@@ -17,6 +17,7 @@ function App() {
         >
           Learn React
         </a>
+        <img src='https://cdn.intra.42.fr/users/3f45bace2720ccd32c3577d23e891628/youlhafi.jpg'/>
       </header>
     </div>
   );
