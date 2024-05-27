@@ -10,9 +10,9 @@ const App = () => {
       <SideBar/>
       <main className='main'>
         <TopBar/>
-        <div className='test'>
+        <div className='page-content'>
           <div className='content'>
-            jojo
+            hellow
           </div>
         </div>
       </main>
