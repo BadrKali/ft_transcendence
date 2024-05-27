@@ -1,6 +1,9 @@
 import React from 'react'
 import './dashboard.css'
-
+import DashProfil from './components/DashProfil'
+import MatchHistory from './components/MatchHistory'
+import Achievments from './components/Achievments'
+import Friends from './components/Friends'
 
 const DashBoard = () => {
   return (
@@ -10,16 +13,16 @@ const DashBoard = () => {
         </div>
         <div className="dashboard">
             <div className="profil">
-              DashProfil
+              <DashProfil />
             </div>
             <div className="matchHistory">
-              MatchHistory 
+              <MatchHistory /> 
             </div>
             <div className="achievments">
-              Achievments 
+              <Achievments />
             </div>
             <div className="friends">
-              Friends 
+              <Friends /> 
             </div>
         </div>
     </div>

@@ -1,0 +1,41 @@
+.listFriendCard{
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    width: 100%;
+    cursor: pointer;
+    border-bottom: solid 1px #11141B;
+}
+
+.listFriendCard:hover{
+    background-color: var(--bg-body);
+    transition: 0.3s;
+}
+
+.listFriendCard:last-child{
+    border-bottom: none;
+}
+
+
+.firendImage{
+
+}
+
+.firendImage img{
+    width: 70px;
+    border-radius: 50%;
+    
+}
+
+.firendImage .offline{
+    filter: grayscale(90%);
+}
+
+.FriendNameRand{
+    padding-left: 15px;
+}
+
+.FriendName{
+    padding-bottom: 10px;
+}
+
