@@ -9,45 +9,39 @@ import Chat from './pages/Chat/Chat';
 import Tournament from './pages/Tournament/Tournament';
 import LeaderBoard from './pages/LeaderBoard/LeaderBoard';
 import Setting from './pages/Setting/Setting';
+import Auth from './pages/Auth/Auth';
+
+
+const routes = [
+  { path: '/', element: <DashBoard /> },
+  { path: '/game', element: <Game /> },
+  { path: '/chat', element: <Chat /> },
+  { path: '/tournament', element: <Tournament /> },
+  { path: '/leaderboard', element: <LeaderBoard /> },
+  { path: '/setting', element: <Setting /> },
+
+];
+
+const router = createBrowserRouter(routes);
 
 const App = () => {
-  const router = createBrowserRouter([
-    {
-      path: '/',
-      element: <DashBoard/>
-    },
-    {
-      path: '/game',
-      element: <Game />
-    },
-    {
-      path: '/Chat',
-      element: <Chat />
-    },
-    {
-      path: '/Tournament',
-      element: <Tournament />
-    },
-    {
-      path: '/LeaderBoard',
-      element: <LeaderBoard />
-    },
-    {
-      path: '/Setting',
-      element: <Setting />
-    },
-  ])
+  const currentPath = window.location.pathname;
   return (
     <div className='app'>
-      <SideBar/>
-      <main className='main'>
-        <TopBar/>
-        <div className='page-content'>
-          <div className='content'>
-            <RouterProvider router={router}/> 
+      {currentPath === '/auth' ? <Auth/> :
+      <>
+        <SideBar/>
+        <main className='main'>
+          <TopBar/>
+          <div className='page-content'>
+            <div className='content'>
+              <RouterProvider router={router}/> 
+            </div>
           </div>
-        </div>
-      </main>
+        </main>
+      </>
+      }
+
     </div>
   )
 }
