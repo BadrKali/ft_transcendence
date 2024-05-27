@@ -1,4 +1,49 @@
+.dashboard-contianer{
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
 .page-title {
-    /* padding: 10px 20px; */
+    flex: 0 0 auto;
     border: 1px solid red;
+}
+
+.dashboard {
+    flex: 1 1 auto;
+    height: calc(100% - 20px);
+    display: grid;
+    color: var( --font-color);
+    grid-template-columns: repeat(6, 1fr);
+    grid-template-rows: 170px auto;
+    grid-template-areas:
+    "profil profil profil profil friends friends"
+    "match match achiev achiev friends friends";
+}
+
+.profil{
+    grid-area: profil;
+    transition: 0.6s ease; 
+    background-color:brown;
+}
+
+.matchHistory{
+    background-color:blueviolet;
+
+    grid-area: match;
+    overflow-y: auto;
+}
+
+.achievments{
+    grid-area: achiev;
+    overflow-y: auto;
+    background-color:aquamarine;
+
+}
+
+.friends{
+    grid-area: friends;
+    overflow-y: auto;
+    background-color:antiquewhite;
+
 }
