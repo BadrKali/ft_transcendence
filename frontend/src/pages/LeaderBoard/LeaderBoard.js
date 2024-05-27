@@ -2,7 +2,11 @@ import React from 'react'
 
 const LeaderBoard = () => {
   return (
-    <div>LeaderBoard</div>
+    <div className='leaderboard-container'>
+        <div className='page-title'>
+          <h1>Welcome Back Perdoxi</h1>
+        </div>
+    </div>
   )
 }
 

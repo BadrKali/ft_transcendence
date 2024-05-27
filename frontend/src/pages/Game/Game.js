@@ -2,7 +2,11 @@ import React from 'react'
 
 const Game = () => {
   return (
-    <div>Game</div>
+    <div className='game-container'>
+        <div className='page-title'>
+          <h1>Game</h1>
+        </div>
+    </div>
   )
 }
 
