@@ -45,5 +45,5 @@
     grid-area: friends;
     overflow-y: auto;
 
-    min-width: 400px;
+    /* min-width: 350px; */
 }
