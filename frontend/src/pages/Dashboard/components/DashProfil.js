@@ -22,7 +22,7 @@ function DashProfil() {
                 <div className="userProgress">
                     <div className="progresInfo">
                         <div className="nameRank">
-                            <h4>UserName</h4>
+                            <h4>Perdoxii_noyat</h4>
                             <h4>Rank : Gold</h4>
                         </div>
                         <div className="totalGames box">
