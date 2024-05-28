@@ -23,6 +23,11 @@ export const SideBarData = [
         icon: <Icon name='tournament' className='navbar-toggle-icon'/>,
     },
     {
+        title: 'Leaderboard',
+        path: '/leaderboard',
+        icon: <Icon name='leaderboard' className='navbar-toggle-icon'/>,
+    },
+    {
         title: 'Setting',
         path: '/setting',
         icon: <Icon name='setting' className='navbar-toggle-icon'/>,

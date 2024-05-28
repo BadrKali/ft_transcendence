@@ -31,10 +31,11 @@
 }
 
 .content {
-  border: 1px solid red;
+  /* border: 1px solid red; */
   height: 100%;
   width: 100%;
   min-width: 1100px;
   max-width: 1800px;
   padding: 60px 20px 20px;
 }
+
