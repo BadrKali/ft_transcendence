@@ -4,11 +4,13 @@
 
 .topbar-container {
     /* border: 1px solid red; */
-    width: 100%;
+    /* width: 100%; */
+    width: calc(100% - 280px);
     height: 100px;
     display: flex;
     align-items: center;
     justify-content: space-between;
+    position: fixed;
 }
 
 .topbar-profile {

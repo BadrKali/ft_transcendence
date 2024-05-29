@@ -15,9 +15,11 @@ import './App.css'
 const AppLayout = () => {
   return (
     <div className='app'>
+      <div className='alt-sidebar'></div>
     <SideBar/>
     <main className='main'>
       <TopBar/>
+      <div className='alt-topbar'></div>
       <div className='page-content'>
         <div className='content'>
           <Outlet/>
