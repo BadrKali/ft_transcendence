@@ -3,7 +3,8 @@
     height: 100%;
     display: flex;
     align-items: center;
-    justify-content: space-between
+    justify-content: space-evenly
+    /* gap: 30px; */
     /* border: 1px solid green; */
     /* flex-wrap: wrap; */
 
@@ -12,15 +13,15 @@
 
 .selected-avatar {
     border-radius:  50%;
-    width: 150px;
-    height: 150px;
+    width: 120px;
+    height: 120px;
     border: 3px solid red;
     transition: all 0.3s ease;
 }
 
 .avatar-item {
-    height: 100px;
-    width: 100px;
+    height: 90px;
+    width: 90px;
     cursor: pointer;
     border-radius:  50%;
     transition: all 0.3s ease;

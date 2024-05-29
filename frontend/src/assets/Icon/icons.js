@@ -20,6 +20,7 @@ import { ReactComponent as CopperIcon} from './copperIcon.svg'
 import { ReactComponent as view } from './view.svg'
 import { ReactComponent as bracket } from './bracket.svg'
 import { ReactComponent as history } from './history.svg'
+import {ReactComponent as user } from './user_icon.svg'
 
 
 
@@ -44,7 +45,8 @@ const icons = {
     copper : CopperIcon,
     view : view,
     bracket : bracket,
-    history : history
+    history : history,
+    user: user
 }
 
 

@@ -11,15 +11,14 @@ import SideBar from './components/SideBar/SideBar';
 import TopBar from './components/TopBar/TopBar'
 import { createBrowserRouter, Outlet, RouterProvider } from 'react-router-dom';
 import './App.css'
+import Auth from './pages/Auth/Auth';
 
 const AppLayout = () => {
   return (
     <div className='app'>
-      <div className='alt-sidebar'></div>
     <SideBar/>
     <main className='main'>
       <TopBar/>
-      <div className='alt-topbar'></div>
       <div className='page-content'>
         <div className='content'>
           <Outlet/>
@@ -35,7 +34,11 @@ export default AppLayout
 
 
 const routes = [
-  { 
+  {
+    element: <Auth/>,
+    path: '/auth'
+  },
+  {
     element: <AppLayout />,
     children: [
       { path: '/', element: <DashBoard /> },

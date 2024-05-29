@@ -1,5 +1,5 @@
 import logo from './Logo.svg'
-// import loginBackground from './Background.png'
+import loginBackground from './Background.png'
 import avatar1 from './avatar1.png'
 import avatar2 from './avatar2.png'
 import avatar3 from './avatar3.png'
@@ -11,7 +11,7 @@ import sep from './sep.png'
 export const assets = {
     logo,
     
-    // loginBackground,
+    loginBackground,
     // SchoolIcon,
     sep
     
