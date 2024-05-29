@@ -8,8 +8,8 @@ import { ReactComponent as setting} from './setting_icon.svg'
 import { ReactComponent as Tournament} from './tournament_icon.svg'
 import { ReactComponent as UserName} from './UserName.svg'
 import { ReactComponent as Password} from './Password.svg'
-import { ReactComponent as Notification} from './notification.svg'
-import { ReactComponent as topBarSearch} from './topBarSearch.svg'
+import { ReactComponent as Notification} from './notification_icon.svg'
+import { ReactComponent as search} from './search_icon.svg'
 import { ReactComponent as Achievment1} from './achiev_1.svg'
 import { ReactComponent as Achievment2} from './achiev_2.svg'
 import { ReactComponent as Achievment3} from './achiev_3.svg'
@@ -27,6 +27,7 @@ const icons = {
     dashboard: Dashboard,
     chat: Chat,
     game: Game,
+    search: search,
     leaderboard: LeaderBoard,
     logout: Logout,
     setting: setting,
@@ -34,7 +35,6 @@ const icons = {
     username: UserName,
     password: Password,
     notification: Notification,
-    topBarSearch: topBarSearch,
     achievment1: Achievment1,
     achievment2: Achievment2,
     achievment3: Achievment3,
