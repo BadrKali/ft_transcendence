@@ -20,7 +20,10 @@ import { ReactComponent as CopperIcon} from './copperIcon.svg'
 import { ReactComponent as view } from './view.svg'
 import { ReactComponent as bracket } from './bracket.svg'
 import { ReactComponent as history } from './history.svg'
-import {ReactComponent as user } from './user_icon.svg'
+import { ReactComponent as user } from './user_icon.svg'
+import { ReactComponent as lock } from './lock_icon.svg'
+import { ReactComponent as at } from './at_icon.svg'
+// import { ReactComponent as school_icon } from './school_icon.png'
 
 
 
@@ -46,7 +49,10 @@ const icons = {
     view : view,
     bracket : bracket,
     history : history,
-    user: user
+    user: user,
+    at: at,
+    lock: lock,
+    // school_icon: school_icon
 }
 
 
