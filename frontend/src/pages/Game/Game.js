@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import PingPong from './components/PingPong';
+import PingPong from './components/PingPong/PingPong';
+import XO from './components/XO/XO';
 import './game.css'
 import pingLogo from './Game-assets/ping.svg'
 import XOLogo from './Game-assets/XO.svg'
@@ -20,7 +21,6 @@ const Game = () => {
               onClick={() => handleSelectGame('ping-pong')}>
                 <img src={pingLogo} className='gameLogo' alt=''/>
                 <p className='gameTitle'>Ping Pong</p>
-                {/* {selectedGame === 'ping-pong' && <PingPong/>} */}
             </div>
             <div className={`XO gameComponent ${selectedGame === 'XO' ? 'selected' : ''}`}
               onClick={() => handleSelectGame('XO')}>
@@ -28,6 +28,8 @@ const Game = () => {
               <p className='gameTitle'>XO Game</p>
             </div>
           </div>
+          {selectedGame === 'ping-pong' && <PingPong/>}
+          {selectedGame === 'XO' && <XO/>}
         </div>
     </div>
   )
