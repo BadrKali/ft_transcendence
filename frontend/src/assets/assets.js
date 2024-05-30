@@ -5,14 +5,14 @@ import avatar2 from './avatar2.png'
 import avatar3 from './avatar3.png'
 import avatar4 from './avatar4.png'
 import addAvatar from './addAvatar.png'
-// import SchoolIcon from './school_icon.png'
+import SchoolIcon from './school_icon.png'
 import sep from './sep.png'
 
 export const assets = {
     logo,
     
     loginBackground,
-    // SchoolIcon,
+    SchoolIcon,
     sep
     
 }
