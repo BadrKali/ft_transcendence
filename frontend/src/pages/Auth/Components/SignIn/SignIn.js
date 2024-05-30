@@ -17,7 +17,7 @@ const SignIn = (props) => {
         <div className='signin-input-section'>
             <div className='signin-input'>
                 <Icon name='at' className='signin-icon'/>
-                <input placeholder='User Name' type='text'/>
+                <input placeholder='Email' type='text'/>
             </div>
             <div className='signin-password'>
                 <div className='signin-input'>
