@@ -17,7 +17,7 @@ const Auth = () => {
         </div>
       </div>
       <div className='auth-right-section'>
-        SignIn
+        <img src={assets.loginBackground} />
       </div>
     </div>
   )

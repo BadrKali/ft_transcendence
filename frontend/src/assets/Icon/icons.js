@@ -23,6 +23,8 @@ import { ReactComponent as history } from './history.svg'
 import { ReactComponent as user } from './user_icon.svg'
 import { ReactComponent as lock } from './lock_icon.svg'
 import { ReactComponent as at } from './at_icon.svg'
+import { ReactComponent as show_pass } from './show_pass.svg'
+import { ReactComponent as hide_pass } from './hide_pass.svg'
 // import { ReactComponent as school_icon } from './school_icon.png'
 
 
@@ -52,6 +54,8 @@ const icons = {
     user: user,
     at: at,
     lock: lock,
+    show_pass : show_pass,
+    hide_pass : hide_pass
     // school_icon: school_icon
 }
 

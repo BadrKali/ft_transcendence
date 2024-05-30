@@ -38,6 +38,7 @@
 
 .signin-icon {
     stroke: #8D93AC;
+    /* cursor: pointer; */
 }
 
 .signin-input-section {
@@ -128,14 +129,29 @@
     margin-bottom: 30px;
 }
 
-.sigin-text-bottom {
+.signin-text-bottom {
+}
+
+.signin-text-bottom p {
     font-family: 'Jockey One';
     font-weight: 400;
     font-size: 24px;
     line-height: 34px;
 }
 
-.sigin-text-bottom span {
+.signin-text-bottom span {
     color: #F62943;
     cursor: pointer;
+    font-family: 'Jockey One';
+    font-weight: 400;
+    font-size: 24px;
+    line-height: 34px;
+}
+
+.show_pass {
+    cursor: pointer;
+    /* border: 1px solid red; */
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }

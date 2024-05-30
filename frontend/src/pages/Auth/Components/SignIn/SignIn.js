@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import './SignIn.css'
 import Icon from '../../../../assets/Icon/icons'
 import { assets } from '../../../../assets/assets'
@@ -7,6 +7,7 @@ const SignIn = (props) => {
     function handleSignUpClick() {
         props.setIsLogin(false)
       }
+    const [isHidden, setIsHidden] = useState('hide_pass')
   return (
     <div className='signin-container'>
         <div className='signin-header'>
@@ -16,14 +17,21 @@ const SignIn = (props) => {
         <div className='signin-input-section'>
             <div className='signin-input'>
                 <Icon name='at' className='signin-icon'/>
-                <input placeholder='User Name' type='text'/>
+                <input placeholder='Email' type='text'/>
             </div>
             <div className='signin-password'>
                 <div className='signin-input'>
                     <Icon name='lock' className='signin-icon'/>
-                    <input placeholder='User Name' type='text'/>
+                    <input placeholder='Password' type={isHidden === 'hide_pass' ? 'password' : 'text'}/>
                 </div>
-                <Icon name='lock' className='signin-icon'/>
+                <div className='show_pass' onClick={() => {
+                    if(isHidden === 'hide_pass')
+                        setIsHidden('show_pass')
+                    else
+                        setIsHidden('hide_pass')
+                }}>
+                    <Icon name={isHidden} className='signin-icon'/>
+                </div>
             </div>
         </div>
         <div className='signin-submit-section'>
@@ -37,7 +45,7 @@ const SignIn = (props) => {
         <div className='school_auth'>
             <img src={assets.SchoolIcon}/>
         </div>
-        <div className='sigin-text-bottom'>
+        <div className='signin-text-bottom'>
             <p>Don’t have an account ? <span onClick={handleSignUpClick}>Sign Up here</span></p>
         </div>
     </div>

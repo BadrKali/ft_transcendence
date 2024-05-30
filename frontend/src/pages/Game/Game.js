@@ -6,7 +6,7 @@ import pingLogo from './Game-assets/ping.svg'
 import XOLogo from './Game-assets/XO.svg'
 
 const Game = () => {
-  const [selectedGame, setSelectedGame] = useState(null);
+  const [selectedGame, setSelectedGame] = useState('ping-pong');
 
   const handleSelectGame = (game) => {
     setSelectedGame(game);

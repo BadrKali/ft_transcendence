@@ -6,7 +6,7 @@
     min-width: 1300px;
     min-height: 1100px;
     color: #fff;
-    padding: 30px;
+    padding: 30px 60px;
 }
 
 .auth-logo-container {
@@ -16,7 +16,13 @@
 
 .auth-right-section {
     /* border: 1px solid red; */
-    width: 50%;
+
+
+}
+
+.auth-right-section img {
+    width: 100%;
+    height: auto;
 }
 
 
