@@ -14,29 +14,23 @@
     margin-right: 60px;
     
 }
-
 .gameComponent {
     cursor: pointer;
     padding: 10px;
     margin: 10px;
-    transition: transform 0.3s, border-bottom 0.3s;
+    transition: transform 0.3s, border-bottom 0.1s;
 }
-
 .gameLogo, .gameTitle {
     display: inline-block;
     vertical-align: middle;
     color: #C6C8CF;
 }
-
 .gameTitle {
     margin-left: 10px;
 }
-
-
 .selected {
     border-bottom: 2px solid #C6C8CF;
 }
-
 .gameComponent:hover {
     transform: scale(.90);
 }

@@ -5,5 +5,4 @@ const PingPong = () => {
         </div>
     );
 }
- 
 export default PingPong;
