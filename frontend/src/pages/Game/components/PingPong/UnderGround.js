@@ -9,7 +9,6 @@ const Underground = () => {
     const handleSelectImage = (image) => {
       setSelectedImage(image);
     };
-  
     return (
       <div className="areas-container">
         <div

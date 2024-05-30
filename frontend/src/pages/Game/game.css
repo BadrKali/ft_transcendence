@@ -94,3 +94,35 @@
 .underground:hover {
     transform: scale(1.1);  
 }
+
+/* Pick Tool styling section */
+
+.tools-container {
+    margin-top: 50px;
+}
+.tools-container h1 {
+    font-size: 32px;
+    font-family: 'Jockey One';
+}
+.tools-container .paddle-selector {
+    display: flex;
+    align-items: center;
+    margin: 40px 0;
+}
+
+.tools-container .arrow-icon {
+    width: 30px;
+    height: 30px;
+    cursor: pointer;
+}
+
+.tools-container  .paddle-display {
+    max-width: 254px;
+    width: 100%;
+    height: 21px;
+    border-radius: 10.5px;
+    margin: 0 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
