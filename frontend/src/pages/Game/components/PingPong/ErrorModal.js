@@ -1,6 +1,7 @@
 import React from 'react';
 
-const ErrorModal = ({ message, onClose }) => {
+const ErrorModal = ({onClose }) => {
+    const message = "Please select a background before launching the game.";
     const handleOverlayClick = (e) => {
       if (e.target === e.currentTarget) {
         onClose();
@@ -10,7 +11,7 @@ const ErrorModal = ({ message, onClose }) => {
     return (
       <div className="modal-overlay" onClick={handleOverlayClick}>
         <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-          <p>{message}</p>
+          <p className='modal-message'>{message}</p>
         </div>
       </div>
     );

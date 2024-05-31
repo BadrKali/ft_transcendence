@@ -170,3 +170,34 @@
     transform: scale(.9);
     transition: transform 0.3s;
 }
+
+/* Error Modal styling section */
+
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-content {
+    max-width: 700px;
+    width: 100%;
+    background: #1C1E27;
+    padding: 20px;
+    border-radius: 8px;
+    text-align: center;
+    position: relative;
+}
+
+.modal-content .modal-message {
+    font-size: 25px;
+    color: #C6C8CF;
+    font-family: 'Poppins';
+    text-align: center;
+}

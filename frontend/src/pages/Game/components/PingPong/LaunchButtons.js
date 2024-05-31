@@ -14,9 +14,19 @@ const LaunchButtons = ({selectedBackground, className}) => {
         <div className={className}>
             <div>
                 <button onClick={handleLaunchGame} className="play-button buttons">Play</button>
+                {showModal && (
+                    <ErrorModal 
+                    onClose={closeModal} 
+                    />
+                )}
             </div>
             <div>
                 <button onClick={handleLaunchGame} className="aIBattle-button buttons">AI Battle</button>
+                {showModal && (
+                    <ErrorModal 
+                    onClose={closeModal}
+                    />
+                )}
             </div>
         </div>
     );
