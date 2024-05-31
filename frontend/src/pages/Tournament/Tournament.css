@@ -62,3 +62,53 @@
     
     color: #FFFFFF;
 }
+
+.tournament-subscribers-avatars {
+    width: 130px;
+    height: 40px;
+    /* border: 1px solid rebeccapurple; */
+    position: relative;
+}
+
+.tournament-subscribers-avatars img {
+    height: 40px;
+    width: 40px;
+    object-fit: cover;
+    position: absolute;
+}
+.image1 {
+    top: 0;
+    bottom: 0;
+    z-index: 1;
+}
+
+.image2 {
+    left: 30px;
+    z-index: 2;
+}
+
+.image3 {
+    left: 60px;
+    z-index: 3;
+}
+
+.image4 {
+    left: 90px;
+    z-index: 4;
+}
+
+.tournament-subscribers {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.tournament-subscribers-counter {
+    font-family: 'Jockey One';
+    font-weight: 400;
+    font-size: 19px;
+    line-height: 20px;
+    color: #FFFFFF;
+}

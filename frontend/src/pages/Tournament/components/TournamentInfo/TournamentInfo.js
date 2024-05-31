@@ -1,7 +1,7 @@
 import React from 'react'
 import './TournamentInfo.css'
 import Icon from '../../../../assets/Icon/icons'
-
+import { avatars }from '../../../../assets/assets'
 
 const TournamentInfo = () => {
   return (
@@ -34,8 +34,14 @@ const TournamentInfo = () => {
                 <span>UnderGround Hell</span>
             </div>
         </div>
-        <div className='tournament-info-item'>
-            
+        <div className='tournament-subscribers'>
+            <div className='tournament-subscribers-avatars'>
+                <img className='image1' src={avatars[0].img}/>
+                <img className='image2' src={avatars[1].img}/>
+                <img className='image3' src={avatars[2].img}/>
+                <img className='image4' src={avatars[3].img}/>
+            </div>
+            <span className='tournament-subscribers-counter'>7/10 Joined</span>
         </div>
     </div>
   )
