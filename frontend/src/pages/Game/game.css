@@ -1,5 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Jockey+One&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Jockey+One&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&family=Saira+Semi+Condensed:wght@100;200;300;400;500;600;700;800;900&display=swap');
 * {
     font-family: 'Roboto';
     margin: 0;
@@ -200,4 +201,100 @@
     color: #C6C8CF;
     font-family: 'Poppins';
     text-align: center;
+}
+
+/* Player selection styling section */
+
+.player-selection-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.player-selection {
+    max-width: 500px;
+    width: 100%;
+    max-height: 60vh;
+    background: #1C1E27;
+    padding: 20px;
+    border-radius: 8px;
+    text-align: center;
+    position: relative;
+    overflow-y: auto;
+    position: relative;
+}
+
+.player-selection::-webkit-scrollbar {
+    display: none;
+}
+
+.player-selection h2 {
+    margin: 10px;
+    font-family: 'Jockey One';
+}
+
+.player-selection ul {
+    list-style-type: none;
+    padding: 0;
+    margin-top: 20px;
+}
+
+.player-selection li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+.player-selection li .player-info {
+    margin-right: auto;
+}
+
+.player-selection li p {
+    font-family: 'Saira Semi Condensed';
+    font-size: 18px;
+}
+.player-selection li .player-rank {
+    color : #737373;
+    margin-left: 5px;
+}
+
+.player-selection li:hover {
+
+}
+
+.player-selection li .player-image {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    margin-right: 10px;
+}
+
+.player-selection li .player-challenge {
+    background: none;
+    cursor: pointer;
+    border: none;
+}
+
+.player-selection .cancle {
+    width: 200px;
+    height: 40px;
+    background-color: #F62943;
+    color: #FFFFFF;
+    font-size: 20px;
+    font-family: 'Jockey One';
+    border: none;
+    border-radius: 10px;
+    bottom: 0;
+    cursor: pointer;
+    position: sticky;
+    width: calc(70% - 40px);
+    bottom: 0;
 }
