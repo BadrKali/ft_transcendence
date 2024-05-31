@@ -1,8 +1,8 @@
 import React, { useState } from 'react'
 import './Auth.css'
 import { assets } from '../../assets/assets'
-import SignUp from './components/SignUp/SignUp'
-import SignIn from './components/SignIn/SignIn'
+import SignUp from './Components/SignUp/SignUp'
+import SignIn from './Components/SignIn/SignIn'
 
 const Auth = () => {
   const [isLogin, setIsLogin] = useState(true)

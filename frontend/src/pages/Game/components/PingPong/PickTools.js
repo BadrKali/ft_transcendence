@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import leftArrow from '../../Game-assets/left-arrow.png';
 import rightArrow from '../../Game-assets/right-arrow.png';
 
-const PickTools = () => {
+const PickTools = ({className}) => {
   const paddleColors = ['#BC4F00', '#33FF57', '#3357FF', '#F3FF33', '#FF33F5'];
   const [currentColorIndex, setCurrentColorIndex] = useState(0);
 
@@ -15,7 +15,7 @@ const PickTools = () => {
   };
 
   return (
-    <div className="tools-container">
+    <div className={className}>
         <h1>Pick Your Tool</h1>
         <div className="paddle-selector">
             <img src={leftArrow} alt="Left Arrow" onClick={handleLeftClick} className="arrow-icon" />

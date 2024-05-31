@@ -1,13 +1,11 @@
 import React, {useState} from "react";
-import hell from '../../Game-assets/hell.png'
-import forest from '../../Game-assets/forest.png'
-import graveyard from '../../Game-assets/graveyard.png'
 
-const Underground = () => {
+const Underground = ({ hell, forest, graveyard, onBackgroundSelect }) => {
     const [selectedImage, setSelectedImage] = useState(null);
 
     const handleSelectImage = (image) => {
       setSelectedImage(image);
+      onBackgroundSelect(image);
     };
     return (
       <div className="areas-container">

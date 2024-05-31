@@ -99,6 +99,7 @@
 
 .tools-container {
     margin-top: 50px;
+    margin-right: auto;
 }
 .tools-container h1 {
     font-size: 32px;
@@ -125,4 +126,47 @@
     display: flex;
     align-items: center;
     justify-content: center;
+}
+
+/*  */
+.tools-section {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+}
+
+.tools-section .tools-container {
+    flex: 1;
+}
+
+.tools-section .launchButtons-container {
+    flex-shrink: 0;
+    margin-left: 20px;
+}
+/*  */
+
+/* Launch game Butons styling section */
+
+.launchButtons-container {
+    margin-top: 100px;
+}
+
+.launchButtons-container .buttons {
+    background-color : #F62943;
+    width: 357px;
+    height: 65px;
+    font-family: 'Jockey One';
+    color: #FFFFFF;
+    font-size: 32px;
+    border: none;
+    margin-top: 20px;
+    cursor: pointer;
+    transition: transform 0.3s;
+}
+
+.launchButtons-container .buttons:hover {
+    background-color: #1C1E27;
+    transform: scale(.9);
+    transition: transform 0.3s;
 }
