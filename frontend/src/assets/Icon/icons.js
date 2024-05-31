@@ -25,6 +25,10 @@ import { ReactComponent as lock } from './lock_icon.svg'
 import { ReactComponent as at } from './at_icon.svg'
 import { ReactComponent as show_pass } from './show_pass.svg'
 import { ReactComponent as hide_pass } from './hide_pass.svg'
+import { ReactComponent as calendar } from './calendar.svg'
+import { ReactComponent as game_mode } from './game_mode.svg'
+import { ReactComponent as chump_cup } from './chump_cup.svg'
+import { ReactComponent as location } from './location.svg'
 // import { ReactComponent as school_icon } from './school_icon.png'
 
 
@@ -55,7 +59,12 @@ const icons = {
     at: at,
     lock: lock,
     show_pass : show_pass,
-    hide_pass : hide_pass
+    hide_pass : hide_pass,
+    calendar: calendar,
+    game_mode: game_mode,
+    chump_cup: chump_cup,
+    location: location
+
     // school_icon: school_icon
 }
 

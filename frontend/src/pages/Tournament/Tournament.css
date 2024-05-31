@@ -48,3 +48,17 @@
     color: #C6C8CF;
 }
 
+
+.tournament-menu-content {
+    margin-top: 30px;
+}
+
+
+.tournament-title {
+    font-family: 'Jockey One';
+    font-weight: 400;
+    font-size: 48px;
+    line-height: 67px;
+    
+    color: #FFFFFF;
+}

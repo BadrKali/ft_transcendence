@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import './Tournament.css'
 import Icon from '../../assets/Icon/icons'
+import TournamentInfo from './components/TournamentInfo/TournamentInfo'
 
 
 const Tournament = () => {
@@ -31,6 +32,10 @@ const Tournament = () => {
           <Icon name='history' className='tournament-icon'/>
           <span>Logs</span>
         </div>
+      </div>
+      <div className='tournament-menu-content'>
+        <h1 className='tournament-title'>Last One Standing Tournament</h1> 
+        {tournamentMenuItem === 'overview' && <TournamentInfo/>}
       </div>
     </div>
   )
