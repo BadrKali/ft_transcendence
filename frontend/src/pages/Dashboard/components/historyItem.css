@@ -3,9 +3,10 @@
     display: flex;
     align-items: center;
     font-size: 12px;
-    padding: 10px;
+    padding: 5px 10px 5px 10px;
+
     cursor: pointer;
-    border-bottom: solid 1px #11141B;
+    /* border-bottom: solid 1px #11141B; */
     /* justify-content: space-between; */
 }
 
@@ -22,10 +23,10 @@
     position: absolute;
     content: "";
     background-color: #03F054;
-    height: 80%;
-    width: 3px;
+    height: 70%;
+    width: 2px;
     left: 0px;
-    bottom: 10px;
+    bottom: 15px;
     transition: box-shadow 0.3s ease;
 }
 
@@ -33,10 +34,10 @@
     position: absolute;
     content: "";
     background-color: #FF4655;
-    height: 80%;
-    width: 3px;
+    height: 70%;
+    width: 2px;
     left: 0px;
-    bottom: 10px;
+    bottom: 15px;
     transition: box-shadow 0.3s ease
 }
 
