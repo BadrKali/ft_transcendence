@@ -9,7 +9,7 @@ import NoitfictaionData from '../../assets/NotificationData'
 const TopBar = () => {
   const [showNotif, setNotif] = useState(false)
   const dropdownRef = useRef(null);
-  console.log(showNotif)
+
   const handleClickOutside = (event) => {
     if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
         setNotif(false);
@@ -31,12 +31,14 @@ const TopBar = () => {
         <input placeholder='Search' type='text'/>
       </div>
       <div className='topbar-profile'>
-        <Icon name='notification' className='topbar-notification-icon' onClick={() => setNotif(!showNotif)}/>
-        <div ref={dropdownRef} className={showNotif ? "dropDwon active" : "dropDwon"}>
-                {NoitfictaionData.map((notif) => (
-                  <NotificationItem key={notif.id} notif={notif} />
-                ))}
+        <div ref={dropdownRef} className="icon-container"  onClick={() => setNotif(!showNotif)}>
+          <Icon  name='notification' className={showNotif ? 'topbar-notification-icon active-icon' : 'topbar-notification-icon' }/>
+          <div  className={showNotif ? "dropDwon active" : "dropDwon"}>
+                  {NoitfictaionData.map((notif) => (
+                    <NotificationItem key={notif.id} notif={notif} />
+                  ))}
           </div>
+        </div>
         <div className='profile-pic-container'>
           <div className='profile-pic'>
             {/* <div className='topbar-online-status'></div> */}

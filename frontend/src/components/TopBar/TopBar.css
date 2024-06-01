@@ -69,6 +69,14 @@
     height: 29px;
     width: 29px;
     cursor: pointer;
+    transition: 0.3s;
+}
+
+.topbar-notification-icon:hover{
+    transform: scale(1.1);
+}
+.active-icon{
+    transform: scale(1.1);
 }
 
 
@@ -105,6 +113,10 @@
     bottom: 0; */
 }
 
+.icon-container{
+    position: relative;
+}
+
 .dropDwon{
     border-radius: 5px;
     height: 500px;
@@ -114,9 +126,12 @@
     top: 40px;
     display: none;
     z-index: 999;
-    background-color: rgba(33, 37, 40, 0.6);
-    backdrop-filter: blur(10px);
+    background-color: var(--card-bg-color);
     overflow-y: auto;
+    border: 1px solid #2A2C37; /* Lighter shade for 3D effect */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15), 
+              0 5px 15px rgba(0, 0, 0, 0.1), 
+              0 10px 30px rgba(0, 0, 0, 0.05); 
 }
 
 .active{
