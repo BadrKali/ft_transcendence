@@ -12,7 +12,7 @@ function FriendsItem({history}) {
                 <p>{history.player_name}</p>
             </div>
             <div className='FriendRank'>
-                <p  style={{color: '#8D93AC'}}>{history.rank}</p>
+                <p  style={{color: '#8D93AC'}}>Rank : {history.rank}</p>
             </div>
        </div>
     </div>
