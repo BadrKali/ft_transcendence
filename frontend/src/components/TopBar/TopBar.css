@@ -68,6 +68,7 @@
 .topbar-notification-icon {
     height: 29px;
     width: 29px;
+    cursor: pointer;
 }
 
 
@@ -102,4 +103,23 @@
     /* position: relative;
     z-index: 1000;
     bottom: 0; */
+}
+
+.dropDwon{
+    border-radius: 5px;
+    height: 500px;
+    width: 400px;
+    position: absolute;
+    right: 10px;
+    top: 40px;
+    display: none;
+    z-index: 999;
+    background-color: rgba(33, 37, 40, 0.6);
+    backdrop-filter: blur(10px);
+    overflow-y: auto;
+}
+
+.active{
+    display: block;
+    animation: slideDown 0.3s forwards;
 }
