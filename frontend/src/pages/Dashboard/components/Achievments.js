@@ -14,6 +14,7 @@ function Achievments() {
                 <AchievmentsItem key={achiev.id} achiev={achiev}/>
             ))}
         </div>
+
     </div>
   )
 }

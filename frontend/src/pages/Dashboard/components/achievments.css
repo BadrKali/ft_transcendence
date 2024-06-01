@@ -16,9 +16,12 @@
 .achievmentsCard{
     background-color:  var(--card-bg-color);
     flex: 1 1 auto;
+    padding-top: 20px;
     overflow-y: auto ;
+
     /* padding: 10px 0; */
 }
+
 
 .achievmentsCard::-webkit-scrollbar {
     display: none;
