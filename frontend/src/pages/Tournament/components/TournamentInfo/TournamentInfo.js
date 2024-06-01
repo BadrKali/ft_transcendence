@@ -57,8 +57,21 @@ const TournamentInfo = () => {
                     <p>simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled</p>
                 </div>
             </div>
-            <div className='tournament-top-player'>
-                    hello
+            <div className='tournament-top-player-container'>
+                <div className='tournament-top-player'>
+                    <div className='tournament-top-player-avatar'>
+                        <img src={avatars[0].img}/>
+                        <span>Perdoxii_noyat</span>
+                    </div>
+                    <div className='tournament-top-player-stats'>
+                        {/* <div className='tournament-top-player-stat-container'>
+                            <div className='tournament-top-player-stat-progress'>
+                                <span className='stat-title'>WINRATE</span>
+                                <span className='state-value'>50%</span>
+                            </div>
+                        </div> */}
+                    </div>
+                </div>
             </div>
         </div>
     </div>
