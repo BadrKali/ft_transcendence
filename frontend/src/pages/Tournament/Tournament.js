@@ -34,7 +34,6 @@ const Tournament = () => {
         </div>
       </div>
       <div className='tournament-menu-content'>
-        <h1 className='tournament-title'>Last One Standing Tournament</h1> 
         {tournamentMenuItem === 'overview' && <TournamentInfo/>}
       </div>
     </div>
