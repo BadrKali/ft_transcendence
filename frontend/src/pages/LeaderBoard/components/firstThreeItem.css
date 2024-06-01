@@ -1,0 +1,37 @@
+.firstThree-Container{
+    width: 32%;
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    padding-bottom: 20px;
+    background-color: #1C1E27;
+    position:relative;
+}
+
+.firstThree-Container .player-Image{
+
+    width: 70px;
+}
+
+.firstThree-Container .player-Image img{
+    border-radius: 15px;
+    width: 70px;
+}
+
+.firstThree-Container .playerNameRanke{
+    padding-left: 10px;
+}
+
+.playerNameRanke p{
+    padding: 5px;
+}
+
+.playerNameRanke .rankParag{
+    font-size: 12px;
+}
+
+.rankIcon{
+    position: absolute;
+    top: -40px;
+    right: 0;
+}

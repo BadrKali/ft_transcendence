@@ -10,7 +10,6 @@ import sep from './sep.png'
 
 export const assets = {
     logo,
-    
     loginBackground,
     SchoolIcon,
     sep
