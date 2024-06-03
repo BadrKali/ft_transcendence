@@ -60,22 +60,28 @@
 .signup-input-section {
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: 10px;
     margin-bottom: 30px;
 }
  .signup-input {
+    display: flex;
+    flex-direction: column;
+    /* align-items: center; */
+    justify-content: center;
     width: 680px;
-    background-color: hsl(227, 14%, 19%);
+
 }
  .signup-input input {
     height: 65px;
-    width: 620px;
+    /* width: 620px; */
+    width: 100%;
     padding: 0 10px;
     border: none;
     outline: none;
     background-color: transparent;
     color: #8D93AC;
     font-family: "Poppins", sans-serif;
+    background-color: hsl(227, 14%, 19%);
 }
  .signup-input input::placeholder {
     color: #8D93AC;
@@ -113,4 +119,18 @@
     background-color: #F62943;
     cursor: pointer;
     border: none;
+}
+
+.signup-input span {
+    font-family: 'Rajdhani';
+    font-weight: 500;
+    font-size: 13px;
+    line-height: 17px;
+    color: #F62943;
+    display: none;
+}
+
+
+.signup-input input:invalid ~ span {
+    display: block;
 }
