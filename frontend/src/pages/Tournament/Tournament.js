@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import './Tournament.css'
 import Icon from '../../assets/Icon/icons'
 import TournamentInfo from './components/TournamentInfo/TournamentInfo'
+import TournamentBracket from './components/TournamentBracket/TournamentBracket'
 
 
 const Tournament = () => {
@@ -35,6 +36,7 @@ const Tournament = () => {
       </div>
       <div className='tournament-menu-content'>
         {tournamentMenuItem === 'overview' && <TournamentInfo/>}
+        {tournamentMenuItem === 'bracket' && <TournamentBracket />}
       </div>
     </div>
   )

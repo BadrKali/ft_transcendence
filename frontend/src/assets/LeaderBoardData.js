@@ -32,7 +32,7 @@ const LeaderBoardData = [
     {
         "id": 4,
         "username": "3bii9a_321",
-        "total_games": 150,
+        "total_games": 150000,
         "wins": 85,
         "losses": 65,
         "rank": "Iron",

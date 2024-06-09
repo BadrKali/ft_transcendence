@@ -26,10 +26,10 @@ function RestItem({players}) {
                     <p>{players.wins}%</p>
                 </div>
                 <div className='PlayerLoss'>
-                <p>{players.losses}%</p>
+                    <p>{players.losses}%</p>
                 </div>
                 <div className='PlayerRank'>
-                <p>{players.rank}</p>
+                    <p>{players.rank}</p>
                 </div>
     
             </div>

@@ -29,6 +29,7 @@ import { ReactComponent as calendar } from './calendar.svg'
 import { ReactComponent as game_mode } from './game_mode.svg'
 import { ReactComponent as chump_cup } from './chump_cup.svg'
 import { ReactComponent as location } from './location.svg'
+import { ReactComponent as TournamentWin } from './TournomantWin.svg'
 // import { ReactComponent as school_icon } from './school_icon.png'
 
 
@@ -63,7 +64,8 @@ const icons = {
     calendar: calendar,
     game_mode: game_mode,
     chump_cup: chump_cup,
-    location: location
+    location: location,
+    TournamentWin : TournamentWin,
 
     // school_icon: school_icon
 }

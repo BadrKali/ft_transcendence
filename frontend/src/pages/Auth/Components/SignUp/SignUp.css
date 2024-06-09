@@ -122,6 +122,7 @@
 }
 
 .signup-input span {
+    margin-top: 5px;
     font-family: 'Rajdhani';
     font-weight: 500;
     font-size: 13px;
@@ -131,6 +132,10 @@
 }
 
 
-.signup-input input:invalid ~ span {
+.signup-input input:invalid[focused="true"] ~ span {
     display: block;
+}
+
+.signup-input input:invalid[focused="true"] {
+    border: 1px solid red;
 }

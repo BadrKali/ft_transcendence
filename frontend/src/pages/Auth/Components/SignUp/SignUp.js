@@ -34,7 +34,6 @@ const SignUp = (props) => {
             }));
         }, [activeAvatar]);
     
-    // const errorMsg = ["Username cannot contain special characters or spaces.","Email address must follow the format user@example.com.","Password is too weak. Please choose a more complex password to ensure account security."]
     const errorMsg = [
         {
             id: 0,
@@ -85,8 +84,8 @@ const SignUp = (props) => {
                     <AuthInput name="password" placeholder="Password" type="password" value={setSignUpvalues["password"] } onChange={handleInputChange} errorMessage={errorMsg[2].msg} pattern={errorMsg[2].pattern}/>
                     <AuthInput name="confirmPassword" placeholder="Confirm Password" type="password" value={setSignUpvalues["confirmPassword"] } onChange={handleInputChange} errorMessage={errorMsg[3].msg} pattern={errorMsg[3].pattern}/>
                     <button className="signup-switch">Create Account</button>
+                    <button className="signup-switch" onClick={handleLoginClick} >Sign In</button>
             </form>
-            <button className="signup-switch" onClick={handleLoginClick} >Sign In</button>
         </div>
     </div>
   )
