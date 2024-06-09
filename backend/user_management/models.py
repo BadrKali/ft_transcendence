@@ -92,6 +92,7 @@ class Friendship(models.Model):
     def clean(self):
         if self.player == self.friend:
             raise ValidationError("A player cannot be friends with themselves.")
+        
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
         if not Friendship.objects.filter(player=self.friend, friend=self.player).exists():
