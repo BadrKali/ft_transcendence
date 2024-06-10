@@ -15,4 +15,4 @@ class FriendshipSerializer(serializers.ModelSerializer):
 class PlayerSerializer(serializers.ModelSerializer):
     class Meta:
         model = Player
-        fields = "__all__"
+        fields = ['avatar', 'rank', 'rank_progress', 'games_played', 'games_won', 'xp']

@@ -8,7 +8,7 @@ from django.shortcuts import get_object_or_404
 from django.core.exceptions import ValidationError
 from .models import Friendship, Player
 from .serializers import PlayerSerializer, FriendshipSerializer
-
+from rest_framework.permissions import IsAuthenticated, AllowAny
 
 class CreateFriendshipView(APIView):
     def post(self, request, player_id, friend_id):
@@ -40,6 +40,7 @@ class DeleteFriendshipView(APIView):
              
 class FriendsListView(generics.ListAPIView):
     serializer_class = FriendshipSerializer
+    permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
         player_id = self.kwargs['player_id']  
