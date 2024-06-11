@@ -54,6 +54,7 @@
 
 .playerImage img{
     width: 70px;
+    border-radius: 5px;
 }
 
 .playerInfo {

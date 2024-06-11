@@ -19,7 +19,9 @@ urlpatterns = [
     path("user-auth/", include("rest_framework.urls")),
 
 
-    path("user_management/", include("user_management.urls"))
+    path("user_management/", include("user_management.urls")),
+    path('api/game/', include('game.urls')),
+    
 ]
 
 if settings.DEBUG:

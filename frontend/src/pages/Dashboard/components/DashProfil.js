@@ -1,6 +1,7 @@
 import React from 'react'
 import  { useState, useEffect } from 'react';
 import './dashProfil.css'
+import { avatars } from '../../../assets/assets'
 
 function DashProfil() {
   const [progress, setProgress] = useState('0%');
@@ -17,7 +18,7 @@ function DashProfil() {
         <div className="userInfo">
             <div className='userContainer'>
                 <div className="userImage" >
-                    <img src=''/>
+                    <img src={avatars[0].img}/>
                 </div>
                 <div className="userProgress">
                     <div className="progresInfo">
