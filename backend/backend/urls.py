@@ -12,6 +12,8 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path("user_management/", include("user_management.urls")),
     path("auth/", include("authentication.urls")),
+    path('api/game/', include('game.urls')),
+    
 ]
 
 if settings.DEBUG:
