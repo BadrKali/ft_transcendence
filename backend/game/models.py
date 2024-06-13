@@ -3,6 +3,9 @@ from django.conf import settings
 from django.core.exceptions import ValidationError
 from user_management.models import Player
 
+def achievment_image_upload_path(instance, filename):
+    return f"Achievments/{filename}"
+
 class GameHistory(models.Model):
     GAME_TYPES = [
         ('pingpong', 'Ping Pong'),
@@ -36,3 +39,20 @@ class GameHistory(models.Model):
         
     def __str__(self):
         return f"{self.winner_user} vs {self.loser_user}"
+    
+class Achievement(models.Model):
+    title = models.CharField(max_length=100)
+    description = models.TextField()
+    image = models.ImageField(upload_to=achievment_image_upload_path)
+    task = models.TextField()
+
+    def __str__(self):
+        return self.title
+
+class PlayerAchievement(models.Model):
+    player = models.ForeignKey(Player, on_delete=models.CASCADE)
+    achievement = models.ForeignKey(Achievement, on_delete=models.CASCADE)
+    achieved_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.player} - {self.achievement.title}"
