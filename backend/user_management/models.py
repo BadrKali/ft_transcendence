@@ -15,11 +15,11 @@ class Player(models.Model):
     PLAYER_FIRST_GAMES_XP = 0
 
     # avatar = models.URLField(max_length=200)
-    avatar = models.ImageField(
-        upload_to=user_avatar_upload_path,
-        null=False,
-        blank=False,
-    )
+    # avatar = models.ImageField(
+    #     upload_to=user_avatar_upload_path,
+    #     null=False,
+    #     blank=False,
+    # )
     rank = models.CharField(max_length=1,default=PLAYER_RANK_BRONZE)
     rank_progress = models.DecimalField(max_digits=5, decimal_places=2, default=PLAYER_FIRST_RANK_PROGRESS)
     games_played = models.IntegerField(default=PLAYER_FIRST_GAMES_PLAYED)

@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Player, Friendship
+from .models import Player, Friendship, FriendInvitation
 
 class FriendshipSerializer(serializers.ModelSerializer):
     friend = serializers.SerializerMethodField()
@@ -15,4 +15,15 @@ class FriendshipSerializer(serializers.ModelSerializer):
 class PlayerSerializer(serializers.ModelSerializer):
     class Meta:
         model = Player
-        fields = ['id', 'avatar', 'rank', 'rank_progress', 'games_played', 'games_won', 'xp']
+        fields = ['id', 'rank', 'rank_progress', 'games_played', 'games_won', 'xp']
+    
+
+class FriendInvitationsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = FriendInvitation
+        fields = ['id', 'player_sender', 'player_receiver', 'invite_status', 'send_at']
+
+    
+
+
+

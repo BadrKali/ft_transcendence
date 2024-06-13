@@ -1,5 +1,5 @@
 from django.urls import path,include
-from .views import FriendsListView, CreateFriendshipView, DeleteFriendshipView,BlockFriendView, UnblockFriendView
+from .views import FriendsListView, CreateFriendshipView, DeleteFriendshipView,BlockFriendView, UnblockFriendView,PlayerView, FrindInvitationsView
 
 
 
@@ -10,7 +10,8 @@ urlpatterns = [
     path('friends/list/<int:player_id>/', FriendsListView.as_view(), name='friends_list'),
     path('friends/block/<int:player_id>/<int:friend_id>/', BlockFriendView.as_view(), name='block_friend'),
     path('friends/unblock/<int:player_id>/<int:friend_id>/', UnblockFriendView.as_view(), name='unblock_friend'),
-    # path('user/<int:player_id>/', PlayerView.as_view(), name='get_player_informations'),
+    path('player/', PlayerView.as_view(), name='player_view'),
+    path('friends/invitations/', FrindInvitationsView.as_view(), name='player_invitations'),
     # path('player/', PlayerView.as_view(), name='player_view'),
     
 ]

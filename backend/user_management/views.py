@@ -6,9 +6,11 @@ from rest_framework import generics
 from rest_framework.views import APIView
 from django.shortcuts import get_object_or_404
 from django.core.exceptions import ValidationError
-from .models import Friendship, Player
-from .serializers import PlayerSerializer, FriendshipSerializer
+from .models import Friendship, Player, FriendInvitation
+from .serializers import PlayerSerializer, FriendshipSerializer, FriendInvitationsSerializer
 from rest_framework.permissions import IsAuthenticated, AllowAny
+from authentication .models import User
+from django.db.utils import IntegrityError
 
 class CreateFriendshipView(APIView):
     def post(self, request, player_id, friend_id):
@@ -70,3 +72,35 @@ class UnblockFriendView(APIView):
             return Response({'status': 'friend unblocked'}, status=status.HTTP_200_OK)
         except Friendship.DoesNotExist:
             return Response({'error': 'friendship does not exist'}, status=status.HTTP_404_NOT_FOUND)
+
+
+
+
+
+
+
+
+
+class PlayerView(APIView):
+    def get(self, request):
+        id = request.user.id
+        player = get_object_or_404(Player, user_id=id)
+        serializer = PlayerSerializer(player)
+        return(Response(serializer.data, status=status.HTTP_200_OK))
+    def post(self, request):
+        serializer = PlayerSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        try:
+            user = get_object_or_404(User, pk = request.user.id)
+            serializer.save(user=user)
+            return Response({"message": "User registered successfully"}, status=status.HTTP_201_CREATED)
+        except IntegrityError:
+            return Response({"message": "A player for this user already exists."}, status=status.HTTP_400_BAD_REQUEST)
+        
+
+
+class FrindInvitationsView(APIView):
+    def get(self, request):
+        invitation = FriendInvitation.objects.filter(player_receiver=request.user)
+        serializer = FriendInvitationsSerializer(invitation, many=True)
+        return(Response(serializer.data, status=status.HTTP_200_OK))
