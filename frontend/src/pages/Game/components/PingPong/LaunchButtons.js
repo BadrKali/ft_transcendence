@@ -35,14 +35,6 @@ const LaunchButtons = ({selectedBackground, className}) => {
                     />
                 )}
             </div>
-            <div>
-                <button onClick={() => {handleLaunchGame(); setShowPlayerSelection(false);}} className="aIBattle-button buttons">AI Battle</button>
-                {showModal && (
-                    <ErrorModal 
-                    onClose={closeModal}
-                    />
-                )}
-            </div>
         </div>
     );
 }

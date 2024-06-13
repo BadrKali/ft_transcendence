@@ -16,7 +16,7 @@ const PickTools = ({className}) => {
 
   return (
     <div className={className}>
-        <h1>Pick Your Tool</h1>
+        <h2>Paddle</h2>
         <div className="paddle-selector">
             <img src={leftArrow} alt="Left Arrow" onClick={handleLeftClick} className="arrow-icon" />
             <div className="paddle-display" style={{ backgroundColor: paddleColors[currentColorIndex] }}></div>

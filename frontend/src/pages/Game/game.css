@@ -53,7 +53,8 @@
 
 .areas-container {
     display: flex;
-    justify-content: space-around;
+    justify-content: space-between;
+    padding: 0 10px;
     margin-top: 30px;
 }
 
@@ -89,37 +90,87 @@
 }
 
 .underground.selectedUnderground {
-    transform: scale(1.1);  
+    transform: scale(1.1);
 }
 
 .underground:hover {
     transform: scale(1.1);  
 }
 
-/* Pick Tool styling section */
+/* Tools container styling section */
 
-.tools-container {
+.toolsContainer {
+    margin-top: 30px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    max-width: 375px;
+    width: 100%;
+    height: 397px;
+    background-color: rgba(28, 30, 39, 1);
+    border-radius: 21px;
+    box-sizing: border-box;
+}
+
+.keys-container, .paddle-container {
+    width: 100%;
+    padding: 10px;
+    margin: 5px 0;
+    border-radius: 5px;
+}
+
+/* Keys styling section */
+
+.keys-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.keys-container .container {
+    margin: 5px;
+    background-color: rgba(28, 30, 39, 0.67);
+    border-radius: 6px;
+    display: flex;
+    flex-direction: column;
+}
+
+.keys-container .container .key {
+    margin: 10px;
+    width: 50px;
+    height: 50px;
+}
+
+/* Pick Paddle styling section */
+
+.paddle-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     margin-top: 50px;
     margin-right: auto;
 }
-.tools-container h1 {
+
+.paddle-container h2 {
     font-size: 32px;
     font-family: 'Jockey One';
 }
-.tools-container .paddle-selector {
+.paddle-container .paddle-selector {
     display: flex;
     align-items: center;
-    margin: 40px 0;
+    margin: 20px 0;
 }
 
-.tools-container .arrow-icon {
+.paddle-container .arrow-icon {
     width: 30px;
     height: 30px;
     cursor: pointer;
 }
 
-.tools-container  .paddle-display {
-    max-width: 254px;
+.paddle-container  .paddle-display {
+    min-width: 200px;
+    max-width: 200px;
     width: 100%;
     height: 21px;
     border-radius: 10.5px;
@@ -130,21 +181,7 @@
 }
 
 /*  */
-.tools-section {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 20px;
-}
 
-.tools-section .tools-container {
-    flex: 1;
-}
-
-.tools-section .launchButtons-container {
-    flex-shrink: 0;
-    margin-left: 20px;
-}
 /*  */
 
 /* Launch game Butons styling section */

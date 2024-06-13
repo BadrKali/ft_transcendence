@@ -5,6 +5,7 @@ import hell from '../../Game-assets/hell.png';
 import forest from '../../Game-assets/forest.png';
 import graveyard from '../../Game-assets/graveyard.png';
 import LaunchButtons from './LaunchButtons';
+import ToolsContainer from './ToolsContainer';
 const PingPong = () => {
     const [selectedBackground, setSelectedBackground] = useState(null);
     const handleBackgroundSelect = (background) => {
@@ -19,9 +20,9 @@ const PingPong = () => {
                 graveyard={graveyard}
                 onBackgroundSelect={handleBackgroundSelect} />
             <div className="tools-section">
-                <PickTools className="tools-container"/>
-                <LaunchButtons selectedBackground={selectedBackground} className="launchButtons-container"/>
+                <ToolsContainer className="toolsContainer"/>
             </div>
+                {/* <LaunchButtons selectedBackground={selectedBackground} className="launchButtons-container"/> */}
         </div>
     );
 }
