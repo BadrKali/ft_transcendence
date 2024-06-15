@@ -1,5 +1,5 @@
 from django.urls import path,include
-from .views import FriendsListView, CreateFriendshipView, DeleteFriendshipView,BlockFriendView, UnblockFriendView,PlayerView, FrindInvitationsView
+from .views import FriendsListView, CreateFriendshipView, DeleteFriendshipView,BlockFriendView, UnblockFriendView,PlayerView, FrindInvitationsView, SearchAPIView
 
 
 
@@ -13,5 +13,5 @@ urlpatterns = [
     path('player/', PlayerView.as_view(), name='player_view'),
     path('friends/invitations/', FrindInvitationsView.as_view(), name='player_invitations'),
     # path('player/', PlayerView.as_view(), name='player_view'),
-    
+    path('search/', SearchAPIView.as_view(), name='search-api'),
 ]
