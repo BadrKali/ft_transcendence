@@ -56,6 +56,13 @@
     justify-content: space-around;
 }
 
+.PingPong-container .tools-section {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-left: 100px;
+}
+
 /* game background styling section */
 
 .areas-container {
@@ -127,7 +134,20 @@
 }
 
 .underground:hover {
+    animation: pulse 1s infinite;
     transform: scale(1.1);  
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+    }
+    70% {
+        transform: scale(1.05);
+    }
+    100% {
+        transform: scale(1);
+    }
 }
 
 /* Tools container styling section */
@@ -156,23 +176,38 @@
 /* Keys styling section */
 
 .keys-container {
+    padding-top: 40px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.keys-container .keys-selection {
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
-.keys-container .container {
-    margin: 5px;
-    background-color: rgba(28, 30, 39, 0.67);
+.keys-container .keys-selection .container {
+    margin: 10px;
+    cursor: pointer;
     border-radius: 6px;
     display: flex;
     flex-direction: column;
+    transition: border-color 0.3s ease;
 }
 
-.keys-container .container .key {
+.keys-container .keys-selection .container .key {
     margin: 10px;
     width: 50px;
     height: 50px;
+}
+
+.container.selectedOption {
+    border: #F62943 solid 2px;
+    transform: scale(1.05);
+    box-shadow: 0 0 10px 10px rgba(246, 41, 67, 0.1);
 }
 
 /* Pick Paddle styling section */
@@ -181,7 +216,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin-top: 50px;
+    margin-top: 20px;
     margin-right: auto;
 }
 
@@ -211,6 +246,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    transition: background-color 0.5s ease;
 }
 
 /*  */

@@ -20,10 +20,10 @@ const PingPong = () => {
                     forest={forest}
                     graveyard={graveyard}
                     onBackgroundSelect={handleBackgroundSelect} />
-                {/* <div className="tools-section">
-                    <ToolsContainer className="toolsContainer"/>
-                </div> */}
                     {/* <LaunchButtons selectedBackground={selectedBackground} className="launchButtons-container"/> */}
+            </div>
+            <div className="tools-section">
+                <ToolsContainer className="toolsContainer"/>
             </div>
         </div>
     );

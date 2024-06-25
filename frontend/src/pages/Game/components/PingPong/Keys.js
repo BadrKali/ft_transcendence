@@ -13,7 +13,7 @@ const Keys = ({ className }) => {
 
     return (
         <div className={className}>
-            <h2>Keys</h2>
+            <h1>Keys</h1>
             <div className={`ws-container container ${selectedOption === 'ws' ? 'selectedOption' : ''}`} onClick={() => handleSelectOption('ws')}>
                 <img src={wKey} alt="" className='key' />
                 <img src={sKey} alt="" className='key' />
