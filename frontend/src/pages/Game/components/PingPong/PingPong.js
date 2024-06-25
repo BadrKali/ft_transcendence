@@ -13,16 +13,18 @@ const PingPong = () => {
     };
     return (
         <div className="PingPong-container">
-            <h1>Choose Your Arena</h1>
-            <Underground 
-                hell={hell}
-                forest={forest}
-                graveyard={graveyard}
-                onBackgroundSelect={handleBackgroundSelect} />
-            <div className="tools-section">
-                <ToolsContainer className="toolsContainer"/>
+            <h1>Customise Your game</h1>
+            <div className="game-cutomisation">
+                <Underground 
+                    hell={hell}
+                    forest={forest}
+                    graveyard={graveyard}
+                    onBackgroundSelect={handleBackgroundSelect} />
+                {/* <div className="tools-section">
+                    <ToolsContainer className="toolsContainer"/>
+                </div> */}
+                    {/* <LaunchButtons selectedBackground={selectedBackground} className="launchButtons-container"/> */}
             </div>
-                {/* <LaunchButtons selectedBackground={selectedBackground} className="launchButtons-container"/> */}
         </div>
     );
 }

@@ -9,32 +9,35 @@ const Underground = ({ hell, forest, graveyard, onBackgroundSelect }) => {
     };
     return (
       <div className="areas-container">
-        <div
-          className={`hell underground ${selectedImage === 'hell' ? 'selectedUnderground' : ''}`}
-          onClick={() => handleSelectImage('hell')}
-        >
-          <div className="image-container">
-            <img src={hell} alt="Hell" />
-            <div className="image-title">UnderGround Hell</div>
-          </div>
-        </div>
-        <div
-          className={`forest underground ${selectedImage === 'forest' ? 'selectedUnderground' : ''}`}
-          onClick={() => handleSelectImage('forest')}
-        >
-          <div className="image-container">
-            <img src={forest} alt="Forest" />
-            <div className="image-title">UnderGround Forest</div>
-          </div>
-        </div>
-        <div
-          className={`graveyard underground ${selectedImage === 'graveyard' ? 'selectedUnderground' : ''}`}
-          onClick={() => handleSelectImage('graveyard')}
-        >
-          <div className="image-container">
-            <img src={graveyard} alt="Graveyard" />
-            <div className="image-title">UnderGround Graveyard</div>
-          </div>
+        <h1 className="areas-title">ARENA</h1>
+          <div className="underground-container">
+            <div
+              className={`hell underground ${selectedImage === 'hell' ? 'selectedUnderground' : ''}`}
+              onClick={() => handleSelectImage('hell')}
+            >
+              <div className="image-container">
+                <img src={hell} alt="Hell" />
+                <div className="image-title">UnderGround Hell</div>
+              </div>
+            </div>
+            <div
+              className={`forest underground ${selectedImage === 'forest' ? 'selectedUnderground' : ''}`}
+              onClick={() => handleSelectImage('forest')}
+            >
+              <div className="image-container">
+                <img src={forest} alt="Forest" />
+                <div className="image-title">UnderGround Forest</div>
+              </div>
+            </div>
+            <div
+              className={`graveyard underground ${selectedImage === 'graveyard' ? 'selectedUnderground' : ''}`}
+              onClick={() => handleSelectImage('graveyard')}
+            >
+              <div className="image-container">
+                <img src={graveyard} alt="Graveyard" />
+                <div className="image-title">UnderGround Graveyard</div>
+              </div>
+            </div>
         </div>
       </div>
     );
