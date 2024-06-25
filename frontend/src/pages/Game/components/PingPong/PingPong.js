@@ -1,11 +1,11 @@
 import React, {useState} from 'react';
 import Underground from './UnderGround';
-import PickTools from './PickTools';
 import hell from '../../Game-assets/hell.png';
 import forest from '../../Game-assets/forest.png';
 import graveyard from '../../Game-assets/graveyard.png';
 import LaunchButtons from './LaunchButtons';
 import ToolsContainer from './ToolsContainer';
+import GameMode from './GameMode';
 const PingPong = () => {
     const [selectedBackground, setSelectedBackground] = useState(null);
     const handleBackgroundSelect = (background) => {
@@ -24,6 +24,7 @@ const PingPong = () => {
             </div>
             <div className="tools-section">
                 <ToolsContainer className="toolsContainer"/>
+                <GameMode className="gameModeContainer"/>
             </div>
         </div>
     );

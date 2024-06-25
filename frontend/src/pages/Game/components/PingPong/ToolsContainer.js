@@ -27,7 +27,7 @@ const ToolsContainer = ( {className }) => {
     return (
         <div className={className}>
             <div className="keys-container">
-                <h2>Keys</h2>
+                <h1>Keys</h1>
                 <div className="keys-selection">
                     <div className={`ws-container container ${selectedOption === 'ws' ? 'selectedOption' : ''}`} onClick={() => handleSelectOption('ws')}>
                         <img src={wKey} alt="" className='key' />

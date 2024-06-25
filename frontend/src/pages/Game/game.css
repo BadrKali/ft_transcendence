@@ -40,14 +40,14 @@
 
 /* Ping Pong styling section */
 
+.PingPong-container h1 {
+    font-family: 'Rajdhani';
+}
+
 .PingPong-container {
     margin-top: 35px;
     margin-left: 10px;
     width: 80%;
-}
-
-.PingPong-container h1 {
-    font-family: 'Rajdhani';
 }
 
 .PingPong-container .game-cutomisation {
@@ -59,8 +59,8 @@
 .PingPong-container .tools-section {
     display: flex;
     align-items: center;
-    justify-content: space-between;
     margin-left: 100px;
+    gap: 50px;
 }
 
 /* game background styling section */
@@ -216,7 +216,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin-top: 20px;
+    margin-top: 10px;
     margin-right: auto;
 }
 
@@ -249,9 +249,77 @@
     transition: background-color 0.5s ease;
 }
 
-/*  */
+/* Game Mode styling section */
 
-/*  */
+.gameModeContainer {
+    margin-top: 30px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    max-width: 375px;
+    width: 100%;
+    height: 397px;
+    background-color: rgba(28, 30, 39, 1);
+    border-radius: 21px;
+    box-sizing: border-box;
+    overflow: hidden;
+}
+
+.gameModeContainer .title {
+    margin-top: 20px;
+}
+
+.mode-selector {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.arrow-icon {
+    width: 40px;
+    height: 40px;
+    cursor: pointer;
+    margin: 0 20px;
+    transition: transform 0.3s ease; 
+}
+
+.mode-display {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transition: transform 0.3s ease;
+}
+
+.mode-image-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #11141B;
+    border-radius: 19px;
+    width: 200px;
+    height: 230px;
+    margin-bottom: 15px;
+    overflow: hidden;
+}
+
+.mode-image {
+    width: 150px;
+    height: 150px;
+    margin-bottom: 10px;
+    transition: transform 0.3s ease;
+}
+
+.mode-title {
+    text-align: center;
+    color: #F62943;
+    transition: transform 0.3s ease;
+}
+
+.arrow-icon:hover {
+    transform: scale(1.1);
+}
 
 /* Launch game Butons styling section */
 
