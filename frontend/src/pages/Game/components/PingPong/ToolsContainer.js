@@ -6,22 +6,25 @@ import upKey from '../../Game-assets/up.png';
 import downKey from '../../Game-assets/down.png';
 import wKey from '../../Game-assets/w.png';
 
-const ToolsContainer = ( {className }) => {
+const ToolsContainer = ( {className, onPaddleSelect, onKeysSelect}) => {
     const paddleColors = ['#BC4F00', '#33FF57', '#3357FF', '#F3FF33', '#FF33F5'];
     const [currentColorIndex, setCurrentColorIndex] = useState(0);
 
     const handleLeftClick = () => {
         setCurrentColorIndex((prevIndex) => (prevIndex - 1 + paddleColors.length) % paddleColors.length);
+        onPaddleSelect(paddleColors[(currentColorIndex - 1 + paddleColors.length) % paddleColors.length]);
     };
 
     const handleRightClick = () => {
         setCurrentColorIndex((prevIndex) => (prevIndex + 1) % paddleColors.length);
+        onPaddleSelect((prevIndex) => (prevIndex + 1) % paddleColors.length);
     };
 
     const [selectedOption, setSelectedOption] = useState(null);
 
     const handleSelectOption = (option) => {
         setSelectedOption(option);
+        onKeysSelect(option);
     };
 
     return (

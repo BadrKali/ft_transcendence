@@ -5,20 +5,25 @@ import pongy from "../../Game-assets/pongy.png";
 import leftArrow from "../../Game-assets/leftFlesh.png";
 import rightArrow from "../../Game-assets/rightFlesh.png";
 
-const GameMode = ({ className }) => {
+const GameMode = ({ className, setSelectedMode }) => {
     const modes = [
         { name: "Invite", img: invite },
         { name: "Local", img: local },
         { name: "Pongy!", img: pongy }
     ];
+
     const [selectedModeIndex, setSelectedModeIndex] = useState(0);
 
     const handleLeftClick = () => {
-        setSelectedModeIndex((prevIndex) => (prevIndex === 0 ? modes.length - 1 : prevIndex - 1));
+        const newIndex = (selectedModeIndex === 0 ? modes.length - 1 : selectedModeIndex - 1);
+        setSelectedModeIndex(newIndex);
+        setSelectedMode(modes[newIndex].name);
     };
 
     const handleRightClick = () => {
-        setSelectedModeIndex((prevIndex) => (prevIndex === modes.length - 1 ? 0 : prevIndex + 1));
+        const newIndex = (selectedModeIndex === modes.length - 1 ? 0 : selectedModeIndex + 1);
+        setSelectedModeIndex(newIndex);
+        setSelectedMode(modes[newIndex].name);
     };
 
     return (
@@ -50,6 +55,6 @@ const GameMode = ({ className }) => {
             </div>
         </div>
     );
-}
+};
 
 export default GameMode;

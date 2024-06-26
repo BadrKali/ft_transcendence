@@ -57,6 +57,7 @@
 }
 
 .PingPong-container .tools-section {
+    position: relative;
     display: flex;
     align-items: center;
     margin-left: 100px;
@@ -324,7 +325,9 @@
 /* Launch game Butons styling section */
 
 .launchButtons-container {
-    margin-top: 100px;
+    position: absolute;
+    bottom: 0; 
+    right: 0; 
 }
 
 .launchButtons-container .buttons {
