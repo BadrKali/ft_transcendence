@@ -8,10 +8,12 @@ import Tournament from './pages/Tournament/Tournament';
 import LeaderBoard from './pages/LeaderBoard/LeaderBoard';
 import Setting from './pages/Setting/Setting';
 import SideBar from './components/SideBar/SideBar';
-import TopBar from './components/TopBar/TopBar'
+import TopBar from './components/TopBar/TopBar';
+import PingPongGame from './pages/PingPongGame/PingPongGame';
 import { createBrowserRouter, Outlet, RouterProvider } from 'react-router-dom';
 import './App.css'
 import Auth from './pages/Auth/Auth';
+
 
 const AppLayout = () => {
   return (
@@ -31,8 +33,6 @@ const AppLayout = () => {
 
 export default AppLayout
 
-
-
 const routes = [
   {
     element: <Auth/>,
@@ -48,7 +48,11 @@ const routes = [
       { path: 'leaderboard', element: <LeaderBoard /> },
       { path: 'setting', element: <Setting /> },
     ]
-  }
+  },
+  {
+    element: <PingPongGame />,
+    path: 'pingponggame'
+  },
 ];
 
 const router = createBrowserRouter(routes);

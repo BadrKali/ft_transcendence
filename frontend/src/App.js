@@ -10,7 +10,7 @@ import Tournament from './pages/Tournament/Tournament';
 import LeaderBoard from './pages/LeaderBoard/LeaderBoard';
 import Setting from './pages/Setting/Setting';
 import Auth from './pages/Auth/Auth';
-
+import PingPongGame from './pages/PingPongGame/PingPongGame';
 
 const routes = [
   { path: '/', element: <DashBoard /> },
@@ -19,7 +19,7 @@ const routes = [
   { path: '/tournament', element: <Tournament /> },
   { path: '/leaderboard', element: <LeaderBoard /> },
   { path: '/setting', element: <Setting /> },
-
+  { path: '/pingponggame', element: <PingPongGame />}
 ];
 
 const router = createBrowserRouter(routes);
