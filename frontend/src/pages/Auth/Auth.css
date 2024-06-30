@@ -3,8 +3,8 @@
     background-color: #11141B;
     width: 100vw;
     height: 100vh;
-    min-width: 1300px;
-    min-height: 1100px;
+    min-width: 800px;
+    /* min-height: 1100px; */
     color: #fff;
     padding: 30px 60px;
 }
@@ -16,13 +16,17 @@
 
 .auth-right-section {
     /* border: 1px solid red; */
-
+    width: 50%;
+    background-image: url(../../assets/back.png);
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
 
 }
 
 .auth-right-section img {
-    width: 100%;
-    height: auto;
+    /* width: 100%;
+    height: auto; */
 }
 
 
@@ -37,6 +41,20 @@
     height: 70%;
 }
 
+
+@media (max-width: 1500px) {
+    .auth-right-section {
+        display: none;
+    }
+    .auth-left-section {
+        width: 100%;
+    }
+    .auth-content {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+}
 
 
 @keyframes slide {
