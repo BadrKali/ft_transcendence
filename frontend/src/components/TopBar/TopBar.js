@@ -47,8 +47,6 @@ const TopBar = () => {
 
   const handleChange = (e) => {
     setQuery(e.target.value);
-    if (showSearch === false)
-      setSearch(!showSearch)
   };
 
   return (
@@ -56,12 +54,11 @@ const TopBar = () => {
       <div className='topbar-search'>
         <Icon name='search' className='topbar-search-icon'/>
         <input placeholder='Search' value={query}  type='text' onChange={handleChange}/>
-          <div className={showSearch ? "search-dropDwon searchActiv" : "search-dropDwon"}>
+          <div className={results.length > 0 ? "search-dropDwon searchActiv" : "search-dropDwon"}>
             {results.map((result) => (
               <SearchItem key={result.id} result={result}/>
             ))}
           </div>
-          
       </div>
       <div className='topbar-profile'>
         <div ref={dropdownRef} className="icon-container"  onClick={() => setNotif(!showNotif)}>

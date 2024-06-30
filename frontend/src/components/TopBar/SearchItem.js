@@ -3,9 +3,9 @@ import './searchItem.css'
 
 function SearchItem({result}) {
   return (
-    <div>
+    <div className='SearchItem-container'> 
         <div className="search-image">
-            <img src=''/> 
+            <img src={`http://127.0.0.1:8000${result.image}`}/> 
         </div>
         <div className="search-name">
             <p>{result.title}</p>

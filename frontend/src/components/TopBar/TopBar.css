@@ -143,6 +143,7 @@
 .search-dropDwon{
     position: absolute;
     width: 300px;
+    /* height: 400px; */
     z-index: 999;
     background-color: var(--card-bg-color);
     overflow-y: auto;
@@ -150,11 +151,15 @@
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15), 
               0 5px 15px rgba(0, 0, 0, 0.1), 
               0 10px 30px rgba(0, 0, 0, 0.05); 
-    top : 35px;
+    top : 40px;
     left: 0;
-    display: none;
+    border-radius: 10px;
+    opacity: 0; /* Start with opacity 0 for fade-in effect */
+    visibility: hidden; /* Start with visibility hidden */
+    transition: opacity 0.3s ease, visibility 0.3s ease; /* Smooth transition */
 }
 
 .searchActiv{
-    display: block;
+    opacity: 1; /* Show dropdown with fade-in effect */
+    visibility: visible; /* Show dropdown with visibility */
 }

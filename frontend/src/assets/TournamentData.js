@@ -1,5 +1,5 @@
-const AchievmentsData = [
-    {
+const TournamentData =  [
+      {
         "title": "First Serve",
         "description": "Complete your first game of Ping Pong.",
         "image": "https://example.com/images/first_serve.png"
@@ -82,5 +82,4 @@ const AchievmentsData = [
         "image": "https://example.com/images/tournament_master.png"
       }
 ]
-
-export default AchievmentsData;
+  

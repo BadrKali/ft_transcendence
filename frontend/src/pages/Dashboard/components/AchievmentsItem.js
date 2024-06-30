@@ -11,7 +11,7 @@ function AchievmentsItem({achiev}) {
         </div>
         <div className='AchievmentsInfo'>
             <div className='AchievmentsName'>
-                <p>{achiev.name}</p>
+                <p>{achiev.title}</p>
             </div>
             <div className='AchievmenstDescription'>
                 <p style={{color: '#8D93AC'}}>{achiev.description}</p>
