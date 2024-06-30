@@ -1,0 +1,10 @@
+.ChatView{
+    display: grid;
+    grid-template-columns: 1fr 3fr 82px;
+    grid-template-rows: 1fr;
+    gap: 12px;
+    align-self: center;
+    justify-self: center;
+    width: 100%;
+    height: 90%
+}

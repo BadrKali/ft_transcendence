@@ -26,23 +26,23 @@ const router = createBrowserRouter(routes);
 
 const App = () => {
   const currentPath = window.location.pathname;
-  return (
-    <div className='app'>
-      {currentPath === '/auth' ? <Auth/> :
-      <>
-        <SideBar/>
-        <main className='main'>
-          <TopBar/>
-          <div className='page-content'>
-            <div className='content'>
-              <RouterProvider router={router}/> 
-            </div>
-          </div>
-        </main>
-      </>
-      }
+  return ( <></>
+    // <div className='app'>
+    //   {currentPath === '/auth' ? <Auth/> :
+    //   <>
+    //     <SideBar/>
+    //     <main className='main'>
+    //       <TopBar/>
+    //       <div className='page-content'>
+    //         <div className='content'>
+    //           <RouterProvider router={router}/> 
+    //         </div>
+    //       </div>
+    //     </main>
+    //   </>
+    //   }
 
-    </div>
+    // </div>
   )
 }
 
