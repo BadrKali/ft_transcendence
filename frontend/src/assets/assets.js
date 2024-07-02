@@ -12,7 +12,8 @@ export const assets = {
     logo,
     loginBackground,
     SchoolIcon,
-    sep
+    sep,
+    addAvatar
     
 }
 
@@ -32,10 +33,6 @@ export const avatars = [
     {
         name: 'brain',
         img: avatar4
-    },
-    {
-        name: 'addvatar',
-        img: addAvatar
     },
 ]
 

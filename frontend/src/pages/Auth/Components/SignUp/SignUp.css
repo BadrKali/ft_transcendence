@@ -139,3 +139,7 @@
 .signup-input input:invalid[focused="true"] {
     border: 1px solid red;
 }
+
+.upload-input {
+    display: none;
+}

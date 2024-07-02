@@ -33,6 +33,12 @@ class UserRegistration(APIView):
     def post(self, request):
         serializer = UserRegistrationSerializer(data=request.data)
         if serializer.is_valid():
+            avatar_type = request.data.get('avatar_type')
+            avatar_file = request.FILES.get('avatar')
+            if avatar_file:
+                serializer.validated_data['avatar'] = avatar_file
+            else:
+                serializer.validated_data['avatar'] = f'avatars/{avatar_type}.png'
             serializer.save()
             return Response({"message": "User registered successfully"}, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
