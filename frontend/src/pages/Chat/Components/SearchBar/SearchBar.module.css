@@ -5,6 +5,8 @@
     grid-template-rows:  1fr;
     align-items: center;
     justify-items: center;
+    align-self: center;
+    justify-self: center;
     background-color: #11141B;
     border-radius: 9px ;
     gap: 2px;

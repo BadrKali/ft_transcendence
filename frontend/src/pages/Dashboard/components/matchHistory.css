@@ -10,6 +10,7 @@
     flex: 0 0 auto;
     padding: 10px 0;
 }
+
 .historyCard{
     background-color:  var(--card-bg-color);
     flex: 1 1 auto;

@@ -1,11 +1,12 @@
+@import url('https://fonts.googleapis.com/css2?family=Saira+Semi+Condensed:wght@100;200;300;400;500;600;700;800;900&display=swap');
+
 .ContactSection{
     display: grid;
     grid-template-columns: 1fr;
     grid-template-rows: 80px 80px 1fr;
     border-radius: 6px;
     background-color:#1C1E27;
-    align-items: center;
-    justify-items: center;
+    overflow: auto;/*new*/
 }
 
 .MessageString{
@@ -17,8 +18,111 @@
 .MessageNotePencilHolder{
     height: 100%;
     width: 90%;
+    align-self: center;
+    justify-self: center;
     display: flex;
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
+}
+
+.ConversationHolder{
+    /* width: 90%; */
+    height: 60px;
+    border-radius: 20px;
+    display: grid;
+    gap: 20px;
+    grid-template-columns: 52px 1fr 60px;
+    grid-template-rows: 1fr;
+}
+
+.FriendPhoto{
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    align-self: center;
+
+}
+
+.ConversationContainer{
+    display: flex;
+    flex-direction: column;
+    width: 90%;
+    gap: 30px;
+    justify-self: center;
+    overflow: auto;
+    margin-bottom: 10px;
+}
+
+.ConversationContainer::-webkit-scrollbar {
+    display: none;
+}
+
+.NameAndLastMessage{
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr 1fr;
+    align-items: center;
+    justify-items: center;
+}
+
+.FriendName{
+    font-family: 20px;
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: bold;
+    justify-self: start;
+
+}
+
+.LastMessage{
+    justify-self: start;
+
+}
+
+.UnreadAndTime{
+    display: grid;
+    grid-template-columns: 1fr ;
+    grid-template-rows: 1fr 1fr;
+    align-items: center;
+    justify-items: center;
+}
+
+.SendTime{
+    font-family: 'Saira Semi Condensed', sans-serif;
+    font-size: 13px;
+    align-self: end;
+}
+
+
+.NoOneToTalkTost{
+    opacity: 0.1;
+    align-self: center;
+
+}
+
+.ConversationContainerAnimation{
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr;
+    align-items: center;
+    justify-items: center;
+}
+
+.unreadedMsgHolder{
+    width: 20px; 
+    height: 20px;
+    align-self: start;
+    border-radius: 50%; 
+    background-color: #F62943;
+    display: grid;
+    grid-template-columns: 1f;
+    grid-template-rows: 1fr;
+}
+
+.UnreadMessages{
+    align-self: center;
+    justify-self: center;
+    font-family: 'Saira Semi Condensed', sans-serif;
+    font-weight: bold;
+    font-size:13px;
 }

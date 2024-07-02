@@ -9,7 +9,7 @@ const Chat = () => {
 
     return(
         <>
-        <h1>Chat</h1>
+        <h1>Clunca</h1>
         <div className={style.ChatView}>
             <ContactSection />
             <MessageSection />

@@ -4,22 +4,16 @@
     background-color:#1C1E27;
 }
 
-.Animationstyle{
-    position: relative;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-}
-
 .WelcomeChat{
     display: grid;
-    gap : 25px;
+    gap : 10px;
     grid-template-columns: 1fr;
     grid-template-rows: 1fr 80px;
     align-items: center;
     justify-content: center;
     justify-items: center;
     text-align: center;
+    height: 90%;
 }
 
 .ChatQuote{
@@ -27,7 +21,6 @@
 }
 
 .Clunca{
-    opacity: 1;
     color: #F62943;
     border-bottom: 1px solid #F62943;
 }
