@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import './AvatarSelect.css'
 import { avatars } from '../../../../assets/assets'
+import { assets } from '../../../../assets/assets'
 
 
 const AvatarSelect = () => {
@@ -20,7 +21,7 @@ const AvatarSelect = () => {
         <img src={avatars[3].img} className={`avatar-item ${avatarNum === 3 ? 'active' : ''}`} onClick={() => {
             setAvatarNum(3)
         }}/>
-        <img src={avatars[4].img} className={`avatar-item ${avatarNum === 4 ? 'active' : ''}`} onClick={()=> {
+        <img src={assets.addAvatar} className={`avatar-item ${avatarNum === 4 ? 'active' : ''}`} onClick={()=> {
             alert('ghayerha a weldi')
         }}/>
     </div>

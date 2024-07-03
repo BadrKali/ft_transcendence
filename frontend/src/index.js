@@ -13,21 +13,23 @@ import PingPongGame from './pages/PingPongGame/PingPongGame';
 import { createBrowserRouter, Outlet, RouterProvider } from 'react-router-dom';
 import './App.css'
 import Auth from './pages/Auth/Auth';
+import { AuthProvider } from './context/Auth/AuthProvider';
+import ProtectedRoutes from './components/ProtectedRoutes/ProtectedRoutes';
 
 
 const AppLayout = () => {
   return (
     <div className='app'>
-    <SideBar/>
-    <main className='main'>
-      <TopBar/>
-      <div className='page-content'>
-        <div className='content'>
-          <Outlet/>
+      <SideBar/>
+      <main className='main'>
+        <TopBar/>
+        <div className='page-content'>
+          <div className='content'>
+            <Outlet/>
+          </div>
         </div>
-      </div>
-    </main>
-</div>
+      </main>
+  </div>
   )
 }
 
@@ -60,6 +62,8 @@ const router = createBrowserRouter(routes);
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <RouterProvider router={router}/> 
+    <AuthProvider>
+      <RouterProvider router={router}/>
+    </AuthProvider>
   </React.StrictMode>
 );
