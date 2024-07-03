@@ -13,7 +13,7 @@ const Chat = () => {
         <div className={style.ChatView}>
             <ContactSection />
             <MessageSection />
-            {/* <UserParams /> */}
+            <UserParams />
         </div>
         </>
     )

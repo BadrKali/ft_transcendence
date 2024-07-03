@@ -1,5 +1,6 @@
 import React from 'react'
 import style from './UserParams.module.css'
+import { DotsThreeVertical, Phone, VideoCamera } from 'phosphor-react'
 
 
 const UserParams = () => {
@@ -27,6 +28,12 @@ const UserParams = () => {
             <svg className={style.Block} width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M25.0003 26.6667L33.3337 35M33.3337 26.6667L25.0003 35M18.3337 23.3333C11.8903 23.3333 6.66699 28.5567 6.66699 35H18.3337M25.0003 11.6667C25.0003 15.3486 22.0155 18.3333 18.3337 18.3333C14.6518 18.3333 11.667 15.3486 11.667 11.6667C11.667 7.98477 14.6518 5 18.3337 5C22.0155 5 25.0003 7.98477 25.0003 11.6667Z" stroke="#8D93AC" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
+            </div>
+            <div className={style.PhoneBack}>
+              <Phone className={style.Phone} size={35} />
+            </div>
+            <div className={style.VideoCallBack}>
+              <VideoCamera className={style.VideoCall} size={35}  />
             </div>
     </div>
   )

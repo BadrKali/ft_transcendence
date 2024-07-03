@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Saira+Semi+Condensed:wght@100;200;300;400;500;600;700;800;900&display=swap');
+
 .MessageSection{
     border-radius: 6px;
     opacity: 0.4;
@@ -17,10 +19,158 @@
 }
 
 .ChatQuote{
-    font-size: 30px;
+    font-size: 1.875rem;
 }
 
 .Clunca{
     color: #F62943;
     border-bottom: 1px solid #F62943;
 }
+
+.MessageSectionFull{
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: 6rem 1fr 5rem;
+    background-color:#1C1E27;
+    border-radius: 0.4rem;
+    gap: 4px;
+}
+/***************************************************/
+.ChatHeaderHolder{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color:#1C1E27;
+    box-shadow: 0px 25px 20px -20px #11141B;
+}
+
+.UserInfo{
+    display: flex;
+    gap: 30px;
+    flex-grow: 1;
+    align-content: center;
+    width: 85%;
+    height: 100%;
+}
+
+.FriendPhoto{
+    margin-left: 1.25rem;
+    width: 65px;
+    height: 65px;
+    border-radius: 50%;
+    align-self: center;
+}
+
+.FriendNameAndStatus{
+    display: flex;
+    flex-direction: column;
+    align-self: center;
+    flex-grow: 1;
+}
+
+.FriendName{
+    font-family: 'Rajdhani', serif;
+    font-size: 1.8rem;
+    font-weight: bold;
+    letter-spacing: 0.5px;
+}
+
+.Status{
+    font-size: 0.875rem;
+}
+
+.StatusHolder{
+    display: flex;
+    align-items: center;
+    gap: 3px;
+
+}
+
+.StatusIcon{
+    width: 30px;
+    height: 30px;
+}
+
+
+.DiscussionColors{
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    width: 15%;
+    height: 100%;
+}
+
+.ChatMainHolder{
+    background-color:#1C1E27;
+}
+/*****************************************/
+.ChatInputHolder{
+    /* background-color:#bfc4da; */
+    display: flex;
+    align-items: start;
+    justify-content: center;
+}
+
+.inputMainDiv{
+    display: grid;
+    grid-template-columns: 1fr 13fr 1fr 1fr;
+    grid-template-rows: 1fr;
+    /* gap: 1rem; */
+    align-items: center;
+    justify-items: center;
+    background-color: #121318;
+    border-radius: 0.5625rem;
+    height: 90%;
+    width: 95%;
+}
+.ImportButton{
+
+}
+
+.Emojie{
+    justify-self: end;
+}
+
+ .inputMessage{
+    border: none;
+    outline: none;
+    background-color: #11141B;
+    width: 100%;
+    height: 100%;
+    color: #4b4f5d;
+    font-size: 25px;
+    font-family: 'Saira Semi Condensed', sans-serif;
+} 
+/*******************INPUT HOLDER***********************/
+
+.Color1{
+    width: 30px;
+    height: 30px;
+    background-color: #22420d;
+    border-bottom-left-radius: 10px;
+    border-top-right-radius: 10px ;
+    /* border */
+}
+
+.Color2{
+    width: 30px;
+    height: 30px;
+    background-color: #F62943;
+    border-bottom-left-radius: 10px;
+    border-top-right-radius: 10px ;
+}
+
+.Color3{
+    width: 30px;
+    height: 30px;
+    background-color: #333497;
+    border-bottom-left-radius: 10px;
+    border-top-right-radius: 10px ;
+}
+.Color4{
+    /* background-color: var(--message-background-color); */
+    width: 30px;
+    height: 30px;
+    /* color: white; */
+}
+

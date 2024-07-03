@@ -6,7 +6,9 @@
     grid-template-rows: 80px 80px 1fr;
     border-radius: 6px;
     background-color:#1C1E27;
-    overflow: auto;/*new*/
+    
+    overflow: auto;
+
 }
 
 .MessageString{
@@ -14,7 +16,6 @@
     font-weight: bold;
     justify-self: end;
 }
-
 .MessageNotePencilHolder{
     height: 100%;
     width: 90%;
@@ -26,39 +27,60 @@
     justify-content: space-between;
 }
 
-.ConversationHolder{
-    /* width: 90%; */
-    height: 60px;
-    border-radius: 20px;
+/* .Back{
+
+    overflow: auto;
     display: grid;
-    gap: 20px;
-    grid-template-columns: 52px 1fr 60px;
-    grid-template-rows: 1fr;
-}
-
-.FriendPhoto{
-    width: 52px;
-    height: 52px;
-    border-radius: 50%;
-    align-self: center;
-
-}
+    gap: 12px;
+    grid-template-columns: 1fr;
+    grid-template-rows: 200px;
+    grid-auto-rows: 200px;
+} */
 
 .ConversationContainer{
-    display: flex;
-    flex-direction: column;
-    width: 90%;
-    gap: 30px;
-    justify-self: center;
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: 100px;
+    gap: 20px; 
+    grid-auto-rows: 100px;
+    
     overflow: auto;
     margin-bottom: 10px;
+
 }
 
 .ConversationContainer::-webkit-scrollbar {
     display: none;
 }
 
+.DiscussionBack{
+
+}
+
+.ConversationHolder{
+    height: 100%;
+    width: 100%;
+    display: grid;
+    grid-template-columns: 90px 4fr 90px;
+    grid-template-rows: 1fr;
+    gap: 1rem;
+    align-items: center;
+
+}
+
+.FriendPhoto{
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    align-self: center;
+    justify-self: end;
+}
+
+
+
 .NameAndLastMessage{
+    height: 100%;
+    width: 100%;
     display: grid;
     grid-template-columns: 1fr;
     grid-template-rows: 1fr 1fr;
@@ -67,19 +89,26 @@
 }
 
 .FriendName{
-    font-family: 20px;
+    letter-spacing: 1px;
+    font-size: 25px;
     font-family: 'Rajdhani', sans-serif;
     font-weight: bold;
+    opacity: 0.8;
     justify-self: start;
+    align-self: end;
 
 }
 
 .LastMessage{
+    font-size: 1.1rem;
     justify-self: start;
-
+    align-self: start;
+    color: #A9A6A6;
 }
 
 .UnreadAndTime{
+    height: 100%;
+    width: 100%;
     display: grid;
     grid-template-columns: 1fr ;
     grid-template-rows: 1fr 1fr;
@@ -89,7 +118,7 @@
 
 .SendTime{
     font-family: 'Saira Semi Condensed', sans-serif;
-    font-size: 13px;
+    font-size: 14px;
     align-self: end;
 }
 
@@ -109,8 +138,8 @@
 }
 
 .unreadedMsgHolder{
-    width: 20px; 
-    height: 20px;
+    width: 23px; 
+    height: 23px;
     align-self: start;
     border-radius: 50%; 
     background-color: #F62943;

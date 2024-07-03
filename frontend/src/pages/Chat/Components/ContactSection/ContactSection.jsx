@@ -1,17 +1,17 @@
-import React from 'react'
+import React, { useState } from 'react'
 import style from './ContactSection.module.css'
 import SearchBar from '../SearchBar/SearchBar.jsx'
 import {NotePencil} from 'phosphor-react'
 import src from '../../ChatAssets/download.jpeg'
 import NoOneTotalkTo from '../../ChatAssets/NoOneTotalkTo.json'
 import Lottie from 'lottie-react'
-
-// **************************
-import {Avatar} from '@mui/material'
-import {Faker} from '@faker-js/faker'
-// **************************
+import {ChatList} from '../../FakeData/GlobalFakeData.jsx'
 
 
+/************************ */
+import { Avatar } from '@mui/material';
+import {faker} from '@faker-js/faker'
+/************************* */
 const SendToNoneFriend = () =>{
 
   function handleGlobalMessage(){
@@ -34,105 +34,26 @@ function LastMessageFormater(lastMessage){
   return lastMessage;
 }
 
-const ChatList = [
-{
-  username : 'abdelali ait talb',
-  lastMessage : 'Hello abdellai ait talb is ok',
-  Time : '9.32 PM',
-  unread : 0,
-},
 
-{
-  username : 'Alexander fo',
-  lastMessage : 'Hello abdellai ait talb is ok',
-  Time : '9.32 PM',
-  unread : 2,
-},
+const ChatConversation = ({ ConversationData, selectedIndex, onSelectConversation }) => {
+  function HandleClick() {
+    onSelectConversation(ConversationData.id); // Pass ID to parent callback
+  }
 
-{
-  username : 'koStra_X',
-  lastMessage : 'Hello abdellai ait talb is ok',
-  Time : '9.32 PM',
-  unread : 2,
-},
+  return (
+    <div onClick={HandleClick}
+    style={{    borderRadius: '0.5rem', 
+     backgroundColor: selectedIndex === ConversationData.id ? '#11141B' : '' }}>
+        <div className={style.ConversationHolder}>
 
-{
-  username : 'Tolandriss 119',
-  lastMessage : 'Hello abdellai ait talb is ok',
-  Time : '19.32 AM',
-  unread : 2,
-},
-{
-  username : 'FatnaX piW',
-  lastMessage : 'Hello abdellai ait talb is ok',
-  Time : '10.32 AM',
-  unread : 2,
-},
-
-{
-  username : 'Boutalaght flanit',
-  lastMessage : 'Hello abdellai ait talb is ok',
-  Time : '9.32 PM',
-  unread : 2,
-},
-
-{
-  username : 'Othman XT 119',
-  lastMessage : 'Hello abdellai ait talb is ok',
-  Time : '9.32 PM',
-  unread : 2,
-},
-
-{
-  username : 'kolanssatil',
-  lastMessage : 'Hello abdellai ait talb is ok',
-  Time : '9.32 PM',
-  unread : 2,
-},
-
-{
-  username : 'CHARDAN ABOLA',
-  lastMessage : 'Hello abdellai ait talb is ok',
-  Time : '9.32 PM',
-  unread : 2,
-},
-
-{
-  username : 'CHARDAN ABOLA',
-  lastMessage : 'Hello abdellai ait talb is ok',
-  Time : '9.32 PM',
-  unread : 2,
-},
-
-{
-  username : 'CHARDAN ABOLA',
-  lastMessage : 'Hello abdellai ait talb is ok',
-  Time : '9.32 PM',
-  unread : 49,
-},
-
-{
-  username : 'CHARDAN ABOLA',
-  lastMessage : 'Hello abdellai ait talb is ok',
-  Time : '9.32 PM',
-  unread : 100,
-},
-
-
-];
-
-const ChatConversation =({ConversationData}) =>{
-
-  return(
-    <div className={style.ConversationHolder}>
-      <img className={style.FriendPhoto} src={src} alt="Your-friend-photo" />
-      
+       <img className={style.FriendPhoto} src={src} alt="Your-friend-photo" />
+     
       <div className={style.NameAndLastMessage}>
-        <p className={style.FriendName}> {ConversationData.username}</p>
+        <p className={style.FriendName}> {faker.person.fullName()}</p>
         <p className={style.LastMessage}> {LastMessageFormater(ConversationData.lastMessage)}</p>
       </div>
 
-
+    
       <div className={style.UnreadAndTime}>
         <p className={style.SendTime}> {ConversationData.Time}</p>
         {
@@ -141,14 +62,21 @@ const ChatConversation =({ConversationData}) =>{
            <p className={style.UnreadMessages}> {ConversationData.unread >= 9 ? '+9': ConversationData.unread}</p>
           </div>
         : null
-        }
+        } 
       </div>
 
+        </div>
     </div>
   )
 }
 
 const ContactSection = () => {
+
+  const [selectedIndex, setSelectedIndex] = useState(-1);
+  const handleConversationSelect = (conversationId) => {
+    setSelectedIndex(conversationId);
+  };
+
   return (
     <div className={style.ContactSection}> 
     
@@ -163,17 +91,19 @@ const ContactSection = () => {
 {
   ChatList.length ? 
     <div className={style.ConversationContainer}>
-        {ChatList.map((DataObj) => {
-          return (<ChatConversation ConversationData={DataObj}/>)
+        {ChatList.map((DataObj, index) => {
+          return (<ChatConversation
+            key={index}
+            ConversationData={DataObj}
+            selectedIndex={selectedIndex}
+            onSelectConversation={handleConversationSelect} //
+            />)
         })
       }
     </div> : <div className={style.ConversationContainerAnimation}>
         <div className={style.NoOneToTalkTost}> <Lottie animationData={NoOneTotalkTo} /> </div>
     </div>
 }
-
-
-
     </div>
     )
 }
