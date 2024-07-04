@@ -8,7 +8,7 @@ from rest_framework import status
 from rest_framework.views import APIView
 from django.shortcuts import get_object_or_404
 from .serializers import CurrentUserSerializer
-
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 # Create your views here.
 
 
@@ -44,3 +44,34 @@ class UserRegistration(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+class CustomTokenObtainPairView(TokenObtainPairView):
+    def post(self, request, *args, **kwargs):
+        response = super().post(request, *args, **kwargs)
+        if response.status_code == status.HTTP_200_OK:
+            refreshToken = response.data['refresh']
+            print(f"this is the refre from login {refreshToken}")
+            response.set_cookie(
+                key = 'refresh',
+                value = refreshToken,
+                httponly = True,
+                #more options to add when nedded 
+            )
+            del response.data["refresh"]
+        return response
+
+class CustomTokenRefreshView(TokenRefreshView):
+    def post(self, request, *args, **kwargs):
+        refresh_token = request.COOKIES.get('refresh')
+        # print(f"this is ref from cocokie {refresh_token}")
+        if not refresh_token:
+            return Response({'error': 'Refresh token not found in cookies'}, status=status.HTTP_400_BAD_REQUEST)
+        serializer = self.get_serializer(data={'refresh': refresh_token})
+        serializer.is_valid(raise_exception=True)
+        response = Response(serializer.validated_data, status=status.HTTP_200_OK)
+        response.set_cookie(
+            key='refresh',
+            value=refresh_token,
+            httponly = True,
+            #more options to add when nedded 
+        )
+        return response

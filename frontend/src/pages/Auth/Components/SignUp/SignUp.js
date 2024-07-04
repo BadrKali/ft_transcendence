@@ -34,7 +34,6 @@ const SignUp = (props) => {
 
     const handleSignUpSubmit = async (e) => {
         e.preventDefault();
-
         const formData = new FormData();
         formData.append('username', signUpValues.username);
         formData.append('email', signUpValues.email);
@@ -49,6 +48,7 @@ const SignUp = (props) => {
         try {
             const response = await axios.post(SIGNUP_URL, formData, {
                 headers: { 'Content-Type': 'multipart/form-data' },
+                withCredentials: true
             });
             console.log(response.data);
             props.setIsLogin(true);

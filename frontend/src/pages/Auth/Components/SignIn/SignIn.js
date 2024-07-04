@@ -30,11 +30,12 @@ const SignIn = (props) => {
         // console.log(formData)
         try {
             const response = await axios.post(SIGNIN_URL, formData, {
-                headers: { 'Content-Type': 'multipart/form-data' }
+                headers: { 'Content-Type': 'multipart/form-data' },
+                withCredentials: true
             });
             const accessToken = response?.data?.access;
             setAuth({...signInValues, accessToken})
-            navigate('/');
+            navigate('/leaderboard');
         } catch(err) {
             console.log(err)
         } finally {
