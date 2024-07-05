@@ -5,6 +5,8 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.views import APIView
+from channels.layers import get_channel_layer
+from asgiref.sync import async_to_sync
 from .models import GameHistory, Achievement, PlayerAchievement
 from .serializers import GameHistorySerializer, AchievementSerializer, PlayerAchievementSerializer
 
@@ -26,3 +28,18 @@ class PlayerAchievementListView(APIView):
         player_achievements = PlayerAchievement.objects.filter(player_id=player_id)
         serializer = PlayerAchievementSerializer(player_achievements, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+class TriggerAchievementView(APIView):
+    def post(self, request):
+        channel_layer = get_channel_layer()
+        async_to_sync(channel_layer.group_send)(
+            "achievements_group",
+            {
+                "type": "send_achievement",
+                "achievement": {
+                    "title": "Achievement Unlocked!",
+                    "description": "You have completed 5 games."
+                }
+            }
+        )
+        return Response({"status": "Achievement sent"}, status=status.HTTP_200_OK)

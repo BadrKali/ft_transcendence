@@ -14,6 +14,7 @@ from django.db.utils import IntegrityError
 from game.models import Achievement
 from game.serializers import AchievementSerializer
 
+
 class CreateFriendshipView(APIView):
     def post(self, request, player_id, friend_id):
         player = Player.objects.get(id=player_id)
@@ -68,6 +69,7 @@ class UnblockFriendView(APIView):
         player = get_object_or_404(Player, id=player_id)
         friend = get_object_or_404(Player, id=friend_id)
         try:
+
             friendship = Friendship.objects.get(player=player, friend=friend)
             friendship.blocked = False
             friendship.save()

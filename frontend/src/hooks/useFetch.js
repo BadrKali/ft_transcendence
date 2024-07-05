@@ -1,12 +1,15 @@
 
 
 import React, { useEffect, useRef, useState } from 'react'
+import useAuth from './useAuth'
+
 
 const useFetch = (endpoint) => {
     const [data, setData] = useState(null)
     const [isLoading, setIsLoading] = useState(false)
     const [error, setError] = useState(null)
     const abortControllerRef = useRef()
+    const { auth }  = useAuth()
 
     useEffect(() => {
         const fetchData = async () => {
@@ -14,7 +17,13 @@ const useFetch = (endpoint) => {
             const signal = abortControllerRef.current.signal;
             setIsLoading(true)
             try {
-                const response = await fetch(endpoint, {signal})
+                const response = await fetch(endpoint, {
+                    signal,
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${auth.accessToken}`
+                    }
+                })
                 const data = await response.json()
                 setData(data)
             }

@@ -15,6 +15,7 @@ import './App.css'
 import Auth from './pages/Auth/Auth';
 import { AuthProvider } from './context/Auth/AuthProvider';
 import ProtectedRoutes from './components/ProtectedRoutes/ProtectedRoutes';
+import AchievementsPopup from './components/AchievementsPopup/AchievementsPopup';
 
 
 const AppLayout = () => {
@@ -29,6 +30,7 @@ const AppLayout = () => {
           </div>
         </div>
       </main>
+      <AchievementsPopup />
   </div>
   )
 }
