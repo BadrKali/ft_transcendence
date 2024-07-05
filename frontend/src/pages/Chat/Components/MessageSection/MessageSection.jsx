@@ -7,6 +7,8 @@ import { ChatList } from '../../FakeData/GlobalFakeData'
 import { Smiley } from 'phosphor-react'
 import Lottie from 'lottie-react'
 import src from '../../ChatAssets/download.jpeg'
+import data from '@emoji-mart/data'
+import Picker from '@emoji-mart/react'
 
 const ImportItem = ()=>{
   return(
@@ -24,9 +26,12 @@ const SendMessage = () => {
   )
 }
 
-const Emojies = () => {
+const Emojies = (
+  {SetPicker}
+) => {
+
   return(
-    <Smiley className ={styles.Emojie} size={40} color="#242424" weight="fill" />
+    <Smiley onClick={() => SetPicker(prev => !prev)} className ={styles.Emojie} size={40} color="#242424" weight="fill" />
   )
 }
 
@@ -38,7 +43,6 @@ const InputField = () => {
 
 
   }
-
   return(
     <input className={styles.inputMessage} onChange={(e) => handleWritedMessage(e)}
         type="text" value={message} placeholder='write a message ... '/>
@@ -93,14 +97,30 @@ const ChatHeader = () => {
 }
 
 const ChatInput = () =>{
+
+  const [PickerClick, SetPicker] = useState(false);
+
+
   return(
     <div className={styles.ChatInputHolder}>
       <div className={styles.inputMainDiv}>
       < ImportItem    />
       < InputField   />
-      < Emojies     />
+      < Emojies    SetPicker={SetPicker} />
       < SendMessage/>
       </div>
+
+      <div  style={{display : PickerClick ? 'inline' : 'none'}} className={styles.EmojiPicker}>
+      <Picker data={data} onEmojiSelect={console.log} />
+    </div>
+    </div>
+  )
+}
+
+const ChatMainHolder = () => {
+  return(
+    <div className={styles.ChatMainHolder}>
+
     </div>
   )
 }
@@ -117,9 +137,9 @@ const MessageSection = () => {
      <blockquote className={styles.ChatQuote}> Unleash the power of connection! <br/>Start chatting and discover what <span className={styles.Clunca}>Clunca </span> has to offer you .  </blockquote>
       </div>
     </div> : <div className={styles.MessageSectionFull}>
-      <ChatHeader />
-      <div className={styles.ChatMainHolder}></div>
-      <ChatInput/>      
+      <ChatHeader      />
+      <ChatMainHolder />
+      <ChatInput     />      
       </div>
 }
     </>

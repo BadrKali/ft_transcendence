@@ -89,7 +89,7 @@
 }
 
 .FriendName{
-    letter-spacing: 1px;
+    letter-spacing: 0.5px;
     font-size: 25px;
     font-family: 'Rajdhani', sans-serif;
     font-weight: bold;
@@ -110,6 +110,7 @@
     height: 100%;
     width: 100%;
     display: grid;
+    gap: 0.0625rem;
     grid-template-columns: 1fr ;
     grid-template-rows: 1fr 1fr;
     align-items: center;
