@@ -41,7 +41,7 @@ const routes = [
     path: '/auth'
   },
   {
-    element:<ProtectedRoutes><AppLayout /></ProtectedRoutes>,
+    element:<AppLayout />,
     children: [
       { path: '/', element: <DashBoard /> },
       { path: 'game', element: <Game /> },

@@ -3,7 +3,7 @@ import style from './Chat.module.css'
 import ContactSection from './Components/ContactSection/ContactSection.jsx'
 import MessageSection from './Components/MessageSection/MessageSection.jsx'
 import UserParams from "./Components/UserParams/UserParams";
-
+import { ChatList } from "./FakeData/GlobalFakeData.jsx";
 
 const Chat = () => {
 
@@ -13,8 +13,11 @@ const Chat = () => {
         <div className={style.ChatView}>
             <ContactSection />
             <MessageSection />
-            <UserParams />
-        </div>
+            {
+                ChatList.length ?
+                <UserParams /> : null
+            }
+            </div>
         </>
     )
 }

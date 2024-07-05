@@ -30,6 +30,9 @@ import { ReactComponent as game_mode } from './game_mode.svg'
 import { ReactComponent as chump_cup } from './chump_cup.svg'
 import { ReactComponent as location } from './location.svg'
 import { ReactComponent as TournamentWin } from './TournomantWin.svg'
+import {ReactComponent as visiteProfil} from './visiteProfil.svg'
+import { ReactComponent as inviteToGame} from './InviteToGame.svg'
+import {ReactComponent as block} from './Block.svg'
 // import { ReactComponent as school_icon } from './school_icon.png'
 
 
@@ -66,6 +69,9 @@ const icons = {
     chump_cup: chump_cup,
     location: location,
     TournamentWin : TournamentWin,
+    VisiteProfil: visiteProfil,
+    InviteToGame: inviteToGame,
+    Block : block
 
     // school_icon: school_icon
 }
