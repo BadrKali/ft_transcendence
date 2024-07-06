@@ -14,9 +14,9 @@ const useRefresh = () => {
              {},{withCredentials: true}
         );
         setAuth(prev => {
-            console.log(JSON.stringify(prev));
-            console.log(response.data.access);
-            return{...prev, access: response.data.access}
+            // console.log(JSON.stringify(prev));
+            // console.log(response.data.access);
+            return{...prev, accessToken: response.data.access}
         });
         return response.data.access;
     }
