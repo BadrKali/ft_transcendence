@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState,useRef } from 'react'
 import styles from './MessageSection.module.css'
 import EmptyChatAnimation from '../../ChatAssets/EmptyChatAnimation.json'
 import online from '../../ChatAssets/online.json'
@@ -26,25 +26,17 @@ const SendMessage = () => {
   )
 }
 
-const Emojies = (
-  {SetPicker}
-) => {
+const Emojies = ( {SetPicker} ) => {
 
   return(
     <Smiley onClick={() => SetPicker(prev => !prev)} className ={styles.Emojie} size={40} color="#242424" weight="fill" />
   )
 }
 
-const InputField = () => {
-  const [message, setMessage] = useState('');
+const InputField = ({message, handleWritedMessage,inputRef}) => {
 
-  function handleWritedMessage(e){
-    setMessage(e.target.value);
-
-
-  }
   return(
-    <input className={styles.inputMessage} onChange={(e) => handleWritedMessage(e)}
+    <input ref={inputRef} className={styles.inputMessage} onChange={(e) => handleWritedMessage(e)}
         type="text" value={message} placeholder='write a message ... '/>
   )
 }
@@ -99,7 +91,32 @@ const ChatHeader = () => {
 const ChatInput = () =>{
 
   const [PickerClick, SetPicker] = useState(false);
-  const [ImportItemsClicked, setImportClicked] = useState(false)
+  const [ImportItemsClicked, setImportClicked] = useState(false);
+  const [message, setMessage] = useState('');
+  const inputRef = useRef(null);
+
+
+  function handleWritedMessage(e){
+    setMessage(e.target.value);
+  }
+
+
+  function handleEmojieSelect(e){
+
+    const CursorPos = getCursorPosition();
+    const start = message.substring(0, CursorPos);
+    const end = message.substring(CursorPos);
+    const NewMessage = start + e.native + end;
+    setMessage(NewMessage );
+
+  }
+
+    const getCursorPosition = () => {
+    if (inputRef.current) {
+      return inputRef.current.selectionStart;
+    }
+    return -1;
+  };
 
   return(
   <div className={styles.ChatInputHolder}>
@@ -119,13 +136,13 @@ const ChatInput = () =>{
 
     <div className={styles.inputMainDiv}>
       < ImportItem    setImportClicked={setImportClicked}/>
-      < InputField   />
+      < InputField   inputRef={inputRef} message={message} handleWritedMessage={handleWritedMessage} />
       < Emojies    SetPicker={SetPicker} />
       < SendMessage/>
     </div>
 
     <div  style={{display : PickerClick ? 'inline' : 'none'}} className={styles.EmojiPicker}>
-      <Picker theme='dark' data={data} onEmojiSelect={console.log} />
+      <Picker theme='dark' data={data} onEmojiSelect={handleEmojieSelect} />
     </div>
 
   </div>

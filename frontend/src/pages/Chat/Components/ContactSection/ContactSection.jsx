@@ -26,7 +26,6 @@ const SendToNoneFriend = () =>{
 // Don't Forget to check For username lenght it will be ugly if you have 
 // a big name the front will be ugly
 
-
 function LastMessageFormater(lastMessage){
   if (lastMessage.length > 30 ){
     return (`${lastMessage.slice(0, 25)} ...`);
