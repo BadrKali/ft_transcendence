@@ -9,25 +9,27 @@ from django.core.exceptions import ValidationError
 from .models import Friendship, Player, FriendInvitation
 from .serializers import PlayerSerializer, FriendshipSerializer, FriendInvitationsSerializer
 from rest_framework.permissions import IsAuthenticated, AllowAny
-from authentication .models import User
 from django.db.utils import IntegrityError
 from game.models import Achievement
 from game.serializers import AchievementSerializer
+from django.conf import settings
+from authentication .models import User
+
 
 
 class CreateFriendshipView(APIView):
-    def post(self, request, player_id, friend_id):
-        player = Player.objects.get(id=player_id)
-        friend = Player.objects.get(id=friend_id)
+    def post(self, request, friend_id):
+        player = request.user  
+        friend = get_object_or_404(User, id=friend_id) 
         
-        friendship = Friendship(player=player, friend=friend)
-        
+        friendship = Friendship(player=player, friend=friend) 
         try:
             friendship.full_clean()  
             friendship.save()
             return Response({"message": "Friendship created successfully."}, status=status.HTTP_201_CREATED)
         except ValidationError as e:
             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
 
 class DeleteFriendshipView(APIView):
 

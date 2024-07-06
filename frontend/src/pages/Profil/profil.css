@@ -1,0 +1,88 @@
+.dashboard-contianer{
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    width: 100%;
+
+}
+
+.profil-icons{
+    display: flex;
+    width: 100%;
+    justify-content: center;
+
+    /* width: 75%; */
+}
+
+.profil-buttons{
+    display: flex;
+    justify-content: end;
+    width: 75%;
+    height: 30px;
+}
+
+.profil-button{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: var(--card-bg-color);
+    border-radius: 5px;
+    width: 100px;
+    height: 30px;
+    margin-left: 10px;
+    height: auto;
+    transition: background-color 0.3s, transform 0.3s;
+    color: white; 
+    text-align: center;
+    cursor: pointer;
+}
+
+.profil-button:hover {
+    background-color: #2E313D;
+    transform: scale(1.05);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.profil-icon{
+    width: 24px;
+    height: 24px;
+    padding-right: 5px;
+}
+.dashboard-profil {
+    display: flex;
+    width: 100%;
+    justify-content: center;
+    overflow-y: hidden;
+    
+    flex : 1 1 auto
+}
+
+.profilHistoryAcgievmeants-container-profil{
+    height: 100%;
+    width: 75%;
+    display: flex;
+    flex-direction: column;
+}
+
+.profil-container-profil{
+
+    height: 20%;
+}
+.historyAchievments-container-profil{
+    height: 80%;
+    display: flex;
+}
+
+.history-container-profil{
+    height: 100%;
+    width: 50%;
+    font-family: "Rajdhani", sans-serif;
+    font-style: normal;
+}
+
+.achievments-container-profil{
+
+    height: 100%;
+    width: 50%;
+}
+

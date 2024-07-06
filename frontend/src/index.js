@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
 import DashBoard from './pages/Dashboard/DashBoard';
+import Profil from './pages/Profil/Profil';
 import Game from './pages/Game/Game';
 import Chat from './pages/Chat/Chat';
 import Tournament from './pages/Tournament/Tournament';
@@ -30,7 +31,6 @@ const AppLayout = () => {
           </div>
         </div>
       </main>
-      <AchievementsPopup />
   </div>
   )
 }
@@ -46,6 +46,7 @@ const routes = [
     element:<AppLayout />,
     children: [
       { path: '/', element: <DashBoard /> },
+      { path: '/user/:userId', element: <Profil />},
       { path: 'game', element: <Game /> },
       { path: 'chat', element: <Chat /> },
       { path: 'tournament', element: <Tournament /> },

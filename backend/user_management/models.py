@@ -81,8 +81,8 @@ class Notifications(models.Model):
         return f"notification sent to {self.to_player.username}"
     
 class Friendship(models.Model):
-    player = models.ForeignKey(Player, related_name='friendships', on_delete=models.CASCADE)
-    friend = models.ForeignKey(Player, related_name='friends_with', on_delete=models.CASCADE)
+    player = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='friendships', on_delete=models.CASCADE)
+    friend = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='friends_with', on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     blocked = models.BooleanField(default=False)
 
@@ -103,6 +103,6 @@ class Friendship(models.Model):
         Friendship.objects.filter(player=self.friend, friend=self.player).delete()
         
     def __str__(self):
-        return f"{self.player.user.username} is friends with {self.friend.user.username}"
+        return f"{self.player.username} is friends with {self.friend.username}"
     
 
