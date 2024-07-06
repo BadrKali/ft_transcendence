@@ -4,3 +4,4 @@ from . import models
 admin.site.register(models.GameHistory)
 admin.site.register(models.Achievement)
 admin.site.register(models.PlayerAchievement)
+admin.site.register(models.GameSettings)

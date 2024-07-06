@@ -57,4 +57,10 @@ class PlayerAchievement(models.Model):
     def __str__(self):
         return f"{self.player} - {self.achievement.title}"
     
-    
+class GameSettings(models.Model):
+    user = models.ForeignKey(Player, on_delete=models.CASCADE)
+    background = models.CharField(max_length=255)
+    paddle = models.CharField(max_length=7)
+    gameMode = models.CharField(max_length=255)
+    def __str__(self) -> str:
+        return f"{self.background} {self.paddle} {self.gameMode}"
