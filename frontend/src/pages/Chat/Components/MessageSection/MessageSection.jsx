@@ -101,26 +101,34 @@ const ChatInput = () =>{
   const [PickerClick, SetPicker] = useState(false);
   const [ImportItemsClicked, setImportClicked] = useState(false)
 
-
   return(
-    <div className={styles.ChatInputHolder}>
-      <div  className={styles.ImportOptions} style={{display: ImportItemsClicked ? 'flex' : 'none'}}>
+  <div className={styles.ChatInputHolder}>
 
-        <Image onClick={()=> {alert('Import Image yalah')}} className={styles.ImportImage}size={40} />
-        <Files onClick={()=> {alert('Import File yalah')}} className={styles.ImportFiles}size={40} />
+    <div  className={styles.ImportOptions} style={{display: ImportItemsClicked ? 'flex' : 'none'}}>
+      
+      <div className={styles.ImageBack}> 
+        <Image onClick={()=> {alert('Import Image yalah')}} className={styles.ImportImage} size={40} />
       </div>
-      <div className={styles.inputMainDiv}>
+
+      <div className={styles.FilesBack}>
+        <Files onClick={()=> {alert('Import File yalah')}} className={styles.ImportFiles} size={40} />
+      </div>
+
+    </div>
+
+
+    <div className={styles.inputMainDiv}>
       < ImportItem    setImportClicked={setImportClicked}/>
       < InputField   />
       < Emojies    SetPicker={SetPicker} />
       < SendMessage/>
-      </div>
+    </div>
 
-      <div  style={{display : PickerClick ? 'inline' : 'none'}} className={styles.EmojiPicker}>
+    <div  style={{display : PickerClick ? 'inline' : 'none'}} className={styles.EmojiPicker}>
       <Picker theme='dark' data={data} onEmojiSelect={console.log} />
     </div>
 
-    </div>
+  </div>
   )
 }
 
