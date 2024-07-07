@@ -16,42 +16,54 @@ import './App.css'
 import Auth from './pages/Auth/Auth';
 import { AuthProvider } from './context/Auth/AuthProvider';
 import ProtectedRoutes from './components/ProtectedRoutes/ProtectedRoutes';
-import AchievementsPopup from './components/AchievementsPopup/AchievementsPopup';
-
+import PersistLogin from './components/PersistLogin/PersistLogin';
 
 const AppLayout = () => {
   return (
-    <div className='app'>
-      <SideBar/>
-      <main className='main'>
-        <TopBar/>
-        <div className='page-content'>
-          <div className='content'>
-            <Outlet/>
+      <div className='app'>
+        <SideBar/>
+        <main className='main'>
+          <TopBar/>
+          <div className='page-content'>
+            <div className='content'>
+              <Outlet/>
+            </div>
           </div>
-        </div>
-      </main>
-  </div>
+        </main>
+    </div>
   )
 }
+
+
+
 
 export default AppLayout
 
 const routes = [
   {
-    element: <Auth/>,
+    element: <Auth />,
     path: '/auth'
   },
   {
-    element:<AppLayout />,
+    element: <PersistLogin />,
     children: [
-      { path: '/', element: <DashBoard /> },
-      { path: '/user/:userId', element: <Profil />},
-      { path: 'game', element: <Game /> },
-      { path: 'chat', element: <Chat /> },
-      { path: 'tournament', element: <Tournament /> },
-      { path: 'leaderboard', element: <LeaderBoard /> },
-      { path: 'setting', element: <Setting /> },
+      {
+        element: <ProtectedRoutes />,
+        children: [
+          {
+            element: <AppLayout />,
+            children: [
+              { path: '/', element: <DashBoard /> },
+              { path: '/user/:userId', element: <Profil />},
+              { path: 'game', element: <Game /> },
+              { path: 'chat', element: <Chat /> },
+              { path: 'tournament', element: <Tournament /> },
+              { path: 'leaderboard', element: <LeaderBoard /> },
+              { path: 'setting', element: <Setting /> },
+            ]
+          }
+        ]
+      }
     ]
   },
   {

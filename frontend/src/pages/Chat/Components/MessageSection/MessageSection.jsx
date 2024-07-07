@@ -1,16 +1,18 @@
-import React, { useState } from 'react'
+import React, { useState,useRef } from 'react'
 import styles from './MessageSection.module.css'
 import EmptyChatAnimation from '../../ChatAssets/EmptyChatAnimation.json'
 import online from '../../ChatAssets/online.json'
 import offline from '../../ChatAssets/offline.json'
 import { ChatList } from '../../FakeData/GlobalFakeData'
-import { Smiley } from 'phosphor-react'
+import { Smiley, Image, Files } from 'phosphor-react'
 import Lottie from 'lottie-react'
 import src from '../../ChatAssets/download.jpeg'
+import data from '@emoji-mart/data'
+import Picker from '@emoji-mart/react'
 
-const ImportItem = ()=>{
+const ImportItem = ({setImportClicked})=>{
   return(
-    <svg  className={styles.ImportButton} width="30" height="30" viewBox="0 0 23 23" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <svg  onClick={()=> setImportClicked(prev=> !prev)} className={styles.ImportButton} width="30" height="30" viewBox="0 0 23 23" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path d="M11.1996 0C5.02861 0 0 5.1635 0 11.5C0 17.8365 5.02861 23 11.1996 23C17.3706 23 22.3992 17.8365 22.3992 11.5C22.3992 5.1635 17.3706 0 11.1996 0ZM15.6794 12.3625H12.0395V16.1C12.0395 16.5715 11.6588 16.9625 11.1996 16.9625C10.7404 16.9625 10.3596 16.5715 10.3596 16.1V12.3625H6.71975C6.26057 12.3625 5.87978 11.9715 5.87978 11.5C5.87978 11.0285 6.26057 10.6375 6.71975 10.6375H10.3596V6.9C10.3596 6.4285 10.7404 6.0375 11.1996 6.0375C11.6588 6.0375 12.0395 6.4285 12.0395 6.9V10.6375H15.6794C16.1386 10.6375 16.5194 11.0285 16.5194 11.5C16.5194 11.9715 16.1386 12.3625 15.6794 12.3625Z" fill="white" fillOpacity="0.5"/>
     </svg>
   )
@@ -24,23 +26,17 @@ const SendMessage = () => {
   )
 }
 
-const Emojies = () => {
+const Emojies = ( {SetPicker} ) => {
+
   return(
-    <Smiley className ={styles.Emojie} size={40} color="#242424" weight="fill" />
+    <Smiley onClick={() => SetPicker(prev => !prev)} className ={styles.Emojie} size={40} color="#242424" weight="fill" />
   )
 }
 
-const InputField = () => {
-  const [message, setMessage] = useState('');
-
-  function handleWritedMessage(e){
-    setMessage(e.target.value);
-
-
-  }
+const InputField = ({message, handleWritedMessage,inputRef}) => {
 
   return(
-    <input className={styles.inputMessage} onChange={(e) => handleWritedMessage(e)}
+    <input ref={inputRef} className={styles.inputMessage} onChange={(e) => handleWritedMessage(e)}
         type="text" value={message} placeholder='write a message ... '/>
   )
 }
@@ -93,14 +89,70 @@ const ChatHeader = () => {
 }
 
 const ChatInput = () =>{
+
+  const [PickerClick, SetPicker] = useState(false);
+  const [ImportItemsClicked, setImportClicked] = useState(false);
+  const [message, setMessage] = useState('');
+  const inputRef = useRef(null);
+
+
+  function handleWritedMessage(e){
+    setMessage(e.target.value);
+  }
+
+
+  function handleEmojieSelect(e){
+
+    const CursorPos = getCursorPosition();
+    const start = message.substring(0, CursorPos);
+    const end = message.substring(CursorPos);
+    const NewMessage = start + e.native + end;
+    setMessage(NewMessage );
+
+  }
+
+    const getCursorPosition = () => {
+    if (inputRef.current) {
+      return inputRef.current.selectionStart;
+    }
+    return -1;
+  };
+
   return(
-    <div className={styles.ChatInputHolder}>
-      <div className={styles.inputMainDiv}>
-      < ImportItem    />
-      < InputField   />
-      < Emojies     />
-      < SendMessage/>
+  <div className={styles.ChatInputHolder}>
+
+    <div  className={styles.ImportOptions} style={{display: ImportItemsClicked ? 'flex' : 'none'}}>
+      
+      <div className={styles.ImageBack}> 
+        <Image onClick={()=> {alert('Import Image yalah')}} className={styles.ImportImage} size={40} />
       </div>
+
+      <div className={styles.FilesBack}>
+        <Files onClick={()=> {alert('Import File yalah')}} className={styles.ImportFiles} size={40} />
+      </div>
+
+    </div>
+
+
+    <div className={styles.inputMainDiv}>
+      < ImportItem    setImportClicked={setImportClicked}/>
+      < InputField   inputRef={inputRef} message={message} handleWritedMessage={handleWritedMessage} />
+      < Emojies    SetPicker={SetPicker} />
+      < SendMessage/>
+    </div>
+
+    <div  style={{display : PickerClick ? 'inline' : 'none'}} className={styles.EmojiPicker}>
+      <Picker theme='dark' data={data} onEmojiSelect={handleEmojieSelect} />
+    </div>
+
+  </div>
+  )
+}
+
+const ChatMainHolder = () => {
+  return(
+    <div className={styles.ChatMainHolder}>
+
     </div>
   )
 }
@@ -117,9 +169,9 @@ const MessageSection = () => {
      <blockquote className={styles.ChatQuote}> Unleash the power of connection! <br/>Start chatting and discover what <span className={styles.Clunca}>Clunca </span> has to offer you .  </blockquote>
       </div>
     </div> : <div className={styles.MessageSectionFull}>
-      <ChatHeader />
-      <div className={styles.ChatMainHolder}></div>
-      <ChatInput/>      
+      <ChatHeader      />
+      <ChatMainHolder />
+      <ChatInput     />      
       </div>
 }
     </>

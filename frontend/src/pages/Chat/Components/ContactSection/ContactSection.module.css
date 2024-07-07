@@ -27,25 +27,15 @@
     justify-content: space-between;
 }
 
-/* .Back{
-
-    overflow: auto;
-    display: grid;
-    gap: 12px;
-    grid-template-columns: 1fr;
-    grid-template-rows: 200px;
-    grid-auto-rows: 200px;
-} */
-
 .ConversationContainer{
     display: grid;
     grid-template-columns: 1fr;
     grid-template-rows: 100px;
     gap: 20px; 
     grid-auto-rows: 100px;
-    
     overflow: auto;
-    margin-bottom: 10px;
+    margin-top: 30px;
+    margin-bottom: 40px;
 
 }
 
@@ -89,8 +79,8 @@
 }
 
 .FriendName{
-    letter-spacing: 1px;
-    font-size: 25px;
+    letter-spacing: 0.5px;
+    font-size: 22px;
     font-family: 'Rajdhani', sans-serif;
     font-weight: bold;
     opacity: 0.8;
@@ -110,6 +100,7 @@
     height: 100%;
     width: 100%;
     display: grid;
+    gap: 0.0625rem;
     grid-template-columns: 1fr ;
     grid-template-rows: 1fr 1fr;
     align-items: center;

@@ -3,7 +3,6 @@
 import React, { useEffect, useRef, useState } from 'react'
 import useAuth from './useAuth'
 
-
 const useFetch = (endpoint) => {
     const [data, setData] = useState(null)
     const [isLoading, setIsLoading] = useState(false)
@@ -23,7 +22,7 @@ const useFetch = (endpoint) => {
                         'Content-Type': 'application/json',
                         'Authorization': `Bearer ${auth.accessToken}`
                     }
-                })
+                });
                 const data = await response.json()
                 setData(data)
             }

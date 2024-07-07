@@ -49,7 +49,6 @@ class CustomTokenObtainPairView(TokenObtainPairView):
         response = super().post(request, *args, **kwargs)
         if response.status_code == status.HTTP_200_OK:
             refreshToken = response.data['refresh']
-            print(f"this is the refre from login {refreshToken}")
             response.set_cookie(
                 key = 'refresh',
                 value = refreshToken,

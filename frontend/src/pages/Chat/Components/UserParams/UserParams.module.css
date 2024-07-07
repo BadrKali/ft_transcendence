@@ -1,16 +1,16 @@
 
 .UserParams{
     display: grid;
-    gap: 30px;
+    gap: 10px;
     grid-template-columns: 1fr;
-    grid-template-rows: 1fr 1fr 1fr 1fr 1fr;
+    grid-template-rows: repeat(5, 1fr);
     align-self: center;
     align-items:center;
     justify-items: center;
     justify-content: space-between;
     border-radius: 6px;
     background-color:#1C1E27;
-    height : 70%;
+    height : 65%;
     transition : 2s ease;
 }
 
