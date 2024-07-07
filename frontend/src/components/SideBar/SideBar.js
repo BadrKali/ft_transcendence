@@ -1,17 +1,13 @@
 import React, { useState } from 'react'
 import './SideBar.css'
 import { assets } from '../../assets/assets'
-import { Link }  from 'react-router-dom'
+import { Link, useLocation }  from 'react-router-dom'
 import Icon from '../../assets/Icon/icons'
 import { SideBarData } from './SideBarData'
 
 const SideBar = () => {
-  const [menuActive, setMenuActive] = useState('Dashboard')
-
-  function handleMenuClick(item) {
-    setMenuActive(item)
-  }
-
+  const location = useLocation().pathname
+  
   return (
     <div className='sidebar-container'>
       <div className='sidebar-logo-container'>
@@ -21,7 +17,7 @@ const SideBar = () => {
           <ul className='nav-menu-items'>
             {SideBarData.map((item, index) => {
               return(
-                <li key={index} className={`navbar-toggle ${menuActive === item.title ? 'active' : ''}`} onClick={()=>handleMenuClick(item.title)}>
+                <li key={index} className={`navbar-toggle ${location === item.path ? 'active' : ''}`}>
                   <Link to={item.path} className='navbar-toggle-link' >
                     {item.icon}
                     <span>{item.title}</span>
