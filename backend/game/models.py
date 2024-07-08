@@ -19,12 +19,12 @@ class GameHistory(models.Model):
     ]
     
     winner_user = models.ForeignKey(
-        User,
+        Player,
         related_name='won_games',
         on_delete=models.CASCADE
     )
     loser_user = models.ForeignKey(
-        User,
+        Player,
         related_name='lost_games',
         on_delete=models.CASCADE
     )
@@ -51,7 +51,7 @@ class Achievement(models.Model):
         return self.title
 
 class PlayerAchievement(models.Model):
-    player = models.ForeignKey(User, on_delete=models.CASCADE)
+    player = models.ForeignKey(Player, on_delete=models.CASCADE)
     achievement = models.ForeignKey(Achievement, on_delete=models.CASCADE)
     achieved_at = models.DateTimeField(auto_now_add=True)
 
@@ -59,7 +59,7 @@ class PlayerAchievement(models.Model):
         return f"{self.player} - {self.achievement.title}"
     
 class GameSettings(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(Player, on_delete=models.CASCADE)
     background = models.CharField(max_length=255)
     paddle = models.CharField(max_length=7)
     gameMode = models.CharField(max_length=255)
