@@ -9,6 +9,7 @@ from rest_framework.views import APIView
 from django.shortcuts import get_object_or_404
 from .serializers import CurrentUserSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
+from rest_framework_simplejwt.tokens import RefreshToken, TokenError
 # Create your views here.
 
 
@@ -61,9 +62,15 @@ class CustomTokenObtainPairView(TokenObtainPairView):
 class CustomTokenRefreshView(TokenRefreshView):
     def post(self, request, *args, **kwargs):
         refresh_token = request.COOKIES.get('refresh')
-        # print(f"this is ref from cocokie {refresh_token}")
         if not refresh_token:
             return Response({'error': 'Refresh token not found in cookies'}, status=status.HTTP_400_BAD_REQUEST)
+        try:
+            refresh = RefreshToken(refresh_token)
+            user_id = refresh['user_id']
+            user = User.objects.get(id=user_id)
+            #to do : catch specific error like Tokenerror and User.NotExist
+        except:
+            return Response({'error': 'User not found.'}, status=status.HTTP_404_NOT_FOUND)
         serializer = self.get_serializer(data={'refresh': refresh_token})
         serializer.is_valid(raise_exception=True)
         response = Response(serializer.validated_data, status=status.HTTP_200_OK)
