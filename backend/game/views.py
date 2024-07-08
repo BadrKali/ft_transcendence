@@ -9,6 +9,8 @@ from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
 from .models import GameHistory, Achievement, PlayerAchievement, GameSettings
 from .serializers import GameHistorySerializer, AchievementSerializer, PlayerAchievementSerializer, GameSettingsSerializer
+from user_management.models import Player
+
 
 class PlayerGameHistoryView(generics.ListAPIView):
     serializer_class = GameHistorySerializer
@@ -46,14 +48,27 @@ class TriggerAchievementView(APIView):
     
 class GameSettingsView(APIView):
     def get(self, request, player_id):
-        game_settings = GameSettings.objects.filter(player_id=player_id)
-        serializer = GameSettingsSerializer(game_settings, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
-    
-    def post(self, request, player_id):
-        game_settings = GameSettings.objects.filter(player_id=player_id).first()
-        serializer = GameSettingsSerializer(instance=game_settings, data=request.data)
-        if serializer.is_valid():
-            serializer.save()
+        try:
+            player = Player.objects.get(user_id=player_id)
+            game_settings = GameSettings.objects.get(user=player)
+            serializer = GameSettingsSerializer(game_settings)
             return Response(serializer.data, status=status.HTTP_200_OK)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        except Player.DoesNotExist:
+            return Response({"error": "Player not found"}, status=status.HTTP_404_NOT_FOUND)
+        except GameSettings.DoesNotExist:
+            return Response({"error": "GameSettings not found"}, status=status.HTTP_404_NOT_FOUND)
+
+    def post(self, request, player_id):
+        try:
+            player = Player.objects.get(user_id=player_id)
+            game_settings = GameSettings.objects.filter(user=player).first()
+
+            serializer = GameSettingsSerializer(instance=game_settings, data=request.data)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_200_OK)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        except Player.DoesNotExist:
+            return Response({"error": "Player not found"}, status=status.HTTP_404_NOT_FOUND)
+        

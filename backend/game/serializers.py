@@ -24,4 +24,5 @@ class PlayerAchievementSerializer(serializers.ModelSerializer):
 class GameSettingsSerializer(serializers.ModelSerializer):
     class Meta:
         model = GameSettings
-        fields = ['id', 'player', 'background', 'paddle', 'game_mode']
+        fields = ['id', 'user', 'background', 'paddle', 'gameMode']
+        read_only_fields = ['user']

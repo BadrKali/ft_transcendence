@@ -40,7 +40,7 @@ class GameHistory(models.Model):
         
     def __str__(self):
         return f"{self.winner_user} vs {self.loser_user}"
-    
+
 class Achievement(models.Model):
     title = models.CharField(max_length=100)
     description = models.TextField()
@@ -57,11 +57,11 @@ class PlayerAchievement(models.Model):
 
     def __str__(self):
         return f"{self.player} - {self.achievement.title}"
-    
+
 class GameSettings(models.Model):
-    user = models.ForeignKey(Player, on_delete=models.CASCADE)
+    user = models.ForeignKey(Player, on_delete=models.CASCADE, blank=True, null=True)
     background = models.CharField(max_length=255)
     paddle = models.CharField(max_length=7)
     gameMode = models.CharField(max_length=255)
-    def __str__(self) -> str:
+    def __str__(self):
         return f"{self.background} {self.paddle} {self.gameMode}"
