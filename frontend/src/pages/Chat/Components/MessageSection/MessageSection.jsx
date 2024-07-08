@@ -4,10 +4,10 @@ import EmptyChatAnimation from '../../ChatAssets/EmptyChatAnimation.json'
 import NoConversationPicked from '../../ChatAssets/NoConversationPicked.json'
 import online from '../../ChatAssets/online.json'
 import offline from '../../ChatAssets/offline.json'
+import NoPickedConv from '../../ChatAssets/NoConversationchoiced.json'
 import { ChatList } from '../../FakeData/GlobalFakeData'
 import { Smiley, Image, Files, FadersHorizontal } from 'phosphor-react'
 import Lottie from 'lottie-react'
-import src from '../../ChatAssets/download.jpeg'
 import data from '@emoji-mart/data'
 import Icon from '../../../../assets/Icon/icons.js'
 import Picker from '@emoji-mart/react'
@@ -68,7 +68,7 @@ const ChatHeader = ({UserMessageData}) => {
   function handleParamsClick() {
     alert('Olaaala');
   }
-  const status = true;
+  // const status = true;
   return (
     <div className={styles.ChatHeaderHolder}>
       {
@@ -83,7 +83,7 @@ const ChatHeader = ({UserMessageData}) => {
            
             <div className={styles.StatusHolder}>
             <div className={styles.StatusIcon}> <Lottie animationData={UserMessageData?.status ? online : offline} /> </div >
-            <div className={styles.Status}> {status ? 'Online' : 'Offline'}</div>
+            <div className={styles.Status}> {UserMessageData?.status ? 'Online' : 'Offline'}</div>
             </div>
         </div>
       </div>
@@ -160,8 +160,28 @@ const ChatInput = ({UserMessageData}) =>{
   )
 }
 
-const ChatMainHolder = ({UserMessageData}) => {
+const MessageDisplayer = ({message, user, IsIncoming}) => {
+  // messageType : incoming outgoing
 
+  return(
+    <div className={styles.MsgDisplayer}>
+
+        <div className={styles.receiverAvatar} >
+          <img className={styles.avatar} src={user.avatar} alt="user-avatar" />
+        </div>
+
+      <div className={styles.msgContent} >
+
+        <div className={IsIncoming ? styles.incoming : styles.outgoing}> {'Blati ra ba9i khedamin'} </div>
+        <h1 className={styles.SendingTime}> Time now 19:00 </h1>
+      </div>
+
+    </div>
+
+  )
+
+}
+const ChatMainHolder = ({UserMessageData}) => {
 
   if (UserMessageData){
     var {messages} = UserMessageData;
@@ -174,16 +194,19 @@ const ChatMainHolder = ({UserMessageData}) => {
       UserMessageData ? 
       <div className={styles.ConversationMessages}>
 {
-  JoinedMessages.map((elem, index) => {
-    return index % 2 ? <div key={index} className={styles.incoming}>{elem}</div>  :
-                       <div key={index}  className={styles.outgoing}>{elem}</div>
-  })
+   <MessageDisplayer message={'Hello'}user={UserMessageData} IsIncoming={true}/>
+  // JoinedMessages.map((elem, index) => {
+  //   return index % 2 ? <MessageDisplayer message={elem}user={UserMessageData} IsIncoming={true}/>  :
+  //                      <MessageDisplayer message={elem}user={UserMessageData} IsIncoming={false}/>
+  // })
 }
       </div> : 
       <div className={styles.StartMessageHolder}>
+       <div className={styles.NoPickedConvContainer}> <Lottie animationData={NoPickedConv} /> </div>
+       <div className={styles.QuoteContainer}>
 
-        <blockquote className={styles.GoPickConversation}> Pick A Conversation To Start ! </blockquote>
-
+        <blockquote className={styles.GoPickConversation}> Another Conversation Another Human </blockquote>
+       </div>
          </div>
         
      }

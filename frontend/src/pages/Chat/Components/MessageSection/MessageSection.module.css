@@ -250,15 +250,28 @@
 .StartMessageHolder{
     width: 100%;
     height: 100%;
-    display: flex;
-    flex-direction: column;
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr, 20px;
     align-items: center;
-    justify-content: center;
-    /* justify-items: center; */
+    justify-items: center;
+}
+
+.NoPickedConvContainer{
+    width: 50%;
+    opacity: 0.6;
+
+
+}
+
+.QuoteContainer{
+    opacity: 0.6;
 }
 
 .GoPickConversation{
     font-size: 2.5rem;
+    opacity: 1;
+
 }
 
 .ConversationMessages{
@@ -277,7 +290,6 @@
 .incoming{
     display: flex;
     flex-grow: 1;
-
     align-self: flex-start;
     background-color: rgba(115, 115, 115, 0.2);
     padding: 1rem;
@@ -301,4 +313,45 @@
     border-top-left-radius: 18px;
     border-top-right-radius: 18px;
     border-bottom-left-radius: 18px;
+}
+
+.MsgDisplayer{
+    display: grid;
+
+    grid-template-columns: 90px 1fr;
+    grid-template-rows: 1fr;
+    gap: 1rem;
+    word-wrap: break-word;
+
+    margin-left: 1rem;
+    /* overflow: hidden; */
+
+
+    max-width: 35rem;
+    height: 100px;
+    /* background-color: #F62943; */
+    }
+
+.avatar{
+    width: 65px;
+    height: 65px;
+    border-radius: 50%;
+}
+
+.receiverAvatar{
+    display: flex;
+    align-items: flex-end;
+    flex-grow: 1;
+}
+
+.msgContent{
+    display: flex;
+    flex-direction: column;
+    gap: 0.1rem;
+    
+    /* background-color: #364790; */
+}
+
+.SendingTime{
+    font-size: 7px;
 }
