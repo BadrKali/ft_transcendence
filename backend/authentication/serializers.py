@@ -32,8 +32,8 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         avatar_type = validated_data.pop('avatar_type', None)
         if avatar_type:
             validated_data['avatar'] = f'avatars/{avatar_type}.png'
-            print(f"ava : {validated_data['avatar']}")
         user = User.objects.create(**validated_data)
+        player = Player.objects.create(user=user)
         user.set_password(validated_data['password'])
         user.save()
         return user
