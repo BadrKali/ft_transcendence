@@ -1,13 +1,15 @@
 import React, { useState,useRef } from 'react'
 import styles from './MessageSection.module.css'
 import EmptyChatAnimation from '../../ChatAssets/EmptyChatAnimation.json'
+import NoConversationPicked from '../../ChatAssets/NoConversationPicked.json'
 import online from '../../ChatAssets/online.json'
 import offline from '../../ChatAssets/offline.json'
 import { ChatList } from '../../FakeData/GlobalFakeData'
-import { Smiley, Image, Files } from 'phosphor-react'
+import { Smiley, Image, Files, FadersHorizontal } from 'phosphor-react'
 import Lottie from 'lottie-react'
 import src from '../../ChatAssets/download.jpeg'
 import data from '@emoji-mart/data'
+import Icon from '../../../../assets/Icon/icons.js'
 import Picker from '@emoji-mart/react'
 
 const ImportItem = ({setImportClicked})=>{
@@ -41,54 +43,60 @@ const InputField = ({message, handleWritedMessage,inputRef}) => {
   )
 }
 
-const ChatHeader = () => {
 
+// { /* 
+// {
+  /* <div className={styles.DiscussionColors}>
+<div onClick={handleColor1} className={styles.Color1}></div>
+<div onClick={handleColor2} className={styles.Color2}></div>
+<div onClick={handleColor3} className={styles.Color3}></div>
+<div className={styles.Color4} style={{backgroundColor: MessageBackColor}}> </div>
+</div>  */
+// }
+// const [MessageBackColor, setColor] = useState('');
+//   function handleColor1(){
+//     setColor('#22420d')
+//   }
+//   function handleColor2(){
+//     setColor('#F62943');
+//   }
+//   function handleColor3(){
+//     setColor('#333497');
+//   }// }
+
+const ChatHeader = ({UserMessageData}) => {
+  function handleParamsClick() {
+    alert('Olaaala');
+  }
   const status = true;
-
-  const [MessageBackColor, setColor] = useState('');
-  function handleColor1(){
-    setColor('#22420d')
-  }
-
-  function handleColor2(){
-    setColor('#F62943');
-  }
-
-  function handleColor3(){
-    setColor('#333497');
-  }
-
   return (
     <div className={styles.ChatHeaderHolder}>
+      {
+        UserMessageData ?
+        <>
       <div className={styles.UserInfo}>
-      
-      <img className={styles.FriendPhoto} src={src} alt="Your-friend-photo" />
+      <img className={styles.FriendPhoto} src={UserMessageData?.avatar} alt="Your-friend-photo" />
       
         <div className={styles.FriendNameAndStatus}>
             
-            <div className={styles.FriendName}>Youlhafi_BT</div>
-            
+            <div className={styles.FriendName}>{UserMessageData?.username}</div>
+           
             <div className={styles.StatusHolder}>
-            <div className={styles.StatusIcon}> <Lottie animationData={status ? online : offline} /> </div >
+            <div className={styles.StatusIcon}> <Lottie animationData={UserMessageData?.status ? online : offline} /> </div >
             <div className={styles.Status}> {status ? 'Online' : 'Offline'}</div>
             </div>
         </div>
-      
       </div>
-
-      <div className={styles.DiscussionColors}>
-      <div onClick={handleColor1} className={styles.Color1}></div>
-      <div onClick={handleColor2} className={styles.Color2}></div>
-      <div onClick={handleColor3} className={styles.Color3}></div>
-      {/* TO BE REMOVED */}
-      <div className={styles.Color4} style={{backgroundColor: MessageBackColor}}> </div>
-      </div>
-
+    <div className={styles.ChatSettings} >
+      <FadersHorizontal  onClick={handleParamsClick} size={40}  color="#6a6c74"/>
+    </div>
+    </>
+  : null }
     </div>
   )
 }
 
-const ChatInput = () =>{
+const ChatInput = ({UserMessageData}) =>{
 
   const [PickerClick, SetPicker] = useState(false);
   const [ImportItemsClicked, setImportClicked] = useState(false);
@@ -120,7 +128,9 @@ const ChatInput = () =>{
 
   return(
   <div className={styles.ChatInputHolder}>
-
+{
+  UserMessageData ? 
+  <>
     <div  className={styles.ImportOptions} style={{display: ImportItemsClicked ? 'flex' : 'none'}}>
       
       <div className={styles.ImageBack}> 
@@ -144,19 +154,44 @@ const ChatInput = () =>{
     <div  style={{display : PickerClick ? 'inline' : 'none'}} className={styles.EmojiPicker}>
       <Picker theme='dark' data={data} onEmojiSelect={handleEmojieSelect} />
     </div>
-
+</>: null
+}
   </div>
   )
 }
 
-const ChatMainHolder = () => {
+const ChatMainHolder = ({UserMessageData}) => {
+
+
+  if (UserMessageData){
+    var {messages} = UserMessageData;
+    var JoinedMessages = [...messages.incomingMsg, ...messages.outgoingMsgs]
+  }
+
   return(
     <div className={styles.ChatMainHolder}>
+     { 
+      UserMessageData ? 
+      <div className={styles.ConversationMessages}>
+{
+  JoinedMessages.map((elem, index) => {
+    return index % 2 ? <div key={index} className={styles.incoming}>{elem}</div>  :
+                       <div key={index}  className={styles.outgoing}>{elem}</div>
+  })
+}
+      </div> : 
+      <div className={styles.StartMessageHolder}>
 
+        <blockquote className={styles.GoPickConversation}> Pick A Conversation To Start ! </blockquote>
+
+         </div>
+        
+     }
     </div>
   )
 }
-const MessageSection = () => {
+const MessageSection = ({UserMessageData}) => {
+
   return (
     <>
     {
@@ -164,14 +199,14 @@ const MessageSection = () => {
     <div className={styles.MessageSection}>
 
     <div className={styles.WelcomeChat}>
-     <div className={styles.Animationstyles}> <Lottie animationData={EmptyChatAnimation} />
-     </div>
-     <blockquote className={styles.ChatQuote}> Unleash the power of connection! <br/>Start chatting and discover what <span className={styles.Clunca}>Clunca </span> has to offer you .  </blockquote>
-      </div>
+        <div className={styles.Animationstyles}> <Lottie animationData={EmptyChatAnimation} />
+        </div>
+        <blockquote className={styles.ChatQuote}> Unleash the power of connection! <br/>Start chatting and discover what <span className={styles.Clunca}>Clunca </span> has to offer you .  </blockquote>
+    </div>
     </div> : <div className={styles.MessageSectionFull}>
-      <ChatHeader      />
-      <ChatMainHolder />
-      <ChatInput     />      
+      <ChatHeader      UserMessageData={UserMessageData}/>
+      <ChatMainHolder UserMessageData={UserMessageData}/>
+      <ChatInput     UserMessageData={UserMessageData}/>      
       </div>
 }
     </>

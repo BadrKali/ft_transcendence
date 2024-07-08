@@ -30,13 +30,11 @@ import { ReactComponent as game_mode } from './game_mode.svg'
 import { ReactComponent as chump_cup } from './chump_cup.svg'
 import { ReactComponent as location } from './location.svg'
 import { ReactComponent as TournamentWin } from './TournomantWin.svg'
-import { ReactComponent as AddFriend} from './addFriend.svg'
-import { ReactComponent as ChatFriend } from './chatFriend.svg'
-import { ReactComponent as Challangefriend } from './challangefriend.svg'
-import { ReactComponent as BlockFriend} from './blockFriend.svg'
 import {ReactComponent as visiteProfil} from './visiteProfil.svg'
 import { ReactComponent as inviteToGame} from './InviteToGame.svg'
 import {ReactComponent as block} from './Block.svg'
+import {ReactComponent as startMessage} from './startMessage.svg'
+
 // import { ReactComponent as school_icon } from './school_icon.png'
 
 
@@ -73,14 +71,10 @@ const icons = {
     chump_cup: chump_cup,
     location: location,
     TournamentWin : TournamentWin,
-    AddFriend : AddFriend,
-    ChatFriend : ChatFriend,
-    Challangefriend : Challangefriend,
-    BlockFriend : BlockFriend,
     VisiteProfil: visiteProfil,
     InviteToGame: inviteToGame,
-    Block : block
-
+    Block : block,
+    StartMessage: startMessage
     // school_icon: school_icon
 }
 

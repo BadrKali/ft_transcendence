@@ -45,14 +45,13 @@ const ChatConversation = ({ ConversationData, selectedIndex, onSelectConversatio
      backgroundColor: selectedIndex === ConversationData.id ? '#11141B' : '' }}>
         <div className={style.ConversationHolder}>
 
-       <img className={style.FriendPhoto} src={src} alt="Your-friend-photo" />
+       <img className={style.FriendPhoto} src={ConversationData.avatar} alt="Your-friend-photo" />
      
       <div className={style.NameAndLastMessage}>
-        <p className={style.FriendName}> {faker.person.fullName()}</p>
+        <p className={style.FriendName}> {ConversationData.username}</p>
         <p className={style.LastMessage}> {LastMessageFormater(ConversationData.lastMessage)}</p>
       </div>
 
-    
       <div className={style.UnreadAndTime}>
         <p className={style.SendTime}> {ConversationData.Time}</p>
         {
@@ -69,12 +68,7 @@ const ChatConversation = ({ ConversationData, selectedIndex, onSelectConversatio
   )
 }
 
-const ContactSection = () => {
-
-  const [selectedIndex, setSelectedIndex] = useState(-1);
-  const handleConversationSelect = (conversationId) => {
-    setSelectedIndex(conversationId);
-  };
+const ContactSection = ({selectedIndex, handleConversationSelect}) => {
 
   return (
     <div className={style.ContactSection}> 

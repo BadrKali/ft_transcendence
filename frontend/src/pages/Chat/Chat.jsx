@@ -7,14 +7,26 @@ import { ChatList } from "./FakeData/GlobalFakeData.jsx";
 
 const Chat = () => {
 
+    const [selectedIndex, setSelectedIndex] = useState(-1);
+  
+    const handleConversationSelect = (conversationId) => {
+      setSelectedIndex(conversationId);
+    };
+
+    function extractUserMessages(selectedIndex){
+        return ChatList.filter((UserObj) => UserObj.id === selectedIndex);
+    }
+    const UserMessageData = extractUserMessages(selectedIndex)[0];
+
     return(
         <>
         <h1>Clunca</h1>
         <div className={style.ChatView}>
-            <ContactSection />
-            <MessageSection />
+            <ContactSection selectedIndex={selectedIndex} handleConversationSelect={handleConversationSelect} />
+            
+            <MessageSection UserMessageData={UserMessageData}/>
             {
-                ChatList.length ?
+                UserMessageData ? 
                 <UserParams /> : null
             }
             </div>

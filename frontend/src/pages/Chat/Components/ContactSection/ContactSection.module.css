@@ -47,6 +47,18 @@
 
 }
 
+@keyframes SLideToRight {
+    from
+    {
+        transform: translateX(-80px);
+        opacity: 0;
+
+    }to{
+        transform: translateX(0px);
+    }  
+}
+
+
 .ConversationHolder{
     height: 100%;
     width: 100%;
@@ -55,7 +67,10 @@
     grid-template-rows: 1fr;
     gap: 1rem;
     align-items: center;
-
+    animation-name: SLideToRight;
+    animation-duration: 1s;
+    animation-timing-function: ease-in;
+    /* animation-delay: 0s; */
 }
 
 .FriendPhoto{
