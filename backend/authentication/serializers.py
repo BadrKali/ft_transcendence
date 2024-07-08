@@ -1,6 +1,5 @@
 from .models import User
 from rest_framework import serializers
-from user_management.serializers import PlayerSerializer
 from user_management.models import Player
 from django.contrib.auth.password_validation import validate_password
 

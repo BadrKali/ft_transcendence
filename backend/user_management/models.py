@@ -21,23 +21,10 @@ class Player(models.Model):
     games_won = models.IntegerField(default=PLAYER_FIRST_GAMES_WON)
     xp = models.IntegerField(default=PLAYER_FIRST_GAMES_XP)
     updated_at = models.DateTimeField(auto_now=True)
-    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE )
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, primary_key=True)
 
     def __str__(self) -> str:
         return self.user.username
-    
-    def save(self, *args, **kwargs):
-        if self.id:
-            existing = get_object_or_404(Player, id=self.id)
-            if existing.avatar != self.avatar:
-                existing.avatar.delete(save=False)
-        super(Player, self).save(*args, **kwargs)
-    def category_delete_files(sender, instance, **kwargs):
-        for field in instance._meta.fields:
-            if field.name == "avatar":
-                file = getattr(instance, field.name)
-                if file:
-                    file.delete(save=False)
                     
 
 

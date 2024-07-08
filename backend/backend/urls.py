@@ -10,7 +10,7 @@ from rest_framework_simplejwt.views import TokenObtainPairView , TokenRefreshVie
 admin.site.site_header = "ft_transcendence Admin"
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path("user_management/", include("user_management.urls")),
+    path("user/", include("user_management.urls")),
     path("auth/", include("authentication.urls")),
     path('api/game/', include('game.urls')),
     
