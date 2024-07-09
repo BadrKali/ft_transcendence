@@ -12,13 +12,14 @@ import avatar10 from "../ChatAssets/avatar10.jpeg";
 const ChatHistory = [
   {
     msg_id: 1,
+    
     incomingMsg: [
       "fin akhy Abdo",
       "Hnaya Lwe9t",
       "Lahila yasalaaaam awdi fchkel hadchi 3awtanni",
       "wah wah akhali Wah","wah wah akhali Wah","wah wah akhali Wah","wah wah akhali Wah","wah wah akhali Wah","wah wah akhali Wah","wah wah akhali Wah","wah wah akhali Wah","wah wah akhali Wah","wah wah akhali Wah","wah wah akhali Wah",
     ],
-    outgoingMsgs: ["Lay7fdek", "ta sir a3awed Lrassek", "Wayih fchkel Hadchi"],
+    outgoingMsgs: ["Lay7fdek", "ta sir a3awed Lrassek", "Wayih fchkel Hadchi 1"],
   },
   {
     msg_id: 2,
@@ -28,7 +29,7 @@ const ChatHistory = [
       "Lahila yasalaaaam awdi fchkel hadchi 3awtanni",
       "wah wah akhali Wah","wah wah akhali Wah","wah wah akhali Wah","wah wah akhali Wah","wah wah akhali Wah","wah wah akhali Wah","wah wah akhali Wah","wah wah akhali Wah","wah wah akhali Wah","wah wah akhali Wah","wah wah akhali Wah",
     ],
-    outgoingMsgs: ["Lay7fdek", "ta sir a3awed Lrassek", "Wayih fchkel Hadchi"],
+    outgoingMsgs: ["Lay7fdek", "ta sir a3awed Lrassek", "Wayih fchkel Hadchi 2"],
   },
   {
     msg_id: 3,
@@ -38,7 +39,7 @@ const ChatHistory = [
       "Lahila yasalaaaam awdi fchkel hadchi 3awtanni",
       "wah wah akhali Wah","wah wah akhali Wah","wah wah akhali Wah","wah wah akhali Wah","wah wah akhali Wah","wah wah akhali Wah","wah wah akhali Wah","wah wah akhali Wah","wah wah akhali Wah","wah wah akhali Wah","wah wah akhali Wah",
     ],
-    outgoingMsgs: ["Lay7fdek", "ta sir a3awed Lrassek", "Wayih fchkel Hadchi"],
+    outgoingMsgs: ["Lay7fdek", "ta sir a3awed Lrassek", "Wayih fchkel Hadchi 3"],
   },
   {
     msg_id: 4,
@@ -48,7 +49,7 @@ const ChatHistory = [
       "Lahila yasalaaaam awdi fchkel hadchi 3awtanni",
       "wah wah akhali Wah","wah wah akhali Wah","wah wah akhali Wah","wah wah akhali Wah","wah wah akhali Wah","wah wah akhali Wah","wah wah akhali Wah","wah wah akhali Wah","wah wah akhali Wah","wah wah akhali Wah","wah wah akhali Wah",
     ],
-    outgoingMsgs: ["Lay7fdek", "ta sir a3awed Lrassek", "Wayih fchkel Hadchi"],
+    outgoingMsgs: ["Lay7fdek", "ta sir a3awed Lrassek", "Wayih fchkel Hadchi 4"],
   },
   {
     msg_id: 5,
@@ -58,7 +59,7 @@ const ChatHistory = [
       "Lahila yasalaaaam awdi fchkel hadchi 3awtanni",
       "wah wah akhali Wah","wah wah akhali Wah","wah wah akhali Wah","wah wah akhali Wah","wah wah akhali Wah","wah wah akhali Wah","wah wah akhali Wah","wah wah akhali Wah","wah wah akhali Wah","wah wah akhali Wah","wah wah akhali Wah",
     ],
-    outgoingMsgs: ["Lay7fdek", "ta sir a3awed Lrassek", "Wayih fchkel Hadchi"],
+    outgoingMsgs: ["Lay7fdek", "ta sir a3awed Lrassek", "Wayih fchkel Hadchi 5 "],
   },
   {
     msg_id: 6,
@@ -68,7 +69,7 @@ const ChatHistory = [
       "Lahila yasalaaaam awdi fchkel hadchi 3awtanni",
       "decheklfjdskljhsdfghsdgsdjfgolaaall olaaaala les enfant de la rue ici c'est vol;a fgdfhjkldfj klj kljdfh kldh jkldfhklj kldhkl  iosdgidisgh uhdfugh uhdugh ioafbgnajkdfgjkhajkhfgjkgfhgo hjfiug hsdifhjksdhfdsgjkhsdjkghjksdhgjkhsdjkghjksdjkgjkhfhksdfhds","wah wah akhali Wah","wah wah akhali Wah","wah wah akhali Wah","wah wah akhali Wah","wah wah akhali Wah","wah wah akhali Wah","wah wah akhali Wah","wah wah akhali Wah","wah wah akhali Wah","wah wah akhali Wah",
     ],
-    outgoingMsgs: ["Lay7fdek", "ta sir a3awed Lrassek", "Wayih fchkel Hadchi"],
+    outgoingMsgs: ["Lay7fdek", "ta sir a3awed Lrassek", "Wayih fchkel Hadchi 6"],
   },
   {
     msg_id: 7,
@@ -78,7 +79,7 @@ const ChatHistory = [
       "Lahila yasalaaaam awdi fchkel hadchi 3awtanni",
       "wah wah akhali Wah","wah wah akhali Wah","wah wah akhali Wah","wah wah akhali Wah","wah wah akhali Wah","wah wah akhali Wah","wah wah akhali Wah","wah wah akhali Wah","wah wah akhali Wah","wah wah akhali Wah","wah wah akhali Wah",
     ],
-    outgoingMsgs: ["Lay7fdek", "ta sir a3awed Lrassek", "Wayih fchkel Hadchi"],
+    outgoingMsgs: ["Lay7fdek", "ta sir a3awed Lrassek", "Wayih fchkel Hadchi 7"],
   },
   {
     msg_id: 8,
@@ -88,7 +89,7 @@ const ChatHistory = [
       "Lahila yasalaaaam awdi fchkel hadchi 3awtanni",
       "wah wah akhali Wah","wah wah akhali Wah","wah wah akhali Wah","wah wah akhali Wah","wah wah akhali Wah","wah wah akhali Wah","wah wah akhali Wah","wah wah akhali Wah","wah wah akhali Wah","wah wah akhali Wah","wah wah akhali Wah",
     ],
-    outgoingMsgs: ["Lay7fdek", "ta sir a3awed Lrassek", "Wayih fchkel Hadchi"],
+    outgoingMsgs: ["Lay7fdek", "ta sir a3awed Lrassek", "Wayih fchkel Hadchi 8"],
   },
   {
     msg_id: 9,
@@ -98,7 +99,7 @@ const ChatHistory = [
       "Lahila yasalaaaam awdi fchkel hadchi 3awtanni",
       "wah wah akhali Wah","wah wah akhali Wah","wah wah akhali Wah","wah wah akhali Wah","wah wah akhali Wah","wah wah akhali Wah","wah wah akhali Wah","wah wah akhali Wah","wah wah akhali Wah","wah wah akhali Wah","wah wah akhali Wah",
     ],
-    outgoingMsgs: ["Lay7fdek", "ta sir a3awed Lrassek", "Wayih fchkel Hadchi"],
+    outgoingMsgs: ["Lay7fdek", "ta sir a3awed Lrassek", "Wayih fchkel Hadchi 9"],
   },
   {
     msg_id: 10,
@@ -108,7 +109,7 @@ const ChatHistory = [
       "Lahila yasalaaaam awdi fchkel hadchi 3awtanni",
       "wah wah akhali Wah","wah wah akhali Wah","wah wah akhali Wah","wah wah akhali Wah","wah wah akhali Wah","wah wah akhali Wah","wah wah akhali Wah","wah wah akhali Wah","wah wah akhali Wah","wah wah akhali Wah","wah wah akhali Wah",
     ],
-    outgoingMsgs: ["Lay7fdek", "ta sir a3awed Lrassek", "Wayih fchkel Hadchi"],
+    outgoingMsgs: ["Lay7fdek", "ta sir a3awed Lrassek", "Wayih fchkel Hadchi 10"],
   },
   {
     msg_id: 11,
@@ -118,7 +119,7 @@ const ChatHistory = [
       "Lahila yasalaaaam awdi fchkel hadchi 3awtanni",
       "wah wah akhali Wah","wah wah akhali Wah","wah wah akhali Wah","wah wah akhali Wah","wah wah akhali Wah","wah wah akhali Wah","wah wah akhali Wah","wah wah akhali Wah","wah wah akhali Wah","wah wah akhali Wah","wah wah akhali Wah",
     ],
-    outgoingMsgs: ["Lay7fdek", "ta sir a3awed Lrassek", "Wayih fchkel Hadchi"],
+    outgoingMsgs: ["Lay7fdek", "ta sir a3awed Lrassek", "Wayih fchkel Hadchi 11"],
   },
   {
     msg_id: 12,
@@ -128,7 +129,7 @@ const ChatHistory = [
       "Lahila yasalaaaam awdi fchkel hadchi 3awtanni",
       "wah wah akhali Wah","wah wah akhali Wah","wah wah akhali Wah","wah wah akhali Wah","wah wah akhali Wah","wah wah akhali Wah","wah wah akhali Wah","wah wah akhali Wah","wah wah akhali Wah","wah wah akhali Wah","wah wah akhali Wah",
     ],
-    outgoingMsgs: ["Lay7fdek", "ta sir a3awed Lrassek", "Wayih fchkel Hadchi"],
+    outgoingMsgs: ["Lay7fdek", "ta sir a3awed Lrassek", "Wayih fchkel Hadchi 12"],
   },
 ];
 
@@ -140,7 +141,7 @@ export const ChatList = [
     lastMessage: "السيطرة تحت الامور",
     Time: "9.32 PM",
     unread: 0,
-    avatar: avatar1,
+    avatar: avatar10,
     status: true,
     messages: ChatHistory[0],
   },

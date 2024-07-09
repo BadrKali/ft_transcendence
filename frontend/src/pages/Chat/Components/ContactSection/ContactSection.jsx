@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState,useContext } from 'react'
 import style from './ContactSection.module.css'
 import SearchBar from '../SearchBar/SearchBar.jsx'
 import {NotePencil} from 'phosphor-react'
@@ -6,12 +6,9 @@ import src from '../../ChatAssets/download.jpeg'
 import NoOneTotalkTo from '../../ChatAssets/NoOneTotalkTo.json'
 import Lottie from 'lottie-react'
 import {ChatList} from '../../FakeData/GlobalFakeData.jsx'
+import   {UserMsgContext} from '../../Chat.jsx';
 
 
-/************************ */
-import { Avatar } from '@mui/material';
-import {faker} from '@faker-js/faker'
-/************************* */
 const SendToNoneFriend = () =>{
 
   function handleGlobalMessage(){
@@ -35,6 +32,9 @@ function LastMessageFormater(lastMessage){
 
 
 const ChatConversation = ({ ConversationData, selectedIndex, onSelectConversation }) => {
+  
+  console.log(ConversationData.messages);
+  
   function HandleClick() {
     onSelectConversation(ConversationData.id); // Pass ID to parent callback
   }
@@ -49,7 +49,7 @@ const ChatConversation = ({ ConversationData, selectedIndex, onSelectConversatio
      
       <div className={style.NameAndLastMessage}>
         <p className={style.FriendName}> {ConversationData.username}</p>
-        <p className={style.LastMessage}> {LastMessageFormater(ConversationData.lastMessage)}</p>
+        <p className={style.LastMessage}> {LastMessageFormater(ConversationData.messages.outgoingMsgs[ConversationData.messages.outgoingMsgs.length- 1])}</p>
       </div>
 
       <div className={style.UnreadAndTime}>
@@ -72,9 +72,7 @@ const ContactSection = ({selectedIndex, handleConversationSelect}) => {
 
   return (
     <div className={style.ContactSection}> 
-    
     <SearchBar />
-
     <div className={style.MessageNotePencilHolder}>
       <p className={style.MessageString}> Messages</p>
       <SendToNoneFriend />

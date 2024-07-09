@@ -7,13 +7,12 @@
     border-radius: 6px;
     opacity: 0.4;
     background-color:#1C1E27;
-    /* overflow: scroll; */
+
 }
 
 .WelcomeChat{
     align-self: center;
     display: grid;
-    /* gap : 10px; */
     grid-template-columns: 1fr;
     grid-template-rows: 1fr 90px;
     align-items: center;
@@ -106,14 +105,6 @@
     height: 30px;
 }
 
-.ChatSettings{
-
-}
-/* .DiscussionColors{
-    display: flex;
-    align-items: center;
-    justify-content: space-around;
-} */
 
 .ChatMainHolder{
     background-color:#1C1E27;
@@ -217,7 +208,7 @@
     background-color: #22420d;
     border-bottom-left-radius: 10px;
     border-top-right-radius: 10px ;
-    /* border */
+    /* border *
 }
 
 .Color2{
@@ -239,13 +230,8 @@
     /* background-color: var(--message-background-color); */
     width: 30px;
     height: 30px;
-    /* color: white; */
 }
 
-.startMessage{
-    
-
-}
 
 .StartMessageHolder{
     width: 100%;
@@ -260,8 +246,6 @@
 .NoPickedConvContainer{
     width: 50%;
     opacity: 0.6;
-
-
 }
 
 .QuoteContainer{
@@ -271,7 +255,6 @@
 .GoPickConversation{
     font-size: 2.5rem;
     opacity: 1;
-
 }
 
 .ConversationMessages{
@@ -287,71 +270,85 @@
     display: none;
 }
 
-.incoming{
-    display: flex;
-    flex-grow: 1;
+.MsgIncom{
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+
     align-self: flex-start;
-    background-color: rgba(115, 115, 115, 0.2);
-    padding: 1rem;
-    margin: 1rem;
-    max-width: 29rem;
-    word-wrap: break-word;
-    border-top-left-radius: 18px;
-    border-top-right-radius: 18px;
-    border-bottom-right-radius: 18px;
-}
-
-.outgoing{
-    display: flex;
-    flex-grow: 1;
-    align-self: flex-end;
-    background-color: rgba(115, 115, 115, 0.2);
-    padding: 1rem;
-    margin: 1rem;
-    max-width: 29rem;
-    word-wrap: break-word;
-    border-top-left-radius: 18px;
-    border-top-right-radius: 18px;
-    border-bottom-left-radius: 18px;
-}
-
-.MsgDisplayer{
     display: grid;
-
-    grid-template-columns: 90px 1fr;
+    grid-template-columns: 80px 1fr;
     grid-template-rows: 1fr;
     gap: 1rem;
     word-wrap: break-word;
+    max-width : 35rem;
+}
 
-    margin-left: 1rem;
-    /* overflow: hidden; */
+.MsgOut{
+    margin-top: 1rem;
+    margin-bottom: 2rem;
+    align-self: flex-end;
+    display: grid;
+    grid-template-columns: 1fr 80px;
+    grid-template-rows: 1fr;
+    gap: 1rem;
+    word-wrap: break-word;
+    max-width : 35rem;
+}
 
-
-    max-width: 35rem;
-    height: 100px;
-    /* background-color: #F62943; */
-    }
 
 .avatar{
-    width: 65px;
-    height: 65px;
+    width: 50px;
+    height: 50px;
     border-radius: 50%;
 }
 
 .receiverAvatar{
     display: flex;
-    align-items: flex-end;
-    flex-grow: 1;
+    align-items: end;
+    justify-content: end;
+}
+
+.MyAvatar{
+    display: flex;
+    align-items: end;
+    justify-content: start;
+    grid-row: 1 /2;
+    grid-column: 2/ -1;
 }
 
 .msgContent{
     display: flex;
     flex-direction: column;
-    gap: 0.1rem;
-    
-    /* background-color: #364790; */
+    gap: 0.4rem;
+}
+
+.incoming{
+    max-width: 27rem;
+
+    background-color: rgba(115, 115, 115, 0.2);
+    padding: 1rem;
+    border-top-left-radius: 18px;
+    border-top-right-radius: 18px;
+    border-bottom-right-radius: 18px;
+    word-wrap: break-word;
+}
+
+.outgoing{
+    background-color: rgba(115, 115, 115, 0.2);
+    border-top-left-radius: 18px;
+    border-top-right-radius: 18px;
+    border-bottom-left-radius: 18px;
+    padding: 1rem;
+    max-width: 27rem;
+    word-wrap: break-word;
 }
 
 .SendingTime{
-    font-size: 7px;
+    font-size: 0.7rem;
+}
+
+.SendingTimeout{
+    text-align: end;
+    font-size: 0.7rem;
+
 }

@@ -1,4 +1,4 @@
-import React, { useState,useRef } from 'react'
+import React, { useState,useRef,useContext } from 'react'
 import styles from './MessageSection.module.css'
 import EmptyChatAnimation from '../../ChatAssets/EmptyChatAnimation.json'
 import NoConversationPicked from '../../ChatAssets/NoConversationPicked.json'
@@ -10,7 +10,9 @@ import { Smiley, Image, Files, FadersHorizontal } from 'phosphor-react'
 import Lottie from 'lottie-react'
 import data from '@emoji-mart/data'
 import Icon from '../../../../assets/Icon/icons.js'
+import src from '../../ChatAssets/download.jpeg'
 import Picker from '@emoji-mart/react'
+import   {UserMsgContext} from '../../Chat.jsx';
 
 const ImportItem = ({setImportClicked})=>{
   return(
@@ -64,7 +66,10 @@ const InputField = ({message, handleWritedMessage,inputRef}) => {
 //     setColor('#333497');
 //   }// }
 
-const ChatHeader = ({UserMessageData}) => {
+const ChatHeader = () => {
+
+const UserMessageData = useContext(UserMsgContext);
+
   function handleParamsClick() {
     alert('Olaaala');
   }
@@ -96,7 +101,9 @@ const ChatHeader = ({UserMessageData}) => {
   )
 }
 
-const ChatInput = ({UserMessageData}) =>{
+const ChatInput = () =>{
+  
+  const UserMessageData = useContext(UserMsgContext);
 
   const [PickerClick, SetPicker] = useState(false);
   const [ImportItemsClicked, setImportClicked] = useState(false);
@@ -160,28 +167,29 @@ const ChatInput = ({UserMessageData}) =>{
   )
 }
 
-const MessageDisplayer = ({message, user, IsIncoming}) => {
-  // messageType : incoming outgoing
+const MessageDisplayer = ({message, IsIncoming}) => {
+
+  const UserMessageData = useContext(UserMsgContext);
+
 
   return(
-    <div className={styles.MsgDisplayer}>
+    <div className={IsIncoming ? styles.MsgIncom : styles.MsgOut}>
 
-        <div className={styles.receiverAvatar} >
-          <img className={styles.avatar} src={user.avatar} alt="user-avatar" />
-        </div>
-
-      <div className={styles.msgContent} >
-
-        <div className={IsIncoming ? styles.incoming : styles.outgoing}> {'Blati ra ba9i khedamin'} </div>
-        <h1 className={styles.SendingTime}> Time now 19:00 </h1>
+      <div className={IsIncoming ?  styles.receiverAvatar : styles.MyAvatar} >
+        <img className={styles.avatar} src={IsIncoming ? UserMessageData.avatar : src} alt="user-avatar" />
       </div>
 
+      <div className={styles.msgContent} >
+        <div className={IsIncoming ? styles.incoming : styles.outgoing}> {message} </div>
+        <h1 className={ IsIncoming ? styles.SendingTime : styles.SendingTimeout}> Time now 19:00 </h1>
+    </div> 
     </div>
-
   )
-
 }
-const ChatMainHolder = ({UserMessageData}) => {
+
+const ChatMainHolder = () => {
+
+  const UserMessageData = useContext(UserMsgContext);
 
   if (UserMessageData){
     var {messages} = UserMessageData;
@@ -194,18 +202,18 @@ const ChatMainHolder = ({UserMessageData}) => {
       UserMessageData ? 
       <div className={styles.ConversationMessages}>
 {
-   <MessageDisplayer message={'Hello'}user={UserMessageData} IsIncoming={true}/>
-  // JoinedMessages.map((elem, index) => {
-  //   return index % 2 ? <MessageDisplayer message={elem}user={UserMessageData} IsIncoming={true}/>  :
-  //                      <MessageDisplayer message={elem}user={UserMessageData} IsIncoming={false}/>
-  // })
+   
+  JoinedMessages.map((elem, index) => {
+    return index % 2 ? <MessageDisplayer message={elem}  IsIncoming={true}/>  :
+                        <MessageDisplayer message={elem}  IsIncoming={false}/>
+  })
 }
       </div> : 
       <div className={styles.StartMessageHolder}>
        <div className={styles.NoPickedConvContainer}> <Lottie animationData={NoPickedConv} /> </div>
        <div className={styles.QuoteContainer}>
 
-        <blockquote className={styles.GoPickConversation}> Another Conversation Another Human </blockquote>
+        <blockquote className={styles.GoPickConversation}> Another Conversation Another World </blockquote>
        </div>
          </div>
         
@@ -213,8 +221,8 @@ const ChatMainHolder = ({UserMessageData}) => {
     </div>
   )
 }
-const MessageSection = ({UserMessageData}) => {
-
+const MessageSection = () => {
+  console.log()
   return (
     <>
     {
@@ -227,9 +235,9 @@ const MessageSection = ({UserMessageData}) => {
         <blockquote className={styles.ChatQuote}> Unleash the power of connection! <br/>Start chatting and discover what <span className={styles.Clunca}>Clunca </span> has to offer you .  </blockquote>
     </div>
     </div> : <div className={styles.MessageSectionFull}>
-      <ChatHeader      UserMessageData={UserMessageData}/>
-      <ChatMainHolder UserMessageData={UserMessageData}/>
-      <ChatInput     UserMessageData={UserMessageData}/>      
+      <ChatHeader     />
+      <ChatMainHolder />
+      <ChatInput      />      
       </div>
 }
     </>
