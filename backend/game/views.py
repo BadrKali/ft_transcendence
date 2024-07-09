@@ -47,9 +47,9 @@ class TriggerAchievementView(APIView):
         return Response({"status": "Achievement sent"}, status=status.HTTP_200_OK)
     
 class GameSettingsView(APIView):
-    def get(self, request, player_id):
+    def get(self, request):
         try:
-            player = Player.objects.get(user_id=player_id)
+            player = Player.objects.get(user_id=request.user.id)
             game_settings = GameSettings.objects.get(user=player)
             serializer = GameSettingsSerializer(game_settings)
             return Response(serializer.data, status=status.HTTP_200_OK)
@@ -58,9 +58,10 @@ class GameSettingsView(APIView):
         except GameSettings.DoesNotExist:
             return Response({"error": "GameSettings not found"}, status=status.HTTP_404_NOT_FOUND)
 
-    def post(self, request, player_id):
+    def post(self, request):
         try:
-            player = Player.objects.get(user_id=player_id)
+            # print(f"{request.data}")
+            player = Player.objects.get(user_id=request.user.id)
             game_settings = GameSettings.objects.filter(user=player).first()
 
             serializer = GameSettingsSerializer(instance=game_settings, data=request.data)

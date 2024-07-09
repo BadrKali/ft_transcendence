@@ -3,11 +3,12 @@ import { useNavigate } from "react-router-dom";
 import ErrorModal from "./ErrorModal";
 import PlayerSelection from "./PlayerSelection";
 
-const LaunchButtons = ({ selectedMode, selectedBackground, selectedKeys, className }) => {
+const LaunchButtons = ({ selectedMode, selectedBackground, selectedKeys, className , onLaunch}) => {
     const [showModal, setShowModal] = useState(false);
     const [showPlayerSelection, setShowPlayerSelection] = useState(false);
     const navigate = useNavigate();
     const handleLaunchGame = () => {
+        onLaunch();
         if (!selectedBackground || !selectedKeys) {
             setShowModal(true);
         } else if (selectedMode === 'Invite') {

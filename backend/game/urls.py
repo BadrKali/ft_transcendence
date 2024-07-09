@@ -7,5 +7,5 @@ urlpatterns = [
     path('achievements/', AchievementListView.as_view(), name='achievement_list'),
     path('achievements/player/<int:player_id>', PlayerAchievementListView.as_view(), name='player_achievements'),
     path('trigger-achievement/', TriggerAchievementView.as_view(), name='trigger_achievement'),
-    path('game-settings/<int:player_id>/', GameSettingsView.as_view(), name='game_settings'),
+    path('game-settings/current-user/', GameSettingsView.as_view(), name='game_settings'),
 ]

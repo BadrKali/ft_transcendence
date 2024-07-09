@@ -6,14 +6,17 @@ import graveyard from '../../Game-assets/graveyard.png';
 import LaunchButtons from './LaunchButtons';
 import ToolsContainer from './ToolsContainer';
 import GameMode from './GameMode';
+import axios from 'axios';
+import useAuth from "../../../../hooks/useAuth.js";
 
 const PingPong = () => {
+    const { auth } = useAuth();
     const [selectedBackground, setSelectedBackground] = useState(null);
     const handleBackgroundSelect = (background) => {
         setSelectedBackground(background);
     };
 
-    const [selectedPaddle, setSelectedPaddle] = useState(null);
+    const [selectedPaddle, setSelectedPaddle] = useState('hhhhh');
     const handlePaddleSelect = (paddle) => {
         setSelectedPaddle(paddle);
     };
@@ -28,6 +31,24 @@ const PingPong = () => {
         setSelectedMode(mode);
     };
 
+    const handleLaunchGame = async () =>{
+        const gameSettings = {
+            background: selectedBackground,
+            paddle: selectedPaddle,
+            gameMode: selectedMode,
+        }
+        try  {
+            const response = await axios.post('http://localhost:8000/api/game/game-settings/current-user/', gameSettings, {
+                headers : {
+                    'Content-Type' : 'application/json',
+                    'Authorization': `Bearer ${auth.accessToken}`,
+                }
+            });
+            console.log("Game Settings saved", response.data);
+        } catch (error) {
+            console.log("Failed to save game settings");
+        }
+    }
     return (
         <div className="PingPong-container">
             <h1>Customise Your Game</h1>
@@ -53,7 +74,8 @@ const PingPong = () => {
                     selectedMode={selectedMode} 
                     selectedBackground={selectedBackground} 
                     selectedKeys={selectedKeys} 
-                    className="launchButtons-container" 
+                    className="launchButtons-container"
+                    onLaunch={handleLaunchGame}
                 />
             </div>
         </div>
