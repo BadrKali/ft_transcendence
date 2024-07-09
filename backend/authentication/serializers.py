@@ -7,9 +7,10 @@ def user_avatar_upload_path(instance, filename):
     return f"player/{instance.id}/user_avatar/{filename}"
 
 class CurrentUserSerializer(serializers.ModelSerializer):
+    avatar_type = serializers.CharField(write_only=True, required=False)
     class Meta:
         model = User
-        fields = ['id', 'avatar', 'username', 'email']
+        fields = ['id', 'avatar', 'username', 'email', 'avatar_type']
 
 class UserRegistrationSerializer(serializers.ModelSerializer):
     confirm_password = serializers.CharField(write_only=True, required=True)

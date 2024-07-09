@@ -89,19 +89,18 @@ class UnblockFriendView(APIView):
  
 class PlayerView(APIView):
     def get(self, request):
-        id = request.user.id
-        player = get_object_or_404(Player, user_id=id)
+        player_id = request.user.id
+        player = get_object_or_404(Player, user_id=player_id)
         serializer = PlayerSerializer(player)
         return(Response(serializer.data, status=status.HTTP_200_OK))
-    # def post(self, request):
-    #     serializer = PlayerSerializer(data=request.data)
-    #     serializer.is_valid(raise_exception=True)
-    #     try:
-    #         user = get_object_or_404(User, pk = request.user.id)
-    #         serializer.save(user=user)
-    #         return Response({"message": "User registered successfully"}, status=status.HTTP_201_CREATED)
-    #     except IntegrityError:
-    #         return Response({"message": "A player for this user already exists."}, status=status.HTTP_400_BAD_REQUEST)
+    # def patch(self, request):
+    #     player_id  = request.user.id
+    #     player = get_object_or_404(Player, user_id=player_id)
+    #     serializer = PlayerSerializer(player, data=request.data, partial=True)
+    #     if serializer.is_valid():
+    #         serializer.save()
+    #         return Response({"message" : "sir 3la lah you can do it"}, status=status.HTTP_200_OK)
+    #     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         
 
 
