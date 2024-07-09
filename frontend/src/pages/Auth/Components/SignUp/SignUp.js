@@ -71,7 +71,7 @@ const SignUp = (props) => {
         {
             id: 2,
             msg: "Password is too weak. Please choose a more complex password to ensure account security.",
-            pattern: "^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$",
+            pattern: "^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$",
         },
         {
             id: 3,
