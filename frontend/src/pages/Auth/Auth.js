@@ -3,14 +3,11 @@ import './Auth.css'
 import { assets } from '../../assets/assets'
 import SignUp from './Components/SignUp/SignUp'
 import SignIn from './Components/SignIn/SignIn'
-import useAuth from '../../hooks/useAuth'
 import { Navigate } from 'react-router-dom'
 
 const Auth = () => {
   const [isLogin, setIsLogin] = useState(true)
-  const { auth } = useAuth()
   return (
-    auth?.accessToken ? 
     <div className='auth-container'>
       <div className='auth-left-section'>
         <div className='auth-logo-container'>
@@ -23,7 +20,7 @@ const Auth = () => {
       <div className='auth-right-section'>
          {/* <img src={assets.loginBackground} />  */}
       </div>
-    </div> : <Navigate to='/'/>
+    </div>
   )
 }
 
