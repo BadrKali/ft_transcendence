@@ -1,9 +1,6 @@
 import React, { useRef, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import "./bot.css";
-import hell from "../asstes/hell.png";
-import forest from "../asstes/forest.png";
-import graveyard from "../asstes/graveyard.png";
 import ScoreBoard from '../components/ScoreBoard';
 import Timeout from '../components/TimeOut';
 import avatar from "../asstes/avatar3.png";
@@ -25,6 +22,8 @@ const GameLogic = ({paddleColor, keys, username}) => {
     const [userScore, setUserScore] = useState(0);
     const [comScore, setComScore] = useState(0);
     const [gameRunning, setGameRunning] = useState(true);
+    const [showExitPopup, setShowExitPopup] = useState(false);
+    const [pauseGame, setPauseGame] = useState(false);
 
     const handleUserScore = (score) => {
         setUserScore(score);
@@ -200,50 +199,76 @@ const GameLogic = ({paddleColor, keys, username}) => {
         }
 
         function game() {
-            update();
-            render();
+            if (!pauseGame) {
+                update();
+                render();
+            }
         }
 
         let framePerSecond = 50;
         let loop = setInterval(game, 1000 / framePerSecond);
+
         const speedInterval = setInterval(() => {
             ball.speed += 1;
         }, 20000);
+
         return () => {
             clearInterval(loop);
             clearInterval(speedInterval);
             window.removeEventListener('keydown', handleKeyDown);
         };
-    }, []);
+    }, [paddleColor, keys, pauseGame]);
 
     const handleTimeout = () => {
         setGameRunning(false);
         alert("Game Timeout! Returning to lobby...");
     };
+
     const handleExitGame = () => {
-        setGameRunning(false);
+        setPauseGame(true);
+        setShowExitPopup(true);
+    };
+
+    const confirmExitGame = (confirm) => {
+        setShowExitPopup(false);
+        if (confirm) {
+            setGameRunning(false);
+        } else {
+            setPauseGame(false);
+        }
     };
     if (!gameRunning) {
         navigate('game');
         return;
     }
     return (
-            <div className="pingponggame-container">
-                <div className="info-container">
-                 <ScoreBoard
-                    user1Score={userScore}
-                    user2Score={comScore}
-                    user1Name={username}
-                    user1Avatar={avatar}
-                    user2Name="PONGY!"
-                    user2Avatar={pongy}
-                />
-                <Timeout onTimeout={handleTimeout} />
+        <div className="pingponggame-container">
+                    <div className="info-container">
+                        <ScoreBoard
+                            user1Score={userScore}
+                            user2Score={comScore}
+                            user1Name={username}
+                            user1Avatar={avatar}
+                            user2Name="PONGY!"
+                            user2Avatar={pongy}
+                        />
+                        <Timeout onTimeout={handleTimeout} />
+                    </div>
+                <canvas className='canvas-container' ref={canvasRef}></canvas>
+                <button className='exit-game-button' onClick={handleExitGame}><img src={exit} alt="" className='exit-logo'/></button>
+                {showExitPopup && (
+                    <div className="exit-popup">
+                        <div className="exit-popup-content">
+                            <h2>BACK TO LOBBY ?</h2>
+                            <div className="exit-popup-buttons">
+                                <button onClick={() => confirmExitGame(true)}>Yes</button>
+                                <button onClick={() => confirmExitGame(false)}>Cancel</button>
+                            </div>
+                        </div>
+                    </div>
+                )}
             </div>
-            <canvas className='canvas-container' ref={canvasRef}></canvas>
-            <button className='exit-game-button' onClick={handleExitGame}><img src={exit} alt="" className='exit-logo'/></button>
-        </div>
     );
 }
- 
+
 export default GameLogic;

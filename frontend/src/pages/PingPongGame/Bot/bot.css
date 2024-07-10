@@ -56,6 +56,60 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    color: white;
+    color: #1C1E27;
     font-size: 24px;
+}
+
+.exit-popup {
+    position: fixed;
+    width: 25%;
+    height: 24%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #1C1E27;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+}
+
+.exit-popup-content {
+    text-align: center;
+    color: #ffffff;
+}
+
+.exit-popup-content h2 {
+    margin: 25px;
+    font-size: 40px;
+}
+.exit-popup-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 90px;
+}
+
+.exit-popup-content .exit-popup-buttons button {
+    width: 100px;
+    margin: 0 10px;
+    padding: 10px 20px;
+    cursor: pointer;
+    border: none;
+    border-radius: 4px;
+    background-color: #8D93AC;
+    color: white;
+    font-size: 25px;
+    width: 180px;
+}
+
+.exit-popup-content .exit-popup-buttons button:hover {
+    background-color: #F62943;
+}
+
+.exit-popup-content .exit-popup-buttons button:nth-child(2) {
+    background-color: #4CAF50;
+}
+
+.exit-popup-content .exit-popup-buttons button:nth-child(2):hover {
+    background-color: #45a049;
 }

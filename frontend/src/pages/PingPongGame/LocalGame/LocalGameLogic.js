@@ -31,6 +31,8 @@ const LocalGameLogic = ({ paddleColor, keys, username }) => {
     const [user1Score, setUser1Score] = useState(0);
     const [user2Score, setUser2Score] = useState(0);
     const [gameRunning, setGameRunning] = useState(true);
+    const [showExitPopup, setShowExitPopup] = useState(false);
+    const [pauseGame, setPauseGame] = useState(false);
 
     const handleUser1Score = (score) => {
         setUser1Score(score);
@@ -204,8 +206,10 @@ const LocalGameLogic = ({ paddleColor, keys, username }) => {
         }
 
         function game() {
-            update();
-            render();
+            if (!pauseGame){
+                update();
+                render();
+            }
         }
 
         let framePerSecond = 50;
@@ -220,7 +224,7 @@ const LocalGameLogic = ({ paddleColor, keys, username }) => {
             clearInterval(speedInterval);
             window.removeEventListener('keydown', handleKeyDown);
         };
-    }, [paddleColor, keys]);
+    }, [paddleColor, keys, pauseGame]);
 
     const handleTimeout = () => {
         setGameRunning(false);
@@ -228,7 +232,17 @@ const LocalGameLogic = ({ paddleColor, keys, username }) => {
     };
 
     const handleExitGame = () => {
-        setGameRunning(false);
+        setPauseGame(true);
+        setShowExitPopup(true);
+    };
+
+    const confirmExitGame = (confirm) => {
+        setShowExitPopup(false);
+        if (confirm) {
+            setGameRunning(false);
+        } else {
+            setPauseGame(false);
+        }
     };
 
     if (!gameRunning) {
@@ -253,6 +267,17 @@ const LocalGameLogic = ({ paddleColor, keys, username }) => {
             <button className='exit-game-button' onClick={handleExitGame}>
                 <img src={exit} alt="exit" className='exit-logo'/>
             </button>
+            {showExitPopup && (
+                <div className="exit-popup">
+                    <div className="exit-popup-content">
+                        <h2>BACK TO LOBBY ?</h2>
+                        <div className="exit-popup-buttons">
+                            <button onClick={() => confirmExitGame(true)}>Yes</button>
+                            <button onClick={() => confirmExitGame(false)}>Cancel</button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };
