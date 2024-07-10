@@ -34,7 +34,7 @@ const SignIn = (props) => {
                 withCredentials: true
             });
             const accessToken = response?.data?.access;
-            setAuth({...signInValues, accessToken})
+            setAuth({username:signInValues.username, accessToken: accessToken})
             navigate('/leaderboard');
         } catch(err) {
             console.log(err)
