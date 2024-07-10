@@ -18,7 +18,7 @@ const Profil = () => {
   const {data ,isLoading, error} = useFetch('http://localhost:8000/auth/user/me/4')
 
   const handleAddFriend = async () => {
-    const url = `http://localhost:8000/user_management/friends/create/2/`;
+    const url = `http://localhost:8000/user/friends/create/2/`;
     try {
       const response = await fetch(url, {
         method: 'POST',

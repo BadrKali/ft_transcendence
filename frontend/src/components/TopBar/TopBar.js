@@ -17,8 +17,8 @@ const TopBar = () => {
   const [query, setQuery] = useState('');
   const [results, setResults] = useState([]);
   const [profilData, setProfilData] = useState([]);
-  const [queryEndpoint, setQueryEndpoint] = useState(`http://localhost:8000/user_management/search/?q=${query}`)
-  const response1 = useFetch('http://localhost:8000/auth/user/me/')
+  const [queryEndpoint, setQueryEndpoint] = useState(`http://localhost:8000/user/search/?q=${query}`)
+  const response1 = useFetch('http://localhost:8000/user/stats/')
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -43,7 +43,7 @@ const TopBar = () => {
  
 
   useEffect(() => {
-    setQueryEndpoint(`http://localhost:8000/user_management/search/?q=${query}`)
+    setQueryEndpoint(`http://localhost:8000/user/search/?q=${query}`)
   }, [query])
 
 

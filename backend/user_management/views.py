@@ -14,6 +14,7 @@ from game.models import Achievement
 from game.serializers import AchievementSerializer
 from django.conf import settings
 from authentication .models import User
+from authentication .serializers import CurrentUserSerializer
 
 
 
@@ -119,7 +120,7 @@ class SearchAPIView(APIView):
     def get(self, request, *args, **kwargs):
         query = request.query_params.get('q', '')
         if query:
-            results = Achievement.objects.filter(title__icontains=query)
-            serializer = AchievementSerializer(results, many=True)
+            results = User.objects.filter(username__icontains=query)
+            serializer = CurrentUserSerializer(results, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response({"results": []}, status=status.HTTP_200_OK)

@@ -3,7 +3,7 @@
     height: 100%;
     display: flex;
     align-items: center;
-    justify-content: space-evenly
+    justify-content: space-between
     /* gap: 30px; */
     /* border: 1px solid green; */
     /* flex-wrap: wrap; */
@@ -13,23 +13,29 @@
 
 .selected-avatar {
     border-radius:  50%;
-    width: 120px;
-    height: 120px;
+    width: 150px;
+    height: 150px;
     border: 3px solid red;
     transition: all 0.3s ease;
 }
 
 .avatar-item {
-    height: 90px;
-    width: 90px;
+    height: 100px;
+    width: 100px;
     cursor: pointer;
     border-radius:  50%;
     transition: all 0.3s ease;
 }
-
+/* 
+.avatar-item:hover {
+    height: 110px;
+    width: 110px;
+} */
 
 .avatar-item.active {
-    border: 3px solid #fff;
+    /* border: 3px solid #fff; */
+    height: 110px;
+    width: 110px;
 }
 
 
