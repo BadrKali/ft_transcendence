@@ -10,7 +10,8 @@ import LeaderBoard from './pages/LeaderBoard/LeaderBoard';
 import Setting from './pages/Setting/Setting';
 import SideBar from './components/SideBar/SideBar';
 import TopBar from './components/TopBar/TopBar';
-import BOT from './pages/PingPongGame/Bot/Bot';
+import Bot from './pages/PingPongGame/Bot/Bot';
+import LocalGame from './pages/PingPongGame/LocalGame/LocalGame';
 import { createBrowserRouter, Outlet, RouterProvider } from 'react-router-dom';
 import './App.css'
 import Auth from './pages/Auth/Auth';
@@ -67,8 +68,12 @@ const routes = [
     ]
   },
   {
-    element: <BOT />,
+    element: <Bot />,
     path: 'bot-game'
+  },
+  {
+    element: <LocalGame />,
+    path: 'local-game'
   },
 ];
 

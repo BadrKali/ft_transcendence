@@ -16,6 +16,8 @@ const LaunchButtons = ({ selectedMode, selectedBackground, selectedKeys, classNa
             setShowPlayerSelection(true);
         } else if (selectedMode === 'Pongy!') {
             navigate("/bot-game");
+        } else if (selectedMode === 'Local') {
+            navigate("/local-game");
         }
         }, 1000);
     };
