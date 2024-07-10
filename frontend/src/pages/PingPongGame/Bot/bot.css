@@ -1,5 +1,4 @@
 .pingponggame-container {
-    /* background-image: url("asstes/forest.png"); */
     width: 100%;
     height: 100vh;
     background-size: cover;
@@ -45,4 +44,18 @@
 }
 .exit-logo {
     width: 40px;
+}
+
+.loading-popup {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    font-size: 24px;
 }
