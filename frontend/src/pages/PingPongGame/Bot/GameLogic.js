@@ -10,7 +10,7 @@ import avatar from "../asstes/avatar3.png";
 import pongy from "../asstes/pongy.png";
 import exit from "../asstes/right-arrow.png";
 
-const GameLogic = ({paddleColor}) => {
+const GameLogic = ({paddleColor, keys, username}) => {
     const navigate = useNavigate();
     const canvasRef = useRef(null);
     const userRef = useRef({
@@ -81,19 +81,36 @@ const GameLogic = ({paddleColor}) => {
         }
 
         function handleKeyDown(evt) {
-            switch (evt.key) {
-                case 'ArrowUp':
-                    if (user.y > 0) {
-                        user.y -= 20;
-                    }
-                    break;
-                case 'ArrowDown':
-                    if (user.y < canvas.height - user.height) {
-                        user.y += 20;
-                    }
-                    break;
-                default:
-                    break;
+            if (keys === "ws") {
+                switch (evt.key) {
+                    case 'w':
+                        if (user.y > 0) {
+                            user.y -= 20;
+                        }
+                        break;
+                    case 's':
+                        if (user.y < canvas.height - user.height) {
+                            user.y += 20;
+                        }
+                        break;
+                    default:
+                        break;
+                }
+            } else {
+                switch (evt.key) {
+                    case 'ArrowUp':
+                        if (user.y > 0) {
+                            user.y -= 20;
+                        }
+                        break;
+                    case 'ArrowDown':
+                        if (user.y < canvas.height - user.height) {
+                            user.y += 20;
+                        }
+                        break;
+                    default:
+                        break;
+                }
             }
         }
 
@@ -213,7 +230,7 @@ const GameLogic = ({paddleColor}) => {
                  <ScoreBoard
                     user1Score={userScore}
                     user2Score={comScore}
-                    user1Name="MHABIB_A"
+                    user1Name={username}
                     user1Avatar={avatar}
                     user2Name="PONGY!"
                     user2Avatar={pongy}

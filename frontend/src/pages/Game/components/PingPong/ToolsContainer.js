@@ -9,15 +9,16 @@ import wKey from '../../Game-assets/w.png';
 const ToolsContainer = ( {className, onPaddleSelect, onKeysSelect}) => {
     const paddleColors = ['#BC4F00', '#33FF57', '#3357FF', '#F3FF33', '#FF33F5'];
     const [currentColorIndex, setCurrentColorIndex] = useState(0);
-
     const handleLeftClick = () => {
-        setCurrentColorIndex((prevIndex) => (prevIndex - 1 + paddleColors.length) % paddleColors.length);
-        onPaddleSelect(paddleColors[(currentColorIndex - 1 + paddleColors.length) % paddleColors.length]);
+        const newIndex = (currentColorIndex - 1 + paddleColors.length) % paddleColors.length;
+        setCurrentColorIndex(newIndex);
+        onPaddleSelect(paddleColors[newIndex]);
     };
 
     const handleRightClick = () => {
-        setCurrentColorIndex((prevIndex) => (prevIndex + 1) % paddleColors.length);
-        onPaddleSelect((prevIndex) => (prevIndex + 1) % paddleColors.length);
+        const newIndex = (currentColorIndex + 1) % paddleColors.length;
+        setCurrentColorIndex(newIndex);
+        onPaddleSelect(paddleColors[newIndex]);
     };
 
     const [selectedOption, setSelectedOption] = useState(null);

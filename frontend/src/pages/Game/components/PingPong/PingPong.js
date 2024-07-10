@@ -35,6 +35,7 @@ const PingPong = () => {
         const gameSettings = {
             background: selectedBackground,
             paddle: selectedPaddle,
+            keys: selectedKeys,
             gameMode: selectedMode,
         }
         try  {
