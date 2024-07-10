@@ -214,7 +214,7 @@ const LocalGameLogic = ({ paddleColor, keys, username }) => {
         const speedInterval = setInterval(() => {
             ball.speed += 1;
         }, 20000);
-        
+
         return () => {
             clearInterval(loop);
             clearInterval(speedInterval);

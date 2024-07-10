@@ -206,9 +206,12 @@ const GameLogic = ({paddleColor, keys, username}) => {
 
         let framePerSecond = 50;
         let loop = setInterval(game, 1000 / framePerSecond);
-
+        const speedInterval = setInterval(() => {
+            ball.speed += 1;
+        }, 20000);
         return () => {
             clearInterval(loop);
+            clearInterval(speedInterval);
             window.removeEventListener('keydown', handleKeyDown);
         };
     }, []);
