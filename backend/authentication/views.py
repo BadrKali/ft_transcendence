@@ -7,9 +7,10 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.views import APIView
 from django.shortcuts import get_object_or_404
-from .serializers import CurrentUserSerializer
+from .serializers import CurrentUserSerializer, CurrentUserSettingsSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from rest_framework_simplejwt.tokens import RefreshToken, TokenError
+
 # Create your views here.
 
 
@@ -23,19 +24,14 @@ class UserView(APIView):
 
 class CurrentUserView(APIView):
     def patch(self, request):
-        user_id = request.user.id
-        user = get_object_or_404(User, id=user_id)
-        serializer = CurrentUserSerializer(user, data=request.data, partial=True)
+        user = request.user
+        serializer = CurrentUserSettingsSerializer(user, data=request.data, partial=True, context={'request': request})
         if serializer.is_valid():
-            avatar_type = request.data.get('avatar_type')
-            avatar_file = request.FILES.get('avatar')
-            if avatar_file:
-                serializer.validated_data['avatar'] = avatar_file
-            elif avatar_type:
-                serializer.validated_data['avatar'] = f'avatars/{avatar_type}.png'
             serializer.save()
             return Response({"message" : "the user has been updated"}, status=status.HTTP_200_OK)
         return(Response(serializer.errors,  status=status.HTTP_400_BAD_REQUEST))
+        
+
 
 
 

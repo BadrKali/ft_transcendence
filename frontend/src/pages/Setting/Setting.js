@@ -14,11 +14,13 @@ const SETTING_ENDPOINT = "http://127.0.0.1:8000/auth/user/me/"
 
 const Setting = () => {
   const { auth }  = useAuth()
+  const [activeAvatar, setActiveAvatar] = useState(0);
+  
   const [updatedvalues, setUpdatedvalues] = useState({
     username : "",
     email : "",
-    current_password : "",
-    new_password : ""
+    old_password : "",
+    new_password : "",
   })
 
   const successNotify = () => {
@@ -114,7 +116,7 @@ const Setting = () => {
               <p>Update your information about you and details here</p>
             </div>
             <div className={Style.InputSection}>
-              <SettingInput label='Current Password' name="current_password" placeholder='********************' type='password' onChange={handleInputChange}/>
+              <SettingInput label='Current Password' name="old_password" placeholder='********************' type='password' onChange={handleInputChange}/>
               <SettingInput label='New Password' name="new_password" placeholder='********************' type='password' onChange={handleInputChange}/>
             </div>
           </div>
