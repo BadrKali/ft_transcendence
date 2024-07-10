@@ -16,7 +16,7 @@ const PingPong = () => {
         setSelectedBackground(background);
     };
 
-    const [selectedPaddle, setSelectedPaddle] = useState('hhhhh');
+    const [selectedPaddle, setSelectedPaddle] = useState("#BC4F00");
     const handlePaddleSelect = (paddle) => {
         setSelectedPaddle(paddle);
     };

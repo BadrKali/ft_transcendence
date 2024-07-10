@@ -13,7 +13,7 @@ const LaunchButtons = ({ selectedMode, selectedBackground, selectedKeys, classNa
             setShowModal(true);
         } else if (selectedMode === 'Invite') {
             setShowPlayerSelection(true);
-        } else if (selectedMode === 'Pongy!') {
+        } else {
             navigate("/pingponggame");
         }
     };
