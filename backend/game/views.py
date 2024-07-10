@@ -60,7 +60,7 @@ class GameSettingsView(APIView):
 
     def post(self, request):
         try:
-            # print(f"{request.data}")
+            print(f"{request.data}")
             player = Player.objects.get(user_id=request.user.id)
             game_settings = GameSettings.objects.filter(user=player).first()
 

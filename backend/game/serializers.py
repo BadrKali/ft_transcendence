@@ -22,7 +22,8 @@ class PlayerAchievementSerializer(serializers.ModelSerializer):
         fields = ['player', 'achievement', 'achieved_at']
 
 class GameSettingsSerializer(serializers.ModelSerializer):
+    user_name = serializers.ReadOnlyField(source='user.user.username')
     class Meta:
         model = GameSettings
-        fields = ['id', 'user', 'background', 'paddle', 'gameMode']
+        fields = ['id', 'user_name', 'background', 'paddle', 'keys' ,'gameMode']
         read_only_fields = ['user']
