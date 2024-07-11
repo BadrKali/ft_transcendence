@@ -34,7 +34,6 @@ class CurrentUserView(APIView):
 
 
 
-
 class UserRegistration(APIView):
     permission_classes = [AllowAny]
     def post(self, request):
