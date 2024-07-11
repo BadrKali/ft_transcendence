@@ -47,6 +47,22 @@ class TriggerAchievementView(APIView):
         return Response({"status": "Achievement sent"}, status=status.HTTP_200_OK)
     
 class GameSettingsView(APIView):
+    def post(self, request):
+        try:
+            print(f"{request.data}")
+            player, createdPlayer = Player.objects.get_or_create(user_id=request.user.id)
+            game_settings, created = GameSettings.objects.get_or_create(user=player)
+            if created:
+                print("A new GameSettings instance was created.")
+            else:
+                print("An existing GameSettings instance was retrieved.")
+            serializer = GameSettingsSerializer(instance=game_settings, data=request.data)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_200_OK)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        except Player.DoesNotExist:
+            return Response({"error": "Player not found"}, status=status.HTTP_404_NOT_FOUND)
     def get(self, request):
         try:
             player = Player.objects.get(user_id=request.user.id)
@@ -57,19 +73,4 @@ class GameSettingsView(APIView):
             return Response({"error": "Player not found"}, status=status.HTTP_404_NOT_FOUND)
         except GameSettings.DoesNotExist:
             return Response({"error": "GameSettings not found"}, status=status.HTTP_404_NOT_FOUND)
-
-    def post(self, request):
-        try:
-            print(f"{request.data}")
-            player = Player.objects.get(user_id=request.user.id)
-            game_settings = GameSettings.objects.filter(user=player).first()
-
-            serializer = GameSettingsSerializer(instance=game_settings, data=request.data)
-            if serializer.is_valid():
-                serializer.save()
-                return Response(serializer.data, status=status.HTTP_200_OK)
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-        except Player.DoesNotExist:
-            return Response({"error": "Player not found"}, status=status.HTTP_404_NOT_FOUND)
         
