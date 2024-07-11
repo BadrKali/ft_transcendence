@@ -51,7 +51,6 @@ class FriendInvitation(models.Model):
             raise ValidationError("A Player cannot send an invitation to themselves")
         super().save(*args, **kwargs)
 
-
 class Notifications(models.Model):
     to_player = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='to_player' ,on_delete=models.CASCADE)
     type = models.CharField(max_length=100)
@@ -61,7 +60,7 @@ class Notifications(models.Model):
 
     def __str__(self) -> str:
         return f"notification sent to {self.to_player.username}"
-    
+
 class Friendship(models.Model):
     player = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='friendships', on_delete=models.CASCADE)
     friend = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='friends_with', on_delete=models.CASCADE)
@@ -83,8 +82,6 @@ class Friendship(models.Model):
     def delete(self, *args, **kwargs):
         super().delete(*args, **kwargs)
         Friendship.objects.filter(player=self.friend, friend=self.player).delete()
-        
+
     def __str__(self):
         return f"{self.player.username} is friends with {self.friend.username}"
-    
-

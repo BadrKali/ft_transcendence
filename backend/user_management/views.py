@@ -45,13 +45,20 @@ class DeleteFriendshipView(APIView):
             return Response({"message": "Friendship deleted successfully."}, status=status.HTTP_204_NO_CONTENT)
         except Friendship.DoesNotExist:
             return Response({"error": "Friendship does not exist."}, status=status.HTTP_404_NOT_FOUND)
-             
+
+class CurrentFriendsListView(generics.ListAPIView):
+    serializer_class = FriendshipSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return Friendship.objects.filter(player=self.request.user)
+
 class FriendsListView(generics.ListAPIView):
     serializer_class = FriendshipSerializer
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        player_id = self.kwargs['player_id']  
+        player_id = self.kwargs['player_id']
         return Friendship.objects.filter(player_id=player_id)
 
 class BlockFriendView(APIView):
