@@ -25,5 +25,5 @@ class GameSettingsSerializer(serializers.ModelSerializer):
     user_name = serializers.ReadOnlyField(source='user.user.username')
     class Meta:
         model = GameSettings
-        fields = ['id', 'user_name', 'background', 'paddle', 'keys' ,'gameMode']
+        fields = '__all__'
         read_only_fields = ['user']
