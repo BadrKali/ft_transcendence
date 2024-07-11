@@ -14,7 +14,9 @@ const SETTING_ENDPOINT = "http://127.0.0.1:8000/auth/user/me/"
 
 const Setting = () => {
   const { auth }  = useAuth()
-  const [activeAvatar, setActiveAvatar] = useState(0);
+  const [activeAvatar, setActiveAvatar] = useState(null);
+  const [avatarFile, setAvatarFile] = useState(null);
+
   
   const [updatedvalues, setUpdatedvalues] = useState({
     username : "",
@@ -62,25 +64,29 @@ const Setting = () => {
         formData.append(key, updatedvalues[key])
       }
     }
+    if(avatarFile) {
+      formData.append('avatar', avatarFile)
+    }
+    else if (activeAvatar) {
+      formData.append('avatar_type', activeAvatar)
+    }
     try {
       const response = await axios.patch(SETTING_ENDPOINT, formData, {
         headers : {
-            'Content-Type' : 'application/json',
+            'Content-Type': 'multipart/form-data',
             'Authorization': `Bearer ${auth.accessToken}`,
         }
     });
     successNotify()
     } catch(e) {
-      console.log(e)
       errorNotify()
     } finally {
-      console.log("clear data")
+      // console.log("clear data")
     }
   }
 
   const handleInputChange = (e) => {
     setUpdatedvalues({ ...updatedvalues, [e.target.name]: e.target.value });
-    // console.log(updatedvalues)
 };
 
   return (
@@ -93,7 +99,7 @@ const Setting = () => {
             <p>Update your information about you and details here</p>
           </div>
           <div className={Style.Avatars}>
-            <AvatarSelect />
+            <AvatarSelect setActiveAvatar={setActiveAvatar} setAvatarFile={setAvatarFile} activeAvatar={activeAvatar} avatarFile={avatarFile}/>
           </div>
         </div>
         <form className={Style.form} onSubmit={handleFormSubmit}>
@@ -131,16 +137,16 @@ const Setting = () => {
           <button type="submit" onClick={handleFormSubmit} className={Style.SubmitButton}>Update</button>
         </form>
         <ToastContainer
-        position="top-right"
-        autoClose={5000}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-        theme="light"
+          position="top-right"
+          autoClose={5000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+          theme="light"
         />
       </div>
     </>
