@@ -104,6 +104,13 @@ class PlayerView(APIView):
     #     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         
 
+class GamePlayersView(APIView):
+    def get(self, request, player_id):
+        player = get_object_or_404(Player, user_id=player_id)
+        serializer = PlayerSerializer(player)
+        return(Response(serializer.data, status=status.HTTP_200_OK))
+
+
 
 class FrindInvitationsView(APIView):
     def get(self, request):
