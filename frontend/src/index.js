@@ -19,7 +19,7 @@ import Auth from './pages/Auth/Auth';
 import { AuthProvider } from './context/Auth/AuthProvider';
 import ProtectedRoutes from './components/ProtectedRoutes/ProtectedRoutes';
 import PersistLogin from './components/PersistLogin/PersistLogin';
-import AuthTwo from './components/AuthTwo/AuthTwo';
+import OauthTwo from './components/OauthTwo/OauthTwo';
 
 const AppLayout = () => {
   return (
@@ -48,7 +48,7 @@ const routes = [
     path: '/auth'
   },
   {
-    element: <AuthTwo/>,
+    element: <OauthTwo/>,
     path: '/42_api'
   },
   {

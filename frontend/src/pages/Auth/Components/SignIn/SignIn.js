@@ -9,7 +9,7 @@ import useAuth from '../../../../hooks/useAuth'
 
 
 const SIGNIN_URL = "/auth/token/"
-const CALLBACK_URL = ""
+const CALLBACK_URL = process.env.REACT_APP_CALLBACK_URL;
 
 const SignIn = (props) => {
     const [isHidden, setIsHidden] = useState('hide_pass')
@@ -47,7 +47,7 @@ const SignIn = (props) => {
             });
             const accessToken = response?.data?.access;
             setAuth({username:signInValues.username, accessToken: accessToken})
-            navigate('/leaderboard');
+            navigate('/');
         } catch(err) {
             console.log(err)
         } finally {

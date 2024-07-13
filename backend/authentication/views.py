@@ -12,6 +12,8 @@ from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from rest_framework_simplejwt.tokens import RefreshToken, TokenError
 import requests
 from user_management.models import Player
+import os
+import random
 # Create your views here.
 
 token_url = 'https://api.intra.42.fr/oauth/token'
@@ -104,10 +106,10 @@ class CallbackView(APIView):
             return Response({"error": "No code provided"}, status=400)
         data = {
             'grant_type'  : 'authorization_code',
-            'client_id'    : "",
-            'client_secret': "",
+            'client_id'    : os.getenv('CLIENT_ID'),
+            'client_secret': os.getenv('CLIENT_SECRET'),
             "code"         : code,
-            "redirect_uri" : "http://localhost:3000/42_api/"
+            "redirect_uri" : os.getenv('REDIRECT_URI')
         }
         response = requests.post(token_url, data=data)
         if response.status_code != 200:
@@ -119,13 +121,12 @@ class CallbackView(APIView):
         if user_info_response.status_code != 200:
             return Response({"error": "Failed to fetch user data"}, status=user_info_response.status_code)
         user_info = user_info_response.json()
-        print(f"asdjaklsdjaslkdj {user_info}")
         api_42_id = user_info['id']
         username = user_info['login']
         email = user_info.get('email', '')
-        user, created = User.objects.get_or_create(api_42_id=api_42_id, defaults={'username': username, 'email': email})
+        avatarList = [0, 1, 2, 4]
+        user, created = User.objects.get_or_create(api_42_id=api_42_id, defaults={'username': f"{username}{api_42_id}", 'avatar' : f'avatars/{random.choice(avatarList)}.png','email': email})
         # khasni nzid wa7ed check ila ken l user already exist 
-        # player = Player.objects.create(user=user)
         refresh = RefreshToken.for_user(user)
         access_token = str(refresh.access_token)
         refresh_token = str(refresh)
