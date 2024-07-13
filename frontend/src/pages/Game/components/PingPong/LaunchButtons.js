@@ -18,6 +18,8 @@ const LaunchButtons = ({ selectedMode, selectedBackground, selectedKeys, classNa
             navigate("/bot-game");
         } else if (selectedMode === 'Local') {
             navigate("/local-game");
+        } else if (selectedMode === 'Random') {
+            navigate("/random-game");
         }
         }, 1000);
     };

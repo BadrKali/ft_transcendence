@@ -11,6 +11,7 @@ import Setting from './pages/Setting/Setting';
 import SideBar from './components/SideBar/SideBar';
 import TopBar from './components/TopBar/TopBar';
 import Bot from './pages/PingPongGame/Bot/Bot';
+import Random from './pages/PingPongGame/Random/Random';
 import LocalGame from './pages/PingPongGame/LocalGame/LocalGame';
 import { createBrowserRouter, Outlet, RouterProvider } from 'react-router-dom';
 import './App.css'
@@ -74,6 +75,10 @@ const routes = [
   {
     element: <LocalGame />,
     path: 'local-game'
+  },
+  {
+    element: <Random/>,
+    path: 'random-game'
   },
 ];
 

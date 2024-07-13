@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import local from "../../Game-assets/local.png";
 import invite from "../../Game-assets/invite.png";
 import pongy from "../../Game-assets/pongy.png";
+import random from "../../Game-assets/random.png";
 import leftArrow from "../../Game-assets/leftFlesh.png";
 import rightArrow from "../../Game-assets/rightFlesh.png";
 
@@ -9,7 +10,8 @@ const GameMode = ({ className, setSelectedMode }) => {
     const modes = [
         { name: "Invite", img: invite },
         { name: "Local", img: local },
-        { name: "Pongy!", img: pongy }
+        { name: "Pongy!", img: pongy },
+        { name: "Random", img: random},
     ];
 
     const [selectedModeIndex, setSelectedModeIndex] = useState(0);
@@ -49,7 +51,7 @@ const GameMode = ({ className, setSelectedMode }) => {
                 <img 
                     src={rightArrow} 
                     className="arrow-icon" 
-                    alt="Right Arrow" 
+                    alt="Right Arrow"
                     onClick={handleRightClick} 
                 />
             </div>
