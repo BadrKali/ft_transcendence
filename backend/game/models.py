@@ -66,3 +66,9 @@ class GameSettings(models.Model):
     gameMode = models.CharField(max_length=255, default="flesh")
     def __str__(self):
         return f"{self.background} {self.paddle} {self.gameMode}"
+
+class GameRoom(models.Model):
+    player1 = models.ForeignKey(Player, related_name='player1', on_delete=models.CASCADE, null=True, blank=True)
+    player2 = models.ForeignKey(Player, related_name='player2', on_delete=models.CASCADE, null=True, blank=True)
+    is_waiting = models.BooleanField(default=True)
+    creatred_at = models.DateTimeField(auto_now_add=True)
