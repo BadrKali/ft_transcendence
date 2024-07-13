@@ -97,6 +97,7 @@ class UnblockFriendView(APIView):
  
 class PlayerView(APIView):
     def get(self, request):
+        print(request.user.id)
         player_id = request.user.id
         player = get_object_or_404(Player, user_id=player_id)
         serializer = PlayerSerializer(player)

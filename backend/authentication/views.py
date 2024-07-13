@@ -10,8 +10,14 @@ from django.shortcuts import get_object_or_404
 from .serializers import CurrentUserSerializer, CurrentUserSettingsSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from rest_framework_simplejwt.tokens import RefreshToken, TokenError
-
+import requests
+from user_management.models import Player
 # Create your views here.
+
+token_url = 'https://api.intra.42.fr/oauth/token'
+user_info_url = 'https://api.intra.42.fr/v2/me'
+
+
 
 
 class UserView(APIView):
@@ -81,6 +87,52 @@ class CustomTokenRefreshView(TokenRefreshView):
         serializer = self.get_serializer(data={'refresh': refresh_token})
         serializer.is_valid(raise_exception=True)
         response = Response(serializer.validated_data, status=status.HTTP_200_OK)
+        response.set_cookie(
+            key='refresh',
+            value=refresh_token,
+            httponly = True,
+            #more options to add when nedded 
+        )
+        return response
+    
+
+class CallbackView(APIView):
+    permission_classes = [AllowAny]
+    def post(self, request, *args, **kwargs):
+        code = request.data.get('code')
+        if not code:
+            return Response({"error": "No code provided"}, status=400)
+        data = {
+            'grant_type'  : 'authorization_code',
+            'client_id'    : "",
+            'client_secret': "",
+            "code"         : code,
+            "redirect_uri" : "http://localhost:3000/42_api/"
+        }
+        response = requests.post(token_url, data=data)
+        if response.status_code != 200:
+            return Response({"error": "Failed to fetch token"}, status=response.status_code)
+        access_token = response.json().get('access_token')
+        headers = {'Authorization': f'Bearer {access_token}'}
+        user_info_response = requests.get(user_info_url, headers=headers)
+
+        if user_info_response.status_code != 200:
+            return Response({"error": "Failed to fetch user data"}, status=user_info_response.status_code)
+        user_info = user_info_response.json()
+        print(f"asdjaklsdjaslkdj {user_info}")
+        api_42_id = user_info['id']
+        username = user_info['login']
+        email = user_info.get('email', '')
+        user, created = User.objects.get_or_create(api_42_id=api_42_id, defaults={'username': username, 'email': email})
+        # khasni nzid wa7ed check ila ken l user already exist 
+        # player = Player.objects.create(user=user)
+        refresh = RefreshToken.for_user(user)
+        access_token = str(refresh.access_token)
+        refresh_token = str(refresh)
+        response_data = {
+            'access': access_token
+        }
+        response = Response(response_data, status=status.HTTP_200_OK)
         response.set_cookie(
             key='refresh',
             value=refresh_token,

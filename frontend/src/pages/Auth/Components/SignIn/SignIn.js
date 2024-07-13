@@ -1,25 +1,37 @@
-import React, { useState, useContext } from 'react'
+import React, { useState, useContext, useEffect } from 'react'
 import './SignIn.css'
 import Icon from '../../../../assets/Icon/icons'
 import { assets } from '../../../../assets/assets'
 import AuthContext from '../../../../context/Auth/AuthProvider'
 import axios from '../../../../api/axios'
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import useAuth from '../../../../hooks/useAuth'
 
+
 const SIGNIN_URL = "/auth/token/"
+const CALLBACK_URL = ""
 
 const SignIn = (props) => {
+    const [isHidden, setIsHidden] = useState('hide_pass')
+    const [errorMsg, setErrorMsg] = useState("")
     const {setAuth} = useAuth( )
     const navigate = useNavigate();
+    const location = useLocation()
+
+
+
     const [signInValues, setSignInValues] = useState({
         username: "",
         password: ""
     })
-    const [errorMsg, setErrorMsg] = useState("")
+
     function handleSignUpClick() {
         props.setIsLogin(false)
       }
+    function handle42Click() {
+        // navigate('/api_42')
+        window.location.href = CALLBACK_URL;
+    }
 
     const handleSignInSubmit = async (e) => {
         e.preventDefault();
@@ -43,10 +55,28 @@ const SignIn = (props) => {
         }   
     }
 
+    // useEffect(() => {
+    //     const searchParams = new URLSearchParams(location.search);
+    //     const code = searchParams.get('code');
+
+    //     if (code) {
+    //         axios.post("/auth/callback/", { code })
+    //             .then(response => {
+    //                 const accessToken = response.data.access_token;
+    //                 setAuth({ accessToken });
+    //                 console.log(accessToken)
+    //                 navigate('/leaderboard');
+    //             })
+    //             .catch(error => {
+    //                 console.error('Error during authentication', error);
+    //                 setErrorMsg("Failed to authenticate with 42 School.");
+    //             });
+    //     }
+    // }, [location, setAuth, navigate]);
+
     function handleInputChange(e) {
         setSignInValues({ ...signInValues, [e.target.name]: e.target.value });
     }
-    const [isHidden, setIsHidden] = useState('hide_pass')
   return (
     <div className='signin-container'>
         <div className='signin-header'>
@@ -85,7 +115,7 @@ const SignIn = (props) => {
             <div className='signin-sep-s'></div>
         </div>
         <div className='school_auth'>
-            <img src={assets.SchoolIcon}/>
+            <img src={assets.SchoolIcon} onClick={handle42Click}/>
         </div>
         <div className='signin-text-bottom'>
             <p>Don’t have an account ? <span onClick={handleSignUpClick}>Sign Up here</span></p>
