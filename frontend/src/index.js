@@ -19,6 +19,7 @@ import Auth from './pages/Auth/Auth';
 import { AuthProvider } from './context/Auth/AuthProvider';
 import ProtectedRoutes from './components/ProtectedRoutes/ProtectedRoutes';
 import PersistLogin from './components/PersistLogin/PersistLogin';
+import AuthTwo from './components/AuthTwo/AuthTwo';
 
 const AppLayout = () => {
   return (
@@ -45,6 +46,10 @@ const routes = [
   {
     element: <Auth />,
     path: '/auth'
+  },
+  {
+    element: <AuthTwo/>,
+    path: '/42_api'
   },
   {
     element: <PersistLogin />,
@@ -86,9 +91,9 @@ const router = createBrowserRouter(routes);
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-  <React.StrictMode>
+  // <React.StrictMode>
     <AuthProvider>
       <RouterProvider router={router}/>
     </AuthProvider>
-  </React.StrictMode>
+  // </React.StrictMode>
 );
