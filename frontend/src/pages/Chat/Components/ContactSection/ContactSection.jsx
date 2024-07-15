@@ -84,7 +84,9 @@ const ContactSection = ({selectedIndex, handleConversationSelect}) => {
 {
   ChatList.length ? 
     <div className={style.ConversationContainer}>
-        {ChatList.map((DataObj, index) => {
+        {ChatList.filter((userdata) =>{
+          return search.toLowerCase() === '' ? userdata : userdata.username.toLowerCase().includes(search.toLowerCase().replace(/\s+/g, ' '))
+        }).map((DataObj, index) => {
           return (<ChatConversation
             key={index}
             ConversationData={DataObj}

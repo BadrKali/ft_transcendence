@@ -241,7 +241,7 @@ export const ChatList = [
 
   {
     id: 10,
-    username: "CHARDAN Anola boldsgkhg ghsgho djsjksk kw  wdkh ",
+    username: "CHARDAN Anola bol",
     lastMessage: "Hello abdellai ait talb is ok",
     Time: "9.32 PM",
     unread: 2,
