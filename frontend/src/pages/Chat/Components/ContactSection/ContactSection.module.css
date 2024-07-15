@@ -6,9 +6,7 @@
     grid-template-rows: 80px 80px 1fr;
     border-radius: 6px;
     background-color:#1C1E27;
-    
     overflow: auto;
-
 }
 
 .MessageString{
@@ -31,20 +29,16 @@
     display: grid;
     grid-template-columns: 1fr;
     grid-template-rows: 100px;
-    gap: 20px; 
+    gap: 15px; 
     grid-auto-rows: 100px;
     overflow: auto;
     margin-top: 30px;
-    margin-bottom: 40px;
+    margin-bottom: 45px;
 
 }
 
 .ConversationContainer::-webkit-scrollbar {
     display: none;
-}
-
-.DiscussionBack{
-
 }
 
 @keyframes SLideToRight {
@@ -70,7 +64,6 @@
     animation-name: SLideToRight;
     animation-duration: 1s;
     animation-timing-function: ease-in;
-    /* animation-delay: 0s; */
 }
 
 .FriendPhoto{
@@ -94,6 +87,10 @@
 }
 
 .FriendName{
+    width: 100px;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
     letter-spacing: 0.5px;
     font-size: 22px;
     font-family: 'Rajdhani', sans-serif;
@@ -161,3 +158,43 @@
     font-weight: bold;
     font-size:13px;
 }
+
+
+/* BREAKPOINT => 1800 px / 16  */
+@media  only screen and (max-width: 112.5rem){
+    .FriendPhoto{ /*-7px*/ width: 62px; height: 62px; }
+
+    .FriendName{ font-weight: bold; letter-spacing: 0px; font-size: 18px; /*-4*/ }
+
+    .LastMessage{ font-size: 13.6px; }
+
+    .SendTime{ font-size: 10.6px; /* -3 */}
+    
+    .unreadedMsgHolder{     width: 20px;  height: 20px;}
+    
+    .UnreadMessages{    font-size:10px;/* -3*/ }
+
+    .ConversationContainer{
+        gap: 5px;
+        margin-bottom: 15px;
+    }
+}
+
+@media  only screen and (max-width: 104.125rem){
+    .ContactSection{
+         grid-row: 1 /-1;
+    }
+    .ConversationContainer{
+        gap: 0px; 
+    }
+    .FriendPhoto{ width: 55px; height: 55px;}
+
+    
+    .unreadedMsgHolder{     width: 17px;  height: 17px; justify-self: start; margin-left: 20px;}
+    
+    .UnreadMessages{    font-size:10px;/* -3*/ }
+
+    .SendTime{     justify-self: start; margin-left: 10px;}
+
+}
+

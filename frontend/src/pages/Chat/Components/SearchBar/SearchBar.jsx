@@ -14,12 +14,16 @@ const SearchIcon = () => {
     </svg>)
 }
 
-const SearchBar = () => {
-    const [search, setSearch] = useState('');
-    function handleSearch(e){
-        setSearch(e.target.value);
-    }
+const SearchBar = ({search, setSearch}) => {
 
+    function handleSearch(e){
+        console.log('join Change')
+        setSearch(e.target.value);
+        if(search){
+            
+        }
+
+    }
   return (
         <div className={style.GlobalSearchHolder}>
         <SearchIcon />

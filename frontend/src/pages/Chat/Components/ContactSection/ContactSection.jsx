@@ -24,17 +24,14 @@ const SendToNoneFriend = () =>{
 // a big name the front will be ugly
 
 function LastMessageFormater(lastMessage){
-  if (lastMessage.length > 30 ){
-    return (`${lastMessage.slice(0, 25)} ...`);
+  if (lastMessage.length > 15 ){
+    return (`${lastMessage.slice(0, 15)} ...`);
   }
   return lastMessage;
 }
 
-
 const ChatConversation = ({ ConversationData, selectedIndex, onSelectConversation }) => {
-  
-  console.log(ConversationData.messages);
-  
+    
   function HandleClick() {
     onSelectConversation(ConversationData.id); // Pass ID to parent callback
   }
@@ -70,14 +67,19 @@ const ChatConversation = ({ ConversationData, selectedIndex, onSelectConversatio
 
 const ContactSection = ({selectedIndex, handleConversationSelect}) => {
 
+  const [search, setSearch] = useState('');
+  const [searchResult, setSearchResult] = useState([]);
+
   return (
     <div className={style.ContactSection}> 
-    <SearchBar />
+    <SearchBar search={search} setSearch={setSearch}
+    searchResult={searchResult} setSearchResult={setSearchResult}
+    />
+    
     <div className={style.MessageNotePencilHolder}>
       <p className={style.MessageString}> Messages</p>
       <SendToNoneFriend />
     </div>
-
 
 {
   ChatList.length ? 

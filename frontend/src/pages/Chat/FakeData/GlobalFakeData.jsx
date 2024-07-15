@@ -19,7 +19,7 @@ const ChatHistory = [
       "Lahila yasalaaaam awdi fchkel hadchi 3awtanni",
       "wah wah akhali Wah","wah wah akhali Wah","wah wah akhali Wah","wah wah akhali Wah","wah wah akhali Wah","wah wah akhali Wah","wah wah akhali Wah","wah wah akhali Wah","wah wah akhali Wah","wah wah akhali Wah","wah wah akhali Wah",
     ],
-    outgoingMsgs: ["Lay7fdek", "ta sir a3awed Lrassek", "Wayih fchkel Hadchi 1"],
+    outgoingMsgs: ["Lay7fdek", "ta sir a3awed Lrassek", "Wayih fchkel Hadchi waaah waah hada Blaan 3awtaannnnii"],
   },
   {
     msg_id: 2,
@@ -196,7 +196,7 @@ export const ChatList = [
 
   {
     id: 6,
-    username: "Boutalaght flanit",
+    username: "Boutalaght flan",
     lastMessage: "ok ok",
     Time: "9.32 PM",
     unread: 1,
@@ -230,7 +230,7 @@ export const ChatList = [
   {
     id: 9,
 
-    username: "CHARDAN ABOLA",
+    username: "CHARDAN ABOLA89",
     lastMessage: "Hello abdellai ait talb is ok",
     Time: "9.32 PM",
     unread: 3,
@@ -241,7 +241,7 @@ export const ChatList = [
 
   {
     id: 10,
-    username: "CHARDAN Anola",
+    username: "CHARDAN Anola boldsgkhg ghsgho djsjksk kw  wdkh ",
     lastMessage: "Hello abdellai ait talb is ok",
     Time: "9.32 PM",
     unread: 2,

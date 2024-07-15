@@ -204,8 +204,8 @@ const ChatMainHolder = () => {
 {
    
   JoinedMessages.map((elem, index) => {
-    return index % 2 ? <MessageDisplayer message={elem}  IsIncoming={true}/>  :
-                        <MessageDisplayer message={elem}  IsIncoming={false}/>
+    return index % 2 ? <MessageDisplayer  key={index} message={elem}  IsIncoming={true}/>  :
+                        <MessageDisplayer  key={index} message={elem}  IsIncoming={false}/>
   })
 }
       </div> : 
