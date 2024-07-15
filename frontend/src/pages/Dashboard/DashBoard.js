@@ -10,11 +10,11 @@ const DashBoard = () => {
   const [profilData, setProfilData] = useState([]);
 
   const {data ,isLoading, error} = useFetch('http://localhost:8000/user/stats')
-  useEffect(() => {
-    if (data) {
-      setProfilData(data);
-    }
-  }, [data]);
+  // useEffect(() => {
+  //   if (data) {
+  //     setProfilData(data);
+  //   }
+  // }, [data]);
 
   return (
     <div className='dashboard-contianer'>

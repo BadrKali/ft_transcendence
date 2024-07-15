@@ -7,13 +7,16 @@ import avatar4 from './avatar4.png'
 import addAvatar from './addAvatar.png'
 import SchoolIcon from './school_icon.png'
 import sep from './sep.png'
+import google from './google.png'
+
 
 export const assets = {
     logo,
     loginBackground,
     SchoolIcon,
     sep,
-    addAvatar
+    addAvatar,
+    google
     
 }
 

@@ -14,11 +14,9 @@ const CALLBACK_URL = process.env.REACT_APP_CALLBACK_URL;
 const SignIn = (props) => {
     const [isHidden, setIsHidden] = useState('hide_pass')
     const [errorMsg, setErrorMsg] = useState("")
-    const {setAuth} = useAuth( )
+    const {setAuth} = useAuth()
     const navigate = useNavigate();
     const location = useLocation()
-
-
 
     const [signInValues, setSignInValues] = useState({
         username: "",
@@ -114,9 +112,15 @@ const SignIn = (props) => {
             <div>Or</div>
             <div className='signin-sep-s'></div>
         </div>
-        <div className='school_auth'>
-            <img src={assets.SchoolIcon} onClick={handle42Click}/>
+        <div className='school_auth' onClick={handle42Click}>
+            <img src={assets.SchoolIcon}/>
+            <p>Sign In With 42</p>
         </div>
+        <div className='school_auth' onClick={handle42Click}>
+            <img src={assets.google}/>
+            <p>Sign In With Google</p>
+        </div>
+        
         <div className='signin-text-bottom'>
             <p>Don’t have an account ? <span onClick={handleSignUpClick}>Sign Up here</span></p>
         </div>

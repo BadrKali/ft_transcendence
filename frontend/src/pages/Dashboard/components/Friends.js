@@ -15,9 +15,6 @@ function Friends() {
                     <FriendsItem key={history.id} history={history}/>
               ))}
             </div>
-            <div className='buttonAddFriends'>
-              <button><p>ADD FRIEND</p></button>
-            </div>
         </div>
     </div>
   )

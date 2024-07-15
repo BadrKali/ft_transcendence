@@ -34,6 +34,7 @@ import {ReactComponent as visiteProfil} from './visiteProfil.svg'
 import { ReactComponent as inviteToGame} from './InviteToGame.svg'
 import {ReactComponent as block} from './Block.svg'
 import {ReactComponent as startMessage} from './startMessage.svg'
+import {ReactComponent as google} from './google.svg'
 
 // import { ReactComponent as school_icon } from './school_icon.png'
 
@@ -74,7 +75,7 @@ const icons = {
     VisiteProfil: visiteProfil,
     InviteToGame: inviteToGame,
     Block : block,
-    StartMessage: startMessage
+    StartMessage: startMessage,
     // school_icon: school_icon
 }
 
