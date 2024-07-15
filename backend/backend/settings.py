@@ -163,7 +163,7 @@ CORS_ALLOW_CREDENTIALS = True
 
 CHANNEL_LAYERS = {
     "default": {
-        "BACKEND": "channels.layers.InMemoryChannelLayer"
+        "BACKEND": "channels.layers.InMemoryChannelLayer",
     }
 }
 
