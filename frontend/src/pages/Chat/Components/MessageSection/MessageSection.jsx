@@ -109,6 +109,8 @@ const ChatInput = () =>{
   const [ImportItemsClicked, setImportClicked] = useState(false);
   const [message, setMessage] = useState('');
   const inputRef = useRef(null);
+  const [selectedImage, setSelectedImage] = useState(null);
+  const [selectedFile, setSelectedFile] = useState(null);
 
 
   function handleWritedMessage(e){
@@ -133,6 +135,18 @@ const ChatInput = () =>{
     return -1;
   };
 
+  function handleImageSelect(e){
+    console.log(e.target.files[0])
+    setSelectedImage(() => e.target.files[0])
+
+  }
+
+  function handleFileSelect(e){
+    console.log(e.target.files[0])
+    setSelectedFile(e.target.files[0])
+  }
+  
+
   return(
   <div className={styles.ChatInputHolder}>
 {
@@ -141,11 +155,13 @@ const ChatInput = () =>{
     <div  className={styles.ImportOptions} style={{display: ImportItemsClicked ? 'flex' : 'none'}}>
       
       <div className={styles.ImageBack}> 
-        <Image onClick={()=> {alert('Import Image yalah')}} className={styles.ImportImage} size={40} />
+        <label htmlFor="uploadImagebtn"><Image className={styles.ImportImage} size={40} /> </label>
+        <input type="file" name="-photo-" id='uploadImagebtn' className='upload-input' onChange={handleImageSelect} accept="image/*" />
       </div>
 
       <div className={styles.FilesBack}>
-        <Files onClick={()=> {alert('Import File yalah')}} className={styles.ImportFiles} size={40} />
+        <label htmlFor="uploadFileBtn"> <Files className={styles.ImportFiles} size={40} /> </label>
+        <input type="file" name="-FILE-" id='uploadFileBtn' className='upload-input' onChange={handleFileSelect} accept=".txt,.cpp,.c,.jsx,.py" />
       </div>
 
     </div>

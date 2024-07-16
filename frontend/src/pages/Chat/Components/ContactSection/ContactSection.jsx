@@ -1,12 +1,12 @@
-import React, { useState,useContext } from 'react'
-import style from './ContactSection.module.css'
-import SearchBar from '../SearchBar/SearchBar.jsx'
-import {NotePencil} from 'phosphor-react'
-import src from '../../ChatAssets/download.jpeg'
-import NoOneTotalkTo from '../../ChatAssets/NoOneTotalkTo.json'
-import Lottie from 'lottie-react'
-import {ChatList} from '../../FakeData/GlobalFakeData.jsx'
-import   {UserMsgContext} from '../../Chat.jsx';
+import    React, { useState,useContext } from 'react'
+import    style                          from './ContactSection.module.css'
+import    SearchBar                      from '../SearchBar/SearchBar.jsx'
+import    {NotePencil}                   from 'phosphor-react'
+import    src                            from '../../ChatAssets/download.jpeg'
+import    NoOneTotalkTo                  from '../../ChatAssets/NoOneTotalkTo.json'
+import    Lottie                         from 'lottie-react'
+import    {ChatList}                     from '../../FakeData/GlobalFakeData.jsx'
+import    {UserMsgContext}               from '../../Chat.jsx';
 
 
 const SendToNoneFriend = () =>{
