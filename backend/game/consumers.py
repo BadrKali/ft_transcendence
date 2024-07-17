@@ -1,13 +1,9 @@
-import logging
 from channels.generic.websocket import AsyncWebsocketConsumer
 from asgiref.sync import sync_to_async
 import json
-
 import jwt
 from django.conf import settings
 from django.contrib.auth import get_user_model
-from channels.generic.websocket import AsyncWebsocketConsumer
-import logging
 
 class GameConsumer(AsyncWebsocketConsumer):
     async def connect(self):
@@ -49,7 +45,6 @@ class GameConsumer(AsyncWebsocketConsumer):
     async def receive(self, text_data):
         data = json.loads(text_data)
         action = data.get('action')
-
     #     if action == 'random':
     #         await self.handle_random_mode()
 
