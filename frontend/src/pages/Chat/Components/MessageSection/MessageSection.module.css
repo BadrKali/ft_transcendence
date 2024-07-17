@@ -356,6 +356,12 @@
     opacity: 0.5;
 }
 
+#uploadBtn{
+    background-color: #F62943;
+    width: 200px;
+    height: 200px;
+}
+
 @media  only screen and (max-width: 104.125rem){
     .MessageSectionFull{
         grid-row: 2 / -1;

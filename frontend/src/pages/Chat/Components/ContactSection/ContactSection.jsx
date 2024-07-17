@@ -1,12 +1,12 @@
-import React, { useState,useContext } from 'react'
-import style from './ContactSection.module.css'
-import SearchBar from '../SearchBar/SearchBar.jsx'
-import {NotePencil} from 'phosphor-react'
-import src from '../../ChatAssets/download.jpeg'
-import NoOneTotalkTo from '../../ChatAssets/NoOneTotalkTo.json'
-import Lottie from 'lottie-react'
-import {ChatList} from '../../FakeData/GlobalFakeData.jsx'
-import   {UserMsgContext} from '../../Chat.jsx';
+import    React, { useState,useContext } from 'react'
+import    style                          from './ContactSection.module.css'
+import    SearchBar                      from '../SearchBar/SearchBar.jsx'
+import    {NotePencil}                   from 'phosphor-react'
+import    src                            from '../../ChatAssets/download.jpeg'
+import    NoOneTotalkTo                  from '../../ChatAssets/NoOneTotalkTo.json'
+import    Lottie                         from 'lottie-react'
+import    {ChatList}                     from '../../FakeData/GlobalFakeData.jsx'
+import    {UserMsgContext}               from '../../Chat.jsx';
 
 
 const SendToNoneFriend = () =>{
@@ -20,8 +20,6 @@ const SendToNoneFriend = () =>{
     size={32} color="#ffffff" weight="light" />
   )
 }
-// Don't Forget to check For username lenght it will be ugly if you have 
-// a big name the front will be ugly
 
 function LastMessageFormater(lastMessage){
   if (lastMessage.length > 15 ){
@@ -33,7 +31,7 @@ function LastMessageFormater(lastMessage){
 const ChatConversation = ({ ConversationData, selectedIndex, onSelectConversation }) => {
     
   function HandleClick() {
-    onSelectConversation(ConversationData.id); // Pass ID to parent callback
+    onSelectConversation(ConversationData.id);
   }
 
   return (
@@ -68,13 +66,10 @@ const ChatConversation = ({ ConversationData, selectedIndex, onSelectConversatio
 const ContactSection = ({selectedIndex, handleConversationSelect}) => {
 
   const [search, setSearch] = useState('');
-  const [searchResult, setSearchResult] = useState([]);
 
   return (
     <div className={style.ContactSection}> 
-    <SearchBar search={search} setSearch={setSearch}
-    searchResult={searchResult} setSearchResult={setSearchResult}
-    />
+    <SearchBar search={search} setSearch={setSearch} />
     
     <div className={style.MessageNotePencilHolder}>
       <p className={style.MessageString}> Messages</p>
