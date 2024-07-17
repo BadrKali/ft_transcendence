@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
-
+import useAuth from '../../../hooks/useAuth';
 const Random = () => {
-    let socket = new WebSocket('ws://localhost:8000/ws/game/');
+    const { auth } = useAuth();
     const [message, setMessage] = useState("");
-
+    console.log("Current accessToken:", auth.accessToken);
     useEffect(() => {
+        const socket = new WebSocket(`ws://localhost:8000/ws/game/?token=${auth.accessToken}`);
         socket.onopen = () => {
             setMessage("WebSocket connection established");
             console.log("WebSocket connection established.");
