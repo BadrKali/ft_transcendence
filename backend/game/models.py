@@ -72,3 +72,14 @@ class GameRoom(models.Model):
     player2 = models.ForeignKey(Player, related_name='player2', on_delete=models.CASCADE, null=True, blank=True)
     is_waiting = models.BooleanField(default=True)
     creatred_at = models.DateTimeField(auto_now_add=True)
+
+    def add_player(self, player):
+        if not self.player1:
+            self.player1 = player
+        elif not self.player2:
+            self.player2 = player
+        else:
+            raise ValueError("Room is already full")
+        if self.player1 and self.player2:
+            self.is_waiting = False
+        self.save()

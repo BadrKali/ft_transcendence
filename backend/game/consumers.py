@@ -4,6 +4,7 @@ import json
 import jwt
 from django.conf import settings
 from django.contrib.auth import get_user_model
+from jwt.exceptions import ExpiredSignatureError, InvalidTokenError
 
 class GameConsumer(AsyncWebsocketConsumer):
     async def connect(self):
@@ -15,7 +16,6 @@ class GameConsumer(AsyncWebsocketConsumer):
                 break
 
         if not token:
-            print("Token not provided")
             await self.close()
             return
 
@@ -23,81 +23,90 @@ class GameConsumer(AsyncWebsocketConsumer):
             payload = jwt.decode(token, settings.SECRET_KEY, algorithms=['HS256'])
             user_id = payload.get('user_id')
             if not user_id:
-                raise jwt.InvalidTokenError("User ID not found in token")
-
+                raise InvalidTokenError("User ID not found in token")
             User = get_user_model()
             self.user = await sync_to_async(User.objects.get)(id=user_id)
-
             if self.user.is_authenticated:
-                print(f"Authenticated User: {self.user.username}, User ID: {self.user.id}")
                 await self.accept()
+                self.player = await self.get_player(self.user)
             else:
-                print("User is not authenticated")
                 await self.close()
-        except User.DoesNotExist:
-            print("User does not exist")
+        except (ExpiredSignatureError, InvalidTokenError, User.DoesNotExist) as e:
+            print(f"Connection error: {e}")
             await self.close()
 
     async def disconnect(self, close_code):
+        # await self.leave_room()
         print("User disconnected")
-        pass
 
     async def receive(self, text_data):
         data = json.loads(text_data)
         action = data.get('action')
-    #     if action == 'random':
-    #         await self.handle_random_mode()
 
-    # async def handle_random_mode(self):
-    #     room = await sync_to_async(self.find_or_create_room)()
+        if action == "random":
+            await self.handle_random_action()
 
-    #     player = await sync_to_async(self.get_player)()
+    async def handle_random_action(self):
+        room = await self.find_or_create_room()
+        if room and not room.is_waiting:
+            await self.notify_players(room)
 
-    #     if room.player1 == player:
-    #         await self.send(text_data=json.dumps({
-    #             'message': 'Waiting for another player...'
-    #         }))
-    #     else:
-    #         await self.channel_layer.group_add(f"room_{room.id}", self.channel_name)
-    #         await self.channel_layer.group_send(
-    #             f"room_{room.id}",
-    #             {
-    #                 'type': 'start_game',
-    #                 'room_id': room.id
-    #             }
-    #         )
-        
-    # def find_or_create_room(self):
+    @sync_to_async
+    def get_player(self, user):
+        from user_management.models import Player
+        return Player.objects.get(user=user)
+
+    async def find_or_create_room(self):
+        from .models import GameRoom
+        room = await sync_to_async(GameRoom.objects.filter(is_waiting=True).first)()
+        if room:
+            self.room_id = room.id
+            await sync_to_async(room.add_player)(self.player)
+            self.room_name = f"game_room_{room.id}"
+        else:
+            room = await sync_to_async(GameRoom.objects.create)(player1=self.player)
+            self.room_name = f"game_room_{room.id}"
+            self.room_id = room.id
+
+        self.room_group_name = self.room_name
+        await self.channel_layer.group_add(self.room_group_name, self.channel_name)
+        print(f"{room}")
+        return room
+
+    async def notify_players(self, room):
+        message = {
+            'type': 'game.start',
+            'message': 'Both players are connected. The game can start now!'
+        }
+        await self.channel_layer.group_send(
+            self.room_group_name,
+            {
+                'type': 'send_message',
+                'message': message
+            }
+        )
+
+    async def send_message(self, event):
+        message = event['message']
+        await self.send(text_data=json.dumps(message))
+
+    # async def leave_room(self):
     #     from .models import GameRoom
-    #     from user_management.models import Player
+    #     room = await sync_to_async(GameRoom.objects.get)(id=self.room_id)
+    #     if room.player1 == self.player:
+    #         room.player1 = None
+    #     elif room.player2 == self.player:
+    #         room.player2 = None
 
-    #     try:
-    #         player_instance = self.get_player()
+    #     if room.player1 is None and room.player2 is None:
+    #         await sync_to_async(room.delete)()
 
-    #         room = GameRoom.objects.filter(is_waiting=True).first()
-    #         if room:
-    #             room.player2 = player_instance
-    #             room.is_waiting = False
-    #             room.save()
-    #         else:
-    #             room = GameRoom.objects.create(player1=player_instance, is_waiting=True)
+    #     await sync_to_async(room.save)()
 
-    #         return room
-    #     except Exception as e:
-    #         logger.error(f"Error finding or creating room: {e}")
-    #         raise
+    #     await self.channel_layer.group_discard(
+    #         self.room_group_name,
+    #         self.channel_name
+    #     )
 
-    # def get_player(self):
-    #     from user_management.models import Player
-    #     player, created = Player.objects.get_or_create(user_id=self.user.id)
-    #     if created:
-    #         print("Player created with id {self.user.id}")
-
-    #     return player
-
-    # def start_game(self, event):
-    #     room_id = event['room_id']
-    #     self.send(text_data=json.dumps({
-    #         'action': 'start_game',
-    #         'room_id': room_id,
-    #     }))
+    #     self.room_id = None
+    #     await self.save_state()
