@@ -1,5 +1,6 @@
 from channels.generic.websocket import AsyncWebsocketConsumer
 from asgiref.sync import sync_to_async
+from channels.db import database_sync_to_async
 import json
 import jwt
 from django.conf import settings
@@ -36,7 +37,7 @@ class GameConsumer(AsyncWebsocketConsumer):
             await self.close()
 
     async def disconnect(self, close_code):
-        # await self.leave_room()
+        await self.leave_room()
         print("User disconnected")
 
     async def receive(self, text_data):
@@ -70,13 +71,18 @@ class GameConsumer(AsyncWebsocketConsumer):
 
         self.room_group_name = self.room_name
         await self.channel_layer.group_add(self.room_group_name, self.channel_name)
-        print(f"{room}")
         return room
-
     async def notify_players(self, room):
+        if room.player1 == self.player:
+            player = self.player
+        else:
+            player = room.player2
+
         message = {
             'type': 'game.start',
-            'message': 'Both players are connected. The game can start now!'
+            'message': 'start_game',
+            'action': 'start_game',
+            'room_id': room.id
         }
         await self.channel_layer.group_send(
             self.room_group_name,
@@ -90,23 +96,35 @@ class GameConsumer(AsyncWebsocketConsumer):
         message = event['message']
         await self.send(text_data=json.dumps(message))
 
-    # async def leave_room(self):
-    #     from .models import GameRoom
-    #     room = await sync_to_async(GameRoom.objects.get)(id=self.room_id)
-    #     if room.player1 == self.player:
-    #         room.player1 = None
-    #     elif room.player2 == self.player:
-    #         room.player2 = None
+    async def leave_room(self):
+            player = self.player
+            game_room = await self.get_game_room(player)
+            
+            if game_room:
+                await self.update_game_room(game_room, player)
+        
+    @database_sync_to_async
+    def get_game_room(self, player):
+        from .models import GameRoom
+        try:
+            game_room = GameRoom.objects.filter(player1=player).first()
+        except GameRoom.DoesNotExist:
+            try:
+                game_room = GameRoom.objects.filter(player2=player).first()
+            except GameRoom.DoesNotExist:
+                return None
+        return game_room
 
-    #     if room.player1 is None and room.player2 is None:
-    #         await sync_to_async(room.delete)()
-
-    #     await sync_to_async(room.save)()
-
-    #     await self.channel_layer.group_discard(
-    #         self.room_group_name,
-    #         self.channel_name
-    #     )
-
-    #     self.room_id = None
-    #     await self.save_state()
+    @database_sync_to_async
+    def update_game_room(self, game_room, player):
+        if game_room.player1 == player:
+            print(f"{player} has quit {game_room}")
+            game_room.player1 = None
+        elif game_room.player2 == player:
+            print(f"{player} has quit {game_room}")
+            game_room.player2 = None
+        if not game_room.player1 and not game_room.player2:
+            game_room.delete()
+            print(f"{game_room} deleted")
+        else:
+            game_room.save()

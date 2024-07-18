@@ -83,3 +83,14 @@ class GameRoom(models.Model):
         if self.player1 and self.player2:
             self.is_waiting = False
         self.save()
+
+    def leave_room(self, player):
+        if self.player1 == player:
+            self.player1 = None
+        elif self.player2 == player:
+            self.player2 = None
+        
+        if not self.player1 and not self.player2:
+            self.delete()
+        else:
+            self.save()

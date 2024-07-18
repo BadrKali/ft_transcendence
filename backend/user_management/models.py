@@ -25,9 +25,6 @@ class Player(models.Model):
 
     def __str__(self) -> str:
         return self.user.username
-                    
-
-
 
 class FriendInvitation(models.Model):
     INVITATION_CHOICES = [
