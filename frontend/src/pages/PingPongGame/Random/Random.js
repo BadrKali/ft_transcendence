@@ -15,7 +15,11 @@ const Random = () => {
     const [paddle, setPaddle] = useState(null);
     const [keys, setKeys] = useState(null);
     const [username, setUserName] = useState('');
+    const [roomId, setRoomId] = useState(null);
     const [room, setRoom] = useState(null);
+    const [roomLoading, setRoomIsLoading] = useState(null);
+    const [roomError, setRoomError] = useState(null);
+    
     useEffect(() => {
         if (!isLoading && gameSettings) {
             if (gameSettings.background === 'hell') {
@@ -34,43 +38,47 @@ const Random = () => {
         const socket = new WebSocket(`ws://localhost:8000/ws/game/?token=${auth.accessToken}`);
         socket.onopen = () => {
             setMessage("WebSocket connection established");
-            console.log("WebSocket connection established.");
             socket.send(JSON.stringify({ action: 'random' }));
         };
-
+        
         socket.onmessage = (event) => {
             const data = JSON.parse(event.data);
-            console.log("Received:", data);
             if (data.action === 'start_game') {
                 setMessage(`Game starting in room: ${data.room_id}`);
+                setRoomId(data.room_id);
             } else if (data.message) {
                 setMessage(data.message);
             }
         };
-
+        
         socket.onclose = (event) => {
             setMessage("WebSocket connection closed");
-            console.log("WebSocket connection closed:", event);
         };
-
+        
         socket.onerror = (error) => {
             setMessage("WebSocket connection error");
-            console.log("WebSocket error:", error);
         };
-
+        
         return () => {
             socket.close();
         };
     }, []);
+    const { data: roomData, isLoading: roomisLoading, error: roomerror} = useFetch(`http://localhost:8000/api/game/game-room/${roomId}`);
+    
+    useEffect(() => {
+        if (roomId) {
+            setRoom(roomData);
+            setRoomIsLoading(roomisLoading);
+            setRoomError(roomerror);
+        }
+    }, [roomId]);
 
     return (
         <div className="pingponggame-container random-game" style={{ backgroundImage: `url(${background})` }}>
             <h1>{message || "Searching for a game..."}</h1>
-            {/* {playerIsLoading && <p>Loading...</p>}
-            {playerError && <p>Error: {playerError.message}</p>}
-            {player && (
-                <h1>{JSON.stringify(player, null, 2)}</h1>
-            )} */}
+            {room && (
+                <h1>{JSON.stringify(room, null, 2)}</h1>
+            )}
         </div>
     );
 }
