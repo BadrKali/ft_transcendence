@@ -71,7 +71,7 @@ class GameRoom(models.Model):
     player1 = models.ForeignKey(Player, related_name='player1', on_delete=models.CASCADE, null=True, blank=True)
     player2 = models.ForeignKey(Player, related_name='player2', on_delete=models.CASCADE, null=True, blank=True)
     is_waiting = models.BooleanField(default=True)
-    creatred_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(auto_now_add=True)
 
     def add_player(self, player):
         if not self.player1:

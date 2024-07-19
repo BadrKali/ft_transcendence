@@ -7,8 +7,8 @@ from rest_framework import status
 from rest_framework.views import APIView
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
-from .models import GameHistory, Achievement, PlayerAchievement, GameSettings
-from .serializers import GameHistorySerializer, AchievementSerializer, PlayerAchievementSerializer, GameSettingsSerializer
+from .models import GameHistory, Achievement, PlayerAchievement, GameSettings, GameRoom
+from .serializers import GameHistorySerializer, AchievementSerializer, PlayerAchievementSerializer, GameSettingsSerializer, GameRoomSerializer
 from user_management.models import Player
 
 
@@ -74,3 +74,13 @@ class GameSettingsView(APIView):
         except GameSettings.DoesNotExist:
             return Response({"error": "GameSettings not found"}, status=status.HTTP_404_NOT_FOUND)
         
+class GameRoomView(APIView):
+    def get(self, request, room_id):
+        try:
+            room = GameRoom.objects.get(id=room_id)
+            print(f"{room.player1}")
+            print(f"{room.player2}")
+            serializer = GameRoomSerializer(room)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except GameRoom.DoesNotExist:
+            return Response({"error": "Game room not found"}, status=status.HTTP_404_NOT_FOUND)

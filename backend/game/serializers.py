@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import GameHistory, Achievement, PlayerAchievement, GameSettings
+from .models import GameHistory, Achievement, PlayerAchievement, GameSettings, GameRoom
 from user_management.serializers import PlayerSerializer
 
 class GameHistorySerializer(serializers.ModelSerializer):
@@ -27,3 +27,8 @@ class GameSettingsSerializer(serializers.ModelSerializer):
         model = GameSettings
         fields = '__all__'
         read_only_fields = ['user']
+
+class GameRoomSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = GameRoom
+        fields = ['id', 'player1', 'player2', 'is_waiting', 'created_at']
