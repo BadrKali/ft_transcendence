@@ -9,32 +9,11 @@ from jwt.exceptions import ExpiredSignatureError, InvalidTokenError
 
 class GameConsumer(AsyncWebsocketConsumer):
     async def connect(self):
-        query_string = self.scope['query_string'].decode()
-        token = None
-        for param in query_string.split('&'):
-            if param.startswith('token='):
-                token = param.split('=')[1]
-                break
-
-        if not token:
+        if self.scope['user'].is_anonymous:
             await self.close()
-            return
-
-        try:
-            payload = jwt.decode(token, settings.SECRET_KEY, algorithms=['HS256'])
-            user_id = payload.get('user_id')
-            if not user_id:
-                raise InvalidTokenError("User ID not found in token")
-            User = get_user_model()
-            self.user = await sync_to_async(User.objects.get)(id=user_id)
-            if self.user.is_authenticated:
-                await self.accept()
-                self.player = await self.get_player(self.user)
-            else:
-                await self.close()
-        except (ExpiredSignatureError, InvalidTokenError, User.DoesNotExist) as e:
-            print(f"Connection error: {e}")
-            await self.close()
+        else:
+            await self.accept()
+            self.player = await self.get_player(self.scope['user'])
 
     async def disconnect(self, close_code):
         await self.leave_room()
