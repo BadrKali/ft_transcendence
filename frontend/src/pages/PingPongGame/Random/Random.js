@@ -4,11 +4,10 @@ import hell from "../asstes/hell.png";
 import forest from "../asstes/forest.png";
 import graveyard from "../asstes/graveyard.png";
 import useFetch from '../../../hooks/useFetch';
-import "./random.css"
+import "./random.css";
 
 const Random = () => {
-    const { data: gameSettings, isLoading, error } = useFetch('http://localhost:8000/api/game/game-settings/current-user/');
-    const { data: player, playerIsLoading, playerError } = useFetch('http://localhost:8000/user/stats/');
+    const { data: gameSettings, isLoading: gameSettingsLoading } = useFetch('http://localhost:8000/api/game/game-settings/current-user/');
     const { auth } = useAuth();
     const [message, setMessage] = useState("");
     const [background, setBackground] = useState(null);
@@ -16,12 +15,14 @@ const Random = () => {
     const [keys, setKeys] = useState(null);
     const [username, setUserName] = useState('');
     const [roomId, setRoomId] = useState(null);
-    const [room, setRoom] = useState(null);
-    const [roomLoading, setRoomIsLoading] = useState(null);
-    const [roomError, setRoomError] = useState(null);
-    
+    const [player1Id, setPlayer1Id] = useState(null);
+    const [player2Id, setPlayer2Id] = useState(null);
+    const { data: room, isLoading: roomLoading, error: roomError } = useFetch(roomId ? `http://localhost:8000/api/game/game-room/${roomId}` : null);
+    const { data: player1, isLoading: player1Loading, error: player1Error } = useFetch(player1Id ? `http://localhost:8000/user/stats/${player1Id}` : null);
+    const { data: player2, isLoading: player2Loading, error: player2Error } = useFetch(player2Id ? `http://localhost:8000/user/stats/${player2Id}` : null);
+
     useEffect(() => {
-        if (!isLoading && gameSettings) {
+        if (!gameSettingsLoading && gameSettings) {
             if (gameSettings.background === 'hell') {
                 setBackground(hell);
             } else if (gameSettings.background === 'forest') {
@@ -29,29 +30,35 @@ const Random = () => {
             } else if (gameSettings.background === 'graveyard') {
                 setBackground(graveyard);
             }
-            setPaddle(gameSettings.paddle)
-            setKeys(gameSettings.keys)
-            setUserName(gameSettings.user_name)
+            setPaddle(gameSettings.paddle);
+            setKeys(gameSettings.keys);
+            setUserName(gameSettings.user_name);
         }
-    }, [isLoading, gameSettings]);
+    }, [gameSettingsLoading, gameSettings]);
+
     useEffect(() => {
+        if (!auth.accessToken) return;
+
         const socket = new WebSocket(`ws://localhost:8000/ws/game/?token=${auth.accessToken}`);
+        
         socket.onopen = () => {
             setMessage("WebSocket connection established");
             socket.send(JSON.stringify({ action: 'random' }));
         };
         
-        socket.onmessage = (event) => {
+        socket.onmessage = async (event) => {
             const data = JSON.parse(event.data);
             if (data.action === 'start_game') {
                 setMessage(`Game starting in room: ${data.room_id}`);
                 setRoomId(data.room_id);
+            } else if (data.action === 'connected') {
+                setMessage(`You are connected`);
             } else if (data.message) {
                 setMessage(data.message);
             }
         };
-        
-        socket.onclose = (event) => {
+
+        socket.onclose = () => {
             setMessage("WebSocket connection closed");
         };
         
@@ -62,25 +69,25 @@ const Random = () => {
         return () => {
             socket.close();
         };
-    }, []);
-    const { data: roomData, isLoading: roomisLoading, error: roomerror} = useFetch(`http://localhost:8000/api/game/game-room/${roomId}`);
-    
+    }, [auth.accessToken]);
+
     useEffect(() => {
-        if (roomId) {
-            setRoom(roomData);
-            setRoomIsLoading(roomisLoading);
-            setRoomError(roomerror);
+        if (room) {
+            setPlayer1Id(room.player1);
+            setPlayer2Id(room.player2);
         }
-    }, [roomId]);
+    }, [room]);
 
     return (
         <div className="pingponggame-container random-game" style={{ backgroundImage: `url(${background})` }}>
             <h1>{message || "Searching for a game..."}</h1>
             {room && (
-                <h1>{JSON.stringify(room, null, 2)}</h1>
+                <>
+                    <h1>{player1?.username} and {player2?.username}</h1>
+                </>
             )}
-        </div>
+        </div> 
     );
-}
+};
 
 export default Random;

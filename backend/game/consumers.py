@@ -14,6 +14,10 @@ class GameConsumer(AsyncWebsocketConsumer):
         else:
             await self.accept()
             self.player = await self.get_player(self.scope['user'])
+            await self.send(text_data=json.dumps({
+                'action': 'connected',
+                'message': 'Connection established'
+            }))
 
     async def disconnect(self, close_code):
         await self.leave_room()
@@ -52,10 +56,6 @@ class GameConsumer(AsyncWebsocketConsumer):
         await self.channel_layer.group_add(self.room_group_name, self.channel_name)
         return room
     async def notify_players(self, room):
-        if room.player1 == self.player:
-            player = self.player
-        else:
-            player = room.player2
 
         message = {
             'type': 'game.start',
