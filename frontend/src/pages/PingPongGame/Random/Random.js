@@ -6,7 +6,7 @@ import graveyard from "../asstes/graveyard.png";
 import useFetch from '../../../hooks/useFetch';
 import "./random.css";
 import Waiting from './Waiting';
-
+import PlayerInfo from './PlayerInfo';
 
 const Random = () => {
     const { data: gameSettings, isLoading: gameSettingsLoading } = useFetch('http://localhost:8000/api/game/game-settings/current-user/');
@@ -82,10 +82,10 @@ const Random = () => {
 
     return (
         <div className="pingponggame-container random-game" style={{ backgroundImage: `url(${background})` }}>
-            {room && (
-                <>
-                    <h1>{player1?.username} and {player2?.username}</h1>
-                </>
+            {room && player1 && player2 && (
+                <div className="player-info-container">
+                    <PlayerInfo player1={player1} player2={player2}/>
+                </div>
             )}
             {showWaiting && (
                 <Waiting/>
