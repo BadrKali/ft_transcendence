@@ -5,6 +5,8 @@ import forest from "../asstes/forest.png";
 import graveyard from "../asstes/graveyard.png";
 import useFetch from '../../../hooks/useFetch';
 import "./random.css";
+import Waiting from './Waiting';
+
 
 const Random = () => {
     const { data: gameSettings, isLoading: gameSettingsLoading } = useFetch('http://localhost:8000/api/game/game-settings/current-user/');
@@ -17,6 +19,7 @@ const Random = () => {
     const [roomId, setRoomId] = useState(null);
     const [player1Id, setPlayer1Id] = useState(null);
     const [player2Id, setPlayer2Id] = useState(null);
+    const [showWaiting, setShowWaiting] = useState(false);
     const { data: room, isLoading: roomLoading, error: roomError } = useFetch(roomId ? `http://localhost:8000/api/game/game-room/${roomId}` : null);
     const { data: player1, isLoading: player1Loading, error: player1Error } = useFetch(player1Id ? `http://localhost:8000/user/stats/${player1Id}` : null);
     const { data: player2, isLoading: player2Loading, error: player2Error } = useFetch(player2Id ? `http://localhost:8000/user/stats/${player2Id}` : null);
@@ -42,17 +45,16 @@ const Random = () => {
         const socket = new WebSocket(`ws://localhost:8000/ws/game/?token=${auth.accessToken}`);
         
         socket.onopen = () => {
-            setMessage("WebSocket connection established");
             socket.send(JSON.stringify({ action: 'random' }));
         };
         
         socket.onmessage = async (event) => {
             const data = JSON.parse(event.data);
             if (data.action === 'start_game') {
-                setMessage(`Game starting in room: ${data.room_id}`);
+                setShowWaiting(false)
                 setRoomId(data.room_id);
             } else if (data.action === 'connected') {
-                setMessage(`You are connected`);
+                setShowWaiting(true);
             } else if (data.message) {
                 setMessage(data.message);
             }
@@ -80,11 +82,13 @@ const Random = () => {
 
     return (
         <div className="pingponggame-container random-game" style={{ backgroundImage: `url(${background})` }}>
-            <h1>{message || "Searching for a game..."}</h1>
             {room && (
                 <>
                     <h1>{player1?.username} and {player2?.username}</h1>
                 </>
+            )}
+            {showWaiting && (
+                <Waiting/>
             )}
         </div> 
     );
