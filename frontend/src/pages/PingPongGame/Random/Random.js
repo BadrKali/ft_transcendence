@@ -23,6 +23,7 @@ const Random = () => {
     const { data: room, isLoading: roomLoading, error: roomError } = useFetch(roomId ? `http://localhost:8000/api/game/game-room/${roomId}` : null);
     const { data: player1, isLoading: player1Loading, error: player1Error } = useFetch(player1Id ? `http://localhost:8000/user/stats/${player1Id}` : null);
     const { data: player2, isLoading: player2Loading, error: player2Error } = useFetch(player2Id ? `http://localhost:8000/user/stats/${player2Id}` : null);
+    const { data: currentUser, isLoading:currentIsLoading, error: currentError } = useFetch(`http://localhost:8000/user/stats`);
 
     useEffect(() => {
         if (!gameSettingsLoading && gameSettings) {
@@ -55,6 +56,7 @@ const Random = () => {
                 setRoomId(data.room_id);
             } else if (data.action === 'connected') {
                 setShowWaiting(true);
+                setRoomId(data.room_id);
             } else if (data.message) {
                 setMessage(data.message);
             }
@@ -79,7 +81,6 @@ const Random = () => {
             setPlayer2Id(room.player2);
         }
     }, [room]);
-
     return (
         <div className="pingponggame-container random-game" style={{ backgroundImage: `url(${background})` }}>
             {room && player1 && player2 && (
@@ -88,7 +89,7 @@ const Random = () => {
                 </div>
             )}
             {showWaiting && (
-                <Waiting/>
+                <Waiting player={currentUser}/>
             )}
         </div> 
     );
