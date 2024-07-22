@@ -9,35 +9,17 @@ import Icon from '../../assets/Icon/icons'
 import { useNavigate } from 'react-router-dom';
 import { useParams } from 'react-router-dom';
 import useAuth from '../../hooks/useAuth'
+import { useLocation } from 'react-router-dom';
 
 const Profil = () => {
   const { userId } = useParams();
   const [profilData, setProfilData] = useState([]);
   const navigate = useNavigate();
   const { auth }  = useAuth()
-  const {data ,isLoading, error} = useFetch('http://localhost:8000/auth/user/me/4')
+  const location = useLocation();
+  const { userData } = location.state || {};
+  const {data ,isLoading, error} = useFetch(`http://localhost:8000/user/stats/${userData.id}`)
 
-  const handleAddFriend = async () => {
-    const url = `http://localhost:8000/user/friends/create/2/`;
-    try {
-      const response = await fetch(url, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${auth.accessToken}`
-        },
-      });
-
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
-      }
-
-      const data = await response.json();
-      console.log('Friend created:', data);
-    } catch (error) {
-      console.error('Error creating friend:', error);
-    }
-  };
 
   useEffect(() => {
     if (data) {
@@ -53,7 +35,7 @@ const Profil = () => {
     <div className='dashboard-contianer'>
        <div className='profil-icons'>
           <div className='profil-buttons'>
-            <div className='AddFriend-button profil-button' onClick={handleAddFriend}>
+            <div className='AddFriend-button profil-button'>
                 <Icon name='AddFriend' className='Add-Friend profil-icon' />
                 <p>add Friend</p>
             </div>
