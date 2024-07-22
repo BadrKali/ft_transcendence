@@ -1,11 +1,14 @@
-.AchievmentsItemContainer{
+.AchievmentsItemContainer {
     display: flex;
     align-items: center;
     padding: 10px;
     width: 100%;
-    /* border-bottom: solid 1px #11141B; */
-
 }
+
+.unlockedAchiev {
+    filter: blur(1px);
+}
+
 
 .IconContainer{
    width: 70px; 
@@ -35,3 +38,4 @@
     padding-top: 5px;
     font-size: 12px;
 }
+

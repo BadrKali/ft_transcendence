@@ -4,7 +4,7 @@ from django.core.exceptions import ValidationError
 from user_management.models import Player
 from authentication.models import User
 
-def achievment_image_upload_path(instance, filename):
+def achievement_image_upload_path(instance, filename):
     return f"Achievments/{filename}"
 
 class GameHistory(models.Model):
@@ -44,19 +44,20 @@ class GameHistory(models.Model):
 class Achievement(models.Model):
     title = models.CharField(max_length=100)
     description = models.TextField()
-    image = models.ImageField(upload_to=achievment_image_upload_path)
+    image = models.ImageField(upload_to=achievement_image_upload_path)
     task = models.TextField()
 
     def __str__(self):
         return self.title
 
-class PlayerAchievement(models.Model):
-    player = models.ForeignKey(Player, on_delete=models.CASCADE)
+class UserAchievement(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     achievement = models.ForeignKey(Achievement, on_delete=models.CASCADE)
+    unlocked = models.BooleanField(default=False)
     achieved_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"{self.player} - {self.achievement.title}"
+        return f"{self.user.username} - {self.achievement.title}"
 
 class GameSettings(models.Model):
     user = models.ForeignKey(Player, on_delete=models.CASCADE, blank=True, null=True)

@@ -64,7 +64,7 @@ const Profil = () => {
                 <MatchHistory /> 
                 </div>
                 <div className="achievments-container-profil">
-                <Achievments />
+                <Achievments userId={userData.id}/>
                 </div>
               </div>
           </div>

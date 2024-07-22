@@ -14,10 +14,12 @@ import requests
 from user_management.models import Player
 import os
 import random
+from game.models import  Achievement,UserAchievement
 # Create your views here.
 
 token_url = 'https://api.intra.42.fr/oauth/token'
 user_info_url = 'https://api.intra.42.fr/v2/me'
+
 
 
 
@@ -55,10 +57,22 @@ class UserRegistration(APIView):
                 serializer.validated_data['avatar'] = f'avatars/{avatar_type}.png'
             else:
                 return Response({"message": "No avatar provided"}, status=status.HTTP_400_BAD_REQUEST)
-            serializer.save()
+            user = serializer.save()
+            self.unlock_first_register_achievement(user)
             return Response({"message": "User registered successfully"}, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
+    
+    def unlock_first_register_achievement(self, user):
+        achievement, _ = Achievement.objects.get_or_create(
+            title="Welcome Aboard",
+            defaults={'description': "Create your first account."}
+        )
+   
+        UserAchievement.objects.create(
+            user=user,
+            achievement=achievement,
+            unlocked=True
+        )
 
 class CustomTokenObtainPairView(TokenObtainPairView):
     def post(self, request, *args, **kwargs):
@@ -141,3 +155,4 @@ class CallbackView(APIView):
             #more options to add when nedded 
         )
         return response
+

@@ -63,6 +63,7 @@ const TopBar = () => {
     });
   };
 
+  console.log(results)
   return (
     <div className='topbar-container'>
       <div className='topbar-search'>

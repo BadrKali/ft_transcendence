@@ -7,8 +7,8 @@ from rest_framework import status
 from rest_framework.views import APIView
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
-from .models import GameHistory, Achievement, PlayerAchievement, GameSettings, GameRoom
-from .serializers import GameHistorySerializer, AchievementSerializer, PlayerAchievementSerializer, GameSettingsSerializer, GameRoomSerializer
+from .models import GameHistory, Achievement, UserAchievement, GameSettings, GameRoom
+from .serializers import GameHistorySerializer, AchievementSerializer, UserAchievementSerializer, GameSettingsSerializer, GameRoomSerializer
 from user_management.models import Player
 
 
@@ -19,16 +19,25 @@ class PlayerGameHistoryView(generics.ListAPIView):
         player_id = self.kwargs['player_id']
         return GameHistory.objects.filter(models.Q(winner_user_id=player_id) | models.Q(loser_user_id=player_id))
 
+
 class AchievementListView(APIView):
     def get(self, request):
         achievements = Achievement.objects.all()
         serializer = AchievementSerializer(achievements, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-class PlayerAchievementListView(APIView):
-    def get(self, request, player_id):
-        player_achievements = PlayerAchievement.objects.filter(player_id=player_id)
-        serializer = PlayerAchievementSerializer(player_achievements, many=True)
+class CurrentUserAchievementListView(APIView):
+    permission_classes = [IsAuthenticated]  
+    
+    def get(self, request):
+        user_achievements = UserAchievement.objects.filter(user=request.user)
+        serializer = UserAchievementSerializer(user_achievements, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+class SpecificUserAchievementListView(APIView):
+    def get(self, request, user_id):
+        user_achievements = UserAchievement.objects.filter(user_id=user_id)
+        serializer = UserAchievementSerializer(user_achievements, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 class TriggerAchievementView(APIView):
