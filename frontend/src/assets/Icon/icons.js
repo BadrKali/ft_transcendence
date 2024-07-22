@@ -35,6 +35,10 @@ import { ReactComponent as inviteToGame} from './InviteToGame.svg'
 import {ReactComponent as block} from './Block.svg'
 import {ReactComponent as startMessage} from './startMessage.svg'
 import {ReactComponent as google} from './google.svg'
+import {ReactComponent as Challangefriend} from './challangefriend.svg'
+import {ReactComponent as BlockFriend} from './blockFriend.svg'
+import {ReactComponent as ChatFriend} from './chatFriend.svg'
+import {ReactComponent as AddFriend} from './addFriend.svg'
 
 // import { ReactComponent as school_icon } from './school_icon.png'
 
@@ -76,6 +80,10 @@ const icons = {
     InviteToGame: inviteToGame,
     Block : block,
     StartMessage: startMessage,
+    AddFriend : AddFriend,
+    ChatFriend : ChatFriend,
+    Challangefriend : Challangefriend,
+    BlockFriend : BlockFriend,
     // school_icon: school_icon
 }
 

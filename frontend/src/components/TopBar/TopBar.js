@@ -58,8 +58,9 @@ const TopBar = () => {
     setQuery(e.target.value);
   };
   const handleItemClick = (result) => {
-    console.log('Clicked user:', result);
-    navigate(`/user/${result.title}`);
+    navigate(`/user/${result.username}`, {
+      state: { userData: result },
+    });
   };
 
   return (
