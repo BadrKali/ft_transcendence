@@ -23,6 +23,7 @@ const Random = () => {
     const [showWaiting, setShowWaiting] = useState(false);
     const [startGame, setStartGame] = useState(false);
     const [socket, setSocket] = useState(null);
+    const [game_state, setGameState ] = useState(null);
     const { data: room, isLoading: roomLoading, error: roomError } = useFetch(roomId ? `http://localhost:8000/api/game/game-room/${roomId}` : null);
     const { data: player1, isLoading: player1Loading, error: player1Error } = useFetch(player1Id ? `http://localhost:8000/user/stats/${player1Id}` : null);
     const { data: player2, isLoading: player2Loading, error: player2Error } = useFetch(player2Id ? `http://localhost:8000/user/stats/${player2Id}` : null);
@@ -64,6 +65,7 @@ const Random = () => {
                 setRoomId(data.room_id);
                 setPlayer1Id(data.player1_id);
                 setPlayer2Id(data.player2_id);
+                setGameState(data.game_state);
             } else if (data.action === 'connected') {
                 setShowWaiting(true);
                 setRoomId(data.room_id);
@@ -106,7 +108,7 @@ const Random = () => {
                 <GameLogic
                     player1={player1}
                     player2={player2}
-                    socket={socket}
+                    game_state={game_state}
                 />
             )}
         </div> 

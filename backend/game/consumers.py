@@ -7,17 +7,53 @@ from django.conf import settings
 from django.contrib.auth import get_user_model
 from jwt.exceptions import ExpiredSignatureError, InvalidTokenError
 
+class GameState:
+    def __init__(self):
+        self.state = {
+            'canvas': {
+                'width': 1384,
+                'height': 696,
+            },
+            'ball': {
+                'x': 1384 / 2,
+                'y': 696 / 2,
+                'radius': 10,
+                'velocityX': 5,
+                'velocityY': 5,
+                'speed': 7,
+                'color': "WHITE"
+            },
+            'net': {
+                'x': (1384 - 2) / 2,
+                'y': 0,
+                'height': 10,
+                'width': 2,
+                'color': "#D9D9D9"
+            }
+        }
+    
+    def get_state(self):
+        return self.state
+
+    def to_json(self):
+        import json
+        return json.dumps(self.state)
+
+        
 class GameConsumer(AsyncWebsocketConsumer):
     async def connect(self):
         if self.scope['user'].is_anonymous:
             await self.close()
         else:
             await self.accept()
+            self.game_state = GameState()
             self.player = await self.get_player(self.scope['user'])
             await self.send(text_data=json.dumps({
                 'action': 'connected',
-                'message': 'Connection established'
+                'message': 'Connection established',
+                'game_state': self.game_state.get_state()
             }))
+
 
     async def disconnect(self, close_code):
         await self.leave_room()
@@ -33,6 +69,7 @@ class GameConsumer(AsyncWebsocketConsumer):
     async def handle_random_action(self):
         room = await self.find_or_create_room()
         if room and not room.is_waiting:
+            self.game_state = GameState()
             await self.notify_players(room)
 
     @sync_to_async
@@ -61,7 +98,8 @@ class GameConsumer(AsyncWebsocketConsumer):
             'type': 'game.start',
             'message': 'start_game',
             'action': 'start_game',
-            'room_id': room.id
+            'room_id': room.id,
+            'game_state': self.game_state.get_state()
         }
         await self.channel_layer.group_send(
             self.room_group_name,
