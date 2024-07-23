@@ -14,6 +14,8 @@ const TopBar = () => {
   const [showNotif, setNotif] = useState(false)
   const [showSearch, setSearch] = useState(false)
   const dropdownRef = useRef(null);
+  const dropdownSearchRef = useRef(null);
+  const [isDropdownActive, setDropdownActive] = useState(false);
   const [query, setQuery] = useState('');
   const [results, setResults] = useState([]);
   const [profilData, setProfilData] = useState([]);
@@ -56,20 +58,43 @@ const TopBar = () => {
   
   const handleChange = (e) => {
     setQuery(e.target.value);
+    setDropdownActive(true);
   };
   const handleItemClick = (result) => {
+    console.log("good")
     navigate(`/user/${result.username}`, {
       state: { userData: result },
     });
+    setDropdownActive(false);
+    setQuery('');
+
   };
 
-  console.log(results)
+  const handleClickOutsideSearch = (event) => {
+    if (dropdownSearchRef.current && !dropdownSearchRef.current.contains(event.target)) {
+      setDropdownActive(false);
+    setQuery('');
+
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener('mousedown', handleClickOutsideSearch);
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutsideSearch);
+    };
+  }, []);
+
   return (
     <div className='topbar-container'>
       <div className='topbar-search'>
         <Icon name='search' className='topbar-search-icon'/>
         <input placeholder='Search' value={query}  type='text' onChange={handleChange}/>
-        <div className={results.length > 0 ? "search-dropDwon searchActiv" : "search-dropDwon"}>
+        <div 
+        ref={dropdownSearchRef} 
+        className={isDropdownActive && results.length > 0 ? "search-dropDwon searchActiv" : "search-dropDwon"}
+        >
         {results.map((result) => (
             <div 
               key={result.id} 
@@ -92,7 +117,7 @@ const TopBar = () => {
         <div className='profile-pic-container'>
           <div className='profile-pic'>
             {/* <div className='topbar-online-status'></div> */}
-            <img src={avatars[0].img}/>
+            <img src={`http://127.0.0.1:8000${profilData.avatar}`}/>
           </div>
           <span>{profilData.username}</span>
         </div>

@@ -108,18 +108,18 @@ class BlockUnblockView(APIView):
     pass
 
 
-# class CreateFriendshipView(APIView):
-#     def post(self, request, friend_id):
-#         player = request.user  
-#         friend = get_object_or_404(User, id=friend_id) 
+class CreateFriendshipView(APIView):
+    def post(self, request, friend_id):
+        player = request.user  
+        friend = get_object_or_404(User, id=friend_id) 
         
-#         friendship = Friendship(player=player, friend=friend) 
-#         try:
-#             friendship.full_clean()  
-#             friendship.save()
-#             return Response({"message": "Friendship created successfully."}, status=status.HTTP_201_CREATED)
-#         except ValidationError as e:
-#             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+        friendship = Friendship(player=player, friend=friend) 
+        try:
+            friendship.full_clean()  
+            friendship.save()
+            return Response({"message": "Friendship created successfully."}, status=status.HTTP_201_CREATED)
+        except ValidationError as e:
+            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
 
 # class DeleteFriendshipView(APIView):

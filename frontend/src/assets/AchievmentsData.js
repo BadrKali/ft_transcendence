@@ -11,8 +11,7 @@ const AchievmentsData = [
         "title": "First Serve",
         "description": "Complete your first game of Ping Pong.",
         "unlocked" : false,
-
-  "image": "Achiev1"
+        "image": "Achiev1"
 
       },
       {

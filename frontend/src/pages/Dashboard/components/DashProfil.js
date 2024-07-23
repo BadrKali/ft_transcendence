@@ -3,7 +3,7 @@ import  { useState, useEffect } from 'react';
 import './dashProfil.css'
 import { avatars } from '../../../assets/assets'
 
-function DashProfil() {
+function DashProfil({profilData}) {
   const [progress, setProgress] = useState('0%');
 
   useEffect(() => {
@@ -18,12 +18,12 @@ function DashProfil() {
         <div className="userInfo">
             <div className='userContainer'>
                 <div className="userImage" >
-                    <img src={avatars[0].img}/>
+                    <img src={`http://127.0.0.1:8000${profilData.avatar}`}/>
                 </div>
                 <div className="userProgress">
                     <div className="progresInfo">
                         <div className="nameRank">
-                            <h4>Perdoxii_noyat</h4>
+                            <h4>{profilData.username}</h4>
                             <h4>Rank : Gold</h4>
                         </div>
                         <div className="totalGames box">

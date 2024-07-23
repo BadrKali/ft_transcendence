@@ -18,7 +18,7 @@ function DashProfil({profil}) {
         <div className="userInfo">
             <div className='userContainer'>
                 <div className="userImage" >
-                    <img src={avatars[0].img}/>
+                    <img src={`http://127.0.0.1:8000${profil.avatar}`}/>
                 </div>
                 <div className="userProgress">
                     <div className="progresInfo">
