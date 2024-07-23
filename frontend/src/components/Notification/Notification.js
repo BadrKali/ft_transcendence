@@ -1,34 +1,42 @@
-import React, { useEffect } from 'react'
-import useAuth from '../../hooks/useAuth'
+import React, { useEffect, useState } from 'react';
+import useAuth from '../../hooks/useAuth';
 
 const Notification = () => {
-    const { auth } = useAuth()
-    useEffect(()=> {
-        const ws = new WebSocket(`ws://localhost:8000/ws/notifications/?token=${auth.accessToken}`)
-        ws.onopen = (event) => {
-            console.log("socket connected madafaka")
-        }
+    const { auth } = useAuth();
+    const [socket, setSocket] = useState(null);
+
+    useEffect(() => {
+        const ws = new WebSocket(`ws://localhost:8000/ws/notifications/?token=${auth.accessToken}`);
+
+        ws.onopen = () => {
+            console.log("WebSocket connected.");
+        };
+
         ws.onmessage = (event) => {
-            const data = JSON.parse(event.data)
-            console.log(data)
-            alert(data.message)
-        }
+            const data = JSON.parse(event.data);
+            console.log("Received message:", data);
+            alert(data.message);
+        };
 
-        ws.onclose = (event) => {
+        ws.onclose = () => {
+            console.log("WebSocket disconnected.");
+        };
 
-        }
+        ws.onerror = (error) => {
+            console.error("WebSocket error:", error);
+        };
 
-        ws.onerror = (event) => {
+        setSocket(ws);
 
-        }
+        return () => {
+            if (ws) {
+                ws.close();
+                console.log("WebSocket closed.");
+            }
+        };
+    }, [auth.accessToken]);
 
-        return() => {
-            ws.close()
-        }
-        
-    },[])
-  
-    return null
-}
+    return null;
+};
 
-export default Notification
+export default Notification;
