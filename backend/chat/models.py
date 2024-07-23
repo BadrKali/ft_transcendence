@@ -1,3 +1,20 @@
 from django.db import models
+from django.conf import settings
 
 # Create your models here.
+
+class Message(models.Model):
+    TEXT = 'T'
+    IMAGE = 'IMG'
+
+    messsage_types = [
+        (TEXT, 'T'),
+        (IMAGE, 'IMAGE')
+    ]
+    sender_id = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='message_sender', on_delete=models.CASCADE)
+    receiver_id = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='message_receiver', on_delete=models.CASCADE)
+    content = models.TextField(null=False)
+    content_type = models.CharField(max_length=3, choices=messsage_types)
+    seen = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+
