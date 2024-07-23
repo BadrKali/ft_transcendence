@@ -82,3 +82,15 @@ class Friendship(models.Model):
 
     def __str__(self):
         return f"{self.player.username} is friends with {self.friend.username}"
+    
+
+class BlockedUsers(models.Model):
+    blocker = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='blocker_user', on_delete=models.CASCADE)
+    blocked = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='blocked_user', on_delete=models.CASCADE)
+    blocked_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('blocker', 'blocked')
+
+    def __str__(self):
+        return f"{self.blocker} blocked {self.blocked}"

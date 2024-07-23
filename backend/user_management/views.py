@@ -6,7 +6,7 @@ from rest_framework import generics
 from rest_framework.views import APIView
 from django.shortcuts import get_object_or_404
 from django.core.exceptions import ValidationError
-from .models import Friendship, Player, FriendInvitation
+from .models import Friendship, Player, FriendInvitation, BlockedUsers
 from .serializers import PlayerSerializer, FriendshipSerializer, FriendInvitationsSerializer
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from django.db.utils import IntegrityError
@@ -45,8 +45,8 @@ class FriendRequestManagementView(APIView):
             friend_request = FriendInvitation(player_sender=player_sender, player_receiver=player_receiver)
             friend_request.save()
             return Response({'message': 'Friend request sent successfully.'}, status=status.HTTP_201_CREATED)
-        except ValidationError as e:
-            return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+        except:
+            return Response({'error': "Some error happend"}, status=status.HTTP_400_BAD_REQUEST)
     
     def delete(self, request, receiver_id):
         player_sender = request.user
@@ -57,10 +57,8 @@ class FriendRequestManagementView(APIView):
             invitation.delete()
             return Response({'message': 'Friend request canceled.'}, status=status.HTTP_202_ACCEPTED)
         except FriendInvitation.DoesNotExist:
-            return Response({'error': 'Friend request not found.'}, status=status.HTTP_404_NOT_FOUND)
+            return Response({'error': 'Friend request not found.'}, status=status.HTTP_400_BAD_REQUEST)
     
-
-
 
             
 class FriendRequestResponse(APIView):
@@ -80,6 +78,7 @@ class FriendRequestResponse(APIView):
             friend_request.save()
             return Response({'message': 'Friend request accepted.'}, status=status.HTTP_200_OK)
         elif action == 'reject':
+            friend_request.delete()
             return Response({'message': 'Friend request rejected.'}, status=status.HTTP_200_OK)
 
 
@@ -101,11 +100,31 @@ class FriendManagementView(APIView):
             friendship.delete()
             return Response({"message": f"Successfully unfriended {friend}."}, status=status.HTTP_202_ACCEPTED)
         else:
-            return Response({"error": "Friendship does not exist."}, status=status.HTTP_404_NOT_FOUND)
+            return Response({"error": "Friendship does not exist."}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class BlockUnblockView(APIView):
-    pass
+    def post(self, request, blocked_id):
+        blocker = request.user
+        blocked = get_object_or_404(User, id=blocked_id)
+        if BlockedUsers.objects.filter(Q(blocker=blocker, blocked=blocked)).exists():
+            return Response({'error': 'User is already blocked.'}, status=status.HTTP_400_BAD_REQUEST)
+        blocking = BlockedUsers(blocker=blocker, blocked=blocked)
+        blocking.save()
+        return Response({'message': 'User has been blocked successfully.'}, status=status.HTTP_201_CREATED)
+    def delete(self, request, blocked_id):
+        blocker = request.user
+        blocked = get_object_or_404(User, id=blocked_id)
+        blocking = BlockedUsers.objects.filter(Q(blocker=blocker, blocked=blocked) | Q(blocker=blocked, blocked=blocker))
+        if blocking.exists():
+            blocking.delete()
+            return Response({'message': 'User has been unblocked successfully.'}, status=status.HTTP_200_OK)
+        else:
+            return Response({"error": "user is not blocked."}, status=status.HTTP_400_BAD_REQUEST)
+
+        
+
+
 
 
 # class CreateFriendshipView(APIView):
