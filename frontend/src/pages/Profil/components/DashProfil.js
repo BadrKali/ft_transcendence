@@ -26,6 +26,10 @@ function DashProfil({profil}) {
                             <h4>{profil.username}</h4>
                             <h4>Rank : Gold</h4>
                         </div>
+                        <div className="userXp box">
+                            <p>User_xp</p>
+                            <p>900xp</p>
+                        </div>
                         <div className="totalGames box">
                             <p>Total Games</p>
                             <p>123</p>

@@ -212,7 +212,7 @@ class SearchAPIView(APIView):
     def get(self, request, *args, **kwargs):
         query = request.query_params.get('q', '')
         if query:
-            results = User.objects.filter(username__icontains=query)
+            results = User.objects.filter(username__istartswith=query)
             serializer = CurrentUserSerializer(results, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response({"results": []}, status=status.HTTP_200_OK)
