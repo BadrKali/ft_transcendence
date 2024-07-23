@@ -20,6 +20,7 @@ import { AuthProvider } from './context/Auth/AuthProvider';
 import ProtectedRoutes from './components/ProtectedRoutes/ProtectedRoutes';
 import PersistLogin from './components/PersistLogin/PersistLogin';
 import OauthTwo from './components/OauthTwo/OauthTwo';
+import Notification from './components/Notification/Notification';
 
 const AppLayout = () => {
   return (
@@ -29,6 +30,7 @@ const AppLayout = () => {
           <TopBar/>
           <div className='page-content'>
             <div className='content'>
+              <Notification/>
               <Outlet/>
             </div>
           </div>

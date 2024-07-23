@@ -17,7 +17,8 @@ from django.conf import settings
 from authentication .models import User
 from authentication .serializers import CurrentUserSerializer
 from django.db.models import Q
-
+from asgiref.sync import async_to_sync
+from channels.layers import get_channel_layer
 
 class FriendRequestManagementView(APIView):
     
@@ -44,6 +45,14 @@ class FriendRequestManagementView(APIView):
         try:
             friend_request = FriendInvitation(player_sender=player_sender, player_receiver=player_receiver)
             friend_request.save()
+            channel_layer = get_channel_layer()
+            async_to_sync(channel_layer.group_send)(
+                f'notifications_{player_receiver.id}',
+                {
+                    'type': 'notification_message',
+                    'message': f'{player_sender.username} sent you a friend request.'
+                }
+            )
             return Response({'message': 'Friend request sent successfully.'}, status=status.HTTP_201_CREATED)
         except:
             return Response({'error': "Some error happend"}, status=status.HTTP_400_BAD_REQUEST)
@@ -123,22 +132,27 @@ class BlockUnblockView(APIView):
             return Response({"error": "user is not blocked."}, status=status.HTTP_400_BAD_REQUEST)
 
         
+class CurrentFriendsListView(generics.ListAPIView):
+    serializer_class = FriendshipSerializer
+
+    def get_queryset(self):
+        return Friendship.objects.filter(player=self.request.user)
 
 
 
 
-class CreateFriendshipView(APIView):
-    def post(self, request, friend_id):
-        player = request.user  
-        friend = get_object_or_404(User, id=friend_id) 
+# class CreateFriendshipView(APIView):
+#     def post(self, request, friend_id):
+#         player = request.user  
+#         friend = get_object_or_404(User, id=friend_id) 
         
-        friendship = Friendship(player=player, friend=friend) 
-        try:
-            friendship.full_clean()  
-            friendship.save()
-            return Response({"message": "Friendship created successfully."}, status=status.HTTP_201_CREATED)
-        except ValidationError as e:
-            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+#         friendship = Friendship(player=player, friend=friend) 
+#         try:
+#             friendship.full_clean()  
+#             friendship.save()
+#             return Response({"message": "Friendship created successfully."}, status=status.HTTP_201_CREATED)
+#         except ValidationError as e:
+#             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
 
 # class DeleteFriendshipView(APIView):
@@ -155,20 +169,14 @@ class CreateFriendshipView(APIView):
 #         except Friendship.DoesNotExist:
 #             return Response({"error": "Friendship does not exist."}, status=status.HTTP_404_NOT_FOUND)
 
-class CurrentFriendsListView(generics.ListAPIView):
-    serializer_class = FriendshipSerializer
-    permission_classes = [IsAuthenticated]
 
-    def get_queryset(self):
-        return Friendship.objects.filter(player=self.request.user)
+# class FriendsListView(generics.ListAPIView):
+#     serializer_class = FriendshipSerializer
+#     permission_classes = [IsAuthenticated]
 
-class FriendsListView(generics.ListAPIView):
-    serializer_class = FriendshipSerializer
-    permission_classes = [IsAuthenticated]
-
-    def get_queryset(self):
-        player_id = self.kwargs['player_id']
-        return Friendship.objects.filter(player_id=player_id)
+#     def get_queryset(self):
+#         player_id = self.kwargs['player_id']
+#         return Friendship.objects.filter(player_id=player_id)
 
 # class BlockFriendView(APIView):
 #     def post(self, request, player_id, friend_id):
@@ -231,7 +239,16 @@ class SearchAPIView(APIView):
     def get(self, request, *args, **kwargs):
         query = request.query_params.get('q', '')
         if query:
-            results = User.objects.filter(username__istartswith=query)
+            results = User.objects.filter(username__icontains=query)
             serializer = CurrentUserSerializer(results, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response({"results": []}, status=status.HTTP_200_OK)
+    
+
+
+
+
+
+
+
+
