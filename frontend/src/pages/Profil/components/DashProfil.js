@@ -9,7 +9,7 @@ function DashProfil({profil}) {
   useEffect(() => {
       setTimeout(() => {
         setProgress('67%');
-      }, 100); 
+      }, 500); 
     }, []);
 
   return (
