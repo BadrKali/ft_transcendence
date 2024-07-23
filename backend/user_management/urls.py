@@ -8,7 +8,7 @@ urlpatterns = [
     path('friend/<int:friend_id>', FriendManagementView.as_view(), name='friend_management'),
     path('<int:blocked_id>/block-unblock/', BlockUnblockView.as_view(), name='block_unblock_user'),
 
-    # path('friends/create/<int:friend_id>/', CreateFriendshipView.as_view(), name='create_friendship'),
+    path('friends/create/<int:friend_id>/', CreateFriendshipView.as_view(), name='create_friendship'),
     # path('friends/delete/<int:player_id>/<int:friend_id>/', DeleteFriendshipView.as_view(), name='delete_friendship'),
     path('friends/list/<int:player_id>/', FriendsListView.as_view(), name='friends_list'),
     path('friends/list/me/', CurrentFriendsListView.as_view(), name='friends_list'),

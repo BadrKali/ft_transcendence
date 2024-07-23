@@ -127,18 +127,18 @@ class BlockUnblockView(APIView):
 
 
 
-# class CreateFriendshipView(APIView):
-#     def post(self, request, friend_id):
-#         player = request.user  
-#         friend = get_object_or_404(User, id=friend_id) 
+class CreateFriendshipView(APIView):
+    def post(self, request, friend_id):
+        player = request.user  
+        friend = get_object_or_404(User, id=friend_id) 
         
-#         friendship = Friendship(player=player, friend=friend) 
-#         try:
-#             friendship.full_clean()  
-#             friendship.save()
-#             return Response({"message": "Friendship created successfully."}, status=status.HTTP_201_CREATED)
-#         except ValidationError as e:
-#             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+        friendship = Friendship(player=player, friend=friend) 
+        try:
+            friendship.full_clean()  
+            friendship.save()
+            return Response({"message": "Friendship created successfully."}, status=status.HTTP_201_CREATED)
+        except ValidationError as e:
+            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
 
 # class DeleteFriendshipView(APIView):
@@ -231,7 +231,7 @@ class SearchAPIView(APIView):
     def get(self, request, *args, **kwargs):
         query = request.query_params.get('q', '')
         if query:
-            results = User.objects.filter(username__icontains=query)
+            results = User.objects.filter(username__istartswith=query)
             serializer = CurrentUserSerializer(results, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response({"results": []}, status=status.HTTP_200_OK)

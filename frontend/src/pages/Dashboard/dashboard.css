@@ -1,3 +1,48 @@
+@keyframes slideDown {
+    from {
+      transform: translateY(-100%);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+  
+  @keyframes slideInLeft {
+    from {
+      transform: translateX(-100%);
+      opacity: 0;
+    }
+    to {
+      transform: translateX(0);
+      opacity: 1;
+    }
+  }
+  
+
+  @keyframes slideUp {
+    from {
+      transform: translateY(100%);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+  
+  @keyframes slideInLeftFriends {
+    from {
+      transform: translateX(100%);
+      opacity: 0;
+    }
+    to {
+      transform: translateX(0);
+      opacity: 1;
+    }
+  }
+
 .dashboard-contianer{
     display: flex;
     flex-direction: column;
@@ -31,7 +76,7 @@
 }
 
 .profil-container{
-
+    animation: slideDown 1s ease-out;
     height: 20%;
 }
 .historyAchievments-container{
@@ -44,10 +89,11 @@
     width: 50%;
     font-family: "Rajdhani", sans-serif;
     font-style: normal;
+    animation: slideInLeft 1s ease-out;
 }
 
 .achievments-container{
-
+    animation: slideUp 1s ease-out;
     height: 100%;
     width: 50%;
 }
@@ -55,4 +101,5 @@
 .friends-container{
     height: 100%;
     width: 25%;
+    animation: slideInLeftFriends 1s ease-out;
 }

@@ -1,11 +1,11 @@
 import React from 'react'
 import './restItem.css'
 
-function RestItem({players}) {
+function RestItem({players, index}) {
     const ifOdd = players.id % 2 ? true : false;
 
     return (
-        <div className={ifOdd ? 'listPlayerContainer' : 'listPlayerContainer Odd'}>
+        <div className={ifOdd ? 'listPlayerContainer' : 'listPlayerContainer Odd'}   style={{ animationDelay: `${index * 0.1}s` }} >
             <div className='number'>
                 <p>{players.id}</p>
             </div>

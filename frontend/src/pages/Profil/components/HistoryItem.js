@@ -21,8 +21,8 @@ function HistoryItem( {history} ) {
                     <p className='parg' style={{color: '#8D93AC'}}>{history.win_percentage}</p>
                 </div>
                 <div className="Loss box">
-                    <p>Loss</p>
-                    <p className='parg' style={{color: '#8D93AC'}}>{history.loss_percentage}</p>
+                    <p>Game</p>
+                    <p className='parg' style={{color: '#8D93AC'}}>XO</p>
                 </div>
                 <div className={history.won ? "defeat box true" : "defeat box false"}>
                     <p>DEFEAT</p>

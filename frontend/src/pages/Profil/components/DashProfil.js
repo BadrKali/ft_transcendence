@@ -9,7 +9,7 @@ function DashProfil({profil}) {
   useEffect(() => {
       setTimeout(() => {
         setProgress('67%');
-      }, 100); 
+      }, 500); 
     }, []);
 
   return (
@@ -18,13 +18,17 @@ function DashProfil({profil}) {
         <div className="userInfo">
             <div className='userContainer'>
                 <div className="userImage" >
-                    <img src={avatars[0].img}/>
+                    <img src={`http://127.0.0.1:8000${profil.avatar}`}/>
                 </div>
                 <div className="userProgress">
                     <div className="progresInfo">
                         <div className="nameRank">
                             <h4>{profil.username}</h4>
                             <h4>Rank : Gold</h4>
+                        </div>
+                        <div className="userXp box">
+                            <p>User_xp</p>
+                            <p>900xp</p>
                         </div>
                         <div className="totalGames box">
                             <p>Total Games</p>

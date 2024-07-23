@@ -28,8 +28,8 @@ const LeaderBoard = () => {
                       <p>Rank</p>
                 </div>
                 <div className='restList-Players'>
-                    {rest.map((players) => (
-                      <RestItem key={players.id} players={players}/>
+                    {rest.map((players, index) => (
+                      <RestItem key={players.id} players={players} index={index}/>
                     ))}
                 </div>
             </div>

@@ -9,6 +9,9 @@
     filter: blur(1px);
 }
 
+.unlockedAchiev .IconContainer{
+    filter: grayscale(90%);
+}
 
 .IconContainer{
    width: 70px; 

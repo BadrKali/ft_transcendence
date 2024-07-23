@@ -10,11 +10,11 @@ const DashBoard = () => {
   const [profilData, setProfilData] = useState([]);
 
   const {data ,isLoading, error} = useFetch('http://localhost:8000/user/stats')
-  // useEffect(() => {
-  //   if (data) {
-  //     setProfilData(data);
-  //   }
-  // }, [data]);
+  useEffect(() => {
+     if (data) {
+       setProfilData(data);
+     }
+   }, [data]);
 
   return (
     <div className='dashboard-contianer'>
@@ -24,7 +24,7 @@ const DashBoard = () => {
        <div className="dashboard">
           <div className="profilHistoryAcgievmeants-container">
               <div className="profil-container">
-                <DashProfil />
+                <DashProfil profilData={profilData}/>
               </div>
               <div className="historyAchievments-container">
                 <div className="history-container">
@@ -39,7 +39,6 @@ const DashBoard = () => {
             <Friends /> 
           </div>
        </div>
-
     </div>
   )
 }
