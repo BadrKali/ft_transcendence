@@ -2,7 +2,7 @@ from channels.generic.websocket import AsyncWebsocketConsumer
 from asgiref.sync import sync_to_async
 from channels.db import database_sync_to_async
 import json
-import jwt
+import asyncio
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from jwt.exceptions import ExpiredSignatureError, InvalidTokenError
@@ -31,15 +31,21 @@ class GameState:
                 'color': "#D9D9D9"
             }
         }
-    
+
+    def update_ball_position(self):
+        self.state['ball']['x'] += self.state['ball']['velocityX']
+        self.state['ball']['y'] += self.state['ball']['velocityY']
+        if self.state['ball']['y'] - self.state['ball']['radius'] < 0 or self.state['ball']['y'] + self.state['ball']['radius'] > self.state['canvas']['height']:
+            self.state['ball']['velocityY'] = -self.state['ball']['velocityY']
+        if self.state['ball']['x'] - self.state['ball']['radius'] < 0 or self.state['ball']['x'] + self.state['ball']['radius'] > self.state['canvas']['width']:
+            self.state['ball']['velocityX'] = -self.state['ball']['velocityX']
+
     def get_state(self):
         return self.state
 
     def to_json(self):
-        import json
         return json.dumps(self.state)
 
-        
 class GameConsumer(AsyncWebsocketConsumer):
     async def connect(self):
         if self.scope['user'].is_anonymous:
@@ -48,14 +54,14 @@ class GameConsumer(AsyncWebsocketConsumer):
             await self.accept()
             self.game_state = GameState()
             self.player = await self.get_player(self.scope['user'])
+            self.keep_running = True
             await self.send(text_data=json.dumps({
                 'action': 'connected',
                 'message': 'Connection established',
-                'game_state': self.game_state.get_state()
             }))
 
-
     async def disconnect(self, close_code):
+        self.keep_running = False
         await self.leave_room()
         print("User disconnected")
 
@@ -71,6 +77,23 @@ class GameConsumer(AsyncWebsocketConsumer):
         if room and not room.is_waiting:
             self.game_state = GameState()
             await self.notify_players(room)
+            asyncio.create_task(self.start_game_loop())
+
+    async def start_game_loop(self):
+        frame_duration = 1 / 50
+        while self.keep_running:
+            self.game_state.update_ball_position()
+            await self.channel_layer.group_send(
+                self.room_group_name, 
+                {
+                    'type': 'send_message',
+                    'message': {
+                        'action': 'update_game_state',
+                        'game_state': self.game_state.get_state(),
+                    }
+                }
+            )
+            await asyncio.sleep(frame_duration)
 
     @sync_to_async
     def get_player(self, user):
@@ -92,8 +115,8 @@ class GameConsumer(AsyncWebsocketConsumer):
         self.room_group_name = self.room_name
         await self.channel_layer.group_add(self.room_group_name, self.channel_name)
         return room
-    async def notify_players(self, room):
 
+    async def notify_players(self, room):
         message = {
             'type': 'game.start',
             'message': 'start_game',
@@ -114,12 +137,12 @@ class GameConsumer(AsyncWebsocketConsumer):
         await self.send(text_data=json.dumps(message))
 
     async def leave_room(self):
-            player = self.player
-            game_room = await self.get_game_room(player)
-            
-            if game_room:
-                await self.update_game_room(game_room, player)
-        
+        player = self.player
+        game_room = await self.get_game_room(player)
+
+        if game_room:
+            await self.update_game_room(game_room, player)
+
     @database_sync_to_async
     def get_game_room(self, player):
         from .models import GameRoom

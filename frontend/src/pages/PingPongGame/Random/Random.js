@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import useAuth from '../../../hooks/useAuth';
 import hell from "../asstes/hell.png";
 import forest from "../asstes/forest.png";
@@ -7,7 +7,9 @@ import useFetch from '../../../hooks/useFetch';
 import "./random.css";
 import Waiting from './Waiting';
 import PlayerInfo from './PlayerInfo';
-import GameLogic from './GameLogic';
+import ScoreBoard from "../components/ScoreBoard";
+import avatar1 from '../asstes/avatar1.png';
+import avatar2 from '../asstes/avatar2.png';
 
 const Random = () => {
     const { data: gameSettings, isLoading: gameSettingsLoading } = useFetch('http://localhost:8000/api/game/game-settings/current-user/');
@@ -23,7 +25,9 @@ const Random = () => {
     const [showWaiting, setShowWaiting] = useState(false);
     const [startGame, setStartGame] = useState(false);
     const [socket, setSocket] = useState(null);
-    const [game_state, setGameState ] = useState(null);
+    const [game_state, setGameState] = useState(null);
+    const canvasRef = useRef(null);
+
     const { data: room, isLoading: roomLoading, error: roomError } = useFetch(roomId ? `http://localhost:8000/api/game/game-room/${roomId}` : null);
     const { data: player1, isLoading: player1Loading, error: player1Error } = useFetch(player1Id ? `http://localhost:8000/user/stats/${player1Id}` : null);
     const { data: player2, isLoading: player2Loading, error: player2Error } = useFetch(player2Id ? `http://localhost:8000/user/stats/${player2Id}` : null);
@@ -69,6 +73,9 @@ const Random = () => {
             } else if (data.action === 'connected') {
                 setShowWaiting(true);
                 setRoomId(data.room_id);
+            } else if (data.action === 'update_game_state')  {
+                setGameState(data.game_state);
+                setMessage("Game_state received");
             } else if (data.message) {
                 setMessage(data.message);
             }
@@ -94,22 +101,90 @@ const Random = () => {
         }
     }, [room]);
 
+    useEffect(() => {
+        if (!game_state || !canvasRef.current) return;
+
+        const canvas = canvasRef.current;
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+        canvas.width = game_state.canvas.width;
+        canvas.height = game_state.canvas.height;
+
+        const ball = game_state.ball;
+        const net = game_state.net;
+
+        function drawRect(x, y, w, h, color) {
+            ctx.fillStyle = color;
+            ctx.fillRect(x, y, w, h);
+        }
+
+        function drawArc(x, y, r, color) {
+            ctx.fillStyle = color;
+            ctx.beginPath();
+            ctx.arc(x, y, r, 0, Math.PI * 2, true);
+            ctx.closePath();
+            ctx.fill();
+        }
+
+        function drawNet() {
+            for (let i = 0; i <= canvas.height; i += net.height * 2) {
+                drawRect(net.x, net.y + i, net.width, net.height, net.color);
+            }
+        }
+
+        function render() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = 'rgba(22, 22, 37, 0.9)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            drawNet();
+            drawArc(ball.x, ball.y, ball.radius, ball.color);
+        }
+
+        // function game() {
+        //     render();
+        // }
+        let framePerSecond = 100;
+        let interval = 1000 / framePerSecond;
+        let lastTime = Date.now();
+        function loop() {
+            const now = Date.now();
+            const deltaTime = now - lastTime;
+
+            if (deltaTime > interval) {
+                render();
+                lastTime = now - (deltaTime % interval);
+            }
+
+            requestAnimationFrame(loop);
+        }
+        loop();
+    }, [game_state]);
+
     return (
         <div className="pingponggame-container random-game" style={{ backgroundImage: `url(${background})` }}>
             {room && player1 && player2 && (
                 <div className="player-info-container">
-                    <PlayerInfo player1={player1} player2={player2} onStartGame={handleStartGame}/>
+                    <PlayerInfo player1={player1} player2={player2} onStartGame={handleStartGame} socket={socket}/>
                 </div>
             )}
             {showWaiting && (
                 <Waiting player={currentUser}/>
             )}
             {startGame && (
-                <GameLogic
-                    player1={player1}
-                    player2={player2}
-                    game_state={game_state}
-                />
+                <>
+                    <ScoreBoard
+                        user1Score={0}
+                        user2Score={0}
+                        user1Name={player1.username}
+                        user2Name={player2.username}
+                        user1Avatar={avatar1}
+                        user2Avatar={avatar2}
+                    />
+                    <div className="game-container">
+                        <canvas className='canvas-container' ref={canvasRef}></canvas>
+                        <h1>{message}</h1>
+                    </div>
+                </>
             )}
         </div> 
     );
