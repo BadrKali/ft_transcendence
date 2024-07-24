@@ -11,10 +11,10 @@ import useFetch from '../../hooks/useFetch'
 import { useNavigate } from 'react-router-dom';
 import { NotificationContext } from '../Notification/NotificationContext'
 import useAuth from '../../hooks/useAuth'
+import NotificationPopup from './NotificationPopup'
 
 const TopBar = () => {
   const [showNotif, setNotif] = useState(false)
-  const [showSearch, setSearch] = useState(false)
   const dropdownRef = useRef(null);
   const dropdownSearchRef = useRef(null);
   const [isDropdownActive, setDropdownActive] = useState(false);
@@ -27,7 +27,72 @@ const TopBar = () => {
   const { hasNotification, clearNotification} = useContext(NotificationContext);
   const [notifications, setNotifications] = useState([]);
   const { auth }  = useAuth()
+  const [modalOpen, setModalOpen] = useState(false);
+  const [selectedNotification, setSelectedNotification] = useState(null);
 
+  const handleNotificationClick = (notif) => {
+    setSelectedNotification(notif);
+    setModalOpen(true);
+    setNotif(false); 
+  };
+
+  const handleClose = () => {
+    setModalOpen(false);
+    setNotif(false); 
+  };
+
+  const handleAccept = (id) => {
+      handleClose();
+      fetch(`http://localhost:8000/user/friends-request/${id}/response/`, {
+        method: 'PATCH',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${auth.accessToken}`
+        },
+        body: JSON.stringify({ status: 'accept' })
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return response.json();
+    })
+    .then(data => {
+        console.log('Friend request accepted:', data);
+        alert('Friend request accepted');
+    })
+    .catch(error => {
+        console.error('Error accepting friend request:', error);
+        alert('Error accepting friend request');
+    });
+  };
+
+  const handleReject = (id) => {
+    handleClose();
+    fetch(`http://localhost:8000/user/friends-request/${id}/response/`, {
+      method: 'PATCH',
+      headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${auth.accessToken}`
+      },
+      body: JSON.stringify({ status: 'reject' })
+      })
+      .then(response => {
+          if (!response.ok) {
+              throw new Error('Network response was not ok');
+          }
+          return response.json();
+      })
+      .then(data => {
+          console.log('Friend request rejected:', data);
+          alert('Friend request rejected');
+          // Update UI or state as necessary
+      })
+      .catch(error => {
+          console.error('Error rejecting friend request:', error);
+          alert('Error rejecting friend request');
+      });
+  };
 
   const handleIconClick = async () => {
     setNotif(!showNotif);
@@ -147,9 +212,12 @@ const TopBar = () => {
           {hasNotification && <span className="notification-badge"></span>}
           <div  className={showNotif ? "dropDwon active" : "dropDwon"}>
                   {notifications.map((notif) => (
-                    <NotificationItem key={notif.id} notif={notif} />
+                    <NotificationItem key={notif.id} notif={notif} onClick={() => handleNotificationClick(notif)}  />
                   ))}
           </div>
+          {selectedNotification && (
+          <NotificationPopup isOpen={modalOpen} onClose={handleClose} notif={selectedNotification} onAccept={handleAccept} onReject={handleReject} />
+      )}
         </div>
         <div className='profile-pic-container'>
           <div className='profile-pic'>

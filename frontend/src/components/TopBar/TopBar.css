@@ -9,6 +9,8 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
+
+
 }
 
 .topbar-profile {
@@ -154,14 +156,14 @@
     top : 40px;
     left: 0;
     border-radius: 10px;
-    opacity: 0; /* Start with opacity 0 for fade-in effect */
-    visibility: hidden; /* Start with visibility hidden */
-    transition: opacity 0.3s ease, visibility 0.3s ease; /* Smooth transition */
+    opacity: 0; 
+    visibility: hidden; 
+    transition: opacity 0.3s ease, visibility 0.3s ease;
 }
 
 .searchActiv{
-    opacity: 1; /* Show dropdown with fade-in effect */
-    visibility: visible; /* Show dropdown with visibility */
+    opacity: 1; 
+    visibility: visible; 
 }
 
 .notification-badge {
@@ -172,4 +174,4 @@
     height: 10px;
     background-color: red;
     border-radius: 50%;
-  }
+}
