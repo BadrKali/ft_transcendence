@@ -1,5 +1,5 @@
 import React from 'react'
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useContext } from 'react'
 import './TopBar.css'
 import Icon from '../../assets/Icon/icons'
 import { avatars } from '../../assets/assets'
@@ -9,6 +9,8 @@ import axios from 'axios'
 import SearchItem from './SearchItem'
 import useFetch from '../../hooks/useFetch'
 import { useNavigate } from 'react-router-dom';
+import { NotificationContext } from '../Notification/NotificationContext'
+import useAuth from '../../hooks/useAuth'
 
 const TopBar = () => {
   const [showNotif, setNotif] = useState(false)
@@ -22,6 +24,36 @@ const TopBar = () => {
   const [queryEndpoint, setQueryEndpoint] = useState(`http://localhost:8000/user/search/?q=${query}`)
   const response1 = useFetch('http://localhost:8000/user/stats/')
   const navigate = useNavigate();
+  const { hasNotification, clearNotification} = useContext(NotificationContext);
+  const [notifications, setNotifications] = useState([]);
+  const { auth }  = useAuth()
+
+
+  const handleIconClick = async () => {
+    setNotif(!showNotif);
+
+    if (!showNotif) {
+      try {
+        const response = await fetch('http://localhost:8000/user/notifications/', {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${auth.accessToken}`
+          }
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          setNotifications(data);
+          clearNotification(); 
+        } else {
+          console.error('Failed to fetch notifications');
+        }
+      } catch (error) {
+        console.error('Error fetching notifications:', error);
+      }
+    }
+  };
 
   useEffect(() => {
     if (response1.data) {
@@ -86,6 +118,10 @@ const TopBar = () => {
     };
   }, []);
 
+  const handleNotifClick = () => {
+    setNotif(!showNotif);
+    clearNotification();
+  };
   return (
     <div className='topbar-container'>
       <div className='topbar-search'>
@@ -106,10 +142,11 @@ const TopBar = () => {
         </div>
       </div>
       <div className='topbar-profile'>
-        <div ref={dropdownRef} className="icon-container"  onClick={() => setNotif(!showNotif)}>
+        <div ref={dropdownRef} className="icon-container"  onClick={handleIconClick}>
           <Icon  name='notification' className={showNotif ? 'topbar-notification-icon active-icon' : 'topbar-notification-icon' }/>
+          {hasNotification && <span className="notification-badge"></span>}
           <div  className={showNotif ? "dropDwon active" : "dropDwon"}>
-                  {NoitfictaionData.map((notif) => (
+                  {notifications.map((notif) => (
                     <NotificationItem key={notif.id} notif={notif} />
                   ))}
           </div>

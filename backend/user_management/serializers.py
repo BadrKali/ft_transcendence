@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Player, Friendship, FriendInvitation
+from .models import Player, Friendship, FriendInvitation, Notification
 from authentication.serializers import CurrentUserSerializer
 
 
@@ -32,3 +32,7 @@ class FriendInvitationsSerializer(serializers.ModelSerializer):
 
 
 
+class NotificationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Notification
+        fields = ['id', 'sender', 'message', 'timestamp', 'is_read']

@@ -13,6 +13,7 @@ import { useLocation } from 'react-router-dom';
 
 
 
+
 const Profil = () => {
   const { userId } = useParams();
   const [profilData, setProfilData] = useState([]);
@@ -22,34 +23,28 @@ const Profil = () => {
   const { userData } = location.state || {};
   const {data ,isLoading, error} = useFetch(`http://localhost:8000/user/stats/${userData.id}`)
 
-  const handleAddFriend = () => {
-    const url = `http://localhost:8000/user/friends/create/${userData.id}/`; 
-
-    fetch(url, {
+  const handleAddFriend = async () => {
+    try {
+      const response = await fetch(`http://localhost:8000/user/friends-request/${userData.id}/`, {
         method: 'POST',
         headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${auth.accessToken}`
-         
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${auth.accessToken}`,
         },
-        body: JSON.stringify({
+        body: JSON.stringify({})
+      });
 
-        })
-    })
-    .then(response => {
-        if (response.ok) {
-            return response.json();
-        }
-        throw new Error('Something went wrong');
-    })
-    .then(data => {
-        console.log('Friend added successfully:', data);
-  
-    })
-    .catch((error) => {
-        console.error('Error:', error);
-    });
-};
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'An error occurred while sending the friend request.');
+      }
+
+      const data = await response.json();
+      alert(data.message);
+    } catch (error) {
+      alert(error.message);
+    }
+  };
 
   useEffect(() => {
     if (data) {

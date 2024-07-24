@@ -1,8 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext} from 'react';
 import useAuth from '../../hooks/useAuth';
+import { NotificationContext } from './NotificationContext';
 
 const Notification = () => {
     const { auth } = useAuth();
+    const { setHasNotification } = useContext(NotificationContext);
     const [socket, setSocket] = useState(null);
 
     useEffect(() => {
@@ -15,6 +17,7 @@ const Notification = () => {
         ws.onmessage = (event) => {
             const data = JSON.parse(event.data);
             console.log("Received message:", data);
+            setHasNotification(true);
             alert(data.message);
         };
 

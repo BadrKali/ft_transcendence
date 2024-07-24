@@ -6,13 +6,13 @@ from rest_framework import generics
 from rest_framework.views import APIView
 from django.shortcuts import get_object_or_404
 from django.core.exceptions import ValidationError
-from .models import Friendship, Player, FriendInvitation, BlockedUsers
+from .models import Friendship, Player, FriendInvitation, BlockedUsers, Notification
 from .serializers import PlayerSerializer, FriendshipSerializer, FriendInvitationsSerializer
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from django.db.utils import IntegrityError
 from game.models import Achievement
 from game.serializers import AchievementSerializer
-from .serializers import FriendInvitation
+from .serializers import FriendInvitation, NotificationSerializer
 from django.conf import settings
 from authentication .models import User
 from authentication .serializers import CurrentUserSerializer
@@ -45,6 +45,12 @@ class FriendRequestManagementView(APIView):
         try:
             friend_request = FriendInvitation(player_sender=player_sender, player_receiver=player_receiver)
             friend_request.save()
+            notification = Notification.objects.create(
+                recipient=player_receiver,
+                sender=player_sender,
+                message=f'{player_sender.username} sent you a friend request.'
+            )
+
             channel_layer = get_channel_layer()
             async_to_sync(channel_layer.group_send)(
                 f'notifications_{player_receiver.id}',
@@ -252,3 +258,10 @@ class SearchAPIView(APIView):
 
 
 
+class NotificationListView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        notifications = Notification.objects.filter(recipient=request.user).order_by('-timestamp')
+        serializer = NotificationSerializer(notifications, many=True)
+        return Response(serializer.data)

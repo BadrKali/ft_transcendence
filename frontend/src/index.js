@@ -21,6 +21,8 @@ import ProtectedRoutes from './components/ProtectedRoutes/ProtectedRoutes';
 import PersistLogin from './components/PersistLogin/PersistLogin';
 import OauthTwo from './components/OauthTwo/OauthTwo';
 import Notification from './components/Notification/Notification';
+import { NotificationProvider } from './components/Notification/NotificationContext';
+
 
 const AppLayout = () => {
   return (
@@ -95,7 +97,9 @@ const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   // <React.StrictMode>
     <AuthProvider>
-      <RouterProvider router={router}/>
+      <NotificationProvider>
+        <RouterProvider router={router}/>
+      </NotificationProvider>
     </AuthProvider>
   // </React.StrictMode>
 );
