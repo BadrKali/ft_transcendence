@@ -264,4 +264,5 @@ class NotificationListView(APIView):
         notifications = Notification.objects.filter(recipient=request.user).order_by('-timestamp')
         serializer = NotificationSerializer(notifications, many=True)
         return Response(serializer.data)
+
         return Response(serializer.data)
