@@ -263,3 +263,11 @@ class NotificationListView(APIView):
         notifications = Notification.objects.filter(recipient=request.user).order_by('-timestamp')
         serializer = NotificationSerializer(notifications, many=True)
         return Response(serializer.data)
+
+class ListFriendsView(APIView):
+    def get(self, request, *args, **kwargs):
+        current_user = request.user
+        friendships = Friendship.objects.filter(player=current_user, blocked=False)
+        friends = [friendship.friend for friendship in friendships]
+        serializer = CurrentUserSerializer(friends, many=True)
+        return Response(serializer.data)

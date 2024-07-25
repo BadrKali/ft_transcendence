@@ -1,18 +1,18 @@
 import React from 'react'
 import './friendItem.css'
 
-function FriendsItem({history}) {
+function FriendsItem({list}) {
   return (
     <div className='listFriendCard'>
        <div className='firendImage'>
-            <img className={history.active ? "online" : "offline"} src={history.image}/>
+          <img src={`http://127.0.0.1:8000${list.avatar}`}/>
        </div>
        <div className='FriendNameRand'>
             <div className='FriendName'>
-                <p>{history.player_name}</p>
+                <p>{list.username}</p>
             </div>
             <div className='FriendRank'>
-                <p  style={{color: '#8D93AC'}}>Rank : {history.rank}</p>
+                <p  style={{color: '#8D93AC'}}>Rank : Gold</p>
             </div>
        </div>
     </div>
