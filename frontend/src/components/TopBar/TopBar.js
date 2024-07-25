@@ -86,7 +86,7 @@ const TopBar = () => {
       .then(data => {
           console.log('Friend request rejected:', data);
           alert('Friend request rejected');
-          // Update UI or state as necessary
+  
       })
       .catch(error => {
           console.error('Error rejecting friend request:', error);
@@ -158,7 +158,7 @@ const TopBar = () => {
     setDropdownActive(true);
   };
   const handleItemClick = (result) => {
-    console.log("good")
+
     navigate(`/user/${result.username}`, {
       state: { userData: result },
     });

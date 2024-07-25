@@ -70,3 +70,30 @@
     background-color: #f3848d;
 
 }
+
+.emptyFriendsMessage{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 200px;
+}
+
+
+.emptyFriendsMessage p {
+    width: 250px;
+    padding-bottom: 20px;
+}
+.emptyFriendsMessage button{
+    background-color: #F62943; 
+    border: none;
+    padding: 10px 20px;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-right: 10px;
+    transition: background-color 0.3s ease;
+}
+
+.emptyFriendsMessage button:hover{
+    background-color: #FF4757; 
+}

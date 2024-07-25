@@ -259,9 +259,9 @@ class SearchAPIView(APIView):
 
 
 class NotificationListView(APIView):
-    permission_classes = [IsAuthenticated]
 
     def get(self, request):
         notifications = Notification.objects.filter(recipient=request.user).order_by('-timestamp')
         serializer = NotificationSerializer(notifications, many=True)
+        return Response(serializer.data)
         return Response(serializer.data)
