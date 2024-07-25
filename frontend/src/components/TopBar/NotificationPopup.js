@@ -13,8 +13,8 @@ const NotificationPopup = ({ isOpen, onClose, notif, onAccept, onReject })=> {
         <h2>Notification</h2>
         <p>{notif.message}</p>
         <div className='buttuns'>
-          <button onClick={() => onAccept(notif.id)}>Accept</button>
-          <button onClick={() => onReject(notif.id)}>Reject</button>
+          <button onClick={() => onAccept(notif.sender)}>Accept</button>
+          <button onClick={() => onReject(notif.sender)}>Reject</button>
         </div>
       </div>
     </div>

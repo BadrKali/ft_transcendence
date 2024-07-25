@@ -49,7 +49,7 @@ const TopBar = () => {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${auth.accessToken}`
         },
-        body: JSON.stringify({ status: 'accept' })
+        body: JSON.stringify({ 'status' : 'accept' })
     })
     .then(response => {
         if (!response.ok) {
@@ -75,7 +75,7 @@ const TopBar = () => {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${auth.accessToken}`
       },
-      body: JSON.stringify({ status: 'reject' })
+      body: JSON.stringify({ 'status' : 'reject' })
       })
       .then(response => {
           if (!response.ok) {
@@ -106,7 +106,6 @@ const TopBar = () => {
             'Authorization': `Bearer ${auth.accessToken}`
           }
         });
-
         if (response.ok) {
           const data = await response.json();
           setNotifications(data);
