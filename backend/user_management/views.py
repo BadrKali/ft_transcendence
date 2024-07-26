@@ -19,6 +19,7 @@ from authentication .serializers import CurrentUserSerializer
 from django.db.models import Q
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
+from django.http import HttpResponseForbidden
 
 class FriendRequestManagementView(APIView):
     
@@ -136,6 +137,11 @@ class BlockUnblockView(APIView):
             return Response({'message': 'User has been unblocked successfully.'}, status=status.HTTP_200_OK)
         else:
             return Response({"error": "user is not blocked."}, status=status.HTTP_400_BAD_REQUEST)
+    def get(self, request, blocked_id):
+        blocker = request.user
+        blocked = get_object_or_404(User, id=blocked_id)
+        is_blocked = BlockedUsers.objects.filter(Q(blocker=blocker, blocked=blocked)).exists()
+        return Response({'is_blocked': is_blocked}, status=status.HTTP_200_OK)
 
         
 class CurrentFriendsListView(generics.ListAPIView):
@@ -228,9 +234,15 @@ class PlayerView(APIView):
 
 class OtherPlayerView(APIView):
     def get(self, request, player_id):
+        requesting_user = request.user
         player = get_object_or_404(Player, user_id=player_id)
+        profile_user = player.user
+
+        if BlockedUsers.objects.filter(blocker=profile_user, blocked=requesting_user).exists():
+            return HttpResponseForbidden('You are blocked from viewing this profile.')
+
         serializer = PlayerSerializer(player)
-        return(Response(serializer.data, status=status.HTTP_200_OK))
+        return Response(serializer.data, status=status.HTTP_200_OK)
     
 
 class GamePlayersView(APIView):

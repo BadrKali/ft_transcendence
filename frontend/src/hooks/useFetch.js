@@ -23,8 +23,13 @@ const useFetch = (endpoint) => {
                         'Authorization': `Bearer ${auth.accessToken}`
                     }
                 });
-                const data = await response.json()
-                setData(data)
+                if (response.status === 403) {
+                    setError('You are blocked from viewing this content.');
+                    setData(null);
+                }else{
+                    const data = await response.json()
+                    setData(data)
+                }
             }
             catch(e) {
                 if(e.name === 'AbortError') {

@@ -10,6 +10,8 @@ import { useNavigate } from 'react-router-dom';
 import { useParams } from 'react-router-dom';
 import useAuth from '../../hooks/useAuth'
 import { useLocation } from 'react-router-dom';
+import BlockUnblockButton from './components/BlockUnblockButton'
+
 
 
 
@@ -23,6 +25,19 @@ const Profil = () => {
   const { userData } = location.state || {};
   const {data ,isLoading, error} = useFetch(`http://localhost:8000/user/stats/${userData.id}`)
 
+  useEffect(() => {
+    if (data) {
+      setProfilData(data);
+    }
+  }, [data]);
+  
+  if (error) {
+    if (error === 'You are blocked from viewing this content.') {
+        navigate('/')
+        return null;
+    }
+    return <div>{error}</div>;
+  } 
   const handleAddFriend = async () => {
     try {
       const response = await fetch(`http://localhost:8000/user/friends-request/${userData.id}/`, {
@@ -46,11 +61,7 @@ const Profil = () => {
     }
   };
 
-  useEffect(() => {
-    if (data) {
-      setProfilData(data);
-    }
-  }, [data]);
+
 
   const handleItemClick = () => {
     navigate(`/chat`);
@@ -73,10 +84,7 @@ const Profil = () => {
                 <p>Challange</p>
                 
             </div>
-            <div className='BlockFriend-button profil-button'>
-                <Icon name='BlockFriend' className='Block-Friend profil-icon' />
-                <p>Block</p>
-            </div>
+            <BlockUnblockButton blockedId={userData.id}/>
         </div>
        </div>
        <div className="dashboard-profil">
