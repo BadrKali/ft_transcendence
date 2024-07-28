@@ -62,8 +62,8 @@ INSTALLED_APPS = [
     'channels',
     'user_management',
     'game',
+    'chat',
     'corsheaders',
-    'chat'
 ]
 
 MIDDLEWARE = [

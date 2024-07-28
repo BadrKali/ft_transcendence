@@ -12,6 +12,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path("user/", include("user_management.urls")),
     path("auth/", include("authentication.urls")),
+    path("chat/", include("chat.urls")),
     path('api/game/', include('game.urls')),
     
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
