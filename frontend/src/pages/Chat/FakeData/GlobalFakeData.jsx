@@ -14,8 +14,7 @@ const ChatHistory = [
     msg_id: 1,
     
     incomingMsg: [
-      "NcYvxL3x7bcGpCKXKZJDAiR9jNhJXbMg\
-      vKrbHKwPcL6432r1sfTqZD2dhorIxHwf\
+      "NcYvxL3x7bcGpCKXKZJDAiR9jNhJXbMgvKrbHKwPcL6432r1sfTqZD2dhorIxHwf\
       NssFJXpVKMTIHzBOoQ8X7XtcK7bSo4B9\
       RjdR12ZktL1beW624dzUrMcKVkINiruf\
       vysCU5cjm59VLM4ICMBBuIxsKdYlK3mo\
