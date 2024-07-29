@@ -3,7 +3,7 @@ import Icon from '../../../assets/Icon/icons'
 import './achievmentsItem.css'
 
 function AchievmentsItem({achiev}) {
-    console.log(achiev.image)
+    // console.log(achiev.image)
   return (
     <div className={achiev.unlocked === "false" ? 'AchievmentsItemContainer unlockedAchiev' : 'AchievmentsItemContainer'}>
         <div className='IconContainer'>

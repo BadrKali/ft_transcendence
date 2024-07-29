@@ -19,7 +19,7 @@ function Achievments() {
       setAchievements(updatedAchievements);
     }
   }, [userAchievements]);
-  console.log(achievements)
+  // console.log(achievements)
 
   return (
     <div className='achievmentsContainer'>
