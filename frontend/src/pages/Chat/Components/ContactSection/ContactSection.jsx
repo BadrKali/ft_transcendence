@@ -1,4 +1,4 @@
-import    React, { useState,useContext } from 'react'
+import    React, { useState,useContext, useEffect } from 'react'
 import    style                          from './ContactSection.module.css'
 import    SearchBar                      from '../SearchBar/SearchBar.jsx'
 import    {NotePencil}                   from 'phosphor-react'
@@ -67,6 +67,7 @@ const ContactSection = ({selectedIndex, handleConversationSelect}) => {
 
   const [search, setSearch] = useState('');
 
+  console.log()
   return (
     <div className={style.ContactSection}> 
     <SearchBar search={search} setSearch={setSearch} />
