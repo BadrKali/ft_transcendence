@@ -6,6 +6,6 @@ from . import models
 class MessageAdmin(admin.ModelAdmin):
     list_display = ['sender_id', 'receiver_id', 'content', 'created_at', 'seen']
     list_editable = ['content']
-    list_per_page = 8
+    list_per_page = 100
 
 # Register your models here.
