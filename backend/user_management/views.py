@@ -32,6 +32,9 @@ class FriendRequestManagementView(APIView):
         player_sender = request.user
         player_receiver = get_object_or_404(User, id=receiver_id)
         request_exists = self.get_friendship_status(player_sender, player_receiver)
+        is_friend = Friendship.objects.filter(Q(player=player_sender, friend=player_receiver) | Q(player=player_receiver, friend=player_sender)).exists()
+        if is_friend:
+            return Response({'message': 'Friends'}, status=status.HTTP_200_OK)
         if request_exists:
             return Response({"message": "Friend request exists."}, status=status.HTTP_200_OK)
         else:
@@ -108,7 +111,7 @@ class FriendManagementView(APIView):
         else:
             return Response({"message": f"{friend} is not a friend."}, status=status.HTTP_404_NOT_FOUND)
         
-    def detete(self, request, friend_id):
+    def delete(self, request, friend_id):
         currentUser = request.user
         friend = friend = get_object_or_404(User, id=friend_id)
         friendship = Friendship.objects.filter(Q(player=currentUser, friend=friend) | Q(player=friend, friend=currentUser))

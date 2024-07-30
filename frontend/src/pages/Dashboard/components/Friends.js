@@ -5,6 +5,9 @@ import History from '../../../assets/MatchHistoryData'
 import FriendsItem from './FriendsItem'
 import useFetch from '../../../hooks/useFetch'
 import { useNavigate } from 'react-router-dom';
+import Lottie from 'lottie-react'
+import NoOneTotalkTo from '../../Chat/ChatAssets/NoOneTotalkTo.json'
+import style from '../../Chat/Components/ContactSection/ContactSection.module.css'
 
 function Friends() {
   const [listFriend, setListFriend] = useState([]);
@@ -37,9 +40,8 @@ function Friends() {
               </div>
             ))
           ) : (
-            <div className='emptyFriendsMessage'>
-              <p>Looks like your friends list is empty. Why not invite some buddies to join you here?</p>
-              <button >Invite Friends</button>
+            <div className="ConversationContainerAnimation">
+              <div className="NoOneToTalkTost"> <Lottie animationData={NoOneTotalkTo} /> </div>
             </div>
           )}
         </div>

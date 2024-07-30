@@ -97,3 +97,18 @@
 .emptyFriendsMessage button:hover{
     background-color: #FF4757; 
 }
+
+.ConversationContainerAnimation{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    width: 100%;
+}
+
+.NoOneToTalkTost{
+
+    align-self: center;
+    opacity: 0.1;
+}
