@@ -112,6 +112,8 @@ const Random = () => {
 
         const ball = game_state.ball;
         const net = game_state.net;
+        const user1 = game_state.players[player1.username]
+        const user2 = game_state.players[player2.username]
 
         function drawRect(x, y, w, h, color) {
             ctx.fillStyle = color;
@@ -137,9 +139,27 @@ const Random = () => {
             ctx.fillStyle = 'rgba(22, 22, 37, 0.9)';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
             drawNet();
+            ctx.fillStyle = user1.color;
+            drawRoundedRect(user1.x, user1.y, user1.width, user1.height, 9);
+            ctx.fillStyle = user2.color;
+            drawRoundedRect(user2.x, user2.y, user2.width, user2.height, 9);
             drawArc(ball.x, ball.y, ball.radius, ball.color);
         }
-
+        
+        function drawRoundedRect(x, y, width, height, radius) {
+            ctx.beginPath();
+            ctx.moveTo(x + radius, y);
+            ctx.lineTo(x + width - radius, y);
+            ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
+            ctx.lineTo(x + width, y + height - radius);
+            ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
+            ctx.lineTo(x + radius, y + height);
+            ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
+            ctx.lineTo(x, y + radius);
+            ctx.quadraticCurveTo(x, y, x + radius, y);
+            ctx.closePath();
+            ctx.fill();
+        }
         // function game() {
         //     render();
         // }
@@ -182,7 +202,7 @@ const Random = () => {
                     />
                     <div className="game-container">
                         <canvas className='canvas-container' ref={canvasRef}></canvas>
-                        <h1>{message}</h1>
+                        {/* <h1>{}</h1> */}
                     </div>
                 </>
             )}
