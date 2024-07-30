@@ -13,6 +13,7 @@ const AuthTwo = () => {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
+        console.log("i am here niggas")
         const searchParams = new URLSearchParams(location.search);
         const code = searchParams.get('code');
         console.log(code)
@@ -31,9 +32,9 @@ const AuthTwo = () => {
                     navigate('/auth');
                     // setErrorMsg("Failed to authenticate with 42 School.");
                 })
-                .finally(() => {
-                    setLoading(false); 
-                });
+                // .finally(() => {
+                //     setLoading(false); 
+                // });
         }
     }, []);
 

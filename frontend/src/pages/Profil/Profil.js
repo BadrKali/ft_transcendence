@@ -11,6 +11,7 @@ import { useParams } from 'react-router-dom';
 import useAuth from '../../hooks/useAuth'
 import { useLocation } from 'react-router-dom';
 import BlockUnblockButton from './components/BlockUnblockButton'
+import AddFriendUnfriendButton from './components/AddFriendUnfriendButton'
 
 
 
@@ -38,6 +39,7 @@ const Profil = () => {
     }
     return <div>{error}</div>;
   } 
+  
   const handleAddFriend = async () => {
     try {
       const response = await fetch(`http://localhost:8000/user/friends-request/${userData.id}/`, {
@@ -71,12 +73,13 @@ const Profil = () => {
     <div className='dashboard-contianer'>
        <div className='profil-icons'>
           <div className='profil-buttons'>
-            <div className='AddFriend-button profil-button' onClick={handleAddFriend}>
+            <AddFriendUnfriendButton FriendId={userData.id} />
+            {/* <div className='AddFriend-button profil-button' onClick={handleAddFriend}>
                 <Icon name='AddFriend' className='Add-Friend profil-icon' />
                 <p>add Friend</p>
-            </div>
+            </div> */}
             <div className='ChatFriend-button profil-button' onClick={() => handleItemClick()}>
-                <Icon name='ChatFriend' className='Chat-Friend profil-icon' />
+                <Icon name='ChatFriend' className='Chat-Friend profil-icon' />«
                 <p>Message</p>
             </div>
             <div className='Challangefriend-button profil-button'>

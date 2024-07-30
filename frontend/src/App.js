@@ -15,7 +15,7 @@ const AppLayout = () => {
           <TopBar/>
           <div className='page-content'>
             <div className='content'>
-              <Notification/>
+              {/* <Notification/> */}
               <Outlet/>
             </div>
           </div>
