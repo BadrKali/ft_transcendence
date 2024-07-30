@@ -34,9 +34,6 @@ const routes = [
       {
         element: <ProtectedRoutes />,
         children: [
-          {path: 'bot-game', element: <Bot />},
-          {path: 'local-game', element: <LocalGame />},
-          {path: 'random-game', element: <Random/>},
           {element: <AppLayout />,
             children: [
               { path: '/', element: <DashBoard /> },
@@ -52,17 +49,18 @@ const routes = [
       }
     ]
   },
+  {path: 'bot-game', element: <Bot />},
+  {path: 'local-game', element: <LocalGame />},
+  {path: 'random-game', element: <Random/>},
 ];
 
 const router = createBrowserRouter(routes);
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-  <React.StrictMode>
     <AuthProvider>
       <NotificationProvider>
         <RouterProvider router={router}/>
       </NotificationProvider>
     </AuthProvider>
-  // </React.StrictMode>
 );

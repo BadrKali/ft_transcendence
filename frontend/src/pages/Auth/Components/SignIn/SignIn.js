@@ -52,26 +52,6 @@ const SignIn = (props) => {
             console.log("yay")
         }   
     }
-
-    // useEffect(() => {
-    //     const searchParams = new URLSearchParams(location.search);
-    //     const code = searchParams.get('code');
-
-    //     if (code) {
-    //         axios.post("/auth/callback/", { code })
-    //             .then(response => {
-    //                 const accessToken = response.data.access_token;
-    //                 setAuth({ accessToken });
-    //                 console.log(accessToken)
-    //                 navigate('/leaderboard');
-    //             })
-    //             .catch(error => {
-    //                 console.error('Error during authentication', error);
-    //                 setErrorMsg("Failed to authenticate with 42 School.");
-    //             });
-    //     }
-    // }, [location, setAuth, navigate]);
-
     function handleInputChange(e) {
         setSignInValues({ ...signInValues, [e.target.name]: e.target.value });
     }

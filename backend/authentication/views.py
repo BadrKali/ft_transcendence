@@ -125,8 +125,10 @@ class CallbackView(APIView):
             "code"         : code,
             "redirect_uri" : os.getenv('REDIRECT_URI')
         }
+        print(f"code: {data}")
         response = requests.post(token_url, data=data)
         if response.status_code != 200:
+            print(response.status_code)
             return Response({"error": "Failed to fetch token"}, status=response.status_code)
         access_token = response.json().get('access_token')
         headers = {'Authorization': f'Bearer {access_token}'}
