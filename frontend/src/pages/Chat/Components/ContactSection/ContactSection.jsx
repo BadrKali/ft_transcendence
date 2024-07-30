@@ -7,6 +7,8 @@ import    NoOneTotalkTo                  from '../../ChatAssets/NoOneTotalkTo.js
 import    Lottie                         from 'lottie-react'
 import    {ChatList}                     from '../../FakeData/GlobalFakeData.jsx'
 import    {UserMsgContext}               from '../../Chat.jsx';
+import useAuth from '../../../../hooks/useAuth'
+
 
 
 const SendToNoneFriend = () =>{
@@ -28,31 +30,32 @@ function LastMessageFormater(lastMessage){
   return lastMessage;
 }
 
+
 const ChatConversation = ({ ConversationData, selectedIndex, onSelectConversation }) => {
     
   function HandleClick() {
-    onSelectConversation(ConversationData.id);
+    onSelectConversation(ConversationData.username);
   }
-
+  console.log(selectedIndex)
   return (
     <div onClick={HandleClick}
     style={{    borderRadius: '0.5rem', 
-     backgroundColor: selectedIndex === ConversationData.id ? '#11141B' : '' }}>
+     backgroundColor: selectedIndex === ConversationData.username ? '#11141B' : '' }}>
         <div className={style.ConversationHolder}>
 
        <img className={style.FriendPhoto} src={ConversationData.avatar} alt="Your-friend-photo" />
      
       <div className={style.NameAndLastMessage}>
         <p className={style.FriendName}> {ConversationData.username}</p>
-        <p className={style.LastMessage}> {LastMessageFormater(ConversationData.messages.outgoingMsgs[ConversationData.messages.outgoingMsgs.length- 1])}</p>
+        <p className={style.LastMessage}> {LastMessageFormater(ConversationData.lastMessage)}</p>
       </div>
 
       <div className={style.UnreadAndTime}>
-        <p className={style.SendTime}> {ConversationData.Time}</p>
+        <p className={style.SendTime}> {ConversationData.lastTime}</p>
         {
-          ConversationData.unread ?
+          ConversationData.unreadMessages ?
           <div className={style.unreadedMsgHolder}>
-           <p className={style.UnreadMessages}> {ConversationData.unread >= 9 ? '+9': ConversationData.unread}</p>
+           <p className={style.UnreadMessages}> {ConversationData.unreadMessages >= 9 ? '+9': ConversationData.unreadMessages}</p>
           </div>
         : null
         } 
@@ -65,9 +68,32 @@ const ChatConversation = ({ ConversationData, selectedIndex, onSelectConversatio
 
 const ContactSection = ({selectedIndex, handleConversationSelect}) => {
 
-  const [search, setSearch] = useState('');
+  const { auth }  = useAuth();
+  // let ChatList = []
+  // useEffect(()=>{
+  // async function FetchContactSection() {
+  // const url = "http://127.0.0.1:8000/chat/GetContactSection/";
+  // try {
+  //     const response = await fetch(url, {
+  //         method: 'GET',
+  //         headers: {
+  //           'Content-Type': 'application/json',
+  //           'Authorization': `Bearer ${auth.accessToken}`
+  //         }
+  //       });
+  //     if (!response.ok) {
+  //         throw new Error(`Response status: ${response.status}`);
+  //     }
+  //     ChatList = await response.json();
+  //     console.log(ChatList)
+  // } catch (error) {
+  // console.error(error.message);
+  // }
+  // }  
+  // FetchContactSection();
+  // },[])
 
-  console.log()
+  const [search, setSearch] = useState('');
   return (
     <div className={style.ContactSection}> 
     <SearchBar search={search} setSearch={setSearch} />

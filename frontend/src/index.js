@@ -64,5 +64,5 @@ root.render(
         <RouterProvider router={router}/>
       </NotificationProvider>
     </AuthProvider>
-  </React.StrictMode>
+  // </React.StrictMode>
 );
