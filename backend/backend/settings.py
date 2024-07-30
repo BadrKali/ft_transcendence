@@ -167,8 +167,3 @@ CHANNEL_LAYERS = {
         "BACKEND": "channels.layers.InMemoryChannelLayer",
     }
 }
-
-# REST_FRAMEWORK = {
-#     'COERCE_DECIMAL_TO_STRING': False,
-# }
-
