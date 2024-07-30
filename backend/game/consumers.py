@@ -30,7 +30,10 @@ class GameState:
             'players': {},
         }
 
-    async def add_player(self, username,room):
+    async def add_player(self, username, room):
+        player1_settings = await self.get_player_settings(room.player1)
+        player2_settings = await self.get_player_settings(room.player2)
+
         player1_username = await self.get_player_username(room.player1)
         player2_username = await self.get_player_username(room.player2)
 
@@ -41,7 +44,7 @@ class GameState:
             'y': (self.state['canvas']['height'] - 140) / 2,
             'width': 10,
             'height': 140,
-            'color': 'WHITE'
+            'color': player1_settings.paddle if player1_settings else 'WHITE'
         }
         player2 = {
             'username': player2_username,
@@ -50,17 +53,22 @@ class GameState:
             'y': (self.state['canvas']['height'] - 140) / 2,
             'width': 10,
             'height': 140,
-            'color': 'WHITE'
+            'color': player2_settings.paddle if player2_settings else 'WHITE'
         }
 
         self.state['players'][player1_username] = player1
         self.state['players'][player2_username] = player2
 
-        print(f"Players added: {player1_username}, {player2_username}, Current players: {list(self.state['players'].keys())}")
+        print(f"Player 1: {player1}")
+        print(f"Player 2: {player2}")
+        print(f"Current players: {list(self.state['players'].keys())}")
 
     async def get_player_username(self, player):
         return await sync_to_async(lambda: player.user.username)()
 
+    async def get_player_settings(self, player):
+        from .models import GameSettings
+        return await sync_to_async(lambda: GameSettings.objects.filter(user=player).first())()
 
     def remove_player(self, username):
         if username in self.state['players']:
