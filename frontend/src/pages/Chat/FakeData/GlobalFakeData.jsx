@@ -232,160 +232,143 @@ const ChatHistory = [
 ];
 
 
-export const ChatList=[];
-  // {
-  //   id: 1,
-  //   username: "abdelali ait talb",
-  //   lastMessage: "السيطرة تحت الامور",
-  //   lastTime: "9.32 PM",
-  //   unreadMessages: 0,
-  //   avatar: avatar10,
-  //   status: true,
-  //   messages: ChatHistory[0],
-  // },
+export const ChatList=[
+  {
+    id: 1,
+    username: "abdelali ait talb",
+    lastMessage: "السيطرة تحت الامور",
+    lastTime: "9.32 PM",
+    unreadMessages: 0,
+    avatar: avatar10,
+    status: true,
+    messages: ChatHistory[0],
+  },
 
-  // {
-  //   id : 2,
-  //   username: "Alexander fo",
-  //   lastMessage:
-  //     "Hello abdellai ait talb is ok fechkel had Lblan hada akhounaa wayliii",
-  //   lastTime: "9.32 PM",
-  //   unreadMessages: 0,
-  //   avatar: avatar2,
-  //   status: false,
-  //   messages: ChatHistory[1],
-  // },
+  {
+    id : 2,
+    username: "Alexander fo",
+    lastMessage:
+      "Hello abdellai ait talb is ok fechkel had Lblan hada akhounaa wayliii",
+    lastTime: "9.32 PM",
+    unreadMessages: 0,
+    avatar: avatar2,
+    status: false,
+    messages: ChatHistory[1],
+  },
 
-  // {
-  //   id: 3,
+  {
+    id: 3,
 
-  //   username: "koStra_X",
-  //   lastMessage:
-  //     "hello Welcome to my Reseaerch articles could you provid me wih ok lol",
-  //   lastTime: "9.32 PM",
-  //   unreadMessages: 3,
-  //   avatar: avatar3,
-  //   status: true,
-  //   messages: ChatHistory[2],
-  // },
+    username: "koStra_X",
+    lastMessage:
+      "hello Welcome to my Reseaerch articles could you provid me wih ok lol",
+    lastTime: "9.32 PM",
+    unreadMessages: 0,
+    avatar: avatar3,
+    status: true,
+    messages: ChatHistory[2],
+  },
 
-  // {
-  //   id: 4,
+  {
+    id: 4,
 
-  //   username: "Tolandriss 119",
-  //   lastMessage:
-  //     "fin akhouyano thenna Lo9tt manzakinzaa ... lan ichiraan labaas okoko",
-  //   lastTime: "19.32 AM",
-  //   unreadMessages: 2,
-  //   avatar: avatar4,
-  //   status: false,
-  //   messages: ChatHistory[3],
-  // },
-  // {
-  //   id: 5,
-  //   username: "FatnaX piW",
-  //   lastMessage: "sme3 asidi smeee3 artekltek sam3iiin",
-  //   lastTime: "10.32 AM",
-  //   unreadMessages: 0,
-  //   avatar: avatar5,
-  //   status: false,
-  //   messages: ChatHistory[4],
-  // },
+    username: "Tolandriss 119",
+    lastMessage:
+      "fin akhouyano thenna Lo9tt manzakinzaa ... lan ichiraan labaas okoko",
+    lastTime: "19.32 AM",
+    unreadMessages: 2,
+    avatar: avatar4,
+    status: false,
+    messages: ChatHistory[3],
+  },
+  {
+    id: 5,
+    username: "FatnaX piW",
+    lastMessage: "sme3 asidi smeee3 artekltek sam3iiin",
+    lastTime: "10.32 AM",
+    unreadMessages: 0,
+    avatar: avatar5,
+    status: false,
+    messages: ChatHistory[4],
+  },
 
-  // {
-  //   id: 6,
-  //   username: "Boutalaght flan",
-  //   lastMessage: "ok ok",
-  //   lastTime: "9.32 PM",
-  //   unreadMessages: 1,
-  //   avatar: avatar6,
-  //   status: true,
-  //   messages: ChatHistory[5],
-  // },
+  {
+    id: 6,
+    username: "Boutalaght flan",
+    lastMessage: "ok ok",
+    lastTime: "9.32 PM",
+    unreadMessages: 1,
+    avatar: avatar6,
+    status: true,
+    messages: ChatHistory[5],
+  },
 
-  // {
-  //   id: 7,
-  //   username: "Othman XT 119",
-  //   lastMessage: "Hello abdellai ait talb is ok",
-  //   lastTime: "9.32 PM",
-  //   unreadMessages: 19,
-  //   avatar: avatar7,
-  //   status: false,
-  //   messages: ChatHistory[6],
-  // },
+  {
+    id: 7,
+    username: "Othman XT 119",
+    lastMessage: "Hello abdellai ait talb is ok",
+    lastTime: "9.32 PM",
+    unreadMessages: 19,
+    avatar: avatar7,
+    status: false,
+    messages: ChatHistory[6],
+  },
 
-  // {
-  //   id: 8,
-  //   username: "kolanssatil",
-  //   lastMessage: "Hello abdellai ait talb is ok",
-  //   lastTime: "9.32 PM",
-  //   unreadMessages: 2,
-  //   avatar: avatar8,
-  //   status: false,
-  //   messages: ChatHistory[7],
-  // },
+  {
+    id: 8,
+    username: "kolanssatil",
+    lastMessage: "Hello abdellai ait talb is ok",
+    lastTime: "9.32 PM",
+    unreadMessages: 2,
+    avatar: avatar8,
+    status: false,
+    messages: ChatHistory[7],
+  },
 
-  // {
-  //   id: 9,
+  {
+    id: 9,
 
-  //   username: "CHARDAN ABOLA89",
-  //   lastMessage: "Hello abdellai ait talb is ok",
-  //   lastTime: "9.32 PM",
-  //   unreadMessages: 3,
-  //   avatar: avatar9,
-  //   status: true,
-  //   messages: ChatHistory[8],
-  // },
+    username: "CHARDAN ABOLA89",
+    lastMessage: "Hello abdellai ait talb is ok",
+    lastTime: "9.32 PM",
+    unreadMessages: 3,
+    avatar: avatar9,
+    status: true,
+    messages: ChatHistory[8],
+  },
 
-  // {
-  //   id: 10,
-  //   username: "CHARDAN Anola bol",
-  //   lastMessage: "Hello abdellai ait talb is ok",
-  //   lastTime: "9.32 PM",
-  //   unreadMessages: 2,
-  //   avatar: avatar10,
-  //   status: false,
-  //   messages: ChatHistory[9],
-  // },
+  {
+    id: 10,
+    username: "CHARDAN Anola bol",
+    lastMessage: "Hello abdellai ait talb is ok",
+    lastTime: "9.32 PM",
+    unreadMessages: 2,
+    avatar: avatar10,
+    status: false,
+    messages: ChatHistory[9],
+  },
 
-  // {
-  //   id: 11,
-  //   username: "CHARDAN Tunis",
-  //   lastMessage: "Hello abdellai ait talb is ok",
-  //   lastTime: "9.32 PM",
-  //   unreadMessages: 49,
-  //   avatar: avatar2,
-  //   status: true,
-  //   messages: ChatHistory[10],
-  // },
+  {
+    id: 11,
+    username: "CHARDAN Tunis",
+    lastMessage: "Hello abdellai ait talb is ok",
+    lastTime: "9.32 PM",
+    unreadMessages: 49,
+    avatar: avatar2,
+    status: true,
+    messages: ChatHistory[10],
+  },
 
-  // {
-  //   id: 12,
-  //   username: "CHARDAN Fultan",
-  //   lastMessage: "Hello abdellai ait talb is ok",
-  //   lastTime: "9.32 PM",
-  //   unreadMessages: 100,
-  //   avatar: avatar2,
-  //   status: true,
-  //   messages: ChatHistory[11],
-  // },
-// ];
-
-async function FetchContactSection() {
-  console.log('Visited bro')
-  const url = "http://localhost:8000/chat/GetContactsSection/";
-  try {
-    const response = await fetch(url);
-    if (!response.ok) {
-      throw new Error(`Response status: ${response.status}`);
-    }
-
-    const json = await response.json();
-    console.log(json)
-  } catch (error) {
-    console.error(error.message);
-  }
-}  
-FetchContactSection();
+  {
+    id: 12,
+    username: "CHARDAN Fultan",
+    lastMessage: "Hello abdellai ait talb is ok",
+    lastTime: "9.32 PM",
+    unreadMessages: 100,
+    avatar: avatar2,
+    status: true,
+    messages: ChatHistory[11],
+  },
+];
 
 export default ChatList

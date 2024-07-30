@@ -4,19 +4,19 @@ import ContactSection from './Components/ContactSection/ContactSection.jsx'
 import MessageSection from './Components/MessageSection/MessageSection.jsx'
 import UserParams from "./Components/UserParams/UserParams";
 import { ChatList } from "./FakeData/GlobalFakeData.jsx";
+import useAuth from '../../hooks/useAuth'
 
 export const UserMsgContext = createContext();
 
 const Chat = () => {
-
-    const [selectedIndex, setSelectedIndex] = useState(-1);
+    const [selectedIndex, setSelectedIndex] = useState('');
   
     const handleConversationSelect = (conversationId) => {
       setSelectedIndex(conversationId);
     };
 
     function extractUserMessages(selectedIndex){
-        return ChatList.filter((UserObj) => UserObj.id === selectedIndex);
+        return ChatList.filter((UserObj) => UserObj.username === selectedIndex);
     }
     const UserMessageData = extractUserMessages(selectedIndex)[0];
 

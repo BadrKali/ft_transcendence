@@ -166,9 +166,13 @@ CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels.layers.InMemoryChannelLayer",
     }
+<<<<<<< Updated upstream
+}
+=======
 }
 
 # REST_FRAMEWORK = {
 #     'COERCE_DECIMAL_TO_STRING': False,
 # }
 
+>>>>>>> Stashed changes
