@@ -75,7 +75,8 @@ const Random = () => {
                 setRoomId(data.room_id);
             } else if (data.action === 'update_game_state')  {
                 setGameState(data.game_state);
-                setMessage("Game_state received");
+            } else if (data.action === 'update_player_movement') {
+                setGameState(data.game_state);
             } else if (data.message) {
                 setMessage(data.message);
             }
@@ -105,15 +106,21 @@ const Random = () => {
         if (!game_state || !canvasRef.current) return;
 
         const canvas = canvasRef.current;
-        if (!canvas) return;
         const ctx = canvas.getContext('2d');
+        if (!ctx) return;
+
         canvas.width = game_state.canvas.width;
         canvas.height = game_state.canvas.height;
 
         const ball = game_state.ball;
         const net = game_state.net;
-        const user1 = game_state.players[player1.username]
-        const user2 = game_state.players[player2.username]
+
+        const user1 = game_state.players[player1?.username];
+        const user2 = game_state.players[player2?.username];
+    
+        console.log('Game State:', game_state);
+        console.log('Player 1:', user1);
+        console.log('Player 2:', user2);
 
         function drawRect(x, y, w, h, color) {
             ctx.fillStyle = color;
@@ -134,18 +141,63 @@ const Random = () => {
             }
         }
 
+        function handleKeyDown(evt) {
+            if (keys === "ws") {
+                switch (evt.key) {
+                    case 'w':
+                        sendPlayerMovement(currentUser?.username, "up");
+                        break;
+                    case 's':
+                        sendPlayerMovement(currentUser?.username, "down");
+                        break;
+                    default:
+                        break;
+                }
+            } else {
+                switch (evt.key) {
+                    case 'ArrowUp':
+                        sendPlayerMovement(currentUser?.username, "up");
+                        break;
+                    case 'ArrowDown':
+                        sendPlayerMovement(currentUser?.username, "down");
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
+
+        function sendPlayerMovement(username, direction) {
+            if (socket && username) {
+                socket.send(JSON.stringify({ 
+                    action: 'player_movement',
+                    user: username,
+                    direction: direction,
+                }));
+            }
+        }
+
+        window.addEventListener('keydown', handleKeyDown);
+
         function render() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             ctx.fillStyle = 'rgba(22, 22, 37, 0.9)';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
             drawNet();
-            ctx.fillStyle = user1.color;
-            drawRoundedRect(user1.x, user1.y, user1.width, user1.height, 9);
-            ctx.fillStyle = user2.color;
-            drawRoundedRect(user2.x, user2.y, user2.width, user2.height, 9);
+
+            if (user1) {
+                ctx.fillStyle = user1.color;
+                drawRoundedRect(user1.x, user1.y, user1.width, user1.height, 9);
+            }
+
+            if (user2) {
+                ctx.fillStyle = user2.color;
+                drawRoundedRect(user2.x, user2.y, user2.width, user2.height, 9);
+            }
+
             drawArc(ball.x, ball.y, ball.radius, ball.color);
         }
-        
+
         function drawRoundedRect(x, y, width, height, radius) {
             ctx.beginPath();
             ctx.moveTo(x + radius, y);
@@ -160,12 +212,11 @@ const Random = () => {
             ctx.closePath();
             ctx.fill();
         }
-        // function game() {
-        //     render();
-        // }
-        let framePerSecond = 100;
+
+        let framePerSecond = 50;
         let interval = 1000 / framePerSecond;
         let lastTime = Date.now();
+
         function loop() {
             const now = Date.now();
             const deltaTime = now - lastTime;
@@ -177,8 +228,13 @@ const Random = () => {
 
             requestAnimationFrame(loop);
         }
+
         loop();
-    }, [game_state]);
+
+        return () => {
+            window.removeEventListener('keydown', handleKeyDown);
+        };
+    }, [game_state, player1, player2]);
 
     return (
         <div className="pingponggame-container random-game" style={{ backgroundImage: `url(${background})` }}>
@@ -202,7 +258,7 @@ const Random = () => {
                     />
                     <div className="game-container">
                         <canvas className='canvas-container' ref={canvasRef}></canvas>
-                        {/* <h1>{}</h1> */}
+                        <h1>{message}</h1>
                     </div>
                 </>
             )}
