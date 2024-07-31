@@ -94,7 +94,7 @@ class FriendRequestResponse(APIView):
             friend_request.invite_status = 'A'
             friendship = Friendship(player=player_sender, friend=player_receiver)
             friendship.save()
-            friend_request.save()
+            friend_request.delete()
             return Response({'message': 'Friend request accepted.'}, status=status.HTTP_200_OK)
         elif action == 'reject':
             friend_request.delete()
@@ -282,7 +282,7 @@ class NotificationListView(APIView):
 class ListFriendsView(APIView):
     def get(self, request, *args, **kwargs):
         current_user = request.user
-        friendships = Friendship.objects.filter(player=current_user, blocked=False)
-        friends = [friendship.friend for friendship in friendships]
+        friendships = Friendship.objects.filter(Q(player=current_user, blocked=False) | Q(friend=current_user, blocked=False))
+        friends = [friendship.friend if friendship.player == current_user else friendship.player for friendship in friendships]
         serializer = CurrentUserSerializer(friends, many=True)
         return Response(serializer.data)

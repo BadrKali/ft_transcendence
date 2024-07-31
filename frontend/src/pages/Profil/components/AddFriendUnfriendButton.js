@@ -50,7 +50,7 @@ function AddFriendUnfriendButton({ FriendId }) {
 
             const data = await response.json();
             alert(data.message);
-            setIsRequst('Friend request already exists.');
+            setIsRequst('Friend request exists.');
 
         } catch (error) {
             alert(error.message);
