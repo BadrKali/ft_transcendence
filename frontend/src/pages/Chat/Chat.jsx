@@ -1,40 +1,77 @@
-import React, {useState, useEffect, createContext} from "react";
-import style from './Chat.module.css'
-import ContactSection from './Components/ContactSection/ContactSection.jsx'
-import MessageSection from './Components/MessageSection/MessageSection.jsx'
+import React, { useState, useEffect, createContext } from "react";
+import style from "./Chat.module.css";
+import ContactSection from "./Components/ContactSection/ContactSection.jsx";
+import MessageSection from "./Components/MessageSection/MessageSection.jsx";
 import UserParams from "./Components/UserParams/UserParams";
-import { ChatList } from "./FakeData/GlobalFakeData.jsx";
-import useAuth from '../../hooks/useAuth'
+import useAuth from "../../hooks/useAuth";
 
 export const UserMsgContext = createContext();
+export const ChatListContext = createContext();
 
 const Chat = () => {
-    const [selectedIndex, setSelectedIndex] = useState('');
+    const [ChatList, setChatList] = useState([]);
+    const [PickedUserData, setPickedUserData] = useState()
+
+  const { auth } = useAuth();
   
-    const handleConversationSelect = (conversationId) => {
-      setSelectedIndex(conversationId);
+  useEffect(() => {
+      const FetchContactSection = async () => {
+      try {
+        const url = "http://127.0.0.1:8000/chat/GetContactSection/";
+        const response = await fetch(url, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${auth.accessToken}`,
+          },
+        });
+        if (!response.ok) {
+          throw new Error(`Response status: ${response.status}`);
+        }
+        const data = await response.json();
+        setChatList(data)
+      } catch (error) {
+        console.error(error.message);
+      }
     };
+    
+    FetchContactSection();
+  
+});
 
-    function extractUserMessages(selectedIndex){
-        return ChatList.filter((UserObj) => UserObj.username === selectedIndex);
-    }
-    const UserMessageData = extractUserMessages(selectedIndex)[0];
 
-    return(
-        <>
-        <h1>Clunca</h1>
-        <div className={style.ChatView}>
-            <UserMsgContext.Provider value={UserMessageData}>
-            <ContactSection selectedIndex={selectedIndex} handleConversationSelect={handleConversationSelect} />
-                <MessageSection />
-            </UserMsgContext.Provider>
-            {
-                UserMessageData ? 
-                <UserParams /> : null
-            }
-            </div>
-        </>
-    )
-}
+  const [selectedIndex, setSelectedIndex] = useState("");
+
+  const handleConversationSelect = (conversationId) => {
+    setSelectedIndex(conversationId);
+  };
+//   console.log(selectedIndex);
+  function extractUserMessages(selectedIndex) {
+    console.log(`Go fetch Data With ${selectedIndex}`);
+    // get the suitable records From getMessagesEndpoint
+    // return ChatList.filter((UserObj) => UserObj.username === selectedIndex); // got it from backend
+  }
+  useEffect(() => {
+    console.log( 'Go fetch Your Mesages With ' + selectedIndex)
+  }, [selectedIndex])
+  return (
+    <>
+      <h1>Clunca</h1>
+      <div className={style.ChatView}>
+        <UserMsgContext.Provider value={PickedUserData}>
+          <ChatListContext.Provider value={ChatList}>
+            <ContactSection
+              selectedIndex={selectedIndex}
+              handleConversationSelect={handleConversationSelect}
+            />
+            <MessageSection />
+          </ChatListContext.Provider>
+        </UserMsgContext.Provider>
+
+        {PickedUserData ? <UserParams /> : null}
+      </div>
+    </>
+  );
+};
 
 export default Chat;

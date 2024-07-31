@@ -5,9 +5,9 @@ import    {NotePencil}                   from 'phosphor-react'
 import    src                            from '../../ChatAssets/download.jpeg'
 import    NoOneTotalkTo                  from '../../ChatAssets/NoOneTotalkTo.json'
 import    Lottie                         from 'lottie-react'
-import    {ChatList}                     from '../../FakeData/GlobalFakeData.jsx'
+import    {ChatListContext}              from "../../Chat.jsx"
 import    {UserMsgContext}               from '../../Chat.jsx';
-import useAuth from '../../../../hooks/useAuth'
+import    useAuth from '../../../../hooks/useAuth'
 
 
 
@@ -36,7 +36,6 @@ const ChatConversation = ({ ConversationData, selectedIndex, onSelectConversatio
   function HandleClick() {
     onSelectConversation(ConversationData.username);
   }
-  console.log(selectedIndex)
   return (
     <div onClick={HandleClick}
     style={{    borderRadius: '0.5rem', 
@@ -70,29 +69,9 @@ const ContactSection = ({selectedIndex, handleConversationSelect}) => {
 
   const { auth }  = useAuth();
   
-  // let ChatList = []
-  // useEffect(()=>{
-  // async function FetchContactSection() {
-  // const url = "http://127.0.0.1:8000/chat/GetContactSection/";
-  // try {
-  //     const response = await fetch(url, {
-  //         method: 'GET',
-  //         headers: {
-  //           'Content-Type': 'application/json',
-  //           'Authorization': `Bearer ${auth.accessToken}`
-  //         }
-  //       });
-  //     if (!response.ok) {
-  //         throw new Error(`Response status: ${response.status}`);
-  //     }
-  //     ChatList = await response.json();
-  //     console.log(ChatList)
-  // } catch (error) {
-  // console.error(error.message);
-  // }
-  // }  
-  // FetchContactSection();
-  // },[])
+  const ChatList = useContext(ChatListContext);
+
+
 
   const [search, setSearch] = useState('');
   return (
@@ -105,9 +84,9 @@ const ContactSection = ({selectedIndex, handleConversationSelect}) => {
     </div>
 
 {
-  ChatList.length ? 
+  ChatList?.length ? 
     <div className={style.ConversationContainer}>
-        {ChatList.filter((userdata) =>{
+        {ChatList?.filter((userdata) =>{
           return search.toLowerCase() === '' ? userdata : userdata.username.toLowerCase().includes(search.toLowerCase().replace(/\s+/g, ' '))
         }).map((DataObj, index) => {
           return (<ChatConversation

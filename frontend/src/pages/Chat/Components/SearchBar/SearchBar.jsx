@@ -1,6 +1,5 @@
 import React, {useState} from 'react'
 import style from './SearchBar.module.css'
-import { ChatList } from '../../FakeData/GlobalFakeData'
 
 const SearchIcon = () => {
     return (<svg className={style.SearchIcon} width="17" height="20"
