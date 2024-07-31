@@ -11,10 +11,12 @@ export const ChatListContext = createContext();
 const Chat = () => {
     const [ChatList, setChatList] = useState([]);
     const [PickedUserData, setPickedUserData] = useState()
+    const [selectedIndex, setSelectedIndex] = useState("");
 
   const { auth } = useAuth();
   
   useEffect(() => {
+    console.log('I\'LL GO FETCH MOTHER FUCKER !')
       const FetchContactSection = async () => {
       try {
         const url = "http://127.0.0.1:8000/chat/GetContactSection/";
@@ -37,23 +39,27 @@ const Chat = () => {
     
     FetchContactSection();
   
-});
+}, [selectedIndex]);
 
 
-  const [selectedIndex, setSelectedIndex] = useState("");
+  
 
   const handleConversationSelect = (conversationId) => {
     setSelectedIndex(conversationId);
   };
+  useEffect(()=>{
+    console.log('infinite rerendering bro');
+  })
 //   console.log(selectedIndex);
-  function extractUserMessages(selectedIndex) {
-    console.log(`Go fetch Data With ${selectedIndex}`);
-    // get the suitable records From getMessagesEndpoint
-    // return ChatList.filter((UserObj) => UserObj.username === selectedIndex); // got it from backend
-  }
-  useEffect(() => {
-    console.log( 'Go fetch Your Mesages With ' + selectedIndex)
-  }, [selectedIndex])
+//   function extractUserMessages(selectedIndex) {
+//     // console.log(`Go fetch Data With ${selectedIndex}`);
+//     // get the suitable records From getMessagesEndpoint
+//     // return ChatList.filter((UserObj) => UserObj.username === selectedIndex); // got it from backend
+//   }
+//   useEffect(() => {
+//     // console.log( 'Go fetch Your Mesages With ' + selectedIndex)
+//   }, [selectedIndex])
+
   return (
     <>
       <h1>Clunca</h1>
