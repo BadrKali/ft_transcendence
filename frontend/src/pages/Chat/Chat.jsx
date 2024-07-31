@@ -40,10 +40,6 @@ const Chat = () => {
     FetchContactSection();
   
 }, [selectedIndex]);
-
-
-  
-
   const handleConversationSelect = (conversationId) => {
     setSelectedIndex(conversationId);
   };
