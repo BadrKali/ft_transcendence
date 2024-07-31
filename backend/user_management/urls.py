@@ -5,7 +5,7 @@ urlpatterns = [
 
     path('friends-request/<int:receiver_id>/', FriendRequestManagementView.as_view(), name='manage_friend_request_detail'),
     path('friends-request/<int:sender_id>/response/', FriendRequestResponse.as_view(), name='friend_request_response'),
-    path('friend/<int:friend_id>', FriendManagementView.as_view(), name='friend_management'),
+    path('friend/<int:friend_id>/', FriendManagementView.as_view(), name='friend_management'),
     path('<int:blocked_id>/block-unblock/', BlockUnblockView.as_view(), name='block_unblock_user'),
     path('stats/', PlayerView.as_view(), name='player_view'),
     path('stats/<int:player_id>', OtherPlayerView.as_view(), name='player_view'),

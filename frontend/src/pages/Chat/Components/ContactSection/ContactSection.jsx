@@ -68,12 +68,9 @@ const ChatConversation = ({ ConversationData, selectedIndex, onSelectConversatio
 const ContactSection = ({selectedIndex, handleConversationSelect}) => {
 
   const { auth }  = useAuth();
-  
   const ChatList = useContext(ChatListContext);
-
-
-
   const [search, setSearch] = useState('');
+  
   return (
     <div className={style.ContactSection}> 
     <SearchBar search={search} setSearch={setSearch} />

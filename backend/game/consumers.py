@@ -30,7 +30,10 @@ class GameState:
             'players': {},
         }
 
-    async def add_player(self, username,room):
+    async def add_player(self, username, room):
+        player1_settings = await self.get_player_settings(room.player1)
+        player2_settings = await self.get_player_settings(room.player2)
+
         player1_username = await self.get_player_username(room.player1)
         player2_username = await self.get_player_username(room.player2)
 
@@ -41,7 +44,7 @@ class GameState:
             'y': (self.state['canvas']['height'] - 140) / 2,
             'width': 10,
             'height': 140,
-            'color': 'WHITE'
+            'color': player1_settings.paddle if player1_settings else 'WHITE'
         }
         player2 = {
             'username': player2_username,
@@ -50,17 +53,32 @@ class GameState:
             'y': (self.state['canvas']['height'] - 140) / 2,
             'width': 10,
             'height': 140,
-            'color': 'WHITE'
+            'color': player2_settings.paddle if player2_settings else 'WHITE'
         }
 
         self.state['players'][player1_username] = player1
         self.state['players'][player2_username] = player2
 
-        print(f"Players added: {player1_username}, {player2_username}, Current players: {list(self.state['players'].keys())}")
+        print(f"Player 1: {player1}")
+        print(f"Player 2: {player2}")
+        print(f"Current players: {list(self.state['players'].keys())}")
 
     async def get_player_username(self, player):
         return await sync_to_async(lambda: player.user.username)()
 
+    async def get_player_settings(self, player):
+        from .models import GameSettings
+        return await sync_to_async(lambda: GameSettings.objects.filter(user=player).first())()
+
+    def player_mouvement(self, user, direction):
+        player = self.state['players'][user]
+        if direction == "up":
+            if player['y'] > 0:
+                player['y'] -= 20
+        else:
+            if player['y'] < self.state['canvas']['height'] - player['height']:
+                player['y'] += 20
+        print(f"{player['y']}")
 
     def remove_player(self, username):
         if username in self.state['players']:
@@ -115,8 +133,22 @@ class GameConsumer(AsyncWebsocketConsumer):
         if action == "random":
             await self.handle_random_action()
         elif action == "player_movement":
-            print("Player moves")
+            username = data.get('user')
+            direction = data.get('direction')
+            self.game_state.player_mouvement(username, direction)
+            await self.send_player_movement_update()
 
+    async def send_player_movement_update(self):
+        await self.channel_layer.group_send(
+            self.room_group_name,
+            {
+                'type': 'send_message',
+                'message': {
+                    'action': 'update_player_movement',
+                    'game_state': self.game_state.get_state(),
+                }
+            }
+        )
     async def handle_random_action(self):
         player_str = await self.get_player_str()
         room = await self.find_or_create_room(player_str)
