@@ -1,5 +1,6 @@
 import React from 'react';
 import './notificationPopup.css'
+
 const NotificationPopup = ({ isOpen, onClose, notif, onAccept, onReject })=> {
   console.log("hahaha " + isOpen )
   if (!isOpen) {

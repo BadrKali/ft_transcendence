@@ -1,0 +1,19 @@
+.listBlockerItem{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    padding: 10px;
+}
+
+.blockedImageName{
+    display: flex;
+    align-items: center;
+    gap : 10px
+}
+
+.unblockUserButton{
+    display: flex;
+    align-items: center;
+    text-align: center;
+}

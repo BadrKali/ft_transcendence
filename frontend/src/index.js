@@ -18,6 +18,7 @@ import PersistLogin from './components/PersistLogin/PersistLogin';
 import OauthTwo from './components/OauthTwo/OauthTwo';
 import { NotificationProvider } from './components/Notification/NotificationContext';
 import AppLayout from './App';
+import RealTimeProvider from './context/RealTimeProvider';
 
 const routes = [
   {
@@ -59,9 +60,9 @@ const router = createBrowserRouter(routes);
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
     <AuthProvider>
-      <NotificationProvider>
+       <RealTimeProvider>
         <RouterProvider router={router}/>
-      </NotificationProvider>
+      </RealTimeProvider>
     </AuthProvider>
 );
 

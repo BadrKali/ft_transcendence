@@ -1,12 +1,17 @@
 import React, { createContext, useEffect, useContext, useState } from 'react';
 import useAuth from '../hooks/useAuth';
 
-const RealTimeContext = createContext({});
+export const RealTimeContext = createContext({});
 
 export const RealTimeProvider = ({ children }) => {
     const [notifications, setNotifications] = useState([]);
     const [friendsStatus, setFriendsStatus] = useState({});
     const { auth } = useAuth();
+    const [hasNotification, setHasNotification] = useState(false);
+
+    const clearNotification = () => {
+      setHasNotification(false);
+    };
 
     useEffect(() => {
         const ws = new WebSocket(`ws://localhost:8000/ws/notifications/?token=${auth.accessToken}`);
@@ -32,6 +37,7 @@ export const RealTimeProvider = ({ children }) => {
                     ...prevNotifications,
                     dataFromServer.message
                 ]);
+                setHasNotification(true);
             }
         };
 
@@ -50,7 +56,7 @@ export const RealTimeProvider = ({ children }) => {
     }, [auth.accessToken]);
 
     return (
-        <RealTimeContext.Provider value={{ setNotifications, notifications, friendsStatus }}>
+        <RealTimeContext.Provider value={{ setNotifications, notifications, friendsStatus , hasNotification, setHasNotification, clearNotification }}>
             {children}
         </RealTimeContext.Provider>
     );

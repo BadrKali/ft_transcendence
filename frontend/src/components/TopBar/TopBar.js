@@ -9,14 +9,18 @@ import axios from 'axios'
 import SearchItem from './SearchItem'
 import useFetch from '../../hooks/useFetch'
 import { useNavigate } from 'react-router-dom';
-import { NotificationContext } from '../Notification/NotificationContext'
+import { RealTimeContext } from '../../context/RealTimeProvider'
 import useAuth from '../../hooks/useAuth'
 import NotificationPopup from './NotificationPopup'
+import Lottie from 'lottie-react'
+import EmptyBox from '../../assets/EmptyBox.json'
+import ListBlockedPopup from './ListBlockedPopup'
 
 const TopBar = () => {
   const [showNotif, setNotif] = useState(false)
   const dropdownRef = useRef(null);
   const dropdownSearchRef = useRef(null);
+  const [isProfilActive, setProfilActive] = useState(false)
   const [isDropdownActive, setDropdownActive] = useState(false);
   const [query, setQuery] = useState('');
   const [results, setResults] = useState([]);
@@ -24,10 +28,11 @@ const TopBar = () => {
   const [queryEndpoint, setQueryEndpoint] = useState(`http://localhost:8000/user/search/?q=${query}`)
   const response1 = useFetch('http://localhost:8000/user/stats/')
   const navigate = useNavigate();
-  const { hasNotification, clearNotification} = useContext(NotificationContext);
+  const { hasNotification, clearNotification} = useContext(RealTimeContext);
   const [notifications, setNotifications] = useState([]);
   const { auth }  = useAuth()
   const [modalOpen, setModalOpen] = useState(false);
+  const [modalOpenBlocked, setModalOpenBlocked] = useState(false);
   const [selectedNotification, setSelectedNotification] = useState(null);
 
   const handleNotificationClick = (notif) => {
@@ -35,11 +40,17 @@ const TopBar = () => {
     setModalOpen(true);
     setNotif(false); 
   };
+  const handleListBlockedClick = () => {
+    setModalOpenBlocked(true);
+  }
 
   const handleClose = () => {
     setModalOpen(false);
     setNotif(false); 
   };
+  const handleCloseBlocked = () => {
+    setModalOpenBlocked(false)
+  }
 
   const handleAccept = (id) => {
       handleClose();
@@ -166,6 +177,10 @@ const TopBar = () => {
 
   };
 
+  const handleProfilClick = (e) => {
+    setProfilActive(!isProfilActive);
+  };
+
   const handleClickOutsideSearch = (event) => {
     if (dropdownSearchRef.current && !dropdownSearchRef.current.contains(event.target)) {
       setDropdownActive(false);
@@ -210,20 +225,34 @@ const TopBar = () => {
           <Icon  name='notification' className={showNotif ? 'topbar-notification-icon active-icon' : 'topbar-notification-icon' }/>
           {hasNotification && <span className="notification-badge"></span>}
           <div  className={showNotif ? "dropDwon active" : "dropDwon"}>
-                  {notifications.map((notif) => (
+              {notifications.length > 0 ?
+                  notifications.map((notif) => (
                     <NotificationItem key={notif.id} notif={notif} onClick={() => handleNotificationClick(notif)}  />
-                  ))}
+                  )) : (
+                    <div className="DropDownNotificationAnimation">
+                        <div className="EmptyBox"> <Lottie animationData={EmptyBox} /> </div>
+                    </div>
+                  )
+                }
           </div>
           {selectedNotification && (
           <NotificationPopup isOpen={modalOpen} onClose={handleClose} notif={selectedNotification} onAccept={handleAccept} onReject={handleReject} />
       )}
         </div>
-        <div className='profile-pic-container'>
+        <div className='profile-pic-container'  onClick={handleProfilClick}>
           <div className='profile-pic'>
-            {/* <div className='topbar-online-status'></div> */}
             <img src={`http://127.0.0.1:8000${profilData.avatar}`}/>
           </div>
           <span>{profilData.username}</span>
+          <div  className={isProfilActive ? "dropDwonProfil profilActive" : "dropDwonProfil"}>
+            <div className='dropList'>
+              <p className='list'>View My Profil</p>
+              <p className='list' onClick={handleListBlockedClick}>List Blocked</p>
+              <p className='list'>Setting</p>
+              <p className='list'>Log Out</p>
+            </div>
+          </div>
+            <ListBlockedPopup isOpen={modalOpenBlocked} onClose={handleCloseBlocked} />
         </div>
       </div>
     </div>

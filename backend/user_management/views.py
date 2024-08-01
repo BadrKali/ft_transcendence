@@ -52,7 +52,7 @@ class FriendRequestManagementView(APIView):
             notification = Notification.objects.create(
                 recipient=player_receiver,
                 sender=player_sender,
-                message=f'{player_sender.username} sent you a friend request.'
+                message='sent you a friend request.'
             )
 
             channel_layer = get_channel_layer()
@@ -140,11 +140,17 @@ class BlockUnblockView(APIView):
             return Response({'message': 'User has been unblocked successfully.'}, status=status.HTTP_200_OK)
         else:
             return Response({"error": "user is not blocked."}, status=status.HTTP_400_BAD_REQUEST)
-    def get(self, request, blocked_id):
+    def get(self, request, blocked_id=None):
         blocker = request.user
-        blocked = get_object_or_404(User, id=blocked_id)
-        is_blocked = BlockedUsers.objects.filter(Q(blocker=blocker, blocked=blocked)).exists()
-        return Response({'is_blocked': is_blocked}, status=status.HTTP_200_OK)
+
+        if blocked_id:
+            blocked = get_object_or_404(User, id=blocked_id)
+            is_blocked = BlockedUsers.objects.filter(Q(blocker=blocker, blocked=blocked)).exists()
+            return Response({'is_blocked': is_blocked}, status=status.HTTP_200_OK)
+        else:
+            blocked_users = BlockedUsers.objects.filter(blocker=blocker).select_related('blocked')
+            blocked_list = [{'id': user.blocked.id, 'username': user.blocked.username} for user in blocked_users]
+            return Response({'blocked_users': blocked_list}, status=status.HTTP_200_OK)
 
         
 class CurrentFriendsListView(generics.ListAPIView):

@@ -3,6 +3,15 @@ import { useState, useEffect } from 'react';
 import './notificationItem.css'
 import useFetch from '../../hooks/useFetch'
 import NotificationPopup from './NotificationPopup';
+import { formatDistanceToNow, parseISO } from 'date-fns';
+
+
+
+function formatTimeAgo(dateString) {
+  const date = parseISO(dateString);
+  return formatDistanceToNow(date, { addSuffix: true });
+}
+
 
 function NotificationItem({notif, onClick }) {
   const [profilData, setProfilData] = useState([]);
@@ -22,7 +31,7 @@ function NotificationItem({notif, onClick }) {
         </div>
         <div className="notifInfo">
             <p>{profilData.username}<span>{notif.message}</span></p>
-            <span className='notifTime'>{notif.timestamp}</span>
+            <span className='notifTime'>{formatTimeAgo(notif.timestamp)}</span>
         </div>
       </div>
 
