@@ -97,12 +97,13 @@ const InputField = ({ message, handleWritedMessage, inputRef }) => {
 //     setColor('#333497');
 //   }// }
 
+// I still use PickedUserData with the same Logic of ChatList this is Wrong ! 
 const ChatHeader = () => {
   const PickedUserData = useContext(UserMsgContext);
-
   function handleParamsClick() {
     alert("Olaaala");
   }
+
   return (
     <div className={styles.ChatHeaderHolder}>
       {PickedUserData ? (

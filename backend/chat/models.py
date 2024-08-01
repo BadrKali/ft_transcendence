@@ -1,6 +1,7 @@
 from django.db import models
 from django.conf import settings
 from django.db.models import Q
+from authentication .models import User
 
 # Create your models here.
 class message(models.Model):
@@ -19,11 +20,17 @@ class message(models.Model):
         return message.objects.filter(receiver_id=currentUserId, seen=False)
 
     def UnreadMessageBeetwen( currentUserID, user2_Id):
-        return message.objects.filter(receiver_id=currentUserID, sender_id=user2_Id, seen=False).count()
+        if (currentUserID != user2_Id):
+            return message.objects.filter(receiver_id=currentUserID, sender_id=user2_Id, seen=False).count()
+        else:
+            return 0
     
     def getLastMessage(currentUserId, user2_Id):
         return message.objects.filter((Q(sender_id=currentUserId) & Q(receiver_id=user2_Id)) |
                                       (Q(sender_id=user2_Id) & Q(receiver_id=currentUserId))).order_by('-created_at').first()
+    def GetUserStatus(user_Id):
+        return User.objects.filter(id=user_Id).first().is_active
+        # return Us
         # .order_by('-created_at').first().content
 # Funniest Implementation ever
 # class ChatRoom(models.Model):

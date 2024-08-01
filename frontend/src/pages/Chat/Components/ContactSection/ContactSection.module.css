@@ -51,8 +51,8 @@
     }  
 }
 
-
 .ConversationHolder{
+    z-index: 4;
     height: 100%;
     width: 100%;
     display: grid;
@@ -63,6 +63,12 @@
     animation-name: SLideToRight;
     animation-duration: 1s;
     animation-timing-function: ease-in;
+}
+
+.ConversationHolder:hover{
+    z-index: auto;
+    background-color: #F62943;
+
 }
 
 .FriendPhoto{

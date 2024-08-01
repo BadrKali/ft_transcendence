@@ -10,7 +10,7 @@ from authentication .serializers import CurrentUserSerializer
 # Create your views here.
 
 def format_date(date)-> str:
-    minute = {True:date.minute , False: f'0{date.minute}'} [date.minute > 10]
+    minute = {True:date.minute , False: f'0{date.minute}'} [date.minute >= 10]
     return f'{date.hour}:{minute}'
 
 @api_view(['GET'])
@@ -22,9 +22,26 @@ def RetreiveContacts(request):
     contacts = User.objects.filter(id__in=contactIDs)
     ContactSerializer = __user_serializer__(contacts, many=True)
     ChatList = [{ **contact,
-                  "unreadMessages": message.UnreadMessageBeetwen(request.user.id, contact["id"]),
-                  "lastMessage": message.getLastMessage(request.user.id, contact["id"]).content,
-                  "lastTime": format_date(message.getLastMessage(request.user.id, contact["id"]).created_at),
+                  "unreadMessages": message.UnreadMessageBeetwen(request.user.id, contact.get("id")),
+                  "lastMessage": message.getLastMessage(request.user.id, contact.get("id")).content,
+                  "lastTime": format_date(message.getLastMessage(request.user.id, contact.get("id")).created_at),
+                  "status": message.GetUserStatus(contact.get("id"))
                 } for contact in ContactSerializer.data 
                 ]
     return Response(ChatList)
+# I may should Sort conversation using created att when Displaying it on frontend! 
+
+# username is the target 
+
+
+@api_view(['GET'])
+def getMessageswith (request, username):
+
+    allRecords = message.objects.\
+        select_related('sender_id', 'receiver_id').\
+        filter((Q(sender_id__username=request.user.username) & Q(receiver_id__username=username)) |
+               (Q(sender_id__username=username) & Q(receiver_id__username=request.user.username))).order_by('-created_at')
+    serialiser = __messageSerializer__(allRecords, many=True)
+    OurMessages = [{**Singlemessage, "msg_type": "outgoing" if Singlemessage.get('sender_id') == request.user.id else "incoming"} for Singlemessage in serialiser.data]
+    return Response(OurMessages)
+

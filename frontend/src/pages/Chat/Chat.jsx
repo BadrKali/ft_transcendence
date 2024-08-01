@@ -9,15 +9,14 @@ export const UserMsgContext = createContext();
 export const ChatListContext = createContext();
 
 const Chat = () => {
-    const [ChatList, setChatList] = useState([]);
-    const [PickedUserData, setPickedUserData] = useState()
-    const [selectedIndex, setSelectedIndex] = useState("");
+  const [ChatList, setChatList] = useState([]);
+  const [PickedUserData, setPickedUserData] = useState();
+  const [PickedConversation, setPickedConversation] = useState("");
 
   const { auth } = useAuth();
-  
+
   useEffect(() => {
-    console.log('I\'LL GO FETCH MOTHER FUCKER !')
-      const FetchContactSection = async () => {
+    const FetchContactSection = async () => {
       try {
         const url = "http://127.0.0.1:8000/chat/GetContactSection/";
         const response = await fetch(url, {
@@ -31,30 +30,47 @@ const Chat = () => {
           throw new Error(`Response status: ${response.status}`);
         }
         const data = await response.json();
-        setChatList(data)
+        setChatList(data);
       } catch (error) {
         console.error(error.message);
       }
     };
-    
+
     FetchContactSection();
-  
-}, [selectedIndex]);
+  }, [PickedConversation]);
+
   const handleConversationSelect = (conversationId) => {
-    setSelectedIndex(conversationId);
+    setPickedConversation(conversationId);
   };
-  useEffect(()=>{
-    console.log('infinite rerendering bro');
-  })
-//   console.log(selectedIndex);
-//   function extractUserMessages(selectedIndex) {
-//     // console.log(`Go fetch Data With ${selectedIndex}`);
-//     // get the suitable records From getMessagesEndpoint
-//     // return ChatList.filter((UserObj) => UserObj.username === selectedIndex); // got it from backend
-//   }
-//   useEffect(() => {
-//     // console.log( 'Go fetch Your Mesages With ' + selectedIndex)
-//   }, [selectedIndex])
+
+  // useEffect(()=>{
+
+  //   const FetchMessagesSection = async () => {
+  //     try {
+
+  //       console.log(PickedConversation);
+
+  //       const url = `http://localhost:8000/chat/GetMessageswith/${PickedConversation}/`;
+  //       const response = await fetch(url, {
+  //         method: "GET",
+  //         headers: {
+  //           "Content-Type": "application/json",
+  //           Authorization: `Bearer ${auth.accessToken}`,
+  //         },
+  //       });
+  //       if (!response.ok) {
+  //         throw new Error(`Response status: ${response.status}`);
+  //       }
+  //       const data = await response.json();
+  //       console.log(data)
+  //       setPickedUserData(data)
+  //     } catch (error) {
+  //       console.error(error.message);
+  //     }
+  //   };
+
+  //   FetchMessagesSection();
+  // }, [PickedConversation])
 
   return (
     <>
@@ -63,7 +79,7 @@ const Chat = () => {
         <UserMsgContext.Provider value={PickedUserData}>
           <ChatListContext.Provider value={ChatList}>
             <ContactSection
-              selectedIndex={selectedIndex}
+              PickedConversation={PickedConversation}
               handleConversationSelect={handleConversationSelect}
             />
             <MessageSection />
