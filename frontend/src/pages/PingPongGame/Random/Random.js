@@ -26,6 +26,8 @@ const Random = () => {
     const [startGame, setStartGame] = useState(false);
     const [socket, setSocket] = useState(null);
     const [game_state, setGameState] = useState(null);
+    const [score1, setScore1] = useState(0);
+    const [score2, setScore2] = useState(0);
     const canvasRef = useRef(null);
 
     const { data: room, isLoading: roomLoading, error: roomError } = useFetch(roomId ? `http://localhost:8000/api/game/game-room/${roomId}` : null);
@@ -117,7 +119,8 @@ const Random = () => {
 
         const user1 = game_state.players[player1?.username];
         const user2 = game_state.players[player2?.username];
-    
+        setScore1(user1.score)
+        setScore2(user2.score)
         console.log('Game State:', game_state);
         console.log('Player 1:', user1);
         console.log('Player 2:', user2);
@@ -249,8 +252,8 @@ const Random = () => {
             {startGame && (
                 <>
                     <ScoreBoard
-                        user1Score={0}
-                        user2Score={0}
+                        user1Score={score1}
+                        user2Score={score2}
                         user1Name={player1.username}
                         user2Name={player2.username}
                         user1Avatar={avatar1}
