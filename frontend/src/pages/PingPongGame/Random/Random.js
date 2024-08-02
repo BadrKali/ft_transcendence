@@ -11,8 +11,14 @@ import ScoreBoard from "../components/ScoreBoard";
 import avatar1 from '../asstes/avatar1.png';
 import avatar2 from '../asstes/avatar2.png';
 
+
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
+const WS_BACKEND_URL = process.env.REACT_APP_WS_BACKEND_URL;
+
+
+
 const Random = () => {
-    const { data: gameSettings, isLoading: gameSettingsLoading } = useFetch('http://localhost:8000/api/game/game-settings/current-user/');
+    const { data: gameSettings, isLoading: gameSettingsLoading } = useFetch(`${BACKEND_URL}/api/game/game-settings/current-user/`);
     const { auth } = useAuth();
     const [message, setMessage] = useState("");
     const [background, setBackground] = useState(null);
@@ -30,10 +36,10 @@ const Random = () => {
     const [score2, setScore2] = useState(0);
     const canvasRef = useRef(null);
 
-    const { data: room, isLoading: roomLoading, error: roomError } = useFetch(roomId ? `http://localhost:8000/api/game/game-room/${roomId}` : null);
-    const { data: player1, isLoading: player1Loading, error: player1Error } = useFetch(player1Id ? `http://localhost:8000/user/stats/${player1Id}` : null);
-    const { data: player2, isLoading: player2Loading, error: player2Error } = useFetch(player2Id ? `http://localhost:8000/user/stats/${player2Id}` : null);
-    const { data: currentUser, isLoading:currentIsLoading, error: currentError } = useFetch(`http://localhost:8000/user/stats`);
+    const { data: room, isLoading: roomLoading, error: roomError } = useFetch(roomId ? `${BACKEND_URL}/api/game/game-room/${roomId}` : null);
+    const { data: player1, isLoading: player1Loading, error: player1Error } = useFetch(player1Id ? `${BACKEND_URL}/user/stats/${player1Id}` : null);
+    const { data: player2, isLoading: player2Loading, error: player2Error } = useFetch(player2Id ? `${BACKEND_URL}/user/stats/${player2Id}` : null);
+    const { data: currentUser, isLoading:currentIsLoading, error: currentError } = useFetch(`${BACKEND_URL}/user/stats`);
 
     const handleStartGame = () => {
         setStartGame(true);
@@ -57,7 +63,7 @@ const Random = () => {
     useEffect(() => {
         if (!auth.accessToken) return;
 
-        const socket = new WebSocket(`ws://localhost:8000/ws/game/?token=${auth.accessToken}`);
+        const socket = new WebSocket(`${WS_BACKEND_URL}/ws/game/?token=${auth.accessToken}`);
         setSocket(socket);
 
         socket.onopen = () => {

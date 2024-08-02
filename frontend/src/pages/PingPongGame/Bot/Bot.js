@@ -7,10 +7,10 @@ import useFetch from '../../../hooks/useFetch';
 import GameLogic from './GameLogic';
 import Loading from '../components/Loading';
 
-
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
 const Bot = () => {
-    const { data: gameSettings, isLoading, error } = useFetch('http://localhost:8000/api/game/game-settings/current-user/');
+    const { data: gameSettings, isLoading, error } = useFetch(`${BACKEND_URL}/api/game/game-settings/current-user/`);
     const [background, setBackground] = useState(null);
     const [paddle, setPaddle] = useState(null);
     const [keys, setKeys] = useState(null);

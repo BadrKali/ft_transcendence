@@ -4,13 +4,17 @@ import useAuth from '../../hooks/useAuth';
 import './listBlockedPopup.css'
 import ListBlockedItem from './ListBlockedItem';
 
+
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
+
+
 const ListBlockedPopup = ({ isOpen, onClose})=> {
     const { auth }  = useAuth()
     const [blockedUsers, setBlockedUsers] = useState([]);
 
     useEffect(() => {
         const fetchRequestStatus = async () => {
-            const url = `http://localhost:8000/user/block-unblock/`;
+            const url = `${BACKEND_URL}/user/block-unblock/`;
             try {
                 const response = await fetch(url, {
                     method: 'GET',

@@ -9,6 +9,9 @@ import GameMode from './GameMode';
 import axios from 'axios';
 import useAuth from "../../../../hooks/useAuth.js";
 
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
+
+
 const PingPong = () => {
     const { auth } = useAuth();
     const [selectedBackground, setSelectedBackground] = useState(null);
@@ -39,7 +42,7 @@ const PingPong = () => {
             gameMode: selectedMode,
         }
         try  {
-            const response = await axios.post('http://localhost:8000/api/game/game-settings/current-user/', gameSettings, {
+            const response = await axios.post(`${BACKEND_URL}/api/game/game-settings/current-user/`, gameSettings, {
                 headers : {
                     'Content-Type' : 'application/json',
                     'Authorization': `Bearer ${auth.accessToken}`,

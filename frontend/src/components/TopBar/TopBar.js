@@ -16,6 +16,9 @@ import Lottie from 'lottie-react'
 import EmptyBox from '../../assets/EmptyBox.json'
 import ListBlockedPopup from './ListBlockedPopup'
 
+
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
+
 const TopBar = () => {
   const [showNotif, setNotif] = useState(false)
   const dropdownRef = useRef(null);
@@ -25,8 +28,8 @@ const TopBar = () => {
   const [query, setQuery] = useState('');
   const [results, setResults] = useState([]);
   const [profilData, setProfilData] = useState([]);
-  const [queryEndpoint, setQueryEndpoint] = useState(`http://localhost:8000/user/search/?q=${query}`)
-  const response1 = useFetch('http://localhost:8000/user/stats/')
+  const [queryEndpoint, setQueryEndpoint] = useState(`${BACKEND_URL}/user/search/?q=${query}`)
+  const response1 = useFetch(`${BACKEND_URL}/user/stats/`)
   const navigate = useNavigate();
   const { hasNotification, clearNotification} = useContext(RealTimeContext);
   const [notifications, setNotifications] = useState([]);
@@ -54,7 +57,7 @@ const TopBar = () => {
 
   const handleAccept = (id) => {
       handleClose();
-      fetch(`http://localhost:8000/user/friends-request/${id}/response/`, {
+      fetch(`${BACKEND_URL}/user/friends-request/${id}/response/`, {
         method: 'PATCH',
         headers: {
             'Content-Type': 'application/json',
@@ -80,7 +83,7 @@ const TopBar = () => {
 
   const handleReject = (id) => {
     handleClose();
-    fetch(`http://localhost:8000/user/friends-request/${id}/response/`, {
+    fetch(`${BACKEND_URL}/user/friends-request/${id}/response/`, {
       method: 'PATCH',
       headers: {
           'Content-Type': 'application/json',
@@ -110,7 +113,7 @@ const TopBar = () => {
 
     if (!showNotif) {
       try {
-        const response = await fetch('http://localhost:8000/user/notifications/', {
+        const response = await fetch(`${BACKEND_URL}/user/notifications/`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
@@ -152,7 +155,7 @@ const TopBar = () => {
  
 
   useEffect(() => {
-    setQueryEndpoint(`http://localhost:8000/user/search/?q=${query}`)
+    setQueryEndpoint(`${BACKEND_URL}/user/search/?q=${query}`)
   }, [query])
 
 
@@ -241,7 +244,7 @@ const TopBar = () => {
         </div>
         <div className='profile-pic-container'  onClick={handleProfilClick}>
           <div className='profile-pic'>
-            <img src={`http://127.0.0.1:8000${profilData.avatar}`}/>
+            <img src={`${BACKEND_URL}${profilData.avatar}`}/>
           </div>
           <span>{profilData.username}</span>
           <div  className={isProfilActive ? "dropDwonProfil profilActive" : "dropDwonProfil"}>

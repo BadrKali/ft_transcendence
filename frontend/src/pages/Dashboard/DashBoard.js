@@ -6,10 +6,13 @@ import Achievments from './components/Achievments'
 import Friends from './components/Friends'
 import useFetch from '../../hooks/useFetch'
 
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
+
+
 const DashBoard = () => {
   const [profilData, setProfilData] = useState([]);
 
-  const {data ,isLoading, error} = useFetch('http://localhost:8000/user/stats')
+  const {data ,isLoading, error} = useFetch(`${BACKEND_URL}/user/stats`)
   useEffect(() => {
      if (data) {
        setProfilData(data);

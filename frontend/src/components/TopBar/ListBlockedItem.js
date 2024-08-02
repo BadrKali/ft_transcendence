@@ -4,8 +4,12 @@ import useFetch from '../../hooks/useFetch';
 import useAuth from '../../hooks/useAuth';
 import './listBlockedItem.css'
 
+
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
+
+
 function ListBlockedItem({user}) {
-  const {data ,isLoading, error} = useFetch(`http://localhost:8000/user/stats/${user.id}`)
+  const {data ,isLoading, error} = useFetch(`${BACKEND_URL}/user/stats/${user.id}`)
   const [profilData, setProfilData] = useState([]);
   const { auth }  = useAuth()
 
@@ -17,7 +21,7 @@ function ListBlockedItem({user}) {
   }, [data]);
 
     const handleUnblock = async () => {
-        const url = `http://localhost:8000/user/${user.id}/block-unblock/`;
+        const url = `${BACKEND_URL}/user/${user.id}/block-unblock/`;
         try {
             const response = await fetch(url, {
                 method:'DELETE' ,
@@ -42,7 +46,7 @@ function ListBlockedItem({user}) {
     return (
         <div className='listBlockerItem'>
             <div className='blockedImageName'>
-                <img src={`http://127.0.0.1:8000${profilData.avatar}`} alt="profil_pic" />
+                <img src={`${BACKEND_URL}${profilData.avatar}`} alt="profil_pic" />
                 <div className='blockedName'>
                     {profilData.username}
                 </div>

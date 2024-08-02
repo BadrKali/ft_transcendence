@@ -5,7 +5,7 @@ import useFetch from '../../hooks/useFetch'
 import NotificationPopup from './NotificationPopup';
 import { formatDistanceToNow, parseISO } from 'date-fns';
 
-
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
 function formatTimeAgo(dateString) {
   const date = parseISO(dateString);
@@ -15,7 +15,7 @@ function formatTimeAgo(dateString) {
 
 function NotificationItem({notif, onClick }) {
   const [profilData, setProfilData] = useState([]);
-  const {data ,isLoading, error} = useFetch(`http://localhost:8000/user/stats/${notif.sender}`)
+  const {data ,isLoading, error} = useFetch(`${BACKEND_URL}/user/stats/${notif.sender}`)
 
   useEffect(() => {
     if (data) {

@@ -2,13 +2,16 @@ import React, { useState, useEffect } from 'react'
 import useAuth from '../../../hooks/useAuth';
 import Icon from '../../../assets/Icon/icons'
 
+
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
+
 function AddFriendUnfriendButton({ FriendId }) {
     const { auth }  = useAuth()
     const [isRequest, setIsRequst] = useState('Friend request does not exist.')
 
     useEffect(() => {
         const fetchRequestStatus = async () => {
-            const url = `http://localhost:8000/user/friends-request/${FriendId}/`;
+            const url = `${BACKEND_URL}/user/friends-request/${FriendId}/`;
             try {
                 const response = await fetch(url, {
                     method: 'GET',
@@ -34,7 +37,7 @@ function AddFriendUnfriendButton({ FriendId }) {
 
     const handleAddFriend = async () => {
         try {
-            const response = await fetch(`http://localhost:8000/user/friends-request/${FriendId}/`, {
+            const response = await fetch(`${BACKEND_URL}/user/friends-request/${FriendId}/`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -59,7 +62,7 @@ function AddFriendUnfriendButton({ FriendId }) {
 
     const handleCancelRequest = async () => {
         try {
-            const response = await fetch(`http://localhost:8000/user/friends-request/${FriendId}/`, {
+            const response = await fetch(`${BACKEND_URL}/user/friends-request/${FriendId}/`, {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json',
@@ -83,7 +86,7 @@ function AddFriendUnfriendButton({ FriendId }) {
 
     const handleUnfriend = async () => {
         try {
-            const response = await fetch(`http://localhost:8000/user/friend/${FriendId}/`, {
+            const response = await fetch(`${BACKEND_URL}/user/friend/${FriendId}/`, {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',

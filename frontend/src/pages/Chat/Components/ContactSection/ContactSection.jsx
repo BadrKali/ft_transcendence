@@ -9,6 +9,9 @@ import { ChatListContext } from "../../Chat.jsx";
 import { UserMsgContext } from "../../Chat.jsx";
 import useAuth from "../../../../hooks/useAuth";
 
+
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
+
 const SendToNoneFriend = () => {
   function handleGlobalMessage() {
     alert("You touched Icon to send Message to GlobalUsers");
@@ -48,7 +51,7 @@ const ChatConversation = ({ ConversationData, PickedConversation, onSelectConver
       <div className={style.ConversationHolder}>
         <img
           className={style.FriendPhoto}
-          src={"http://localhost:8000" + ConversationData.avatar}
+          src={`${BACKEND_URL}` + ConversationData.avatar}
           alt="Your-friend-photo"
         />
 

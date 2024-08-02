@@ -1,6 +1,9 @@
 import React, { createContext, useEffect, useContext, useState } from 'react';
 import useAuth from '../hooks/useAuth';
 
+
+
+const WS_BACKEND_URL = process.env.REACT_APP_WS_BACKEND_URL;
 export const RealTimeContext = createContext({});
 
 export const RealTimeProvider = ({ children }) => {
@@ -14,7 +17,7 @@ export const RealTimeProvider = ({ children }) => {
     };
 
     useEffect(() => {
-        const ws = new WebSocket(`ws://localhost:8000/ws/notifications/?token=${auth.accessToken}`);
+        const ws = new WebSocket(`${WS_BACKEND_URL}/ws/notifications/?token=${auth.accessToken}`);
 
         ws.onopen = () => {
             console.log("Client Connected to the server");

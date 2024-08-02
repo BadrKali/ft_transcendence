@@ -13,7 +13,7 @@ import { useLocation } from 'react-router-dom';
 import BlockUnblockButton from './components/BlockUnblockButton'
 import AddFriendUnfriendButton from './components/AddFriendUnfriendButton'
 
-
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
 
 
@@ -24,7 +24,7 @@ const Profil = () => {
   const { auth }  = useAuth()
   const location = useLocation();
   const { userData } = location.state || {};
-  const {data ,isLoading, error} = useFetch(`http://localhost:8000/user/stats/${userData.id}`)
+  const {data ,isLoading, error} = useFetch(`${BACKEND_URL}/user/stats/${userData.id}`)
 
   useEffect(() => {
     if (data) {
@@ -42,7 +42,7 @@ const Profil = () => {
   
   const handleAddFriend = async () => {
     try {
-      const response = await fetch(`http://localhost:8000/user/friends-request/${userData.id}/`, {
+      const response = await fetch(`${BACKEND_URL}/user/friends-request/${userData.id}/`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

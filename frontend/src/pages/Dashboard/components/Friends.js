@@ -9,11 +9,14 @@ import Lottie from 'lottie-react'
 import NoOneTotalkTo from '../../Chat/ChatAssets/NoOneTotalkTo.json'
 import style from '../../Chat/Components/ContactSection/ContactSection.module.css'
 
+
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
+
 function Friends() {
   const [listFriend, setListFriend] = useState([]);
   const navigate = useNavigate();
 
-  const {data ,isLoading, error} = useFetch(`http://localhost:8000/user/friends/list/`)
+  const {data ,isLoading, error} = useFetch(`${BACKEND_URL}/user/friends/list/`)
   useEffect(() => {
     if (data) {
       setListFriend(data);

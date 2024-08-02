@@ -5,10 +5,13 @@ import './achievments.css'
 import AchievmentsData from '../../../assets/AchievmentsData'
 import AchievmentsItem from './AchievmentsItem'
 
+
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
+
 function Achievments({userId}) {
   const [achievements, setAchievements] = useState(AchievmentsData.map(achiev => ({ ...achiev, unlocked: "false" })));
 
-  const { data: userAchievements, isLoading, error } = useFetch(`http://localhost:8000/api/game/achievements/player/${userId}`);
+  const { data: userAchievements, isLoading, error } = useFetch(`${BACKEND_URL}/api/game/achievements/player/${userId}`);
  
   useEffect(() => {
     if (userAchievements && userAchievements.length) {
