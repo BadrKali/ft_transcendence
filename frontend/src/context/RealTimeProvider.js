@@ -1,8 +1,6 @@
 import React, { createContext, useEffect, useContext, useState } from 'react';
 import useAuth from '../hooks/useAuth';
 
-
-
 const WS_BACKEND_URL = process.env.REACT_APP_WS_BACKEND_URL;
 export const RealTimeContext = createContext({});
 
@@ -13,10 +11,15 @@ export const RealTimeProvider = ({ children }) => {
     const [hasNotification, setHasNotification] = useState(false);
 
     const clearNotification = () => {
-      setHasNotification(false);
+        setHasNotification(false);
     };
 
     useEffect(() => {
+        if (!auth.accessToken) {
+            return;
+        }
+
+        console.log(`this is the token ${auth.accessToken}`);
         const ws = new WebSocket(`${WS_BACKEND_URL}/ws/notifications/?token=${auth.accessToken}`);
 
         ws.onopen = () => {
@@ -27,14 +30,10 @@ export const RealTimeProvider = ({ children }) => {
             const dataFromServer = JSON.parse(message.data);
             if (dataFromServer.type === 'status_update') {
                 const { user_id, status } = dataFromServer;
-                setFriendsStatus(prevStatus => {
-                    const newStatus = {
-                        ...prevStatus,
-                        [user_id]: status
-                    };
-                    return newStatus
-                    // console.log('Updated friendsStatus:', newStatus);
-                });
+                setFriendsStatus(prevStatus => ({
+                    ...prevStatus,
+                    [user_id]: status
+                }));
             } else if (dataFromServer.type === 'notification') {
                 setNotifications(prevNotifications => [
                     ...prevNotifications,
@@ -43,7 +42,6 @@ export const RealTimeProvider = ({ children }) => {
                 setHasNotification(true);
             }
         };
-
 
         ws.onclose = () => {
             console.log('WebSocket Client Disconnected');
@@ -59,7 +57,7 @@ export const RealTimeProvider = ({ children }) => {
     }, [auth.accessToken]);
 
     return (
-        <RealTimeContext.Provider value={{ setNotifications, notifications, friendsStatus , hasNotification, setHasNotification, clearNotification }}>
+        <RealTimeContext.Provider value={{ setNotifications, notifications, friendsStatus, hasNotification, setHasNotification, clearNotification }}>
             {children}
         </RealTimeContext.Provider>
     );
@@ -70,5 +68,3 @@ export const useRealTime = () => {
 };
 
 export default RealTimeProvider;
-
-
