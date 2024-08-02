@@ -3,6 +3,7 @@ from asgiref.sync import sync_to_async
 from channels.db import database_sync_to_async
 import json
 import asyncio
+import math
 
 class GameState:
     def __init__(self):
@@ -39,6 +40,7 @@ class GameState:
 
         player1 = {
             'username': player1_username,
+            'id': 1,
             'score': 0,
             'x': 20,
             'y': (self.state['canvas']['height'] - 140) / 2,
@@ -48,6 +50,7 @@ class GameState:
         }
         player2 = {
             'username': player2_username,
+            'id': 2,
             'score': 0,
             'x': self.state['canvas']['width'] - 30,
             'y': (self.state['canvas']['height'] - 140) / 2,
@@ -71,14 +74,18 @@ class GameState:
         return await sync_to_async(lambda: GameSettings.objects.filter(user=player).first())()
 
     def player_mouvement(self, user, direction):
-        player = self.state['players'][user]
-        if direction == "up":
-            if player['y'] > 0:
-                player['y'] -= 20
+        print(f"Current players: {list(self.state['players'].keys())}")
+        if user in self.state['players']:
+            player = self.state['players'][user]
+            if direction == "up":
+                if player['y'] > 0:
+                    player['y'] -= 20
+            else:
+                if player['y'] < self.state['canvas']['height'] - player['height']:
+                    player['y'] += 20
+            print(f"{user}'s new y position: {player['y']}")
         else:
-            if player['y'] < self.state['canvas']['height'] - player['height']:
-                player['y'] += 20
-        print(f"{player['y']}")
+            print(f"Error: User {user} not found in players.")
 
     def remove_player(self, username):
         if username in self.state['players']:
@@ -91,19 +98,68 @@ class GameState:
         self.state['ball']['velocityX'] = -self.state['ball']['velocityX']
         self.state['ball']['speed'] = 7
 
+    def collision(self, b, p):
+        p_top = p['y']
+        p_bottom = p['y'] + p['height']
+        p_left = p['x']
+        p_right = p['x'] + p['width']
+        b_top = b['y'] - b['radius']
+        b_bottom = b['y'] + b['radius']
+        b_left = b['x'] - b['radius']
+        b_right = b['x'] + b['radius']
+        return p_left < b_right and p_top < b_bottom and p_right > b_left and p_bottom > b_top
+
     def update_ball_position(self):
-        if self.state['ball']['x'] - self.state['ball']['radius'] < 0 or self.state['ball']['x'] + self.state['ball']['radius'] > self.state['canvas']['width']:
+        ball = self.state['ball']
+        players = self.state['players']
+
+        ball['x'] += ball['velocityX']
+        ball['y'] += ball['velocityY']
+
+        if ball['y'] - ball['radius'] < 0 or ball['y'] + ball['radius'] > self.state['canvas']['height']:
+            ball['velocityY'] = -ball['velocityY']
+
+        player1 = list(players.values())[0]
+        player2 = list(players.values())[1]
+
+        if ball['x'] - ball['radius'] < 0:
+            player2['score'] += 1
             self.reset_ball()
-        self.state['ball']['x'] += self.state['ball']['velocityX']
-        self.state['ball']['y'] += self.state['ball']['velocityY']
-        if self.state['ball']['y'] - self.state['ball']['radius'] < 0 or self.state['ball']['y'] + self.state['ball']['radius'] > self.state['canvas']['height']:
-            self.state['ball']['velocityY'] = -self.state['ball']['velocityY']
+        elif ball['x'] + ball['radius'] > self.state['canvas']['width']:
+            player1['score'] += 1
+            self.reset_ball()
+
+        player = player1 if ball['x'] + ball['radius'] < self.state['canvas']['width'] / 2 else player2
+
+        if self.collision(ball, player):
+            collide_point = (ball['y'] - (player['y'] + player['height'] / 2)) / (player['height'] / 2)
+            angle_rad = (math.pi / 4) * collide_point
+            direction = 1 if ball['x'] + ball['radius'] < self.state['canvas']['width'] / 2 else -1
+            ball['velocityX'] = direction * ball['speed'] * math.cos(angle_rad)
+            ball['velocityY'] = ball['speed'] * math.sin(angle_rad)
+            ball['speed'] += 0.1
 
     def get_state(self):
         return self.state
 
     def to_json(self):
         return json.dumps(self.state)
+
+
+class GameStateManager:
+    def __init__(self):
+        self.game_states = {}
+
+    def get_or_create_game_state(self, room_id):
+        if room_id not in self.game_states:
+            self.game_states[room_id] = GameState()
+        return self.game_states[room_id]
+
+    def remove_game_state(self, room_id):
+        if room_id in self.game_states:
+            del self.game_states[room_id]
+
+game_state_manager = GameStateManager()
 
 class GameConsumer(AsyncWebsocketConsumer):
     async def connect(self):
@@ -114,7 +170,6 @@ class GameConsumer(AsyncWebsocketConsumer):
             self.keep_running = True
             self.room_name = None
             self.room_group_name = None
-            self.game_state = GameState()
             await self.accept()
             await self.send(text_data=json.dumps({
                 'action': 'connected',
@@ -149,13 +204,13 @@ class GameConsumer(AsyncWebsocketConsumer):
                 }
             }
         )
+
     async def handle_random_action(self):
         player_str = await self.get_player_str()
         room = await self.find_or_create_room(player_str)
 
         if not room.is_waiting:
-            print("hello")
-            await self.game_state.add_player("hello", room)
+            await self.game_state.add_player(player_str, room)
             await self.notify_players(room)
             asyncio.create_task(self.start_game_loop())
         else:
@@ -203,12 +258,12 @@ class GameConsumer(AsyncWebsocketConsumer):
             self.room_id = room.id
             await sync_to_async(room.add_player)(self.player)
             self.room_name = f"game_room_{room.id}"
-
+            self.game_state = game_state_manager.get_or_create_game_state(self.room_id)
         else:
             room = await sync_to_async(GameRoom.objects.create)(player1=self.player)
             self.room_name = f"game_room_{room.id}"
             self.room_id = room.id
-            self.game_state = GameState()
+            self.game_state = game_state_manager.get_or_create_game_state(self.room_id)
 
         self.room_group_name = self.room_name
         await self.channel_layer.group_add(self.room_group_name, self.channel_name)
@@ -257,5 +312,6 @@ class GameConsumer(AsyncWebsocketConsumer):
             game_room.player2 = None
         if not game_room.player1 and not game_room.player2:
             game_room.delete()
+            game_state_manager.remove_game_state(self.room_id)
         else:
             game_room.save()
