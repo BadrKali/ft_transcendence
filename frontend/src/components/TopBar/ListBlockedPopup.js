@@ -39,8 +39,8 @@ const ListBlockedPopup = ({ isOpen, onClose})=> {
         return null;
     }
   return (
-    <div className="modal-overlay">
-      <div className="modal">
+    <div className="modal-listBlocked">
+      <div className="modal-blocked">
         <button className="modal-close-button" onClick={onClose}>&times;</button>
         <h2>List Blocked</h2>
         <div className='listBlocked'>

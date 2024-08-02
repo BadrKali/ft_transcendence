@@ -49,7 +49,7 @@ class FriendRequestManagementView(APIView):
         try:
             friend_request = FriendInvitation(player_sender=player_sender, player_receiver=player_receiver)
             friend_request.save()
-            notification = Notification.objects.create(
+            Notification.objects.create(
                 recipient=player_receiver,
                 sender=player_sender,
                 message='sent you a friend request.'
@@ -130,6 +130,7 @@ class BlockUnblockView(APIView):
             return Response({'error': 'User is already blocked.'}, status=status.HTTP_400_BAD_REQUEST)
         blocking = BlockedUsers(blocker=blocker, blocked=blocked)
         blocking.save()
+        Friendship.objects.filter(Q(player=blocker, friend=blocked) | Q(player=blocked, friend=blocker)).delete()
         return Response({'message': 'User has been blocked successfully.'}, status=status.HTTP_201_CREATED)
     def delete(self, request, blocked_id):
         blocker = request.user
