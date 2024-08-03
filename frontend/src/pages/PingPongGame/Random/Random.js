@@ -10,6 +10,9 @@ import PlayerInfo from './PlayerInfo';
 import ScoreBoard from "../components/ScoreBoard";
 import avatar1 from '../asstes/avatar1.png';
 import avatar2 from '../asstes/avatar2.png';
+import { useNavigate } from 'react-router-dom';
+import exit from "../asstes/right-arrow.png";
+
 
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
@@ -18,6 +21,7 @@ const WS_BACKEND_URL = process.env.REACT_APP_WS_BACKEND_URL;
 
 
 const Random = () => {
+    const navigate = useNavigate();
     const { data: gameSettings, isLoading: gameSettingsLoading } = useFetch(`${BACKEND_URL}/api/game/game-settings/current-user/`);
     const { auth } = useAuth();
     const [message, setMessage] = useState("");
@@ -35,7 +39,9 @@ const Random = () => {
     const [score1, setScore1] = useState(0);
     const [score2, setScore2] = useState(0);
     const canvasRef = useRef(null);
-
+    const [gameRunning, setGameRunning] = useState(true);
+    const [showExitPopup, setShowExitPopup] = useState(false);
+    const [pauseGame, setPauseGame] = useState(false);
     const { data: room, isLoading: roomLoading, error: roomError } = useFetch(roomId ? `${BACKEND_URL}/api/game/game-room/${roomId}` : null);
     const { data: player1, isLoading: player1Loading, error: player1Error } = useFetch(player1Id ? `${BACKEND_URL}/user/stats/${player1Id}` : null);
     const { data: player2, isLoading: player2Loading, error: player2Error } = useFetch(player2Id ? `${BACKEND_URL}/user/stats/${player2Id}` : null);
@@ -87,6 +93,11 @@ const Random = () => {
                 setGameState(data.game_state);
             } else if (data.message) {
                 setMessage(data.message);
+            } else if (data.action === 'game_over') {
+                setGameRunning(false);
+                const gameState = data.game_state;
+                const winner = gameState.winner;
+                alert(`${winner} has won the game!`);
             }
         };
 
@@ -245,6 +256,25 @@ const Random = () => {
         };
     }, [game_state, player1, player2]);
 
+    const handleExitGame = () => {
+        setPauseGame(true);
+        setShowExitPopup(true);
+    };
+
+    const confirmExitGame = (confirm) => {
+        setShowExitPopup(false);
+        if (confirm) {
+            setGameRunning(false);
+        } else {
+            setPauseGame(false);
+        }
+    };
+
+    if (!gameRunning) {
+        navigate('/game', { replace: true });
+        return;
+    }
+
     return (
         <div className="pingponggame-container random-game" style={{ backgroundImage: `url(${background})` }}>
             {room && player1 && player2 && (
@@ -270,6 +300,20 @@ const Random = () => {
                         <h1>{message}</h1>
                     </div>
                 </>
+            )}
+            <button className='exit-game-button' onClick={handleExitGame}>
+                <img src={exit} alt="exit" className='exit-logo'/>
+            </button>
+            {showExitPopup && (
+                <div className="exit-popup">
+                    <div className="exit-popup-content">
+                        <h2>BACK TO LOBBY ?</h2>
+                        <div className="exit-popup-buttons">
+                            <button onClick={() => confirmExitGame(true)}>Yes</button>
+                            <button onClick={() => confirmExitGame(false)}>Cancel</button>
+                        </div>
+                    </div>
+                </div>
             )}
         </div> 
     );

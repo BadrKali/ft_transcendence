@@ -6,6 +6,7 @@ import asyncio
 import math
 
 class GameState:
+    # WINNING_SCORE = 2
     def __init__(self):
         self.state = {
             'canvas': {
@@ -29,7 +30,16 @@ class GameState:
                 'color': "#D9D9D9"
             },
             'players': {},
+            'game_over': False,
         }
+    
+    def check_winning_condition(self):
+        for player in self.state['players'].values():
+            if player['score'] >= 1:
+                self.state['game_over'] = True
+                self.state['winner'] = player['username']
+                return True
+        return False
 
     async def add_player(self, username, room):
         player1_settings = await self.get_player_settings(room.player1)
@@ -230,6 +240,18 @@ class GameConsumer(AsyncWebsocketConsumer):
         frame_duration = 1 / 30
         while self.keep_running:
             self.game_state.update_ball_position()
+            if self.game_state.check_winning_condition():
+                await self.channel_layer.group_send(
+                    self.room_group_name,
+                    {
+                        'type': 'send_message',
+                        'message': {
+                            'action': 'game_over',
+                            'game_state': self.game_state.get_state(),
+                        }
+                    }
+                )
+                break
             await self.channel_layer.group_send(
                 self.room_group_name,
                 {
