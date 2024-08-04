@@ -107,7 +107,7 @@ const ChatHeader = () => {
   function handleParamsClick() {
     alert("Olaaala");
   }
-
+  // Just Nothing here !
   return (
     <div className={styles.ChatHeaderHolder}>
       {
