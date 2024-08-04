@@ -65,11 +65,8 @@
     animation-timing-function: ease-in;
 }
 
-.ConversationHolder:hover{
-    z-index: auto;
-    background-color: #F62943;
 
-}
+
 
 .FriendPhoto{
     width: 70px;
@@ -78,8 +75,6 @@
     align-self: center;
     justify-self: end;
 }
-
-
 
 .NameAndLastMessage{
     height: 100%;
