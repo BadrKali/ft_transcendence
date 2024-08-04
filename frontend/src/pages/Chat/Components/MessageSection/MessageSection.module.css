@@ -270,7 +270,33 @@
     display: none;
 }
 
+@keyframes sliding{
+    from {
+        opacity: 0;
+        transform: translateX(-100px);
+    }
+    to{
+        opacity: 1;
+        transform: translateX(0px);
+    }
+}
+
+@keyframes sliding2{
+    from {
+        opacity: 0;
+        transform: translateX(-100px);
+    }
+    to{
+        opacity: 1;
+        transform: translateX(0px);
+    }
+}
+
 .MsgIncom{
+
+    animation: sliding linear;
+    animation-timeline: View();
+    animation-range: entry -1000%  30%;
     margin-top: 1rem;
     margin-bottom: 1rem;
 
@@ -284,6 +310,9 @@
 }
 
 .MsgOut{
+    animation: sliding2 linear;
+    animation-timeline: View();
+    animation-range: entry -1000%  30%;
     margin-top: 1rem;
     margin-bottom: 2rem;
     align-self: flex-end;

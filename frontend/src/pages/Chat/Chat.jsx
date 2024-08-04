@@ -5,14 +5,14 @@ import MessageSection from "./Components/MessageSection/MessageSection.jsx";
 import UserParams from "./Components/UserParams/UserParams";
 import useAuth from "../../hooks/useAuth";
 
-export const UserMsgContext = createContext();
+export const conversationMsgContext = createContext();
 export const ChatListContext = createContext();
+export const PickedConvContext = createContext();
 
 const Chat = () => {
-  const [ChatList, setChatList] = useState([]);
-  const [PickedUserData, setPickedUserData] = useState();
-  const [PickedConversation, setPickedConversation] = useState("");
-
+  const [ChatList, setChatList] = useState(null);
+  const [conversationMsgs, setconversationMsgs] = useState(null);
+  const [PickerUsername, setPickerUsername] = useState("");
   const { auth } = useAuth();
 
   useEffect(() => {
@@ -37,59 +37,56 @@ const Chat = () => {
     };
 
     FetchContactSection();
-  }, [PickedConversation]);
+  }, [PickerUsername]); //dependencies will change
 
   const handleConversationSelect = (conversationId) => {
-    setPickedConversation(conversationId);
+    setPickerUsername(conversationId);
   };
 
-  // useEffect(()=>{
+  useEffect(() => {
+    const FetchMessagesSection = async () => {
+      try {
+        const url = `http://localhost:8000/chat/GetMessageswith/${PickerUsername}/`;
+        const response = await fetch(url, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${auth.accessToken}`,
+          },
+        });
 
-  //   const FetchMessagesSection = async () => {
-  //     try {
-
-  //       console.log(PickedConversation);
-
-  //       const url = `http://localhost:8000/chat/GetMessageswith/${PickedConversation}/`;
-  //       const response = await fetch(url, {
-  //         method: "GET",
-  //         headers: {
-  //           "Content-Type": "application/json",
-  //           Authorization: `Bearer ${auth.accessToken}`,
-  //         },
-  //       });
-  //       if (!response.ok) {
-  //         throw new Error(`Response status: ${response.status}`);
-  //       }
-  //       const data = await response.json();
-  //       console.log(data)
-  //       setPickedUserData(data)
-  //     } catch (error) {
-  //       console.error(error.message);
-  //     }
-  //   };
-
-  //   FetchMessagesSection();
-  // }, [PickedConversation])
+        if (!response.ok) {
+          throw new Error(`Response status: ${response.status}`);
+        }
+        const data = await response.json();
+        setconversationMsgs(data);
+      } catch (error) {
+        console.error(error.message);
+      }
+    };
+    if (PickerUsername.length) FetchMessagesSection();
+  }, [PickerUsername]);
 
   return (
     <>
       <h1>Clunca</h1>
       <div className={style.ChatView}>
-        <UserMsgContext.Provider value={PickedUserData}>
+        <conversationMsgContext.Provider value={conversationMsgs}>
           <ChatListContext.Provider value={ChatList}>
-            <ContactSection
-              PickedConversation={PickedConversation}
-              handleConversationSelect={handleConversationSelect}
-            />
-            <MessageSection />
+            <PickedConvContext.Provider value={PickerUsername}>
+              <ContactSection
+                PickerUsername={PickerUsername}
+                handleConversationSelect={handleConversationSelect}
+              />
+              <MessageSection />
+            </PickedConvContext.Provider>
           </ChatListContext.Provider>
-        </UserMsgContext.Provider>
+        </conversationMsgContext.Provider>
 
-        {PickedUserData ? <UserParams /> : null}
+        {conversationMsgs ? <UserParams /> : null}
       </div>
     </>
   );
 };
-// LIKE IF I ADDED SOMETHING TO THIS SHIIIT TO JUST IGNORE IT ! 
+// LIKE IF I ADDED SOMETHING TO THIS SHIIIT TO JUST IGNORE IT !
 export default Chat;

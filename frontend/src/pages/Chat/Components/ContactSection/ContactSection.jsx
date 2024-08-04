@@ -6,7 +6,7 @@ import src from "../../ChatAssets/download.jpeg";
 import NoOneTotalkTo from "../../ChatAssets/NoOneTotalkTo.json";
 import Lottie from "lottie-react";
 import { ChatListContext } from "../../Chat.jsx";
-import { UserMsgContext } from "../../Chat.jsx";
+import { conversationMsgContext } from "../../Chat.jsx";
 import useAuth from "../../../../hooks/useAuth";
 
 const SendToNoneFriend = () => {
@@ -31,7 +31,11 @@ function LastMessageFormater(lastMessage) {
   return lastMessage;
 }
 
-const ChatConversation = ({ ConversationData, PickedConversation, onSelectConversation,}) => {
+const ChatConversation = ({
+  ConversationData,
+  PickerUsername,
+  onSelectConversation,
+}) => {
   function HandleClick() {
     onSelectConversation(ConversationData.username);
   }
@@ -41,8 +45,8 @@ const ChatConversation = ({ ConversationData, PickedConversation, onSelectConver
       style={{
         borderRadius: "0.5rem",
         backgroundColor:
-          PickedConversation === ConversationData.username ? "#11141B" : "",
-        zIndex : "10"
+          PickerUsername === ConversationData.username ? "#11141B" : "",
+        // zIndex : PickerUsername === ConversationData.username ? "10" : "auto"
       }}
     >
       <div className={style.ConversationHolder}>
@@ -78,7 +82,7 @@ const ChatConversation = ({ ConversationData, PickedConversation, onSelectConver
   );
 };
 
-const ContactSection = ({ PickedConversation, handleConversationSelect }) => {
+const ContactSection = ({ PickerUsername, handleConversationSelect }) => {
   const { auth } = useAuth();
   const ChatList = useContext(ChatListContext);
   const [search, setSearch] = useState("");
@@ -105,7 +109,7 @@ const ContactSection = ({ PickedConversation, handleConversationSelect }) => {
               <ChatConversation
                 key={index}
                 ConversationData={DataObj}
-                PickedConversation={PickedConversation}
+                PickerUsername={PickerUsername}
                 onSelectConversation={handleConversationSelect} //
               />
             );

@@ -36,12 +36,18 @@ def RetreiveContacts(request):
 
 @api_view(['GET'])
 def getMessageswith (request, username):
+    current_user = request.user
+    chat_partner = User.objects.get(username=username)
 
     allRecords = message.objects.\
         select_related('sender_id', 'receiver_id').\
         filter((Q(sender_id__username=request.user.username) & Q(receiver_id__username=username)) |
-               (Q(sender_id__username=username) & Q(receiver_id__username=request.user.username))).order_by('-created_at')
+               (Q(sender_id__username=username) & Q(receiver_id__username=request.user.username))).order_by('created_at')
     serialiser = __messageSerializer__(allRecords, many=True)
-    OurMessages = [{**Singlemessage, "msg_type": "outgoing" if Singlemessage.get('sender_id') == request.user.id else "incoming"} for Singlemessage in serialiser.data]
+    OurMessages = [{**Singlemessage, "msg_type": "outgoing" if Singlemessage.get('sender_id') == request.user.id else "incoming",
+                    "currentUserAvatar": current_user.avatar.url if current_user.avatar else None,
+                    "chatPartnerAvatar": chat_partner.avatar.url if chat_partner.avatar else None
+                    }
+                      for Singlemessage in serialiser.data]
     return Response(OurMessages)
 
