@@ -14,11 +14,11 @@ function ListBlockedItem({user}) {
   const { auth }  = useAuth()
 
 
-  useEffect(() => {
-    if (data) {
-      setProfilData(data);
-    }
-  }, [data]);
+    useEffect(() => {
+        if (data) {
+        setProfilData(data);
+        }
+    }, [data]);
 
     const handleUnblock = async () => {
         const url = `${BACKEND_URL}/user/${user.id}/block-unblock/`;

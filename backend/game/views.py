@@ -9,8 +9,9 @@ from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
 from .models import GameHistory, Achievement, UserAchievement, GameSettings, GameRoom
 from .serializers import GameHistorySerializer, AchievementSerializer, UserAchievementSerializer, GameSettingsSerializer, GameRoomSerializer
-from user_management.models import Player
-
+from user_management.models import Player, Notification
+from authentication .models import User
+from django.shortcuts import get_object_or_404
 
 class PlayerGameHistoryView(generics.ListAPIView):
     serializer_class = GameHistorySerializer
@@ -93,3 +94,32 @@ class GameRoomView(APIView):
             return Response(serializer.data, status=status.HTTP_200_OK)
         except GameRoom.DoesNotExist:
             return Response({"error": "Game room not found"}, status=status.HTTP_404_NOT_FOUND)
+
+class SendChallengeView(APIView):
+    def post(self, request):
+        player_receiver_id = request.data.get('player_receiver_id')
+        if not player_receiver_id:
+            return Response({'error': 'player_receiver_id is required.'}, status=status.HTTP_400_BAD_REQUEST)
+        try:
+            player_sender = request.user
+            player_receiver = get_object_or_404(User, id=player_receiver_id)
+            Notification.objects.create(
+                recipient=player_receiver,
+                sender=player_sender,
+                message=f'{player_sender.username} has challenged you to a game!'
+            )
+            channel_layer = get_channel_layer()
+            async_to_sync(channel_layer.group_send)(
+                f'notifications_{player_receiver.id}',
+                {
+                    'type': 'notification_message',
+                    'message': f'{player_sender.username} has challenged you to a game!'
+                }
+            )
+            return Response({'message': 'Challenge sent successfully.'}, status=status.HTTP_201_CREATED)
+
+        except User.DoesNotExist:
+            return Response({'error': 'Player not found.'}, status=status.HTTP_404_NOT_FOUND)
+
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
