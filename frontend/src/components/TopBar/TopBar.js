@@ -39,6 +39,7 @@ const TopBar = () => {
   const [selectedNotification, setSelectedNotification] = useState(null);
 
   const handleNotificationClick = (notif) => {
+    console.log(notif);
     setSelectedNotification(notif);
     setModalOpen(true);
     setNotif(false); 
@@ -55,15 +56,22 @@ const TopBar = () => {
     setModalOpenBlocked(false)
   }
 
-  const handleAccept = (id) => {
+  const handleAccept = (id, type) => {
       handleClose();
-      fetch(`${BACKEND_URL}/user/friends-request/${id}/response/`, {
+      let url = `${BACKEND_URL}/user/friends-request/${id}/response/`;
+      let body = JSON.stringify({ 'status': 'accept' });
+  
+      if (type === 'game') {
+          url = `${BACKEND_URL}/game-challenges/${id}/response/`; 
+          body = JSON.stringify({ 'response': 'accepted' });
+      }
+      fetch(url, {
         method: 'PATCH',
         headers: {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${auth.accessToken}`
         },
-        body: JSON.stringify({ 'status' : 'accept' })
+        body: body
     })
     .then(response => {
         if (!response.ok) {
@@ -81,9 +89,17 @@ const TopBar = () => {
     });
   };
 
-  const handleReject = (id) => {
+  const handleReject = (id, type) => {
     handleClose();
-    fetch(`${BACKEND_URL}/user/friends-request/${id}/response/`, {
+    let url = `${BACKEND_URL}/user/friends-request/${id}/response/`;
+    let body = JSON.stringify({ 'status': 'accept' });
+
+    if (type === 'game') {
+        url = `${BACKEND_URL}/game-challenges/${id}/response/`; 
+        body = JSON.stringify({ 'response': 'accepted' });
+    }
+
+    fetch(url, {
       method: 'PATCH',
       headers: {
           'Content-Type': 'application/json',
@@ -100,7 +116,6 @@ const TopBar = () => {
       .then(data => {
           console.log('Friend request rejected:', data);
           alert('Friend request rejected');
-          // Update UI or state as necessary
       })
       .catch(error => {
           console.error('Error rejecting friend request:', error);

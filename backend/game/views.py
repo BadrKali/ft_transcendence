@@ -106,7 +106,7 @@ class SendChallengeView(APIView):
             Notification.objects.create(
                 recipient=player_receiver,
                 sender=player_sender,
-                message=f'{player_sender.username} has challenged you to a game!'
+                message='has challenged you to a game!'
             )
             channel_layer = get_channel_layer()
             async_to_sync(channel_layer.group_send)(
