@@ -60,7 +60,7 @@ const SendMessage = ({ message, setMessage }) => {
   const CurrentUser = useContext(CurrentUserContext)
   const ChatPartner = useContext(chatPartnerContext);
   const PickerClicksetter = useContext(PickerClickContext);
-
+ // I will add sockets here tomorrow !
   const handleSendMessage = async () => {
     if (message.trim()) {
       PickerClicksetter((prev) => prev ? !prev : prev)
