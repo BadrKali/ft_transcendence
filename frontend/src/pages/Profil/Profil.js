@@ -12,6 +12,8 @@ import useAuth from '../../hooks/useAuth'
 import { useLocation } from 'react-router-dom';
 import BlockUnblockButton from './components/BlockUnblockButton'
 import AddFriendUnfriendButton from './components/AddFriendUnfriendButton'
+import ChatFriendButton from './components/ChatFriendButton'
+import ChallangefriendButton from './components/ChallangefriendButton'
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
@@ -39,54 +41,15 @@ const Profil = () => {
     }
     return <div>{error}</div>;
   } 
-  
-  const handleAddFriend = async () => {
-    try {
-      const response = await fetch(`${BACKEND_URL}/user/friends-request/${userData.id}/`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${auth.accessToken}`,
-        },
-        body: JSON.stringify({})
-      });
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'An error occurred while sending the friend request.');
-      }
-
-      const data = await response.json();
-      alert(data.message);
-    } catch (error) {
-      alert(error.message);
-    }
-  };
-
-
-
-  const handleItemClick = () => {
-    navigate(`/chat`);
-  };
 
   return (
     <div className='dashboard-contianer'>
        <div className='profil-icons'>
           <div className='profil-buttons'>
             <AddFriendUnfriendButton FriendId={userData.id} />
-            {/* <div className='AddFriend-button profil-button' onClick={handleAddFriend}>
-                <Icon name='AddFriend' className='Add-Friend profil-icon' />
-                <p>add Friend</p>
-            </div> */}
-            <div className='ChatFriend-button profil-button' onClick={() => handleItemClick()}>
-                <Icon name='ChatFriend' className='Chat-Friend profil-icon' />«
-                <p>Message</p>
-            </div>
-            <div className='Challangefriend-button profil-button'>
-                <Icon name='Challangefriend' className='Challange-friend profil-icon' />
-                <p>Challange</p>
-                
-            </div>
+            <ChatFriendButton />
+            <ChallangefriendButton />
             <BlockUnblockButton blockedId={userData.id}/>
         </div>
        </div>
