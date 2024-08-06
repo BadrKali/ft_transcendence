@@ -20,6 +20,8 @@ from django.db.models import Q
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
 from django.http import HttpResponseForbidden
+from game.models import UserAchievement
+
 
 class FriendRequestManagementView(APIView):
     
@@ -95,10 +97,52 @@ class FriendRequestResponse(APIView):
             friendship = Friendship(player=player_sender, friend=player_receiver)
             friendship.save()
             friend_request.delete()
+            self.check_and_award_friends_achievement(player_sender, player_receiver)
             return Response({'message': 'Friend request accepted.'}, status=status.HTTP_200_OK)
         elif action == 'reject':
             friend_request.delete()
             return Response({'message': 'Friend request rejected.'}, status=status.HTTP_200_OK)
+        
+    def check_and_award_friends_achievement(self, player_sender, player_receiver):
+        sender_friend_count = Friendship.objects.filter(player=player_sender).count() + Friendship.objects.filter(friend=player_sender).count()
+        receiver_friend_count = Friendship.objects.filter(player=player_receiver).count() + Friendship.objects.filter(friend=player_receiver).count()
+
+        print(f"Sender friend count: {sender_friend_count}")
+        print(f"Receiver friend count: {receiver_friend_count}")
+        
+        if sender_friend_count >= 1:
+            self.unlock_five_friends_achievement(player_sender)
+        if receiver_friend_count >= 1:
+            self.unlock_five_friends_achievement(player_receiver)
+    
+    def unlock_five_friends_achievement(self, user):
+        achievement, _ = Achievement.objects.get_or_create(
+            title="Social Butterfly",
+            defaults={'description': "Have more than 5 friends."}
+        )
+        user_achievement_exists = UserAchievement.objects.filter(user=user, achievement=achievement).exists()
+        if not user_achievement_exists:
+            UserAchievement.objects.create(
+                user=user,
+                achievement=achievement,
+                unlocked=True
+            )
+            Notification.objects.create(
+                recipient=user,
+                sender=user,
+                message='You Got a new Achievment',
+                title='Social Butterfly',
+                description='Have more than 5 friends.',
+            )
+
+            channel_layer = get_channel_layer()
+            async_to_sync(channel_layer.group_send)(
+                f'notifications_{user.id}',
+                {
+                    'type': 'notification_message',
+                    'message': 'Got a new Achievment'
+                }
+            )
 
 
 class FriendManagementView(APIView):

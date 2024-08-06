@@ -61,7 +61,7 @@ const TopBar = () => {
       let url = `${BACKEND_URL}/user/friends-request/${id}/response/`;
       let body = JSON.stringify({ 'status': 'accept' });
   
-      if (type === 'game') {
+      if (type === 'Game Challenge') {
           url = `${BACKEND_URL}/game-challenges/${id}/response/`; 
           body = JSON.stringify({ 'response': 'accepted' });
       }
@@ -94,7 +94,7 @@ const TopBar = () => {
     let url = `${BACKEND_URL}/user/friends-request/${id}/response/`;
     let body = JSON.stringify({ 'status': 'accept' });
 
-    if (type === 'game') {
+    if (type === 'Game Challenge') {
         url = `${BACKEND_URL}/game-challenges/${id}/response/`; 
         body = JSON.stringify({ 'response': 'accepted' });
     }
@@ -254,8 +254,8 @@ const TopBar = () => {
                 }
           </div>
           {selectedNotification && (
-          <NotificationPopup isOpen={modalOpen} onClose={handleClose} notif={selectedNotification} onAccept={handleAccept} onReject={handleReject} />
-      )}
+            <NotificationPopup isOpen={modalOpen} onClose={handleClose} notif={selectedNotification} onAccept={handleAccept} onReject={handleReject} />
+          )}
         </div>
         <div className='profile-pic-container'  onClick={handleProfilClick}>
           <div className='profile-pic'>

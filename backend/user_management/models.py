@@ -48,20 +48,14 @@ class FriendInvitation(models.Model):
             raise ValidationError("A Player cannot send an invitation to themselves")
         super().save(*args, **kwargs)
 
-class Notifications(models.Model):
-    to_player = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='to_player' ,on_delete=models.CASCADE)
-    type = models.CharField(max_length=100)
-    notification_link = models.URLField(max_length=200)
-    # isRead = check what is is for
-    date_sent = models.DateTimeField(auto_now_add=True)
 
-    def __str__(self) -> str:
-        return f"notification sent to {self.to_player.username}"
 
 class Notification(models.Model):
     recipient = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='notifications')
     sender = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='sent_notifications')
     message = models.TextField()
+    title = models.TextField(default='No description provided')
+    description = models.TextField(default='No description provided')
     timestamp = models.DateTimeField(auto_now_add=True)
     is_read = models.BooleanField(default=False)
 

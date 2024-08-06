@@ -17,6 +17,7 @@ function NotificationItem({notif, onClick }) {
   const [profilData, setProfilData] = useState([]);
   const {data ,isLoading, error} = useFetch(`${BACKEND_URL}/user/stats/${notif.sender}`)
 
+  console.log(notif.discreption)
   useEffect(() => {
     if (data) {
       setProfilData(data);

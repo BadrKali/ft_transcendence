@@ -100,3 +100,26 @@
 .NotiddName p:hover {
   text-decoration: underline; 
 }
+
+.NotifUserImageNameAchievment{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100px;
+  height: 100px;
+  border: solid;
+}
+
+.NotifMessageAchievment {
+  padding: 20px;
+  font-weight: bold; 
+  font-size: 1.2em;
+}
+
+.AchivmentTitleDes{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}

@@ -35,4 +35,4 @@ class FriendInvitationsSerializer(serializers.ModelSerializer):
 class NotificationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Notification
-        fields = ['id', 'sender', 'message', 'timestamp', 'is_read']
+        fields = ['id', 'sender', 'message', 'title', 'description', 'timestamp', 'is_read']

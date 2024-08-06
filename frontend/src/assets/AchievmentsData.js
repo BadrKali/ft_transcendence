@@ -25,6 +25,16 @@ const AchievmentsData = [
 
       },
       {
+        "id" : 9,
+
+        "title": "Social Butterfly",
+        "description": "Have more than 5 friends.",
+        "unlocked" : false,
+
+  "image": "Achiev1"
+
+      },
+      {
         "id" : 3,
 
         "title": "Smash Hit",
@@ -75,16 +85,7 @@ const AchievmentsData = [
 
       },
 
-      {
-        "id" : 9,
-
-        "title": "Social Butterfly",
-        "description": "Add 5 friends to your friend list.",
-        "unlocked" : false,
-
-  "image": "Achiev1"
-
-      },
+  
       {
         "id" : 10,
 
