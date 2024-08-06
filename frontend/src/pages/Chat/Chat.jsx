@@ -4,12 +4,18 @@ import ContactSection from "./Components/ContactSection/ContactSection.jsx";
 import MessageSection from "./Components/MessageSection/MessageSection.jsx";
 import UserParams from "./Components/UserParams/UserParams";
 import useAuth from "../../hooks/useAuth";
+import useFetch from "../../hooks/useFetch.js"
+import {CurrentUserProvider} from "./usehooks/useContexts.js"
 
 export const conversationMsgContext = createContext();
 export const ChatListContext = createContext();
 export const PickedConvContext = createContext();
+export const conversationSetterContext = createContext();
+
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
 const Chat = () => {
+
   const [ChatList, setChatList] = useState(null);
   const [conversationMsgs, setconversationMsgs] = useState(null);
   const [PickerUsername, setPickerUsername] = useState("");
@@ -18,7 +24,7 @@ const Chat = () => {
   useEffect(() => {
     const FetchContactSection = async () => {
       try {
-        const url = "http://127.0.0.1:8000/chat/GetContactSection/";
+        const url = `${BACKEND_URL}/chat/GetContactSection/`;
         const response = await fetch(url, {
           method: "GET",
           headers: {
@@ -46,7 +52,7 @@ const Chat = () => {
   useEffect(() => {
     const FetchMessagesSection = async () => {
       try {
-        const url = `http://localhost:8000/chat/GetMessageswith/${PickerUsername}/`;
+        const url = `${BACKEND_URL}/chat/GetMessageswith/${PickerUsername}/`;
         const response = await fetch(url, {
           method: "GET",
           headers: {
@@ -71,19 +77,20 @@ const Chat = () => {
     <>
       <h1>Clunca</h1>
       <div className={style.ChatView}>
-        <conversationMsgContext.Provider value={conversationMsgs}>
-          <ChatListContext.Provider value={ChatList}>
-            <PickedConvContext.Provider value={PickerUsername}>
-              <ContactSection
-                PickerUsername={PickerUsername}
-                handleConversationSelect={handleConversationSelect}
-              />
-              <MessageSection />
-            </PickedConvContext.Provider>
-          </ChatListContext.Provider>
-        </conversationMsgContext.Provider>
-
-        {conversationMsgs ? <UserParams /> : null}
+      <CurrentUserProvider>
+        <conversationSetterContext.Provider value={setconversationMsgs}>
+          <conversationMsgContext.Provider value={conversationMsgs}>
+            <ChatListContext.Provider value={ChatList}>
+              <PickedConvContext.Provider value={PickerUsername}>
+                <ContactSection PickerUsername={PickerUsername}
+                  handleConversationSelect={handleConversationSelect} />
+                <MessageSection />
+                {conversationMsgs ? <UserParams /> : null}
+              </PickedConvContext.Provider>
+            </ChatListContext.Provider>
+          </conversationMsgContext.Provider>
+        </conversationSetterContext.Provider>
+        </CurrentUserProvider>
       </div>
     </>
   );

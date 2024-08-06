@@ -30,20 +30,3 @@ class message(models.Model):
                                       (Q(sender_id=user2_Id) & Q(receiver_id=currentUserId))).order_by('-created_at').first()
     def GetUserStatus(user_Id):
         return User.objects.filter(id=user_Id).first().is_active
-        # return Us
-        # .order_by('-created_at').first().content
-# Funniest Implementation ever
-# class ChatRoom(models.Model):
-#     Messages = ArrayField(
-#         models.ForeignKey( message, on_delete=models.CASCADE),
-#         default=[]
-#     )
-# class Conversation(models.Model):
-#     first_user  = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='first_member', on_delete=models.CASCADE)
-#     second_user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='second_member', on_delete=models.CASCADE)
-#     chatRoom_id = models.OneToOneField(ChatRoom, related_name='roomId', on_delete=models.PROTECT, null=True)
-#     created_at  = models.DateTimeField(auto_now_add=True)
-#     def __str__(self) -> str:
-#         return f'beetwen : {self.first_user} And {self.second_user}'
-#     class Meta:
-#         unique_together = ['first_user', 'second_user']

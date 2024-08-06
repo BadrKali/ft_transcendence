@@ -18,12 +18,8 @@ const SendToNoneFriend = () => {
   }
 
   return (
-    <NotePencil
-      onClick={handleGlobalMessage}
-      size={32}
-      color="#ffffff"
-      weight="light"
-    />
+    <NotePencil onClick={handleGlobalMessage} size={32}
+                color="#ffffff" weight="light" />
   );
 };
 

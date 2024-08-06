@@ -7,6 +7,8 @@ from django.db.models import Q
 from django.conf import settings
 from authentication .models import User
 from authentication .serializers import CurrentUserSerializer
+from rest_framework import status
+
 # Create your views here.
 
 def format_date(date)-> str:
@@ -16,6 +18,7 @@ def format_date(date)-> str:
 @api_view(['GET'])
 def RetreiveContacts(request):
     Mycontacts = message.objects.filter(Q(sender_id=request.user.id) | Q(receiver_id=request.user.id));
+    
     serializers = __messageSerializer__(Mycontacts, many=True)
     evaluatedData = serializers.data
     contactIDs = {elem.get('receiver_id') if elem.get('receiver_id') != request.user.id else elem.get('sender_id') for elem in evaluatedData}
@@ -28,7 +31,7 @@ def RetreiveContacts(request):
                   "status": message.GetUserStatus(contact.get("id"))
                 } for contact in ContactSerializer.data 
                 ]
-    return Response(ChatList)
+    return Response(ChatList, status=status.HTTP_200_OK)
 # I may should Sort conversation using created att when Displaying it on frontend! 
 
 # username is the target 
@@ -44,10 +47,7 @@ def getMessageswith (request, username):
         filter((Q(sender_id__username=request.user.username) & Q(receiver_id__username=username)) |
                (Q(sender_id__username=username) & Q(receiver_id__username=request.user.username))).order_by('created_at')
     serialiser = __messageSerializer__(allRecords, many=True)
-    OurMessages = [{**Singlemessage, "msg_type": "outgoing" if Singlemessage.get('sender_id') == request.user.id else "incoming",
-                    "currentUserAvatar": current_user.avatar.url if current_user.avatar else None,
-                    "chatPartnerAvatar": chat_partner.avatar.url if chat_partner.avatar else None
-                    }
+    OurMessages = [{**Singlemessage, "msg_type": "outgoing" if Singlemessage.get('sender_id') == request.user.id else "incoming" }
                       for Singlemessage in serialiser.data]
-    return Response(OurMessages)
+    return Response(OurMessages, status=status.HTTP_200_OK)
 

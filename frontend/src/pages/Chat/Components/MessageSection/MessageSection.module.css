@@ -197,7 +197,7 @@
     width: 100%;
     height: 100%;
     color: #6a6c74; /*COLOR NADIR*/
-    font-size: 25px;
+    font-size: 20px;
     font-family: 'Saira Semi Condensed', sans-serif;
 } 
 /*******************INPUT HOLDER***********************/
@@ -352,8 +352,8 @@
 }
 
 .incoming{
+    font-size: 18px;
     max-width: 27rem;
-
     background-color: rgba(115, 115, 115, 0.2);
     padding: 1rem;
     border-top-left-radius: 18px;
@@ -363,6 +363,7 @@
 }
 
 .outgoing{
+    font-size: 18px;
     background-color: rgba(115, 115, 115, 0.2);
     border-top-left-radius: 18px;
     border-top-right-radius: 18px;

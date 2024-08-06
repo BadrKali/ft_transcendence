@@ -1,4 +1,4 @@
-import React, { useState, useRef, useContext,useEffect } from "react";
+import React, { useState, useRef, useContext, useEffect, createContext } from "react";
 import styles from "./MessageSection.module.css";
 import EmptyChatAnimation from "../../ChatAssets/EmptyChatAnimation.json";
 import NoConversationPicked from "../../ChatAssets/NoConversationPicked.json";
@@ -12,8 +12,19 @@ import Icon from "../../../../assets/Icon/icons.js";
 import src from "../../ChatAssets/download.jpeg";
 import Picker from "@emoji-mart/react";
 import { conversationMsgContext } from "../../Chat.jsx";
-import { ChatListContext }        from "../../Chat.jsx";
-import {PickedConvContext}        from "../../Chat.jsx"
+import { ChatListContext } from "../../Chat.jsx";
+import { PickedConvContext } from "../../Chat.jsx";
+import { conversationSetterContext } from "../../Chat.jsx";
+import notificationSound from "../../ChatAssets/notification.mp3";
+import typingSound from "../../ChatAssets/typingSound.mp3"
+import useAuth from "../../../../hooks/useAuth";
+import {CurrentUserContext} from "../../usehooks/useContexts.js"
+
+export const chatPartnerContext = createContext();
+export const PickerClickContext = createContext();
+
+
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
 const ImportItem = ({ setImportClicked }) => {
   return (
@@ -35,16 +46,51 @@ const ImportItem = ({ setImportClicked }) => {
   );
 };
 
-const SendMessage = ({message, setMessage}) => {
-  function handleSendMessage(){
-    if (message){
-    setMessage("")
-    console.log("You try to send ", message)
+function reformeDate(datestr) {
+  const datetimeObj = new Date(datestr);
+  const hours = datetimeObj.getHours();
+  const minutes = String(datetimeObj.getMinutes()).padStart(2, '0'); // Convert to string first
+  return `${hours}:${minutes}`;
+}
+
+const SendMessage = ({ message, setMessage }) => {
+  const { auth } = useAuth();
+  const conversationMsgs = useContext(conversationMsgContext);
+  const conversationSetter = useContext(conversationSetterContext);
+  const CurrentUser = useContext(CurrentUserContext)
+  const ChatPartner = useContext(chatPartnerContext);
+  const PickerClicksetter = useContext(PickerClickContext);
+
+  const handleSendMessage = async () => {
+    if (message.trim()) {
+      PickerClicksetter((prev) => prev ? !prev : prev)
+      conversationSetter([
+        ...conversationMsgs,
+        {
+          sender_id: CurrentUser.id,
+          receiver_id: ChatPartner.id, //fake Data how to get Receiver ? 
+          content: message,
+          seen: false,
+          msg_type: "outgoing",
+          created_at: new Date().toISOString(),
+        },
+      ]);
+      const notif = new Audio(notificationSound);
+      notif.play();
+      setMessage("");
+      console.log("You try to send ", message);
     }
-  }
+    // *********************************************************
+  };
   return (
-    <svg onClick={handleSendMessage} width="30" height="30" viewBox="0 0 23 25"
-         fill="none" xmlns="http://www.w3.org/2000/svg" >
+    <svg
+      onClick={handleSendMessage}
+      width="30"
+      height="30"
+      viewBox="0 0 23 25"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
       <path
         d="M22.286 0.243835C22.1378 0.115822 21.9576 0.0342628 21.7664 0.00866295C21.5753 -0.0169369 21.3811 0.0144765 21.2065 0.0992425L0.250977 10.3275V12.3067L9.05272 15.9678L14.6984 25H16.6021L22.617 1.32233C22.6658 1.12842 22.6606 0.924095 22.602 0.733153C22.5434 0.542212 22.4338 0.372516 22.286 0.243835ZM15.4268 23.1123L10.574 15.3485L18.0416 6.84337L16.86 5.72157L9.33401 14.293L2.07695 11.2744L20.7489 2.16046L15.4268 23.1123Z"
         fill="white"
@@ -58,12 +104,23 @@ const Emojies = ({ SetPicker }) => {
   return (
     <Smiley
       onClick={() => SetPicker((prev) => !prev)}
-      className={styles.Emojie} size={40} color="#242424" weight="fill"
+      className={styles.Emojie}
+      size={40}
+      color="#242424"
+      weight="fill"
     />
   );
 };
 
 const InputField = ({ message, handleWritedMessage, inputRef }) => {
+
+  // useEffect(()=>{
+  //   if (message.length != 0){
+  //     const notif = new Audio(typingSound);
+  //     notif.play();
+  //   }
+  // }, [message])
+
   return (
     <input
       ref={inputRef}
@@ -76,69 +133,57 @@ const InputField = ({ message, handleWritedMessage, inputRef }) => {
   );
 };
 
-// { /*
-// {
-/* <div className={styles.DiscussionColors}>
-<div onClick={handleColor1} className={styles.Color1}></div>
-<div onClick={handleColor2} className={styles.Color2}></div>
-<div onClick={handleColor3} className={styles.Color3}></div>
-<div className={styles.Color4} style={{backgroundColor: MessageBackColor}}> </div>
-</div>  */
-// }
-// const [MessageBackColor, setColor] = useState('');
-//   function handleColor1(){
-//     setColor('#22420d')
-//   }
-//   function handleColor2(){
-//     setColor('#F62943');
-//   }
-//   function handleColor3(){
-//     setColor('#333497');
-//   }// }
-
-// I still use conversationMsgs with the same Logic of ChatList this is Wrong !
-
 const ChatHeader = () => {
   const conversationMsgs = useContext(conversationMsgContext);
-  const ChatList = useContext(ChatListContext)
-  const PickedUsername = useContext(PickedConvContext)
-  const userData = ChatList.filter((elem) => elem.username === PickedUsername)[0]
+  const ChatList = useContext(ChatListContext);
+  const PickedUsername = useContext(PickedConvContext);
+  const userData = useContext(chatPartnerContext);
 
   function handleParamsClick() {
     alert("Olaaala");
   }
-  // Just Nothing here !
+
   return (
     <div className={styles.ChatHeaderHolder}>
-      {
-      userData ? (
+      {userData ? (
         <>
           <div className={styles.UserInfo}>
-
-            <img className={styles.FriendPhoto} src={"http://localhost:8000" + userData?.avatar} alt="Your-friend-photo" />
+            <img
+              className={styles.FriendPhoto}
+              src={`${BACKEND_URL}${userData?.avatar}`}
+              alt="Your-friend-photo"
+            />
             <div className={styles.FriendNameAndStatus}>
               <div className={styles.FriendName}> {userData?.username} </div>
               <div className={styles.StatusHolder}>
-                <div className={styles.StatusIcon}> <Lottie animationData={userData?.status ? online : offline} />
-              </div>
-                <div className={styles.Status}> {userData?.status ? "Online" : "Offline"}
-              </div>
+                <div className={styles.StatusIcon}>
+                  {" "}
+                  <Lottie animationData={userData?.status ? online : offline} />
+                </div>
+                <div className={styles.Status}>
+                  {" "}
+                  {userData?.status ? "Online" : "Offline"}
+                </div>
               </div>
             </div>
           </div>
-          <div className={styles.ChatSettings}> <FadersHorizontal onClick={handleParamsClick} size={40} color="#6a6c74" /> </div>
+          <div className={styles.ChatSettings}>
+            {" "}
+            <FadersHorizontal
+              onClick={handleParamsClick}
+              size={40}
+              color="#6a6c74"
+            />{" "}
+          </div>
         </>
-      ) : null
-      }
-
+      ) : null}
     </div>
   );
 };
 
 const ChatInput = () => {
-  
-  const  Pickerusername = useContext(PickedConvContext)
-  const  conversationMsgs = useContext(conversationMsgContext);
+  const Pickerusername = useContext(PickedConvContext);
+  const conversationMsgs = useContext(conversationMsgContext);
   const [PickerClick, SetPicker] = useState(false);
   const [ImportItemsClicked, setImportClicked] = useState(false);
   const [message, setMessage] = useState("");
@@ -179,15 +224,22 @@ const ChatInput = () => {
     <div className={styles.ChatInputHolder}>
       {Pickerusername.length ? (
         <>
-          <div className={styles.ImportOptions} style={{ display: ImportItemsClicked ? "flex" : "none" }} >
+          <div
+            className={styles.ImportOptions}
+            style={{ display: ImportItemsClicked ? "flex" : "none" }}
+          >
             <div className={styles.ImageBack}>
               <label htmlFor="uploadImagebtn">
                 <Image className={styles.ImportImage} size={40} />{" "}
               </label>
-            <input
-                type="file"  name="-photo-" id="uploadImagebtn"
-                className="upload-input" onChange={handleImageSelect} accept="image/*" 
-            />
+              <input
+                type="file"
+                name="-photo-"
+                id="uploadImagebtn"
+                className="upload-input"
+                onChange={handleImageSelect}
+                accept="image/*"
+              />
             </div>
 
             <div className={styles.FilesBack}>
@@ -196,8 +248,12 @@ const ChatInput = () => {
                 <Files className={styles.ImportFiles} size={40} />{" "}
               </label>
               <input
-                type="file" name="-FILE-" id="uploadFileBtn" className="upload-input" 
-                onChange={handleFileSelect} accept=".txt,.cpp,.c,.jsx,.py"
+                type="file"
+                name="-FILE-"
+                id="uploadFileBtn"
+                className="upload-input"
+                onChange={handleFileSelect}
+                accept=".txt,.cpp,.c,.jsx,.py"
               />
             </div>
           </div>
@@ -205,10 +261,14 @@ const ChatInput = () => {
           <div className={styles.inputMainDiv}>
             <ImportItem setImportClicked={setImportClicked} />
             <InputField
-              inputRef={inputRef} message={message} handleWritedMessage={handleWritedMessage}
+              inputRef={inputRef}
+              message={message}
+              handleWritedMessage={handleWritedMessage}
             />
             <Emojies SetPicker={SetPicker} />
-            <SendMessage message={message} setMessage={setMessage} />
+            <PickerClickContext.Provider value={SetPicker}>
+              <SendMessage message={message} setMessage={setMessage} />
+            </PickerClickContext.Provider>
           </div>
 
           <div
@@ -228,20 +288,19 @@ const ChatInput = () => {
 };
 
 const MessageDisplayer = ({ message, IsIncoming }) => {
-  
-  function reformeDate(datestr){
-    const datetimeObj = new Date(datestr);
-    const hours = datetimeObj.getHours();
-    const minutes = datetimeObj.getMinutes().toString().padStart(1, '0');
-    return `${hours}:${minutes}`
-  }
+  const CurrentUser = useContext(CurrentUserContext)
+  const ChatPartner = useContext(chatPartnerContext);
 
   return (
     <div className={IsIncoming ? styles.MsgIncom : styles.MsgOut}>
       <div className={IsIncoming ? styles.receiverAvatar : styles.MyAvatar}>
         <img
           className={styles.avatar}
-          src={IsIncoming ? "http://localhost:8000" + message.chatPartnerAvatar : "http://localhost:8000" + message.currentUserAvatar}
+          src={
+            IsIncoming
+              ? `${BACKEND_URL}` + ChatPartner.avatar //Here is the shit added target receiver Here !
+              : `${BACKEND_URL}` + CurrentUser.avatar
+          }
           alt="user-avatar"
         />
       </div>
@@ -267,33 +326,37 @@ const ChatMainHolder = () => {
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
-  
+
   useEffect(() => {
     scrollToBottom();
   }, [conversationMsg]);
-
 
   return (
     <div className={styles.ChatMainHolder}>
       {Pickedusername.length ? (
         <div className={styles.ConversationMessages}>
-          {
-          conversationMsg?.map((elem, index) => {
-            return  ( <MessageDisplayer key={index} message={elem} IsIncoming={elem.msg_type === "incoming" ? true : false} /> ) 
+          {conversationMsg?.map((elem, index) => {
+            return (
+              <MessageDisplayer
+                key={index}
+                message={elem}
+                IsIncoming={elem.msg_type === "incoming" ? true : false}
+              />
+            );
           })}
-           <div ref={messagesEndRef} />
+          <div ref={messagesEndRef} />
         </div>
-      ) 
-      
-      :
-      
-      (
+      ) : (
         <div className={styles.StartMessageHolder}>
           <div className={styles.NoPickedConvContainer}>
-            {" "} <Lottie animationData={NoPickedConv} /> {" "}
+            {" "}
+            <Lottie animationData={NoPickedConv} />{" "}
           </div>
           <div className={styles.QuoteContainer}>
-            <blockquote className={styles.GoPickConversation}> {" "} Another Conversation Another World {" "} </blockquote>
+            <blockquote className={styles.GoPickConversation}>
+              {" "}
+              Another Conversation Another World{" "}
+            </blockquote>
           </div>
         </div>
       )}
@@ -304,6 +367,9 @@ const ChatMainHolder = () => {
 const MessageSection = () => {
   const ChatList = useContext(ChatListContext);
   const conversationMsg = useContext(conversationMsgContext);
+  const PickedUsername = useContext(PickedConvContext);
+  const ChatPartner = ChatList?.filter((elem) => elem.username === PickedUsername )[0];
+
 
   return (
     <>
@@ -324,9 +390,11 @@ const MessageSection = () => {
         </div>
       ) : (
         <div className={styles.MessageSectionFull}>
-          <ChatHeader />
-          <ChatMainHolder />
-          <ChatInput />
+          <chatPartnerContext.Provider value={ChatPartner}>
+              <ChatHeader />
+                <ChatMainHolder />
+              <ChatInput />
+          </chatPartnerContext.Provider>
         </div>
       )}
     </>
