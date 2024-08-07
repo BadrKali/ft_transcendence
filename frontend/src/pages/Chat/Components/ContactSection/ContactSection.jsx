@@ -11,6 +11,7 @@ import useAuth from "../../../../hooks/useAuth";
 
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
+const WS_BACKEND_URL = process.env.REACT_APP_WS_BACKEND_URL;
 
 const SendToNoneFriend = () => {
   function handleGlobalMessage() {

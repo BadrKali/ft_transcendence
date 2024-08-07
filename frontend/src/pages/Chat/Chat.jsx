@@ -13,6 +13,8 @@ export const PickedConvContext = createContext();
 export const conversationSetterContext = createContext();
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
+const WS_BACKEND_URL = process.env.REACT_APP_WS_BACKEND_URL;
+
 
 const Chat = () => {
 
@@ -20,6 +22,34 @@ const Chat = () => {
   const [conversationMsgs, setconversationMsgs] = useState(null);
   const [PickerUsername, setPickerUsername] = useState("");
   const { auth } = useAuth();
+  const [socket, setSocket] = useState(null);
+
+  useEffect(() => {
+    const newSocket = new WebSocket(`${WS_BACKEND_URL}/ws/chat/?token=${auth.accessToken}`);
+
+    newSocket.onopen = () => {
+      console.log('WebSocket connected');
+    };
+
+    newSocket.onmessage = (event) => {
+      // Handle incoming messages
+
+      console.log(event.data);
+    };
+
+    newSocket.onclose = () => {
+      console.log('WebSocket closed');
+    };
+
+    newSocket.onerror = ()=>{
+      console.log('|- ERROR -|');
+    }
+
+    return () => {
+      newSocket.close();
+    };
+  }, []);
+
 
   useEffect(() => {
     const FetchContactSection = async () => {
