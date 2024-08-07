@@ -1,5 +1,7 @@
 import React, { createContext, useEffect, useContext, useState } from 'react';
 import useAuth from '../hooks/useAuth';
+import ToastContainer from '../components/ReactToastify/ToastContainer';
+import InfoToast from '../components/ReactToastify/InfoToast';
 
 const WS_BACKEND_URL = process.env.REACT_APP_WS_BACKEND_URL;
 export const RealTimeContext = createContext({});
@@ -14,8 +16,6 @@ export const RealTimeProvider = ({ children }) => {
         setHasNotification(false);
     };
 
-    
-    
     useEffect(() => {
         if (!auth.accessToken) {
             return;
@@ -37,8 +37,9 @@ export const RealTimeProvider = ({ children }) => {
                     [user_id]: status
                 }));
             } else if (dataFromServer.type === 'notification') {
-
                 setHasNotification(true);
+                InfoToast();
+
             }
         };
 
@@ -58,6 +59,7 @@ export const RealTimeProvider = ({ children }) => {
     return (
         <RealTimeContext.Provider value={{ setNotifications, notifications, friendsStatus, hasNotification, setHasNotification, clearNotification }}>
             {children}
+            <ToastContainer />
         </RealTimeContext.Provider>
     );
 };
