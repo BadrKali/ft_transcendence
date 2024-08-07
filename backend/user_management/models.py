@@ -71,6 +71,9 @@ class Friendship(models.Model):
     class Meta:
         unique_together = ('player', 'friend')
 
+    def __str__(self) -> str:
+        return f"{self.player.username} is friends with {self.friend.username}"
+
     def clean(self):
         if self.player == self.friend:
             raise ValidationError("A player cannot be friends with themselves.")

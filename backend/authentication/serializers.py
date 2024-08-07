@@ -10,7 +10,7 @@ class CurrentUserSerializer(serializers.ModelSerializer):
     avatar_type = serializers.CharField(write_only=True, required=False)
     class Meta:
         model = User
-        fields = ['id', 'avatar', 'username', 'email', 'avatar_type']
+        fields = ['id', 'avatar', 'username', 'email', 'avatar_type', 'is_online']
 
 
 class CurrentUserSettingsSerializer(serializers.ModelSerializer):

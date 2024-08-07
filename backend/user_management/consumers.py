@@ -1,5 +1,6 @@
 from channels.generic.websocket import AsyncWebsocketConsumer
 import json
+from django.db.models import Q
 from channels.db import database_sync_to_async
 
 class NotificationConsumer(AsyncWebsocketConsumer):
@@ -66,8 +67,11 @@ class NotificationConsumer(AsyncWebsocketConsumer):
     @database_sync_to_async
     def get_user_friends(self):
         from .models import Friendship
-        friendships = Friendship.objects.filter(player=self.user)
-        friends_ids = friendships.values_list('friend_id', flat=True)
+        friendships = Friendship.objects.filter(Q(player=self.user) | Q(friend=self.user))
+        friends_ids = [
+            friendship.friend.id if friendship.player == self.user else friendship.player.id 
+            for friendship in friendships
+        ]
         return list(friends_ids)
 
     async def notification_message(self, event):
