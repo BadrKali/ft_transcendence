@@ -14,6 +14,8 @@ export const RealTimeProvider = ({ children }) => {
         setHasNotification(false);
     };
 
+    
+    
     useEffect(() => {
         if (!auth.accessToken) {
             return;
@@ -28,6 +30,7 @@ export const RealTimeProvider = ({ children }) => {
 
         ws.onmessage = (message) => {
             const dataFromServer = JSON.parse(message.data);
+            console.log(dataFromServer)
             if (dataFromServer.type === 'status_update') {
                 const { user_id, status } = dataFromServer;
                 setFriendsStatus(prevStatus => ({
@@ -35,10 +38,7 @@ export const RealTimeProvider = ({ children }) => {
                     [user_id]: status
                 }));
             } else if (dataFromServer.type === 'notification') {
-                setNotifications(prevNotifications => [
-                    ...prevNotifications,
-                    dataFromServer.message
-                ]);
+
                 setHasNotification(true);
             }
         };

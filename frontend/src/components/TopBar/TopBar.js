@@ -39,7 +39,6 @@ const TopBar = () => {
   const [selectedNotification, setSelectedNotification] = useState(null);
 
   const handleNotificationClick = (notif) => {
-    console.log(notif);
     setSelectedNotification(notif);
     setModalOpen(true);
     setNotif(false); 

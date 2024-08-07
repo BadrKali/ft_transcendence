@@ -15,6 +15,9 @@ from user_management.models import Player
 import os
 import random
 from game.models import  Achievement,UserAchievement
+from channels.layers import get_channel_layer
+from asgiref.sync import async_to_sync
+from user_management.models import Notification
 # Create your views here.
 
 token_url = 'https://api.intra.42.fr/oauth/token'
@@ -72,6 +75,22 @@ class UserRegistration(APIView):
             user=user,
             achievement=achievement,
             unlocked=True
+        )
+        Notification.objects.create(
+            recipient=user,
+            sender=user,
+            message='You Got a new Achievment',
+            title='Welcome Aboard',
+            description='Create your first account.',
+        )
+
+        channel_layer = get_channel_layer()
+        async_to_sync(channel_layer.group_send)(
+            f'notifications_{user.id}',
+            {
+                'type': 'notification_message',
+                'message': 'Got a new Achievment'
+            }
         )
 
 class CustomTokenObtainPairView(TokenObtainPairView):

@@ -21,7 +21,7 @@ const AchievmentsData = [
         "description": "Win 10 games of Ping Pong.",
         "unlocked" : false,
 
-  "image": "Achiev1"
+        "image": "Achiev1"
 
       },
       {
@@ -31,7 +31,7 @@ const AchievmentsData = [
         "description": "Have more than 5 friends.",
         "unlocked" : false,
 
-  "image": "Achiev1"
+    "image": "Achiev1"
 
       },
       {
