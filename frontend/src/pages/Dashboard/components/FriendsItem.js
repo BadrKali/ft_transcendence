@@ -1,5 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import './friendItem.css'
+import Lottie from 'lottie-react';
+import online from '../../Chat/ChatAssets/online.json'
+import offline from '../../Chat/ChatAssets/offline.json'
 
 function FriendsItem({list, friendsStatus}) {
   const [isonline, setOnline] = useState(false);
@@ -15,7 +18,7 @@ function FriendsItem({list, friendsStatus}) {
         setOnline(friendStatus === 'online');
       } else {
         if (list.is_online)
-            setOnline(true)
+          setOnline(true)
         else
           setOnline(false)
       }
@@ -38,7 +41,10 @@ function FriendsItem({list, friendsStatus}) {
        <div className='firendImage'>
           <img src={`http://127.0.0.1:8000${list.avatar}`}
           style={{ filter: isonline ? 'none' : 'grayscale(100%)' }}/>
-          
+           <div className='FriendStatus'>
+              {isonline ? <div className="statusOnline"> <Lottie animationData={online} /></div> : 
+              <div className="statusOnline"> <Lottie animationData={offline} /></div>}
+          </div>
        </div>
        <div className='FriendNameRand'>
             <div className='FriendName'>

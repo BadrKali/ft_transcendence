@@ -22,10 +22,18 @@
 
 
 .firendImage{
+    position: relative;
     width: 56px;
     height: 56px;
 }
 
+.FriendStatus{
+    position: absolute;
+    bottom: 0px;
+    right: 0;
+    width: 15px;
+    height: 15px;
+}
 .firendImage img{
     width: 56px;
     height: 56px;

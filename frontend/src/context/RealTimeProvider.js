@@ -30,7 +30,6 @@ export const RealTimeProvider = ({ children }) => {
 
         ws.onmessage = (message) => {
             const dataFromServer = JSON.parse(message.data);
-            console.log(dataFromServer)
             if (dataFromServer.type === 'status_update') {
                 const { user_id, status } = dataFromServer;
                 setFriendsStatus(prevStatus => ({
