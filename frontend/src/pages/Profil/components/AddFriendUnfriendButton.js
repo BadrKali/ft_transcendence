@@ -52,8 +52,7 @@ function AddFriendUnfriendButton({ FriendId }) {
             }
 
             const data = await response.json();
-            alert(data.message);
-            setIsRequst('Friend request exists.');
+            setIsRequst('Friend request sent.');
 
         } catch (error) {
             alert(error.message);
@@ -77,8 +76,8 @@ function AddFriendUnfriendButton({ FriendId }) {
             }
 
             const data = await response.json();
-            alert(data.message);
-            setIsRequst('Friend request does not exist.');
+            setIsRequst(data.message);
+
         } catch (error) {
             alert(error.message);
         }
@@ -100,25 +99,52 @@ function AddFriendUnfriendButton({ FriendId }) {
             }
 
             const data = await response.json();
-            alert(data.message);
-            setIsRequst('Friend request does not exist.');
+            setIsRequst(data.message);
+
         } catch (error) {
             alert(error.message);
         }
     };
     
-    const getButtonAction = () => {
-        switch (isRequest) {
-            case 'Friend request does not exist.':
-                return { text: 'Add Friend', action: handleAddFriend };
-            case 'Friend request exists.':
-                return { text: 'Cancel Request', action: handleCancelRequest };
-            case 'Friends':
-                return { text: 'Unfriend', action: handleUnfriend };
-            default:
-                return { text: 'Add Friend', action: handleAddFriend };
+
+    const handleRejectRequest = async () => {
+        try {
+            const response = await fetch(`${BACKEND_URL}/user/friends-request/${FriendId}/response/`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${auth.accessToken}`,
+                },
+                body: JSON.stringify({ 'status' : 'reject' })
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.error || 'An error occurred while unfriending the user.');
+            }
+            const data = await response.json();
+            setIsRequst('Friend request does not exist.');
+
+        } catch (error) {
+            alert(error.message);
         }
-    };
+      };
+
+    const getButtonAction = () => {
+        console.log(isRequest);
+        switch (isRequest) {
+          case 'Friend request does not exist.':
+            return { text: 'Add Friend', action: handleAddFriend };
+          case 'Friend request sent.':
+            return { text: 'Cancel Request', action: handleCancelRequest };
+          case 'Friend request received.':
+            return { text: 'Reject Request', action: handleRejectRequest };
+          case 'Friends':
+            return { text: 'Unfriend', action: handleUnfriend };
+          default:
+            return { text: 'Add Friend', action: handleAddFriend };
+        }
+      };
 
     const { text, action } = getButtonAction();
     return (
