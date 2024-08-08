@@ -1,22 +1,31 @@
 import React, { useState, useEffect } from 'react';
 import './notificationPopup.css'
 import useFetch from '../../hooks/useFetch';
+import backGround from '../../assets/backGroungHell.png'
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
 const GeneralNotificationComponent = ({ notif, typeNotif, profilData, BACKEND_URL, onAccept, onReject }) => (
     <>
       <h2>{typeNotif}</h2>
-      <div className='NotifUserImageName'>
-        <img src={`${BACKEND_URL}${profilData.avatar}`} alt="profile_pic" />
-        <div className='NotiddName'>
-          <p>{profilData.username}</p>
-        </div>
+      <div className='NotifUserImageName-container' style={{
+            backgroundImage: `url(${backGround})`,
+          }}>
+          <div className='NotifUserImageName'>
+            <img src={`${BACKEND_URL}${profilData.avatar}`} alt="profile_pic" />
+            <div className='NotiddName'>
+              <p>{profilData.username}</p>
+              <p>Rank : Gold</p>
+            </div>
+          </div>
+          <div className='WinRate'>
+            <p>Win Rate</p>
+            <p>50%</p>
+          </div>
       </div>
-      <p className='NotifMessage'>{notif.message}</p>
       <div className='buttunsAR'>
-        <button onClick={() => onAccept(notif.sender, typeNotif)}>Accept</button>
-        <button onClick={() => onReject(notif.sender, typeNotif)}>Reject</button>
+        <button className='buttonA Accept' onClick={() => onAccept(notif.sender, typeNotif)}>Accept</button>
+        <button  className='buttonA Reject' onClick={() => onReject(notif.sender, typeNotif)}>Reject</button>
       </div>
     </>
 );
@@ -49,12 +58,12 @@ const NotificationPopup = ({ isOpen, onClose, notif, onAccept, onReject })=> {
   useEffect(() => {
     console.log(notif.message)
     if (notif.message === 'has challenged you to a game!') {
-      setTypeNotif('Game Challenge');
+      setTypeNotif('GAME CHALLANGE');
     } else if (notif.message === 'You Got a new Achievment'){
       setTypeNotif('Achievement')
     } 
     else {
-      setTypeNotif('Invitation');
+      setTypeNotif('FRIEND REQUEST');
     }
   }, [notif]);
 
@@ -67,7 +76,7 @@ const NotificationPopup = ({ isOpen, onClose, notif, onAccept, onReject })=> {
   return (
     <div className="modal-overlay">
       <div className="modal">
-        <button className="modal-close-button" onClick={onClose}>&times;</button>
+        <button className="modalCloseButton" onClick={onClose}>&times;</button>
         {typeNotif === 'Achievement' ? (
           <AchievementComponent notif={notif} BACKEND_URL={BACKEND_URL} />
         ) : (
