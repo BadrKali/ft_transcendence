@@ -111,7 +111,7 @@ const Setting = () => {
             </div>
             <button type="button" onClick={handleTwoFaClick}>Set Up</button>
           </div>
-          <MainButton type="submit" onClick={handleFormSubmit}/>
+          <MainButton type="submit" onClick={handleFormSubmit} content="Update"/>
         </form>
       </div>
     </>

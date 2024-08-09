@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import './notificationPopup.css'
 import useFetch from '../../hooks/useFetch';
 import backGround from '../../assets/backGroungHell.png'
+import MainButton from '../MainButton/MainButton';
+import SecondButton from '../MainButton/SecondButton';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
@@ -24,8 +26,12 @@ const GeneralNotificationComponent = ({ notif, typeNotif, profilData, onAccept, 
           </div>
       </div>
       <div className='buttunsAR'>
-        <button className='buttonA Accept' onClick={() => onAccept(notif.sender, typeNotif)}>Accept</button>
-        <button  className='buttonA Reject' onClick={() => onReject(notif.sender, typeNotif)}>Reject</button>
+        {/* <button className='buttonA Accept' onClick={() => onAccept(notif.sender, typeNotif)}>Accept</button> */}
+        <MainButton type="button" functionHandler={() => onAccept(notif.sender, typeNotif)} content="Accept"/>
+
+        {/* <button  className='buttonA Reject' onClick={() => onReject(notif.sender, typeNotif)}>Reject</button> */}
+        {/* <MainButton type="button" onClick={() => onReject(notif.sender, typeNotif)} content="Reject"/> */}
+        <SecondButton type="button" functionHandler={() => onReject(notif.sender, typeNotif)} content="Reject"/>
       </div>
     </>
 );
@@ -93,4 +99,4 @@ const NotificationPopup = ({ isOpen, onClose, notif, onAccept, onReject })=> {
   );
 };
 
-export default NotificationPopup;
+export default NotificationPopup; 

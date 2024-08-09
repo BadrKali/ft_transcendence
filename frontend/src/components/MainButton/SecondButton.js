@@ -1,7 +1,6 @@
 import React from 'react'
-import Style from './MainButton.module.css'
-
-const MainButton = ({type,functionHandler, content}) => {
+import Style from './SecondButton.module.css'
+const SecondButton = ({type,functionHandler, content}) => {
   return (
     <div className={Style.buttonContainer}>
         <div className={Style.SubmitContainer}>
@@ -11,4 +10,4 @@ const MainButton = ({type,functionHandler, content}) => {
   )
 }
 
-export default MainButton
+export default SecondButton
