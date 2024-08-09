@@ -64,8 +64,8 @@ const TopBar = () => {
       let body = JSON.stringify({ 'status': 'accept' });
   
       if (type === 'Game Challenge') {
-          url = `${BACKEND_URL}/game-challenges/${id}/response/`; 
-          body = JSON.stringify({ 'response': 'accepted' });
+          url = `${BACKEND_URL}/api/game/game-challenges/${id}/response`;
+          body = JSON.stringify({ 'status': 'accepted' });
       }
       fetch(url, {
         method: 'PATCH',
@@ -96,11 +96,11 @@ const TopBar = () => {
   const handleReject = (id, type) => {
     handleClose();
     let url = `${BACKEND_URL}/user/friends-request/${id}/response/`;
-    let body = JSON.stringify({ 'status': 'accept' });
+    let body = JSON.stringify({ 'status': 'reject' });
 
     if (type === 'Game Challenge') {
-        url = `${BACKEND_URL}/game-challenges/${id}/response/`; 
-        body = JSON.stringify({ 'response': 'accepted' });
+        url = `${BACKEND_URL}/api/game/game-challenges/${id}/response/`;
+        body = JSON.stringify({ 'status': 'rejected' });
     }
 
     fetch(url, {
@@ -109,7 +109,7 @@ const TopBar = () => {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${auth.accessToken}`
       },
-      body: JSON.stringify({ 'status' : 'reject' })
+      body: body
       })
       .then(response => {
           if (!response.ok) {

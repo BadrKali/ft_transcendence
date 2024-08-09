@@ -7,7 +7,7 @@ from rest_framework import status
 from rest_framework.views import APIView
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
-from .models import GameHistory, Achievement, UserAchievement, GameSettings, GameRoom
+from .models import GameHistory, Achievement, UserAchievement, GameSettings, GameRoom, GameChallenge
 from .serializers import GameHistorySerializer, AchievementSerializer, UserAchievementSerializer, GameSettingsSerializer, GameRoomSerializer
 from user_management.models import Player, Notification
 from authentication .models import User
@@ -101,8 +101,10 @@ class SendChallengeView(APIView):
         if not player_receiver_id:
             return Response({'error': 'player_receiver_id is required.'}, status=status.HTTP_400_BAD_REQUEST)
         try:
-            player_sender = request.user
             player_receiver = get_object_or_404(User, id=player_receiver_id)
+            player_sender = request.user
+            # friend_request = GameChallenge(player_sender=player_sender, player_receiver=player_receiver)
+            # friend_request.save()
             Notification.objects.create(
                 recipient=player_receiver,
                 sender=player_sender,
@@ -123,3 +125,24 @@ class SendChallengeView(APIView):
 
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+class GameChallengeResponse(APIView):
+    def patch(self, request, sender_id):
+        print("hello World")
+        player_sender = get_object_or_404(User, id=sender_id)
+        player_receiver = request.user
+        friend_request = get_object_or_404(GameChallenge, player_sender=player_sender, player_receiver=player_receiver)
+        if friend_request.invite_status != 'P':
+            return Response({'error': 'Invalid status.'}, status=status.HTTP_400_BAD_REQUEST)
+        action = request.data.get('status')
+        if action not in ['accepted', 'rejected']:
+            return Response({'error': 'Invalid action. Choose "accept" or "reject".'}, status=status.HTTP_400_BAD_REQUEST)
+        if action == 'accepted':
+            friend_request.invite_status = 'A'
+            friendship = GameChallenge(player=player_sender, friend=player_receiver)
+            friendship.save()
+            friend_request.delete()
+            return Response({'message': 'Friend request accepted.'}, status=status.HTTP_200_OK)
+        elif action == 'rejected':
+            friend_request.delete()
+        return Response({'message': 'Friend request rejected.'}, status=status.HTTP_200_OK)

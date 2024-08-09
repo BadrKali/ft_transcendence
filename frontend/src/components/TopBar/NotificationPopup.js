@@ -58,7 +58,7 @@ const NotificationPopup = ({ isOpen, onClose, notif, onAccept, onReject })=> {
   useEffect(() => {
     console.log(notif.message)
     if (notif.message === 'has challenged you to a game!') {
-      setTypeNotif('GAME CHALLANGE');
+      setTypeNotif('Game Challenge');
     } else if (notif.message === 'You Got a new Achievment'){
       setTypeNotif('Achievement')
     } 

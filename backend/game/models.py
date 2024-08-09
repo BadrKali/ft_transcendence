@@ -98,3 +98,20 @@ class GameRoom(models.Model):
             self.delete()
         else:
             self.save()
+
+class GameChallenge(models.Model):
+    INVITATION_CHOICES = [
+        ('A', 'ACCEPTED'),
+        ('P', 'PENDING'),
+        ('D', 'DECLINED')
+    ]
+    player_sender = models.ForeignKey(settings.AUTH_USER_MODEL,related_name='sender', on_delete=models.CASCADE)
+    player_receiver = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='receiver',on_delete=models.CASCADE)
+    status = models.CharField(max_length=1,choices=INVITATION_CHOICES, default='P')
+    send_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ["player_sender", "player_receiver"]
+
+    def __str__(self) -> str:
+        return f"invitation from {self.player_sender.username} to {self.player_receiver.username} - status : {self.invite_status}"
