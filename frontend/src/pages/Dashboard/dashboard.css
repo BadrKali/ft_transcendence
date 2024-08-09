@@ -80,7 +80,7 @@
     height: 20%;
 }
 .historyAchievments-container{
-    height: 80%;
+    height: 50%;
     display: flex;
 }
 
@@ -98,8 +98,19 @@
     width: 50%;
 }
 
+.lineChart-container{
+  animation: slideUp 1s ease-out;
+  height: 29%;
+  width: 100%;
+}
+
+.lineChart-container h2{
+  padding: 5px 0 5px 0;
+}
+
 .friends-container{
     height: 100%;
     width: 25%;
     animation: slideInLeftFriends 1s ease-out;
 }
+
