@@ -135,8 +135,10 @@ const Setting = () => {
             <button type="button" onClick={handleTwoFaClick}>Set Up</button>
           </div>
           {/* <button type="submit" onClick={handleFormSubmit} className={Style.SubmitButton}>Update</button> */}
-          <div className={Style.SubmitContainer}>
-              <button type="submit" onClick={handleFormSubmit} className={Style.SubmitButtonPrimary}>Update</button>
+          <div className={Style.buttonContainer}>
+            <div className={Style.SubmitContainer}>
+                <button type="submit" onClick={handleFormSubmit} className={Style.SubmitButtonPrimary}>Update</button>
+            </div>
           </div>
         </form>
         <ToastContainer
