@@ -14,6 +14,7 @@ import BlockUnblockButton from './components/BlockUnblockButton'
 import AddFriendUnfriendButton from './components/AddFriendUnfriendButton'
 import ChatFriendButton from './components/ChatFriendButton'
 import ChallangefriendButton from './components/ChallangefriendButton'
+import LineChart from '../Dashboard/components/LineChart'
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
@@ -65,6 +66,10 @@ const Profil = () => {
                 <div className="achievments-container-profil">
                 <Achievments userId={userData.id}/>
                 </div>
+              </div>
+              <div className='lineChart-container'>
+                <h2>Graph Growth</h2>
+                <LineChart />
               </div>
           </div>
        </div>

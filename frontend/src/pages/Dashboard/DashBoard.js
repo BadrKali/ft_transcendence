@@ -5,6 +5,7 @@ import MatchHistory from './components/MatchHistory'
 import Achievments from './components/Achievments'
 import Friends from './components/Friends'
 import useFetch from '../../hooks/useFetch'
+import LineChart from './components/LineChart'
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
@@ -37,8 +38,13 @@ const DashBoard = () => {
                 <Achievments />
                 </div>
               </div>
+              <div className='lineChart-container'>
+                <h2>Graph Growth</h2>
+                <LineChart />
+              </div>
           </div>
           <div className="friends-container">
+           
             <Friends /> 
           </div>
        </div>
