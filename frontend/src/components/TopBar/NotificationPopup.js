@@ -5,7 +5,7 @@ import backGround from '../../assets/backGroungHell.png'
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
-const GeneralNotificationComponent = ({ notif, typeNotif, profilData, BACKEND_URL, onAccept, onReject }) => (
+const GeneralNotificationComponent = ({ notif, typeNotif, profilData, onAccept, onReject }) => (
     <>
       <h2>{typeNotif}</h2>
       <div className='NotifUserImageName-container' style={{
@@ -84,7 +84,6 @@ const NotificationPopup = ({ isOpen, onClose, notif, onAccept, onReject })=> {
             notif={notif}
             typeNotif={typeNotif}
             profilData={profilData}
-            BACKEND_URL={BACKEND_URL}
             onAccept={onAccept}
             onReject={onReject}
           />
