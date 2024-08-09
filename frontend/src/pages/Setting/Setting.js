@@ -8,6 +8,7 @@ import useAuth from '../../hooks/useAuth';
 import axios from '../../api/axios';
 import { SuccessToast } from '../../components/ReactToastify/SuccessToast';
 import { ErrorToast } from '../../components/ReactToastify/ErrorToast';
+import MainButton from '../../components/MainButton/MainButton';
 
 
 const SETTING_ENDPOINT = "http://127.0.0.1:8000/auth/user/me/"
@@ -26,22 +27,6 @@ const Setting = () => {
     new_password : "",
   })
 
-  // const successNotify = () => {
-  //   SuccessToast('Profile updated successfully!')
-  // }
-
-  // const errorNotify = () => {
-  //   toast.error('Failed to update settings. Please try again.', {
-  //     position: "top-right",
-  //     autoClose: 5000,
-  //     hideProgressBar: false,
-  //     closeOnClick: true,
-  //     pauseOnHover: true,
-  //     draggable: true,
-  //     progress: undefined,
-  //     theme: "light",
-  //     });
-  // }
 
   const handleTwoFaClick = (e) => {
     e.preventDefault();
@@ -126,25 +111,8 @@ const Setting = () => {
             </div>
             <button type="button" onClick={handleTwoFaClick}>Set Up</button>
           </div>
-          {/* <button type="submit" onClick={handleFormSubmit} className={Style.SubmitButton}>Update</button> */}
-          <div className={Style.buttonContainer}>
-            <div className={Style.SubmitContainer}>
-                <button type="submit" onClick={handleFormSubmit} className={Style.SubmitButtonPrimary}>Update</button>
-            </div>
-          </div>
+          <MainButton type="submit" onClick={handleFormSubmit}/>
         </form>
-        {/* <ToastContainer
-          position="top-right"
-          autoClose={5000}
-          hideProgressBar={false}
-          newestOnTop={false}
-          closeOnClick
-          rtl={false}
-          pauseOnFocusLoss
-          draggable
-          pauseOnHover
-          theme="light"
-        /> */}
       </div>
     </>
   );
