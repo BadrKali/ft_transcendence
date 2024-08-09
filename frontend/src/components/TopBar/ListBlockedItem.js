@@ -3,6 +3,9 @@ import { useEffect, useState } from 'react';
 import useFetch from '../../hooks/useFetch';
 import useAuth from '../../hooks/useAuth';
 import './listBlockedItem.css'
+import { ErrorToast } from '../ReactToastify/ErrorToast';
+import { SuccessToast } from '../ReactToastify/SuccessToast';
+import { InfoToast } from '../ReactToastify/InfoToast';
 
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
@@ -32,14 +35,17 @@ function ListBlockedItem({user}) {
             });
 
             if (response.ok) {
-                alert(`User has been unblocked successfully.`);
+                SuccessToast(`User has been unblocked successfully.`);
+                // alert(`User has been unblocked successfully.`);
             } else {
                 const data = await response.json();
-                alert(data.error || 'An error occurred.');
+                ErrorToast(data.error || 'An error occurred.');
+                // alert(data.error || 'An error occurred.');
             }
         } catch (error) {
             console.error(`Error unblocking user:`, error);
-            alert('An error occurred.');
+            ErrorToast('An error occurred.');
+            // alert('An error occurred.');
         }
     };
     

@@ -6,7 +6,8 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import useAuth from '../../hooks/useAuth';
 import axios from '../../api/axios';
-
+import { SuccessToast } from '../../components/ReactToastify/SuccessToast';
+import { ErrorToast } from '../../components/ReactToastify/ErrorToast';
 
 
 const SETTING_ENDPOINT = "http://127.0.0.1:8000/auth/user/me/"
@@ -25,31 +26,22 @@ const Setting = () => {
     new_password : "",
   })
 
-  const successNotify = () => {
-    toast.success('Profile updated successfully!', {
-      position: "top-right",
-      autoClose: 5000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-      theme: "light",
-      });
-  }
+  // const successNotify = () => {
+  //   SuccessToast('Profile updated successfully!')
+  // }
 
-  const errorNotify = () => {
-    toast.error('Failed to update settings. Please try again.', {
-      position: "top-right",
-      autoClose: 5000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-      theme: "light",
-      });
-  }
+  // const errorNotify = () => {
+  //   toast.error('Failed to update settings. Please try again.', {
+  //     position: "top-right",
+  //     autoClose: 5000,
+  //     hideProgressBar: false,
+  //     closeOnClick: true,
+  //     pauseOnHover: true,
+  //     draggable: true,
+  //     progress: undefined,
+  //     theme: "light",
+  //     });
+  // }
 
   const handleTwoFaClick = (e) => {
     e.preventDefault();
@@ -77,9 +69,9 @@ const Setting = () => {
             'Authorization': `Bearer ${auth.accessToken}`,
         }
     });
-    successNotify()
+    SuccessToast('Profile updated successfully!')
     } catch(e) {
-      errorNotify()
+      ErrorToast('Failed to update settings. Please try again.')
     } finally {
       // console.log("clear data")
     }
@@ -141,7 +133,7 @@ const Setting = () => {
             </div>
           </div>
         </form>
-        <ToastContainer
+        {/* <ToastContainer
           position="top-right"
           autoClose={5000}
           hideProgressBar={false}
@@ -152,7 +144,7 @@ const Setting = () => {
           draggable
           pauseOnHover
           theme="light"
-        />
+        /> */}
       </div>
     </>
   );

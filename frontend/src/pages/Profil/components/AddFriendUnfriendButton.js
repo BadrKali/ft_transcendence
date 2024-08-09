@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react'
 import useAuth from '../../../hooks/useAuth';
 import Icon from '../../../assets/Icon/icons'
-
+import { InfoToast } from '../../../components/ReactToastify/InfoToast'
+import { ErrorToast } from '../../../components/ReactToastify/ErrorToast'
+import { SuccessToast } from '../../../components/ReactToastify/SuccessToast'
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
@@ -55,7 +57,8 @@ function AddFriendUnfriendButton({ FriendId }) {
             setIsRequst('Friend request sent.');
 
         } catch (error) {
-            alert(error.message);
+            ErrorToast(error.message);
+            // alert(error.message);
         }
     };
 
@@ -79,7 +82,8 @@ function AddFriendUnfriendButton({ FriendId }) {
             setIsRequst(data.message);
 
         } catch (error) {
-            alert(error.message);
+            ErrorToast(error.message);
+            // alert(error.message);
         }
     };
 
@@ -102,7 +106,8 @@ function AddFriendUnfriendButton({ FriendId }) {
             setIsRequst(data.message);
 
         } catch (error) {
-            alert(error.message);
+            ErrorToast(error.message);
+            // alert(error.message);
         }
     };
     
@@ -126,7 +131,8 @@ function AddFriendUnfriendButton({ FriendId }) {
             setIsRequst('Friend request does not exist.');
 
         } catch (error) {
-            alert(error.message);
+            ErrorToast(error.message);
+            // alert(error.message);
         }
       };
 

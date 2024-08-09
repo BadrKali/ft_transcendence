@@ -5,6 +5,7 @@ import TopBar from './components/TopBar/TopBar';
 import { createBrowserRouter, Outlet, RouterProvider } from 'react-router-dom';
 import './App.css'
 import Notification from './components/Notification/Notification';
+import ToastContainer from './components/ReactToastify/ToastContainer';
 
 
 const AppLayout = () => {
@@ -20,6 +21,7 @@ const AppLayout = () => {
             </div>
           </div>
         </main>
+        <ToastContainer/>
     </div>
   )
 }

@@ -15,6 +15,9 @@ import NotificationPopup from './NotificationPopup'
 import Lottie from 'lottie-react'
 import EmptyBox from '../../assets/EmptyBox.json'
 import ListBlockedPopup from './ListBlockedPopup'
+import { SuccessToast } from '../ReactToastify/SuccessToast'
+import { ErrorToast } from '../ReactToastify/ErrorToast'
+import { InfoToast } from '../ReactToastify/InfoToast'
 
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
@@ -80,11 +83,13 @@ const TopBar = () => {
     })
     .then(data => {
         console.log('Friend request accepted:', data);
-        alert('Friend request accepted');
+        SuccessToast('Friend request accepted');
+        // alert('Friend request accepted');
     })
     .catch(error => {
         console.error('Error accepting friend request:', error);
-        alert('Error accepting friend request');
+        ErrorToast('Error accepting friend request');
+        // alert('Error accepting friend request');
     });
   };
 
@@ -114,11 +119,13 @@ const TopBar = () => {
       })
       .then(data => {
           console.log('Friend request rejected:', data);
-          alert('Friend request rejected');
+          SuccessToast('Friend request rejected');
+          // alert('Friend request rejected');
       })
       .catch(error => {
           console.error('Error rejecting friend request:', error);
-          alert('Error rejecting friend request');
+          ErrorToast('Error rejecting friend request');
+          // alert('Error rejecting friend request');
       });
   };
 

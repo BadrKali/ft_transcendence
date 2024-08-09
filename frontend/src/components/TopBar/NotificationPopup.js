@@ -63,7 +63,7 @@ const NotificationPopup = ({ isOpen, onClose, notif, onAccept, onReject })=> {
       setTypeNotif('Achievement')
     } 
     else {
-      setTypeNotif('FRIEND REQUEST');
+      setTypeNotif('/    FRIEND REQUEST    /');
     }
   }, [notif]);
 
