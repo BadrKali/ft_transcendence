@@ -3,6 +3,9 @@ import  { useState, useEffect } from 'react';
 import './dashProfil.css'
 import { avatars } from '../../../assets/assets'
 
+
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
+
 function DashProfil({profil}) {
   const [progress, setProgress] = useState('0%');
 
@@ -11,20 +14,22 @@ function DashProfil({profil}) {
         setProgress('67%');
       }, 500); 
     }, []);
-
+    //  const winPer = Math.floor((playerData.games_won / playerData.games_played) * 100);
+    const winPer = Math.floor((30 / 100) * 100);
+    const lossPer = 100 - winPer ;
   return (
     <div className='profilInfo'>
       
         <div className="userInfo">
             <div className='userContainer'>
                 <div className="userImage" >
-                    <img src={`http://127.0.0.1:8000${profil.avatar}`}/>
+                    <img src={`${BACKEND_URL}${profil.avatar}`}/>
                 </div>
                 <div className="userProgress">
                     <div className="progresInfo">
                         <div className="nameRank">
                             <h4>{profil.username}</h4>
-                            <h4>Rank : Gold</h4>
+                            <h4>Rank : {profil.rank}</h4>
                         </div>
                         <div className="userXp box">
                             <p>User_xp</p>
@@ -32,15 +37,15 @@ function DashProfil({profil}) {
                         </div>
                         <div className="totalGames box">
                             <p>Total Games</p>
-                            <p>123</p>
+                            <p>{profil.games_played}</p>
                         </div>
                         <div className="win box">
                             <p>Win</p>
-                            <p>12%</p>
+                            <p>{winPer}%</p>
                         </div>
                         <div className="Loss box">
                             <p>Loss</p>
-                            <p>22%</p>
+                            <p>{lossPer}%</p>
                         </div>
                     </div>
                     <div className="progresBar">

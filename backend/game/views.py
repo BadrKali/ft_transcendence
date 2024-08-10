@@ -13,12 +13,13 @@ from user_management.models import Player, Notification
 from authentication .models import User
 from django.shortcuts import get_object_or_404
 
-class PlayerGameHistoryView(generics.ListAPIView):
-    serializer_class = GameHistorySerializer
-
-    def get_queryset(self):
-        player_id = self.kwargs['player_id']
-        return GameHistory.objects.filter(models.Q(winner_user_id=player_id) | models.Q(loser_user_id=player_id))
+class PlayerGameHistoryView(APIView):
+    def get(self, request, player_id):
+        queryset = GameHistory.objects.filter(
+            models.Q(winner_user_id=player_id) | models.Q(loser_user_id=player_id)
+        )
+        serializer = GameHistorySerializer(queryset, many=True, context={'player_id': player_id})
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class AchievementListView(APIView):

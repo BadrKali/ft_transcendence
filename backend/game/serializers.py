@@ -3,9 +3,15 @@ from .models import GameHistory, Achievement, UserAchievement, GameSettings, Gam
 from user_management.serializers import PlayerSerializer
 
 class GameHistorySerializer(serializers.ModelSerializer):
+    is_winner = serializers.SerializerMethodField()
+
     class Meta:
         model = GameHistory
-        fields = '__all__'
+        fields = ['id', 'winner_user', 'loser_user', 'winner_score', 'loser_score', 'game_type', 'match_type', 'played_at', 'is_winner']
+
+    def get_is_winner(self, obj):
+        player_id = self.context.get('player_id')
+        return obj.winner_user_id == player_id
 
 class AchievementSerializer(serializers.ModelSerializer):
     class Meta:

@@ -20,7 +20,7 @@ class CurrentUserSettingsSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ['username', 'avatar', 'email', 'old_password', 'new_password', 'avatar_type']
+        fields = ['id', 'username', 'avatar', 'email', 'old_password', 'new_password', 'avatar_type']
         extra_kwargs = {
             'username': {'required': False},
             'email': {'required': False},

@@ -192,7 +192,7 @@ const TopBar = () => {
     setDropdownActive(true);
   };
   const handleItemClick = (result) => {
-    console.log("good")
+  
     navigate(`/user/${result.username}`, {
       state: { userData: result },
     });

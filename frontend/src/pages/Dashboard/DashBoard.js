@@ -20,6 +20,7 @@ const DashBoard = () => {
      }
    }, [data]);
 
+ 
   return (
     <div className='dashboard-contianer'>
        <div className='page-title'>
@@ -32,7 +33,7 @@ const DashBoard = () => {
               </div>
               <div className="historyAchievments-container">
                 <div className="history-container">
-                <MatchHistory /> 
+                <MatchHistory profilData={profilData} /> 
                 </div>
                 <div className="achievments-container">
                 <Achievments />

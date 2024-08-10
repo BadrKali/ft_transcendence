@@ -8,7 +8,7 @@ def user_avatar_upload_path(instance, filename):
     return f"player/{instance.id}/user_avatar/{filename}"
 
 class Player(models.Model):
-    PLAYER_RANK_BRONZE = 'B'
+    PLAYER_RANK_BRONZE = 'BRONZE'
     PLAYER_FIRST_RANK_PROGRESS = 0
     PLAYER_FIRST_GAMES_PLAYED = 0
     PLAYER_FIRST_GAMES_WON = 0

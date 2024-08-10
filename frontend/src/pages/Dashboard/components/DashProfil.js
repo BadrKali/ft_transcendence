@@ -12,6 +12,10 @@ function DashProfil({profilData}) {
       }, 500); 
     }, []);
 
+    //  const winPer = Math.floor((playerData.games_won / playerData.games_played) * 100);
+    const winPer = Math.floor((30 / 100) * 100);
+    const lossPer = 100 - winPer ;
+
   return (
     <div className='profilInfo'>
       
@@ -24,7 +28,7 @@ function DashProfil({profilData}) {
                     <div className="progresInfo">
                         <div className="nameRank">
                             <h4>{profilData.username}</h4>
-                            <h4>Rank : Gold</h4>
+                            <h4>Rank : {profilData.rank}</h4>
                         </div>
                         <div className="userXp box">
                             <p>User_xp</p>
@@ -32,15 +36,15 @@ function DashProfil({profilData}) {
                         </div>
                         <div className="totalGames box">
                             <p>Total Games</p>
-                            <p>123</p>
+                            <p>{profilData.games_played}</p>
                         </div>
                         <div className="win box">
                             <p>Win</p>
-                            <p>12%</p>
+                            <p>{winPer}%</p>
                         </div>
                         <div className="Loss box">
                             <p>Loss</p>
-                            <p>22%</p>
+                            <p>{lossPer}%</p>
                         </div>
                     </div>
                     <div className="progresBar">

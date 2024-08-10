@@ -27,7 +27,10 @@ const Profil = () => {
   const { auth }  = useAuth()
   const location = useLocation();
   const { userData } = location.state || {};
-  const {data ,isLoading, error} = useFetch(`${BACKEND_URL}/user/stats/${userData.id}`)
+  let playerId = userData.id;
+  if (!playerId)
+      playerId = userData.user_id;
+  const {data ,isLoading, error} = useFetch(`${BACKEND_URL}/user/stats/${playerId}`)
 
   useEffect(() => {
     if (data) {
@@ -61,7 +64,7 @@ const Profil = () => {
               </div>
               <div className="historyAchievments-container-profil">
                 <div className="history-container-profil">
-                <MatchHistory /> 
+                <MatchHistory profil={profilData}/> 
                 </div>
                 <div className="achievments-container-profil">
                 <Achievments userId={userData.id}/>
