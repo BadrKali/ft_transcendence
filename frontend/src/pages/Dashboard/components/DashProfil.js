@@ -44,7 +44,7 @@ function DashProfil({profilData}) {
                         </div>
                         <div className="Loss box">
                             <p>Loss</p>
-                            <p>{lossPer}%</p>
+                            <p>{lossPer}%</p> 
                         </div>
                     </div>
                     <div className="progresBar">

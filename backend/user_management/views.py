@@ -314,8 +314,9 @@ class GamePlayersView(APIView):
 class SearchAPIView(APIView):
     def get(self, request, *args, **kwargs):
         query = request.query_params.get('q', '')
+        current_user = request.user
         if query:
-            results = User.objects.filter(username__icontains=query)
+            results = User.objects.filter(username__startswith=query).exclude(id=current_user.id)
             serializer = CurrentUserSerializer(results, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response({"results": []}, status=status.HTTP_200_OK)

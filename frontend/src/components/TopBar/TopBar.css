@@ -147,7 +147,7 @@
 .search-dropDwon{
     position: absolute;
     width: 300px;
-    /* height: 400px; */
+    max-height: 400px;
     z-index: 999;
     background-color: var(--card-bg-color);
     overflow-y: auto;
