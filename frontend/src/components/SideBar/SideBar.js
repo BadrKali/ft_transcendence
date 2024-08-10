@@ -3,10 +3,11 @@ import './SideBar.css'
 import { assets } from '../../assets/assets'
 import { Link, useLocation }  from 'react-router-dom'
 import Icon from '../../assets/Icon/icons'
-import { SideBarData } from './SideBarData'
+import useSidebarData from './SideBarData'
 
 const SideBar = () => {
   const location = useLocation().pathname
+  const SideBarData = useSidebarData();
   
   return (
     <div className='sidebar-container'>

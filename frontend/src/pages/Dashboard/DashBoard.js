@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
+import LanguageSelector from '../../components/TopBar/LanguageSelector'
 import './dashboard.css'
 import DashProfil from './components/DashProfil'
 import MatchHistory from './components/MatchHistory'
@@ -12,7 +14,7 @@ const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
 const DashBoard = () => {
   const [profilData, setProfilData] = useState([]);
-
+  const { t } = useTranslation();
   const {data ,isLoading, error} = useFetch(`${BACKEND_URL}/user/stats`)
   useEffect(() => {
      if (data) {
@@ -24,7 +26,7 @@ const DashBoard = () => {
   return (
     <div className='dashboard-contianer'>
        <div className='page-title'>
-           <h1>Welcome Back {profilData.username}</h1>
+           <h1>{t('Welcome back')} {profilData.username}</h1>
        </div>
        <div className="dashboard">
           <div className="profilHistoryAcgievmeants-container">

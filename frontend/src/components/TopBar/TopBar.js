@@ -18,6 +18,7 @@ import ListBlockedPopup from './ListBlockedPopup'
 import { SuccessToast } from '../ReactToastify/SuccessToast'
 import { ErrorToast } from '../ReactToastify/ErrorToast'
 import { InfoToast } from '../ReactToastify/InfoToast'
+import LanguageSelector from './LanguageSelector'
 
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
@@ -245,6 +246,7 @@ const TopBar = () => {
         </div>
       </div>
       <div className='topbar-profile'>
+        <LanguageSelector />
         <div ref={dropdownRef} className="icon-container"  onClick={handleIconClick}>
           <Icon  name='notification' className={showNotif ? 'topbar-notification-icon active-icon' : 'topbar-notification-icon' }/>
           {hasNotification && <span className="notification-badge"></span>}
