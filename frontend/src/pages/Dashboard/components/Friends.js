@@ -16,7 +16,7 @@ const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
 function Friends() {
   const {friendsStatus} = useContext(RealTimeContext);
-  {console.log("i am reandered yyaa0aah")}
+  // {console.log("i am reandered yyaa0aah")}
 
   const [listFriend, setListFriend] = useState([]);
   const navigate = useNavigate();

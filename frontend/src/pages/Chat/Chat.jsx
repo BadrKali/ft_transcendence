@@ -11,6 +11,7 @@ export const conversationMsgContext = createContext();
 export const ChatListContext = createContext();
 export const PickedConvContext = createContext();
 export const conversationSetterContext = createContext();
+export const clientSocketContext = createContext();
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const WS_BACKEND_URL = process.env.REACT_APP_WS_BACKEND_URL;
@@ -25,28 +26,34 @@ const Chat = () => {
   const [socket, setSocket] = useState(null);
 
   useEffect(() => {
-    const newSocket = new WebSocket(`${WS_BACKEND_URL}/ws/chat/?token=${auth.accessToken}`);
+    const clientSocket = new WebSocket(`${WS_BACKEND_URL}/ws/chat/?token=${auth.accessToken}`);
 
-    newSocket.onopen = () => {
+    clientSocket.onopen = () => {
+      setSocket(clientSocket)
       console.log('WebSocket connected');
     };
 
-    newSocket.onmessage = (event) => {
+    clientSocket.onmessage = (event) => {
       // Handle incoming messages
-
-      console.log(event.data);
+      const data = JSON.parse(event.data);
+      setconversationMsgs(prevConversationMsgs => [...prevConversationMsgs, data]);
+      
+      console.log('=-=-=-=-=-=-=-= ReceiveD =-=-=-=-=-=-=-=')
+      console.log(data)
+      console.log('=-=-=-=-=-=-=-==-=-=-=-==-=-=-=-=-=-=-=')
     };
 
-    newSocket.onclose = () => {
+    clientSocket.onclose = () => {
       console.log('WebSocket closed');
     };
 
-    newSocket.onerror = ()=>{
-      console.log('|- ERROR -|');
+    clientSocket.onerror = ()=>{
+      console.log('|- ERROR : with client websocket -|');
     }
 
     return () => {
-      newSocket.close();
+      if (clientSocket)
+        clientSocket.close();
     };
   }, []);
 
@@ -108,6 +115,7 @@ const Chat = () => {
       <h1>Clunca</h1>
       <div className={style.ChatView}>
       <CurrentUserProvider>
+      <clientSocketContext.Provider value={socket}>
         <conversationSetterContext.Provider value={setconversationMsgs}>
           <conversationMsgContext.Provider value={conversationMsgs}>
             <ChatListContext.Provider value={ChatList}>
@@ -120,6 +128,7 @@ const Chat = () => {
             </ChatListContext.Provider>
           </conversationMsgContext.Provider>
         </conversationSetterContext.Provider>
+        </clientSocketContext.Provider>
         </CurrentUserProvider>
       </div>
     </>

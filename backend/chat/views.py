@@ -47,7 +47,5 @@ def getMessageswith (request, username):
         filter((Q(sender_id__username=request.user.username) & Q(receiver_id__username=username)) |
                (Q(sender_id__username=username) & Q(receiver_id__username=request.user.username))).order_by('created_at')
     serialiser = __messageSerializer__(allRecords, many=True)
-    OurMessages = [{**Singlemessage, "msg_type": "outgoing" if Singlemessage.get('sender_id') == request.user.id else "incoming" }
-                      for Singlemessage in serialiser.data]
-    return Response(OurMessages, status=status.HTTP_200_OK)
+    return Response(serialiser.data, status=status.HTTP_200_OK)
 

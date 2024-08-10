@@ -11,15 +11,17 @@ import data from "@emoji-mart/data";
 import Icon from "../../../../assets/Icon/icons.js";
 import src from "../../ChatAssets/download.jpeg";
 import Picker from "@emoji-mart/react";
+
 import { conversationMsgContext } from "../../Chat.jsx";
 import { ChatListContext } from "../../Chat.jsx";
 import { PickedConvContext } from "../../Chat.jsx";
 import { conversationSetterContext } from "../../Chat.jsx";
+import {CurrentUserContext} from "../../usehooks/useContexts.js"
+import {clientSocketContext} from "../../Chat.jsx"
+
 import notificationSound from "../../ChatAssets/notification.mp3";
 import typingSound from "../../ChatAssets/typingSound.mp3"
 import useAuth from "../../../../hooks/useAuth";
-import {CurrentUserContext} from "../../usehooks/useContexts.js"
-
 export const chatPartnerContext = createContext();
 export const PickerClickContext = createContext();
 
@@ -61,25 +63,30 @@ const SendMessage = ({ message, setMessage }) => {
   const CurrentUser = useContext(CurrentUserContext)
   const ChatPartner = useContext(chatPartnerContext);
   const PickerClicksetter = useContext(PickerClickContext);
+  const clientSocket = useContext(clientSocketContext);
+
  // I will add sockets here tomorrow !
   const handleSendMessage = async () => {
     if (message.trim()) {
+
       PickerClicksetter((prev) => prev ? !prev : prev)
-      conversationSetter([
-        ...conversationMsgs,
-        {
-          sender_id: CurrentUser.id,
-          receiver_id: ChatPartner.id, //fake Data how to get Receiver ? 
-          content: message,
-          seen: false,
-          msg_type: "outgoing",
-          created_at: new Date().toISOString(),
-        },
-      ]);
+      const messageData = {
+        sender_id: CurrentUser?.user_id,
+        receiver_id: ChatPartner?.id,
+        content: message,
+        seen: false,
+        created_at: new Date().toISOString(),
+      };
+
+      // conversationSetter(prevConversationMsgs => [...prevConversationMsgs, messageData]);
+
+      clientSocket?.send(JSON.stringify(messageData))
+
       const notif = new Audio(notificationSound);
+      
       notif.play();
+      
       setMessage("");
-      console.log("You try to send ", message);
     }
     // *********************************************************
   };
@@ -291,7 +298,6 @@ const ChatInput = () => {
 const MessageDisplayer = ({ message, IsIncoming }) => {
   const CurrentUser = useContext(CurrentUserContext)
   const ChatPartner = useContext(chatPartnerContext);
-
   return (
     <div className={IsIncoming ? styles.MsgIncom : styles.MsgOut}>
       <div className={IsIncoming ? styles.receiverAvatar : styles.MyAvatar}>
@@ -323,6 +329,7 @@ const ChatMainHolder = () => {
   const Pickedusername = useContext(PickedConvContext);
   const conversationMsg = useContext(conversationMsgContext);
   const messagesEndRef = useRef(null);
+  const CurrentUser = useContext(CurrentUserContext)
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -341,7 +348,7 @@ const ChatMainHolder = () => {
               <MessageDisplayer
                 key={index}
                 message={elem}
-                IsIncoming={elem.msg_type === "incoming" ? true : false}
+                IsIncoming={elem.receiver_id === CurrentUser?.user_id ? true : false}
               />
             );
           })}
