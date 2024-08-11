@@ -104,8 +104,8 @@ class SendChallengeView(APIView):
         try:
             player_receiver = get_object_or_404(User, id=player_receiver_id)
             player_sender = request.user
-            # friend_request = GameChallenge(player_sender=player_sender, player_receiver=player_receiver)
-            # friend_request.save()
+            friend_request = GameChallenge(player_sender=player_sender, player_receiver=player_receiver)
+            friend_request.save()
             Notification.objects.create(
                 recipient=player_receiver,
                 sender=player_sender,
@@ -129,21 +129,61 @@ class SendChallengeView(APIView):
 
 class GameChallengeResponse(APIView):
     def patch(self, request, sender_id):
-        print("hello World")
+        print("hello world")
         player_sender = get_object_or_404(User, id=sender_id)
         player_receiver = request.user
-        friend_request = get_object_or_404(GameChallenge, player_sender=player_sender, player_receiver=player_receiver)
-        if friend_request.invite_status != 'P':
+    
+        game_challenge = get_object_or_404(GameChallenge, player_sender=player_sender, player_receiver=player_receiver)
+
+
+        if game_challenge.status != 'P':
             return Response({'error': 'Invalid status.'}, status=status.HTTP_400_BAD_REQUEST)
+    
         action = request.data.get('status')
         if action not in ['accepted', 'rejected']:
-            return Response({'error': 'Invalid action. Choose "accept" or "reject".'}, status=status.HTTP_400_BAD_REQUEST)
+            game_challenge.delete()
+            return Response({'error': 'Invalid action. Choose "accepted" or "rejected".'}, status=status.HTTP_400_BAD_REQUEST)
+        
         if action == 'accepted':
-            friend_request.invite_status = 'A'
-            friendship = GameChallenge(player=player_sender, friend=player_receiver)
-            friendship.save()
-            friend_request.delete()
-            return Response({'message': 'Friend request accepted.'}, status=status.HTTP_200_OK)
+            game_challenge.status = 'A'
+            game_challenge.save()
+            game_challenge.delete()
+            # self.notify_acceptance(player_sender, player_receiver)
+            return Response({'message': 'Game challenge accepted.'}, status=status.HTTP_200_OK)
+        
         elif action == 'rejected':
-            friend_request.delete()
-        return Response({'message': 'Friend request rejected.'}, status=status.HTTP_200_OK)
+            game_challenge.status = 'D'
+            game_challenge.save()
+            game_challenge.delete()
+            # self.notify_rejection(player_sender, player_receiver)
+            return Response({'message': 'Game challenge rejected.'}, status=status.HTTP_200_OK)
+
+    def notify_acceptance(self, sender, receiver):
+        Notification.objects.create(
+                recipient=receiver,
+                sender=sender,
+                message= f'{receiver.username} has accepted your game challenge!'
+            )
+        channel_layer = get_channel_layer()
+        async_to_sync(channel_layer.group_send)(
+            f'notifications_{sender.id}',
+            {
+                'type': 'notification_message',
+                'message': f'{receiver.username} has accepted your game challenge!'
+            }
+        )
+
+    def notify_rejection(self, sender, receiver):
+        Notification.objects.create(
+                recipient=receiver,
+                sender=sender,
+                message=f'{receiver.username} has rejected your game challenge.'
+            )
+        channel_layer = get_channel_layer()
+        async_to_sync(channel_layer.group_send)(
+            f'notifications_{sender.id}',
+            {
+                'type': 'notification_message',
+                'message': f'{receiver.username} has rejected your game challenge.'
+            }
+        )
