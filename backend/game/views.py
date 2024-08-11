@@ -148,42 +148,49 @@ class GameChallengeResponse(APIView):
             game_challenge.status = 'A'
             game_challenge.save()
             game_challenge.delete()
-            # self.notify_acceptance(player_sender, player_receiver)
+            self.notify(player_sender, player_receiver)
             return Response({'message': 'Game challenge accepted.'}, status=status.HTTP_200_OK)
         
         elif action == 'rejected':
             game_challenge.status = 'D'
             game_challenge.save()
             game_challenge.delete()
-            # self.notify_rejection(player_sender, player_receiver)
             return Response({'message': 'Game challenge rejected.'}, status=status.HTTP_200_OK)
 
-    def notify_acceptance(self, sender, receiver):
+    def notify(self, sender, receiver):
         Notification.objects.create(
                 recipient=receiver,
                 sender=sender,
-                message= f'{receiver.username} has accepted your game challenge!'
+                message=f'{receiver.username} has accept your invitation'
             )
         channel_layer = get_channel_layer()
         async_to_sync(channel_layer.group_send)(
-            f'notifications_{sender.id}',
+            f'notifications_{receiver.id}',
             {
                 'type': 'notification_message',
-                'message': f'{receiver.username} has accepted your game challenge!'
+                'message': f'{sender.username} has accept your invitation!'
             }
         )
 
-    def notify_rejection(self, sender, receiver):
+class GameInvitationResponse(APIView):
+    def post(self, request, invited):
+        oppenent = get_object_or_404(User, id=invited);
+        current_user = request.user
+        action = request.data.get('status')
+        if action == 'accepted':
+            message = f"{oppenent.username} has accept your game invitaion"
+        elif action == 'rejected':
+            message = f"{oppenent.username} has reject your game invitaion"
         Notification.objects.create(
-                recipient=receiver,
-                sender=sender,
-                message=f'{receiver.username} has rejected your game challenge.'
+                recipient=oppenent,
+                sender=current_user,
+                message=message
             )
         channel_layer = get_channel_layer()
         async_to_sync(channel_layer.group_send)(
-            f'notifications_{sender.id}',
+            f'notifications_{current_user.id}',
             {
                 'type': 'notification_message',
-                'message': f'{receiver.username} has rejected your game challenge.'
+                'message': message,
             }
         )

@@ -91,6 +91,15 @@ const TopBar = () => {
         console.error('Error accepting game challenge:', error);
         ErrorToast('Error accepting game challenge');
     });
+    // Send a Response to the oppenent
+    fetch(`${BACKEND_URL}/api/game/game-response/${id}/`, {
+      method: 'POST',
+      headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${auth.accessToken}`
+      },
+      body: body
+  });
 };
 
 const handleReject = (id, type) => {
@@ -125,6 +134,15 @@ const handleReject = (id, type) => {
         console.error('Error rejecting game challenge:', error);
         ErrorToast('Error rejecting game challenge');
     });
+    // Send a Response to the oppenent
+    fetch(`${BACKEND_URL}/api/game/game-response/${id}/`, {
+      method: 'POST',
+      headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${auth.accessToken}`
+      },
+      body: body
+  });
   };
 
   const handleIconClick = async () => {
