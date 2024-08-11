@@ -10,6 +10,7 @@ import Setting from './pages/Setting/Setting';
 import Bot from './pages/PingPongGame/Bot/Bot';
 import Random from './pages/PingPongGame/Random/Random';
 import LocalGame from './pages/PingPongGame/LocalGame/LocalGame';
+import Invite from './pages/PingPongGame/Invite/Invite';
 import { createBrowserRouter, Outlet, RouterProvider } from 'react-router-dom';
 import Auth from './pages/Auth/Auth';
 import { AuthProvider } from './context/Auth/AuthProvider';
@@ -53,6 +54,7 @@ const routes = [
   {path: 'bot-game', element: <Bot />},
   {path: 'local-game', element: <LocalGame />},
   {path: 'random-game', element: <Random/>},
+  {path: 'invite-game', element: <Invite/>},
 ];
 
 const router = createBrowserRouter(routes);

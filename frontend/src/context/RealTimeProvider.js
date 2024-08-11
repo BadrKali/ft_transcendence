@@ -38,7 +38,7 @@ export const RealTimeProvider = ({ children }) => {
                 }));
             } else if (dataFromServer.type === 'notification') {
                 setHasNotification(true);
-                InfoToast("You have a new notification"); //add it here
+                // InfoToast("You have a new notification"); //add it here
 
             }
         };
