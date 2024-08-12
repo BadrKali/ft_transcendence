@@ -101,3 +101,34 @@ class BlockedUsers(models.Model):
 
     def __str__(self):
         return f"{self.blocker} blocked {self.blocked}"
+
+
+class Tournament(models.Model):
+    tournament_name = models.CharField(max_length=100)
+    tournament_prize = models.IntegerField()
+    tournament_map = models.CharField(max_length=100)
+    created_at = models.DateTimeField(auto_now_add=True) 
+    tournament_date = models.DateTimeField() # hadi f ina date tournament
+    tournament_status = models.BooleanField(default=True) # hadi ghadi tbadelha b True lma ykono les places kamline
+    tournament_stage = models.CharField(max_length=100) # hadi f ina stage wasla tournament
+
+    def __str__(self):
+        return self.tournament_name
+
+
+
+class TournamentParticipants(models.Model):
+    pass
+
+
+class TournamentInvitation(models.Model):
+    tournament = models.ForeignKey(Tournament, on_delete=models.CASCADE)
+    player = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    invitation_status = models.BooleanField(default=False)
+    invitation_date = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.player} invited to {self.tournament}"
+
+class TournamentParticipants(models.Model):
+    pass
