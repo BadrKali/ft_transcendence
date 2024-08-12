@@ -1,0 +1,235 @@
+.no-tournament{
+    width: 100%;
+    height: 100%;
+
+}
+
+.NotJoinedTournament{
+
+    width: 100%;
+    height: 80%;
+}
+
+.tournament-page{
+
+    width: 100%;
+    height: 90%;  
+}
+
+.CreatYourTournament{
+    width: 100%;
+    height: 10%;
+    display: flex;
+    justify-content:space-between;
+
+    align-items: center;
+    /* align-items: flex-end; */
+}
+
+/* .StartedTournamentButton{
+    margin-right: 20px;
+} */
+
+/* General Styles */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    color: #333;
+  }
+  
+
+  .cta-button {
+    padding: 10px 20px;
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background-color 0.3s ease;
+  }
+  
+  .cta-button:hover {
+    background-color: #0056b3;
+  }
+  
+  /* How It Works Section */
+  .how-it-works-section {
+    height: 40%;
+    /* text-align: center; */
+    border-bottom: solid #1C1E27 4px;
+    padding-bottom: 20px;
+
+  }
+  
+  .how-it-works-section h2 {
+    font-size: 2rem;
+    margin-bottom: 30px;
+  }
+  
+  .steps-container {
+    display: flex;
+    justify-content: space-around;
+
+  }
+  
+  .step {
+    text-align: center;
+    border: solid #1C1E27 4px;
+    border-radius: 10px;
+    width: 30%;
+  }
+  
+  .step .icon {
+    font-size: 3rem;
+    margin-bottom: 10px;
+  }
+  
+  .step h3 {
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+  }
+  
+  /* Why Create Section */
+  .why-create-section {
+    height: 20%;
+    /* padding: 20px 0; */
+    display: flex;
+    align-items: center;
+    border-bottom: solid #1C1E27 4px;
+
+
+  }
+  
+  .benefits-container {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+  }
+  
+  .benefits ul {
+    list-style: none;
+    padding: 0;
+  }
+  
+  .benefits ul li {
+    margin-bottom: 10px;
+  }
+  
+  .testimonials blockquote {
+    font-style: italic;
+    margin: 0;
+  }
+  
+  .testimonials cite {
+    display: block;
+    margin-top: 10px;
+    font-weight: bold;
+  }
+  
+  /* Examples Section */
+  .examples-section {
+    height: 35%;
+    padding: 40px 20px;
+    border-bottom: solid #1C1E27 4px;
+    text-align: center;
+  }
+  
+  .examples-container {
+    display: flex;
+    justify-content: space-around;
+    height: 80%;
+  }
+  
+  .example {
+    width: 30%;
+    height: 100%;
+    border: solid #1C1E27 4px;
+    border-radius: 10px;
+  }
+
+  .examples-container .undergroundHell{
+    background-image: url('https://s3-alpha-sig.figma.com/img/08d4/60e9/f960c436b61d7a2a61eda9b9c2da25b6?Expires=1724025600&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=kfw3qkO2cb~OxkK~1zDyXAEAoASLkM3zjl~NvJ8OszB4vlN0qlkFPi03EUvtyQhsfwu1w-R-jMDddrV1khg43yBm9En2NQbHxaOowGVR1DIR8dtJUUzdTl07c~jM2CEN9RxDV7PApxfZwRcOMR3Kezrz99N~D3FW98KGB5uWrBUOfoeqk7nKwD-Q~PN9M00VWYYHOTs4jc~N4tj7SBzHMiY7y4zkI1S6AYod3ZrKj7BMv9vM2dXtNfjm7gv0z~jUlhOP6~gatmQ7tY0NMGoc2H3uGfmoerhftHDI1JbUiqQSHy~HuyoQqydCpLNDTnmL7v3~dAVIeVu7-TS2FA0rRQ__');
+}
+
+.examples-container  .undergroundForest{
+    background-image: url('https://s3-alpha-sig.figma.com/img/1ba0/041a/49cc78749981808974e3a42c6734f70e?Expires=1724025600&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=oBYQE98N7P1ycY4xDgm1dHb6OchclblYNz3WyujJtogA8I5lnVmCIssKlXJ6-PCDjzKWh0Iql2OofW-kcGoeqUZjt7eNcOG-4vL1hOOcu4~1Me6Kr1bGmxqcpfm3trzohE~9ZNwfdW13OcB4g7VK9ziDvDaDWs4t31Uh0iHmXeR1ve5PqAlr6~zGTZsJ-XD3TsMvaG1d0~4VewnFaYRxQOPB6DBnN8idCHTmbYzQoqYR99XjosPpYtGXxu-BF3Ss3WH71XGLCE8dfqZcJ9dqPAT4WeijaZnplrHNK0K1bF4ZwI6a3NWcllDiJVRD1wlRcKI0UoL2OT5fPQlpBCKQlg__');
+
+}
+
+.examples-container .undergroundGraveyard{
+    background-image: url('https://s3-alpha-sig.figma.com/img/75c9/3864/504002b7ecb5e44f27b429a1a44b0ce0?Expires=1724025600&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=MTk85X4-J4Q8iuXep~yaGOD9im53CgDXtdMewBaCNn6~F6KFcVSFzTDAEcPURtaY7zBVk9eu-UiBNgPKMHmw4KfrxxwQnhh0Qln3pNWfA2UfMKcuzGPWNGW0Lne79rYReT6QeZMbX-UletaGxXcABki5Xnf9ZYkpluRmSAaPfWKuxkE4u6SgjGjLJrqWpjlNWXQC-ZoUqnX9HrLfnwre2PgzVHnt0QSGtUJH7WOvYqmRqythAz1w-XlGx39PJtcmhcr2r-XFTkRXDR~yn3hO~RQ7Hy90IK0pB87cDqiDznjz6UzTp133EZvXxZmm-pUdQ8JjJto1Jwq5EqzP83zvSA__');
+}
+  
+  .example img {
+    width: 100%;
+    border-radius: 10px;
+    margin-bottom: 10px;
+  }
+  
+  .example h3 {
+    font-size: 1.2rem;
+  }
+  
+  /* Community Section */
+  .community-section {
+    padding: 40px 20px;
+    background-color: #333;
+    color: white;
+  }
+  
+  .community-container {
+    max-width: 800px;
+    margin: 0 auto;
+  }
+  
+  .community-container p {
+    font-size: 1.2rem;
+  }
+  
+  .community-container ul {
+    list-style: none;
+    padding: 0;
+  }
+  
+  .community-container ul li {
+    margin-bottom: 10px;
+  }
+  
+  /* Call to Action Section */
+  .cta-section {
+    padding: 40px 20px;
+
+    color: white;
+    text-align: center;
+  }
+  
+  .cta-section h2 {
+    font-size: 2rem;
+    margin-bottom: 20px;
+  }
+  
+  /* Footer */
+  .footer {
+    padding: 20px;
+    background-color: #222;
+    color: white;
+    text-align: center;
+  }
+  
+  .footer-links {
+    margin-bottom: 10px;
+  }
+  
+  .footer-links a {
+    color: white;
+    margin: 0 10px;
+    text-decoration: none;
+  }
+  
+  .social-media a {
+    color: white;
+    margin: 0 10px;
+  }
+  
