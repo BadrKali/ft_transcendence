@@ -113,7 +113,7 @@ const Setting = () => {
           </div>
           <MainButton type="submit" onClick={handleFormSubmit} content="Update"/>
         </form>
-      </div>
+      </div> 
     </>
   );
 }

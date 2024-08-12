@@ -5,6 +5,7 @@ import './creatTournamentPopUp.css';
 import History from '../../../../assets/MatchHistoryData';
 import Icon from '../../../../assets/Icon/icons';
 import PlayerSelectedItem from './PlayerSelectedItem';
+import MainButton from '../../../../components/MainButton/MainButton';
 
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
@@ -136,6 +137,11 @@ const CreatTournamentPopUp = ({ isOpen, onClose})=> {
                     styles={customStyles}
                     placeholder="Select players..."
                 />
+            </div>
+            <div className='tournamentButton-container'>
+                    <div className='CreatTournamentButton'>
+                        <MainButton type="submit" content="Creat" />
+                    </div>
             </div>
         </div>
       </div>
