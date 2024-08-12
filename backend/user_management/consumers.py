@@ -53,17 +53,6 @@ class NotificationConsumer(AsyncWebsocketConsumer):
                 }
             )
 
-    async def status_update(self, event):
-        user_id = event['user_id']
-        status = event['status']
-        await self.send(text_data=json.dumps({
-            'type': 'status_update',
-            'user_id': user_id,
-            'status': status
-        }))
-
-        
-
     @database_sync_to_async
     def get_user_friends(self):
         from .models import Friendship
@@ -74,10 +63,26 @@ class NotificationConsumer(AsyncWebsocketConsumer):
         ]
         return list(friends_ids)
 
+    async def status_update(self, event):
+        user_id = event['user_id']
+        status = event['status']
+        await self.send(text_data=json.dumps({
+            'type': 'status_update',
+            'user_id': user_id,
+            'status': status
+        }))
+
     async def notification_message(self, event):
         message = event['message']
         await self.send(text_data=json.dumps({
             'type' : 'notification',
+            'message': message
+        }))
+
+    async def notification_match(self, event):
+        message = event['message']
+        await self.send(text_data=json.dumps({
+            'type' : 'match_notification',
             'message': message
         }))
 
