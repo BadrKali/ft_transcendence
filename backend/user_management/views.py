@@ -320,12 +320,6 @@ class SearchAPIView(APIView):
             serializer = CurrentUserSerializer(results, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response({"results": []}, status=status.HTTP_200_OK)
-    
-
-
-
-
-
 
 
 
@@ -342,3 +336,9 @@ class ListFriendsView(APIView):
         friends = [friendship.friend if friendship.player == current_user else friendship.player for friendship in friendships]
         serializer = CurrentUserSerializer(friends, many=True)
         return Response(serializer.data)
+    
+
+
+class TournamentsManagementView(APIView):
+    def get(self, request):
+        return Response({'message': 'Tournaments management view.'}, status=status.HTTP_200_OK)
