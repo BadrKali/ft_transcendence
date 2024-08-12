@@ -1,9 +1,14 @@
 import React, { createContext, useEffect, useContext, useState } from 'react';
 import useAuth from '../hooks/useAuth';
 import ToastContainer from '../components/ReactToastify/ToastContainer';
+import GameChallengeNotification from '../components/Notification/GameChallengeNotification';
+import { SuccessToast } from '../components/ReactToastify/SuccessToast'
+import { ErrorToast } from '../components/ReactToastify/ErrorToast'
 import {InfoToast} from '../components/ReactToastify/InfoToast';
 
 const WS_BACKEND_URL = process.env.REACT_APP_WS_BACKEND_URL;
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
+
 export const RealTimeContext = createContext({});
 
 export const RealTimeProvider = ({ children }) => {
@@ -11,7 +16,7 @@ export const RealTimeProvider = ({ children }) => {
     const [friendsStatus, setFriendsStatus] = useState({});
     const { auth } = useAuth();
     const [hasNotification, setHasNotification] = useState(false);
-
+    const [gameChallenge, setGameChallenge] = useState(null);
     const clearNotification = () => {
         setHasNotification(false);
     };
@@ -30,7 +35,9 @@ export const RealTimeProvider = ({ children }) => {
 
         ws.onmessage = (message) => {
             const dataFromServer = JSON.parse(message.data);
-            if (dataFromServer.type === 'status_update') {
+            if (dataFromServer.type === 'match_notification') {
+                setGameChallenge(dataFromServer);
+            } else if (dataFromServer.type === 'status_update') {
                 const { user_id, status } = dataFromServer;
                 setFriendsStatus(prevStatus => ({
                     ...prevStatus,
@@ -39,7 +46,6 @@ export const RealTimeProvider = ({ children }) => {
             } else if (dataFromServer.type === 'notification') {
                 setHasNotification(true);
                 // InfoToast("You have a new notification"); //add it here
-
             }
         };
 
@@ -56,9 +62,69 @@ export const RealTimeProvider = ({ children }) => {
         };
     }, [auth.accessToken]);
 
-    return (
+    const handleAccept = (id) => {
+        setGameChallenge(null);
+        let url = `${BACKEND_URL}/api/game/game-challenges/${id}/response/`;
+        let body = JSON.stringify({ 'status': 'accepted' });
+        fetch(url, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${auth.accessToken}`
+            },
+            body: body
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log('Game challenge accepted:', data);
+            SuccessToast('Game challenge accepted');
+        })
+        .catch(error => {
+            console.error('Error accepting game challenge:', error);
+        });
+    }
+    const handleReject = (id) => {
+        setGameChallenge(null);
+        let url = `${BACKEND_URL}/api/game/game-challenges/${id}/response/`;
+        let body = JSON.stringify({ 'status': 'rejected' });
+        fetch(url, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${auth.accessToken}`
+            },
+            body: body
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log('Game challenge rejected:', data);
+            SuccessToast('Game challenge rejected');
+        })
+        .catch(error => {
+            console.error('Error rejecting game challenge:', error);
+        });
+}
+return (
         <RealTimeContext.Provider value={{ setNotifications, notifications, friendsStatus, hasNotification, setHasNotification, clearNotification }}>
             {children}
+            {gameChallenge && (
+            <GameChallengeNotification 
+                notif={gameChallenge}
+                message={`${gameChallenge.message}`}
+                onAccept={handleAccept}
+                onReject={handleReject}
+            />
+        )}
             <ToastContainer />
         </RealTimeContext.Provider>
     );

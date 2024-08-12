@@ -81,17 +81,12 @@ class NotificationConsumer(AsyncWebsocketConsumer):
 
     async def notification_match(self, event):
         message = event['message']
+        sender_id = event['sender']
         await self.send(text_data=json.dumps({
             'type' : 'match_notification',
-            'message': message
+            'message': message,
+            'sender_id': sender_id
         }))
-
-
-
-
-
-
-
 
 class EchoConsumer(AsyncWebsocketConsumer):
     async def connect(self):

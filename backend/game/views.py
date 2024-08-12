@@ -115,8 +115,9 @@ class SendChallengeView(APIView):
             async_to_sync(channel_layer.group_send)(
                 f'notifications_{player_receiver.id}',
                 {
-                    'type': 'notification_message',
-                    'message': f'{player_sender.username} has challenged you to a game!'
+                    'type': 'notification_match',
+                    'message': f'{player_sender.username} invite you to play a game.',
+                    'sender': request.user.id, 
                 }
             )
             return Response({'message': 'Challenge sent successfully.'}, status=status.HTTP_201_CREATED)
@@ -148,7 +149,6 @@ class GameChallengeResponse(APIView):
             game_challenge.status = 'A'
             game_challenge.save()
             game_challenge.delete()
-            self.notify(player_sender, player_receiver)
             return Response({'message': 'Game challenge accepted.'}, status=status.HTTP_200_OK)
         
         elif action == 'rejected':
@@ -156,21 +156,6 @@ class GameChallengeResponse(APIView):
             game_challenge.save()
             game_challenge.delete()
             return Response({'message': 'Game challenge rejected.'}, status=status.HTTP_200_OK)
-
-    def notify(self, sender, receiver):
-        Notification.objects.create(
-                recipient=receiver,
-                sender=sender,
-                message=f'{receiver.username} has accept your invitation'
-            )
-        channel_layer = get_channel_layer()
-        async_to_sync(channel_layer.group_send)(
-            f'notifications_{receiver.id}',
-            {
-                'type': 'notification_message',
-                'message': f'{sender.username} has accept your invitation!'
-            }
-        )
 
 class GameInvitationResponse(APIView):
     def post(self, request, invited):
