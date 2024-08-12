@@ -43,3 +43,13 @@ class TournamentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Tournament
         fields = ['id', 'tournament_name', 'tournament_prize', 'tournament_map', 'tournament_date', 'created_at', 'tournament_status', ]
+
+
+#I NEED TO CHECK IF THERE IS ONLY 4 PLAYERS ARE INVITED TO THE TOURNAMENT
+class TournamentCreateSerializer(serializers.ModelSerializer):
+    invitedUsers = serializers.ListField(child=serializers.IntegerField())
+    class Meta:
+        model = Tournament
+        fields = ['tournament_name', 'tournament_map', 'invitedUsers']
+
+    

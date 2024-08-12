@@ -21,8 +21,8 @@ from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
 from django.http import HttpResponseForbidden
 from game.models import UserAchievement
-from .models import Tournament
-from .serializers import TournamentSerializer
+from .models import Tournament, TournamentInvitation
+from .serializers import TournamentSerializer, TournamentCreateSerializer  
 
 
 class FriendRequestManagementView(APIView):
@@ -343,6 +343,29 @@ class ListFriendsView(APIView):
 
 class TournamentsManagementView(APIView):
     def get(self, request):
-        tournaments = Tournament.objects.all()
+        tournaments = Tournament.objects.all().order_by('-created_at')
         serializer = TournamentSerializer(tournaments, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+class TournamentCreateView(APIView):
+    def post(self, request):
+        serializer = TournamentCreateSerializer(data=request.data)
+        if serializer.is_valid():
+            invited_users = serializer.validated_data.pop('invitedUsers', [])
+            tournament = serializer.save()
+            
+            for user_id in invited_users:
+                user = get_object_or_404(User, id=user_id)
+                TournamentInvitation.objects.create(tournament=tournament, player=user)
+                channel_layer = get_channel_layer()
+                async_to_sync(channel_layer.group_send)(
+                    f'notifications_{user_id}',
+                    {
+                        'type': 'notification_message',
+                        'message': 'you have been invited to a tournament'
+                    }
+                )
+            return Response({'message': 'Tournament created successfully'}, status=status.HTTP_201_CREATED)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+

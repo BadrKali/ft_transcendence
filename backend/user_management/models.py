@@ -104,12 +104,13 @@ class BlockedUsers(models.Model):
 
 
 class Tournament(models.Model):
+    tournament_creator = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     tournament_name = models.CharField(max_length=100)
-    tournament_prize = models.IntegerField()
+    tournament_prize = models.IntegerField(default=0) # khas n3amerha 3la 7ssab kola user dert haka gha for testing
     tournament_map = models.CharField(max_length=100)
     created_at = models.DateTimeField(auto_now_add=True) 
-    tournament_date = models.DateTimeField() # hadi f ina date tournament
-    tournament_status = models.BooleanField(default=True) # hadi ghadi tbadelha b True lma ykono les places kamline
+    tournament_date = models.DateTimeField(auto_now_add=True) # hadi f ina date tournament hadi khasha t3awerd
+    tournament_status = models.BooleanField(default=False) # hadi ghadi tbadelha b True lma ykono les places kamline
     tournament_stage = models.CharField(max_length=100) # hadi f ina stage wasla tournament
 
     def __str__(self):
