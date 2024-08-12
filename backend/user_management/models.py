@@ -116,11 +116,6 @@ class Tournament(models.Model):
         return self.tournament_name
 
 
-
-class TournamentParticipants(models.Model):
-    pass
-
-
 class TournamentInvitation(models.Model):
     tournament = models.ForeignKey(Tournament, on_delete=models.CASCADE)
     player = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)

@@ -21,6 +21,8 @@ from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
 from django.http import HttpResponseForbidden
 from game.models import UserAchievement
+from .models import Tournament
+from .serializers import TournamentSerializer
 
 
 class FriendRequestManagementView(APIView):
@@ -341,4 +343,6 @@ class ListFriendsView(APIView):
 
 class TournamentsManagementView(APIView):
     def get(self, request):
-        return Response({'message': 'Tournaments management view.'}, status=status.HTTP_200_OK)
+        tournaments = Tournament.objects.all()
+        serializer = TournamentSerializer(tournaments, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
