@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;400;500;600;700&display=swap');
+
 .game-challenge-notification {
     position: fixed;
     top: 20px;
@@ -11,6 +13,8 @@
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     z-index: 1000;
     animation: slideInRight 0.5s ease-in-out;
+    margin-bottom: 20px;
+    overflow: hidden;
 }
 .game-challenge-notification::before {
     content: '';
@@ -53,9 +57,28 @@
 }
 
 .challenge-message {
-    margin: 0 5px
+    margin: 0 5px;
+    font-family: 'Rajdhani';
+    font-weight: 500;
 }
 
 .challenge {
     margin: 0 5px
+}
+
+.notification-timer {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background: #e0e0e0;
+    overflow: hidden;
+    border-radius: 2px;
+}
+
+.timer-bar {
+    height: 100%;
+    background: #F62943;
+    transition: width 1s linear;
 }
