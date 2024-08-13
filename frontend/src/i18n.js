@@ -17,7 +17,12 @@ const resources = {
       "User XP": "User XP",
       "Total Games": "Total Games",
       "Win": "Win",
-      "Loss": "Loss"
+      "Loss": "Loss",
+      "GOLD": "GOLD",
+      "SILVER": "SILVER",
+      "BRONZE": "BRONZE",
+      "Match History": "Match History",
+      "No match history available.": "No match history available."
     }
   },
   fr: {
@@ -34,16 +39,46 @@ const resources = {
       "User XP": "XP Utilisateur",
       "Total Games": "Jeux Totals",
       "Win": "Victoires",
-      "Loss": "Défaites"
+      "Loss": "Défaites",
+      "GOLD": "OR",
+      "SILVER": "ARGENT",
+      "BRONZE": "BRONZE",
+      "Match History": "Historique des matchs",
+      "No match history available.": "Aucun historique de match disponible.",
+    
+    }
+  },
+  ar: {
+    translation: {
+      "Welcome back": "مرحباً بعودتك",
+      "Add Friend": "إضافة صديق",
+      "Dashboard": "لوحة القيادة",
+      "Game": "لعبة",
+      "Chat": "دردشة",
+      "Tournament": "بطولة",
+      "Leaderboard": "قائمة المتصدرين",
+      "Setting": "الإعدادات",
+      "Rank": "الرتبة",
+      "User XP": "نقاط الخبرة",
+      "Total Games": "إجمالي الألعاب",
+      "Win": "فوز",
+      "Loss": "خسارة",
+      "GOLD": "ذهب",
+      "SILVER": "فضة",
+      "BRONZE": "برونز",
+
     }
   },
 };
+
+
+const savedLanguage = localStorage.getItem('i18nextLng') || 'en';
 
 i18n
   .use(initReactI18next) 
   .init({
     resources,
-    lng: 'en', 
+    lng: savedLanguage, 
     fallbackLng: 'en', 
     interpolation: {
       escapeValue: false, 

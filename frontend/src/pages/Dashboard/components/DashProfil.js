@@ -6,7 +6,9 @@ import { avatars } from '../../../assets/assets'
 
 function DashProfil({profilData}) {
   const [progress, setProgress] = useState('0%');
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+
+  const isArabic = i18n.language === 'ar';
 
   useEffect(() => {
       setTimeout(() => {
@@ -19,7 +21,7 @@ function DashProfil({profilData}) {
     const lossPer = 100 - winPer ;
 
     return (
-        <div className='profilInfo'>
+        <div className={`profilInfo ${isArabic ? 'rtl' : 'ltr'}`}>
             <div className="userInfo">
                 <div className='userContainer'>
                     <div className="userImage" >
@@ -29,7 +31,7 @@ function DashProfil({profilData}) {
                         <div className="progresInfo">
                             <div className="nameRank">
                                 <h4>{profilData.username}</h4>
-                                <h4>{t('Rank')}: {profilData.rank}</h4>
+                                <h4>{t('Rank')} : {t(profilData.rank)}</h4>
                             </div>
                             <div className="userXp box">
                                 <p>{t('User XP')}</p>

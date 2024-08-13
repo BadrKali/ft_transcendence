@@ -116,3 +116,31 @@
     background-color: var(--active-color);
     transition: width 1s ease-in-out;
 }
+
+.profilInfo.ltr {
+    direction: ltr;
+    text-align: left;
+  }
+  
+  .profilInfo.rtl {
+    direction: rtl;
+    text-align: right;
+  }
+  
+  .userContainer {
+    display: flex;
+    flex-direction: row;
+  }
+  
+  .userContainer.rtl {
+    flex-direction: row-reverse;
+  }
+  
+  .userProgress {
+    margin-left: 20px;
+  }
+  
+  .userProgress.rtl {
+    margin-left: 0;
+    margin-right: 20px;
+  }
