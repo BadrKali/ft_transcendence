@@ -8,7 +8,10 @@ class FriendshipSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Friendship
-        fields = ['friend', 'blocked']
+        fields = [
+            'friend', 
+            'blocked'
+            ]
 
     def get_friend(self, obj):
         return PlayerSerializer(obj.friend).data
@@ -81,22 +84,29 @@ class TournamentInvitationSerializer(serializers.ModelSerializer):
 
 class TournamentCreateSerializer(serializers.ModelSerializer):
     invitedUsers = serializers.ListField(child=serializers.IntegerField())
+
     class Meta:
         model = Tournament
         fields = ['tournament_name', 'tournament_map', 'invitedUsers']
+
     def validate(self, data):
         maps = ['HELL', 'FIRE', 'ICE']
+        currentUser = self.context['request'].user
         if data['tournament_map'] not in maps:
             raise serializers.ValidationError({"tournament_map": "Invalid map name"})
-        currentUser = self.context['request'].user
         if len(data['invitedUsers']) != 3:
-            raise serializers.ValidationError({"invitedUsers": "The number of invited players must be 4"})
-        if Tournament.objects.filter(tournament_creator=currentUser.id).exists():
+            raise serializers.ValidationError({"invitedUsers": "The number of invited players must be 3"})
+        if Tournament.objects.filter(tournament_participants=currentUser).exists():
             raise serializers.ValidationError({"invitedUsers": "You are already present in a tournament"})
+        if len(data['invitedUsers']) != len(set(data['invitedUsers'])):
+            raise serializers.ValidationError({"invitedUsers": "Duplicate user IDs detected in the invited players list"})
         for user_id in data['invitedUsers']:
-            print(user_id)
+            if user_id == currentUser.id:
+                raise serializers.ValidationError({"invitedUsers": "You cannot invite yourself to the tournament"})
             if Tournament.objects.filter(tournament_participants=user_id).exists():
-                raise serializers.ValidationError({"invitedUsers": "One of the invited players is already present at the tournament"})
+                raise serializers.ValidationError({"invitedUsers": f"User with ID {user_id} is already present in another tournament"})
+
         return data
+
 
     

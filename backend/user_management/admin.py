@@ -12,5 +12,5 @@ admin.site.register(models.Friendship)
 admin.site.register(models.BlockedUsers)
 admin.site.register(models.Tournament)
 admin.site.register(models.TournamentInvitation)
-# admin.site.register(models.TournamentParticipants)
+admin.site.register(models.TournamentParticipants)
 

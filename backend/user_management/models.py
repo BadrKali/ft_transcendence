@@ -104,8 +104,6 @@ class BlockedUsers(models.Model):
 
 
 class Tournament(models.Model):
-
-
     tournament_creator = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     tournament_name = models.CharField(max_length=100)
     tournament_prize = models.IntegerField(default=0) # khas n3amerha 3la 7ssab kola user dert haka gha for testing
@@ -113,7 +111,7 @@ class Tournament(models.Model):
     created_at = models.DateTimeField(auto_now_add=True) 
     tournament_date = models.DateTimeField(auto_now_add=True) # hadi f ina date tournament hadi khasha t3awerd
     tournament_status = models.BooleanField(default=False) # hadi ghadi tbadelha b True lma ykono les places kamline
-    tournament_stage = models.CharField(max_length=100) # hadi f ina stage wasla tournament
+    tournament_stage = models.CharField(max_length=100, default="semi-finals") # hadi f ina stage wasla tournament
     tournament_participants = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='tournament_participants')
 
     def assign_tournament_prize(self):
@@ -153,11 +151,14 @@ class TournamentInvitation(models.Model):
         return f"{self.player} invited to {self.tournament}"
 
 #this to organize who is gonna play aginst who
+#the nullable field jus temp 
 class TournamentParticipants(models.Model):
     tournament = models.ForeignKey(Tournament, on_delete=models.CASCADE)
-    player1 = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='player1')
-    player2 = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='player2')
+    player1 = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='player1', null=True, blank=True)
+    player2 = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='player2', null=True, blank=True)
+
     def __str__(self):
         return f"{self.player1} vs {self.player2} in {self.tournament}"
+
     
 

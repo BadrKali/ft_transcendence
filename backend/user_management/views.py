@@ -268,9 +268,13 @@ class ListFriendsView(APIView):
 
 class TournamentsManagementView(APIView):
     def get(self, request):
-        tournament = get_object_or_404(Tournament, tournament_participants=request.user)
-        serializer = TournamentSerializer(tournament)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        tournament = Tournament.objects.filter(tournament_participants=request.user)
+        if tournament:
+            serializer = TournamentSerializer(tournament)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        else:
+            # checki wach nrado empty object wla 404 f status code 
+            return Response({}, status=status.HTTP_200_OK)
 
     def post(self, request):
         serializer = TournamentCreateSerializer(data=request.data, context={'request': request})
