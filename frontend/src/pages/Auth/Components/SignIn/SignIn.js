@@ -49,7 +49,7 @@ const SignIn = (props) => {
         } catch(err) {
             console.log(err)
         } finally {
-            console.log("yay")
+            // console.log("yay")
         }   
     }
     function handleInputChange(e) {

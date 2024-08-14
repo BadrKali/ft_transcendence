@@ -32,11 +32,8 @@ class JWTAuthMiddleware(BaseMiddleware):
     async def __call__(self, scope, receive, send):
         query_string = parse_qs(scope['query_string'].decode())
         token = query_string.get('token')
-        # print(token)
         if token:
-            # print(token[0])
             scope['user'] = await get_user(token[0])
-            # print(f"this is the scope for that token {scope['user']}")
         else:
             scope['user'] = AnonymousUser()
         return await super().__call__(scope, receive, send)

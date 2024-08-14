@@ -1,0 +1,62 @@
+import React, {createContext, useState, useEffect} from "react";
+import useFetch from "../../../hooks/useFetch.js";
+import useAuth from "../../../hooks/useAuth.js";
+// import {auth}
+
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
+const WS_BACKEND_URL = process.env.REACT_APP_WS_BACKEND_URL;
+
+export const CurrentUserContext = createContext()
+
+export const CurrentUserProvider = ({children}) =>{
+
+const {data:CurrentUser} = useFetch(`${BACKEND_URL}/user/stats/`)
+return (
+    <CurrentUserContext.Provider value={CurrentUser}>
+        {children}
+    </CurrentUserContext.Provider>
+)
+}
+
+
+export const clientSocketContext = createContext();
+
+export const SocketClientProvider = ({children}) =>{
+    const [socket, setsocket] = useState(null);
+    const { auth } = useAuth();
+
+
+  useEffect(() => {
+    if (!auth.accessToken)
+        return;
+    const clientSocket = new WebSocket(`${WS_BACKEND_URL}/ws/chat/?token=${auth.accessToken}`);
+    clientSocket.onopen = () => {
+        setsocket(clientSocket);
+        console.log(" WebSocket instanciated : onopen => Clunca ")
+    };
+
+    clientSocket.onclose = () => {
+      console.log('WebSocket closed : onclose Clunca');
+    };
+
+    clientSocket.onerror = (error)=>{
+      console.log('WebSocket error : Clunca socket : ', error);
+    }
+
+    return () => {
+      if (socket)
+        socket.close();
+    };
+  }, [auth.accessToken]);
+
+    const socketstate ={
+        stateValue : socket,
+        socketsetter: setsocket
+    }
+    
+return (
+    <clientSocketContext.Provider value={socketstate}>
+        {children}
+    </clientSocketContext.Provider>
+)
+}

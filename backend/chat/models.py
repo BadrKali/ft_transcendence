@@ -12,7 +12,7 @@ class message(models.Model):
     created_at =models.DateTimeField(auto_now_add=True)
 
     def __str__(self) -> str:
-        return f'from : {self.sender_id} to {self.receiver_id}'
+        return f'from : {self.sender_id} to {self.receiver_id} with : {self.content} seen: {self.seen}, created_at : {self.created_at}'
     class Meta:
         ordering = ['-created_at']
 

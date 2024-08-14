@@ -1,12 +1,20 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import style from './UserParams.module.css'
-import { AlignRight, DotsThreeVertical, Phone, VideoCamera } from 'phosphor-react'
+import {Phone, VideoCamera } from 'phosphor-react'
 import Icon from '../../../../assets/Icon/icons.js'
-
+import { useNavigate } from 'react-router-dom';
+import { chatPartnerContext } from '../../Chat.jsx'; 
 
 const UserParams = () => {
+
+  const {ChatPartner} = useContext(chatPartnerContext);
+  const navigate = useNavigate();
+
     function handleVisiteProfil(){
-        alert('Go To the User Profile');
+      if (ChatPartner)
+        navigate(`/user/${ChatPartner?.username}`, {
+          state: { userData: ChatPartner },
+        });
     }
 
     function handleInviteToGame(){

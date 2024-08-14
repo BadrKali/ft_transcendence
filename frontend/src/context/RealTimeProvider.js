@@ -20,8 +20,6 @@ export const RealTimeProvider = ({ children }) => {
         if (!auth.accessToken) {
             return;
         }
-
-        console.log(`this is the token ${auth.accessToken}`);
         const ws = new WebSocket(`${WS_BACKEND_URL}/ws/notifications/?token=${auth.accessToken}`);
 
         ws.onopen = () => {
