@@ -14,6 +14,7 @@ urlpatterns = [
     path('friends/list/', ListFriendsView.as_view(), name='friends_list'),
     path('notifications/', NotificationListView.as_view(), name='notifications_list'),
     path('tournament/', TournamentsManagementView.as_view(), name='tournament_management'),
+    path('tournament/<str:stage>', TournamentByStageView.as_view(), name='tournament_management'),
     path('tournament/invitations/', TournamentInvitationView.as_view(), name='tournament_management'),
     path('tournament/invitations/<int:tournament_id>', TournamentInvitationView.as_view(), name='tournament_invitation_handler'),
     # path('friends/create/<int:friend_id>/', CreateFriendshipView.as_view(), name='create_friendship'),

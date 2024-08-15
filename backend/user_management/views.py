@@ -21,8 +21,8 @@ from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
 from django.http import HttpResponseForbidden
 from game.models import UserAchievement
-from .models import Tournament, TournamentInvitation
-from .serializers import TournamentSerializer, TournamentCreateSerializer , TournamentInvitationSerializer
+from .models import Tournament, TournamentInvitation, TournamentParticipants
+from .serializers import TournamentSerializer, TournamentCreateSerializer , TournamentInvitationSerializer, TournamentParticipantsSerializer
 
 
 class FriendRequestManagementView(APIView):
@@ -192,7 +192,6 @@ class BlockUnblockView(APIView):
             return Response({"error": "user is not blocked."}, status=status.HTTP_400_BAD_REQUEST)
     def get(self, request, blocked_id=None):
         blocker = request.user
-
         if blocked_id:
             blocked = get_object_or_404(User, id=blocked_id)
             is_blocked = BlockedUsers.objects.filter(Q(blocker=blocker, blocked=blocked)).exists()
@@ -268,7 +267,8 @@ class ListFriendsView(APIView):
 
 class TournamentsManagementView(APIView):
     def get(self, request):
-        tournament = Tournament.objects.filter(tournament_participants=request.user)
+        #cuz it returns a query set 
+        tournament = Tournament.objects.filter(tournament_participants=request.user).first()
         if tournament:
             serializer = TournamentSerializer(tournament)
             return Response(serializer.data, status=status.HTTP_200_OK)
@@ -314,6 +314,7 @@ class TournamentInvitationView(APIView):
         if action == 'accept':
             tournament.tournament_participants.add(player)
             if tournament.tournament_participants.count() == 4:
+                tournament.assign_opponent()
                 tournament.tournament_status = True
                 tournament.assign_tournament_stage()
                 tournament.save()
@@ -322,4 +323,12 @@ class TournamentInvitationView(APIView):
         elif action == 'reject':
             invitation.delete()
             return Response({'message': 'Invitation rejected.'}, status=status.HTTP_200_OK)
+        
+
+class TournamentByStageView(APIView):
+    def get(self, request, stage):
+        stage_participants = TournamentParticipants.objects.filter(matchStage=stage)
+        serilaizer = TournamentParticipantsSerializer(stage_participants, many=True)
+        print(serilaizer.data)
+        return Response(serilaizer.data,  status=status.HTTP_200_OK)
     

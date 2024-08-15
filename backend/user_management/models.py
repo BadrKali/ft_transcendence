@@ -3,6 +3,7 @@ from django.conf import settings
 # Create your models here.
 from django.core.exceptions import ValidationError
 from django.shortcuts import get_object_or_404
+import random
 
 def user_avatar_upload_path(instance, filename):
     return f"player/{instance.id}/user_avatar/{filename}"
@@ -118,21 +119,24 @@ class Tournament(models.Model):
         print(self.tournament_creator.player.rank)
         if self.tournament_creator.player.rank == 'BRONZE':
             self.tournament_prize = 2000
-        elif self.tournament_creator.rank == 'SILVER':
+        elif self.tournament_creator.player.rank == 'SILVER':
             self.tournament_prize = 4000
-        elif self.tournament_creator.rank == 'GOLD':
+        elif self.tournament_creator.player.rank == 'GOLD':
             self.tournament_prize = 6000
 
+    def assign_opponent(self):
+        participants = list(self.tournament_participants.all())
+        random.shuffle(participants)
+        for i in range(0, len(participants), 2):
+            TournamentParticipants.objects.create(tournament=self, player1=participants[i], player2=participants[i+1])
+
     def assign_tournament_stage(self):
-        #mazal nbadloha 3la hssab 4
-        if self.tournament_participants.count() == 8:
-            self.tournament_stage = 'QUARTER FINALS'
-        elif self.tournament_participants.count() == 4:
-            self.tournament_stage = 'SEMI FINALS'
+        if self.tournament_participants.count() == 4:
+            self.tournament_stage = 'SEMI-FINALS'
         elif self.tournament_participants.count() == 2:
             self.tournament_stage = 'FINALS'
         else:
-            self.tournament_stage = 'GROUP STAGE'
+            self.tournament_stage = 'GROUP-STAGE'
 
     def save(self, *args, **kwargs):
         self.assign_tournament_prize()
@@ -156,9 +160,15 @@ class TournamentParticipants(models.Model):
     tournament = models.ForeignKey(Tournament, on_delete=models.CASCADE)
     player1 = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='player1', null=True, blank=True)
     player2 = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='player2', null=True, blank=True)
+    matchPlayed = models.BooleanField(default=False)
+    matchStage = models.CharField(max_length=100, default="SEMI-FINALS")
+    winner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='winner', null=True, blank=True)
+
 
     def __str__(self):
         return f"{self.player1} vs {self.player2} in {self.tournament}"
+    
+
 
     
 

@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from .models import Player, Friendship, FriendInvitation, Notification
 from authentication.serializers import CurrentUserSerializer
-from .models import Tournament, TournamentInvitation
+from .models import Tournament, TournamentInvitation, TournamentParticipants
 
 class FriendshipSerializer(serializers.ModelSerializer):
     friend = serializers.SerializerMethodField()
@@ -109,4 +109,8 @@ class TournamentCreateSerializer(serializers.ModelSerializer):
         return data
 
 
-    
+class TournamentParticipantsSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = TournamentParticipants
+        fields = '__all__'
