@@ -56,13 +56,16 @@ const Chat = () => {
   if (clientSocket) {
   clientSocket.onmessage = (event) => {
     const data = JSON.parse(event.data);
+    console.log(data.type)
     const notif = new Audio(receivedmsgsound);
     
     if (data.type === 'newchat.message'){
       // console.log(data.message)
       // You are receiver you got notif sound! not your self too talk with your self .
       if (data.message.receiver_id === CurrentUser?.user_id && data.message.sender_id !== CurrentUser?.user_id){ 
-          notif.play(); //when User didn't interact with site the browser reject playing sound and throw exception Handle it later !
+          notif.play().then(() => {}).catch((error) => {
+            // Ignore the error 
+          });
         }
       if (ChatPartner){
         if ((data.message.sender_id === CurrentUser?.user_id && data.message.receiver_id === ChatPartner?.id) ||
