@@ -7,6 +7,8 @@ import useAuth from "../../hooks/useAuth";
 import { CurrentUserContext } from "./usehooks/ChatContext.js";
 import { clientSocketContext } from "./usehooks/ChatContext.js";
 import receivedmsgsound from "./ChatAssets/receivemsgnotif.mp3"
+import { useLocation } from 'react-router-dom';
+
 
 
 export const conversationMsgContext = createContext();
@@ -35,6 +37,7 @@ const Chat = () => {
   const CurrentUser = useContext(CurrentUserContext);
   const [sendMessage, setSendMessage] = useState(0);
   const [ChatPartner, setChatPartner] = useState(null)
+  const location = useLocation();
 
   const  updateUnreadMsgs = (message) =>{
     if (message.receiver_id === CurrentUser?.user_id && message.receiver_id !== message.sender_id){
@@ -56,7 +59,6 @@ const Chat = () => {
   if (clientSocket) {
   clientSocket.onmessage = (event) => {
     const data = JSON.parse(event.data);
-    console.log(data.type)
     const notif = new Audio(receivedmsgsound);
     
     if (data.type === 'newchat.message'){
@@ -93,7 +95,6 @@ const Chat = () => {
       }
       
     if (data.type === "last.message"){
-      // console.log(da÷ta.message)
       let result = ChatList.filter((contact) =>{
         return (contact.id === data.message.sender_id) || (contact.id === data.message.receiver_id)
       })
@@ -129,6 +130,13 @@ const Chat = () => {
             }
           });
         });
+      }
+
+      if (data.type === "Pick_existed_conv"){
+        console.log(`Pick the Conversation With ${data.message.username}`)
+        // Here is the issue the Pickedusername change 
+        // but the chatlist is not yet setted because contact Section is not rendred !
+          setPickerUsername(data.message.username)
       }
   };
 }
@@ -189,9 +197,14 @@ const Chat = () => {
     };
     if (PickedUsername.length) {
       FetchMessagesSection();
-      clientSocket.send(JSON.stringify({ type: "_mark_msgs_asRead_",
-        messageData: {With: PickedUsername }}));
+      const PickedConversation = ChatList?.filter(contact => contact.username === PickedUsername)
+      // if I protect for PickedConversation this will make error's msgs will not mark_as_Read !
+      if (PickedConversation[0]?.unreadMessages){
+          clientSocket.send(JSON.stringify({ type: "_mark_msgs_asRead_",
+                                               messageData: {With: PickedUsername }}));
+        } 
     }
+    
     return () => {
       abortController.abort(); // Cancel pending fetch request on component unmount
     };

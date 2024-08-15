@@ -9,6 +9,7 @@ from .Serializers import __messageSerializer__ ,__user_serializer__
 from django.core.exceptions import ObjectDoesNotExist
 from dateutil.parser import parse
 from django.utils import timezone
+from django.db.models import Q
 
 
 class ChatConsumer(AsyncWebsocketConsumer):
@@ -32,6 +33,10 @@ class ChatConsumer(AsyncWebsocketConsumer):
     async def receive(self, text_data=None):
         self.extracted_msg = json.loads(text_data)
 
+        # 2 cases already Existing ChatList - Create new Conversation !
+        if (self.extracted_msg.get('type') == '_start_chat_'):
+            await self.start_chat()
+        
         if (self.extracted_msg.get('type') == 'Update_msgStatus'):
             await self.update_unique_msg_status()
         
@@ -40,6 +45,30 @@ class ChatConsumer(AsyncWebsocketConsumer):
         # add if users are blocked or not !
         if (self.extracted_msg.get('type') == 'newchat.message'):
             await self.Broadcast_newMsg()
+    async def start_chat(self):
+        Isconversation_exist = await self.get_record_if_exist()
+        if (Isconversation_exist):
+            await self.channel_layer.group_send(
+            f"room_{self.sender_id}",{
+                  'type': 'Pick_existed_conv',
+                  'message': self.extracted_msg.get('messageData')
+            }
+            )
+        else:
+            print('=-=-=- We never Talked=-=-=-')
+    
+    async def Pick_existed_conv(self, event):
+        await (self.send( text_data=json.dumps(event) ))
+        
+    @database_sync_to_async
+    def get_record_if_exist(self):
+        profil_Id = self.extracted_msg.get('messageData').get('user_id')
+        print('Profil user_id is :' +  str(profil_Id) + 'requester :' + str(self.sender_id))
+        totalRecord = message.objects.filter((Q(sender_id=profil_Id) & Q(receiver_id=self.sender_id)) |
+                                      (Q(sender_id=self.sender_id) & Q(receiver_id=profil_Id))).count()
+        if (totalRecord):
+            return True
+        return False
 
     async def processRead_Event(self, currentUserId, FriendUsername):
         try:

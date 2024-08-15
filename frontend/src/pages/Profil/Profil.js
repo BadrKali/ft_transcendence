@@ -46,13 +46,12 @@ const Profil = () => {
     return <div>{error}</div>;
   } 
 
-
   return (
     <div className='dashboard-contianer'>
        <div className='profil-icons'>
           <div className='profil-buttons'>
             <AddFriendUnfriendButton FriendId={userData.id} />
-            <ChatFriendButton />
+            <ChatFriendButton profilData={profilData}/>
             <ChallangefriendButton />
             <BlockUnblockButton blockedId={userData.id}/>
         </div>
