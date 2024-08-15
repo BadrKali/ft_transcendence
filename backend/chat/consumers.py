@@ -33,47 +33,14 @@ class ChatConsumer(AsyncWebsocketConsumer):
         self.extracted_msg = json.loads(text_data)
 
         if (self.extracted_msg.get('type') == 'Update_msgStatus'):
-            self.msgcontent = self.extracted_msg.get('messageData').get('content')
-            self.createdAt  = self.extracted_msg.get('messageData').get('created_at')
             await self.update_unique_msg_status()
         
         if (self.extracted_msg.get('type') == '_mark_msgs_asRead_'):
             await self.processRead_Event(self.sender_id, self.extracted_msg.get('messageData').get('With'))
         # add if users are blocked or not !
         if (self.extracted_msg.get('type') == 'newchat.message'):
-            self.receiver_id = self.extracted_msg.get('messageData').get('receiver_id')
-            await self.save_to_db();
-            try :
-                await (self.channel_layer.group_send)(
-                f'room_{self.receiver_id}',{
-                    'type': 'newchat.message',
-                    'message': self.extracted_msg.get('messageData')
-                }
-                )
-                if (self.receiver_id != self.extracted_msg.get('messageData').get('sender_id')):
-                    await (self.channel_layer.group_send)(
-                    f"room_{self.extracted_msg.get('messageData').get('sender_id')}",{
-                            'type': 'newchat.message',
-                            'message': self.extracted_msg.get('messageData')
-                     }
-                    )
-                    await (self.channel_layer.group_send)(
-                        f"room_{self.extracted_msg.get('messageData').get('sender_id')}",{
-                              'type': 'last.message',
-                            'message': self.extracted_msg.get('messageData')
-                        }
-                    )
-            # Trigger event last Message !
-                await (self.channel_layer.group_send)(
-                f'room_{self.receiver_id}',{
-                    'type': 'last.message',
-                    'message': self.extracted_msg.get('messageData')
-                }
-                )
-              
-            except Exception as e:
-                print(f"An error occurred: {e}")
-    
+            await self.Broadcast_newMsg()
+
     async def processRead_Event(self, currentUserId, FriendUsername):
         try:
             FriendId = await self.get_user_id(FriendUsername)
@@ -91,6 +58,40 @@ class ChatConsumer(AsyncWebsocketConsumer):
            }
         )
     
+    async def Broadcast_newMsg(self):
+        self.receiver_id = self.extracted_msg.get('messageData').get('receiver_id')
+        await self.save_to_db();
+        try :
+            await (self.channel_layer.group_send)(
+            f'room_{self.receiver_id}',{
+                'type': 'newchat.message',
+                'message': self.extracted_msg.get('messageData')
+            }
+            )
+            if (self.receiver_id != self.extracted_msg.get('messageData').get('sender_id')):
+                await (self.channel_layer.group_send)(
+                f"room_{self.extracted_msg.get('messageData').get('sender_id')}",{
+                        'type': 'newchat.message',
+                        'message': self.extracted_msg.get('messageData')
+                 }
+                )
+                await (self.channel_layer.group_send)(
+                    f"room_{self.extracted_msg.get('messageData').get('sender_id')}",{
+                          'type': 'last.message',
+                        'message': self.extracted_msg.get('messageData')
+                    }
+                )
+        # Trigger event last Message !
+            await (self.channel_layer.group_send)(
+            f'room_{self.receiver_id}',{
+                'type': 'last.message',
+                'message': self.extracted_msg.get('messageData')
+            }
+            )
+        except Exception as e:
+            print(f"An error occurred: {e}")
+    
+
     @database_sync_to_async
     def get_user_id(self, username):
         return User.objects.get(username=username).id
@@ -102,6 +103,8 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
     @database_sync_to_async
     def update_unique_msg_status(self):
+        self.msgcontent = self.extracted_msg.get('messageData').get('content')
+        self.createdAt  = self.extracted_msg.get('messageData').get('created_at')
         created_at = parse(self.createdAt)
         created_at = created_at.replace(microsecond=0)
         requiredMsg = message.objects.filter(content=self.msgcontent, created_at__second=created_at.second)
