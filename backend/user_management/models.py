@@ -101,3 +101,64 @@ class BlockedUsers(models.Model):
 
     def __str__(self):
         return f"{self.blocker} blocked {self.blocked}"
+
+
+class Tournament(models.Model):
+    tournament_creator = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    tournament_name = models.CharField(max_length=100)
+    tournament_prize = models.IntegerField(default=0) # khas n3amerha 3la 7ssab kola user dert haka gha for testing
+    tournament_map = models.CharField(max_length=100)
+    created_at = models.DateTimeField(auto_now_add=True) 
+    tournament_date = models.DateTimeField(auto_now_add=True) # hadi f ina date tournament hadi khasha t3awerd
+    tournament_status = models.BooleanField(default=False) # hadi ghadi tbadelha b True lma ykono les places kamline
+    tournament_stage = models.CharField(max_length=100, default="semi-finals") # hadi f ina stage wasla tournament
+    tournament_participants = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='tournament_participants')
+
+    def assign_tournament_prize(self):
+        print(self.tournament_creator.player.rank)
+        if self.tournament_creator.player.rank == 'BRONZE':
+            self.tournament_prize = 2000
+        elif self.tournament_creator.rank == 'SILVER':
+            self.tournament_prize = 4000
+        elif self.tournament_creator.rank == 'GOLD':
+            self.tournament_prize = 6000
+
+    def assign_tournament_stage(self):
+        #mazal nbadloha 3la hssab 4
+        if self.tournament_participants.count() == 8:
+            self.tournament_stage = 'QUARTER FINALS'
+        elif self.tournament_participants.count() == 4:
+            self.tournament_stage = 'SEMI FINALS'
+        elif self.tournament_participants.count() == 2:
+            self.tournament_stage = 'FINALS'
+        else:
+            self.tournament_stage = 'GROUP STAGE'
+
+    def save(self, *args, **kwargs):
+        self.assign_tournament_prize()
+        super().save(*args, **kwargs)
+    def __str__(self):
+        return self.tournament_name
+
+
+class TournamentInvitation(models.Model):
+    tournament = models.ForeignKey(Tournament, on_delete=models.CASCADE)
+    player = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    invitation_status = models.BooleanField(default=False)
+    invitation_date = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.player} invited to {self.tournament}"
+
+#this to organize who is gonna play aginst who
+#the nullable field jus temp 
+class TournamentParticipants(models.Model):
+    tournament = models.ForeignKey(Tournament, on_delete=models.CASCADE)
+    player1 = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='player1', null=True, blank=True)
+    player2 = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='player2', null=True, blank=True)
+
+    def __str__(self):
+        return f"{self.player1} vs {self.player2} in {self.tournament}"
+
+    
+

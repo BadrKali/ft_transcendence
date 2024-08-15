@@ -21,6 +21,7 @@ import AppLayout from "./App";
 import RealTimeProvider from "./context/RealTimeProvider";
 import { SocketClientProvider } from "./pages/Chat/usehooks/ChatContext";
 import { CurrentUserProvider } from "./pages/Chat/usehooks/ChatContext";
+import Invite from './pages/PingPongGame/Invite/Invite';
 
 
 const routes = [
@@ -54,9 +55,10 @@ const routes = [
       },
     ],
   },
-  { path: "bot-game", element: <Bot /> },
-  { path: "local-game", element: <LocalGame /> },
-  { path: "random-game", element: <Random /> },
+  {path: 'bot-game', element: <Bot />},
+  {path: 'local-game', element: <LocalGame />},
+  {path: 'random-game', element: <Random/>},
+  {path: 'invite-game', element: <Invite/>},
 ];
 
 const router = createBrowserRouter(routes);

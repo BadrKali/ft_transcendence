@@ -21,6 +21,8 @@ from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
 from django.http import HttpResponseForbidden
 from game.models import UserAchievement
+from .models import Tournament, TournamentInvitation
+from .serializers import TournamentSerializer, TournamentCreateSerializer , TournamentInvitationSerializer
 
 
 class FriendRequestManagementView(APIView):
@@ -138,7 +140,6 @@ class FriendRequestResponse(APIView):
                 title='Social Butterfly',
                 description='Have more than 5 friends.',
             )
-
             channel_layer = get_channel_layer()
             async_to_sync(channel_layer.group_send)(
                 f'notifications_{user.id}',
@@ -208,72 +209,6 @@ class CurrentFriendsListView(generics.ListAPIView):
     def get_queryset(self):
         return Friendship.objects.filter(player=self.request.user)
 
-
-
-
-# class CreateFriendshipView(APIView):
-#     def post(self, request, friend_id):
-#         player = request.user  
-#         friend = get_object_or_404(User, id=friend_id) 
-        
-#         friendship = Friendship(player=player, friend=friend) 
-#         try:
-#             friendship.full_clean()  
-#             friendship.save()
-#             return Response({"message": "Friendship created successfully."}, status=status.HTTP_201_CREATED)
-#         except ValidationError as e:
-#             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
-
-
-# class DeleteFriendshipView(APIView):
-
-#     def delete(self, request, player_id, friend_id):
-#         try:
-#             friendship = Friendship.objects.get(player_id=player_id, friend_id=friend_id)
-#             reverse_friendship = Friendship.objects.get(player_id=friend_id, friend_id=player_id)
-            
-#             friendship.delete()
-#             reverse_friendship.delete()
-            
-#             return Response({"message": "Friendship deleted successfully."}, status=status.HTTP_202_ACCEPTED)
-#         except Friendship.DoesNotExist:
-#             return Response({"error": "Friendship does not exist."}, status=status.HTTP_404_NOT_FOUND)
-
-
-# class FriendsListView(generics.ListAPIView):
-#     serializer_class = FriendshipSerializer
-#     permission_classes = [IsAuthenticated]
-
-#     def get_queryset(self):
-#         player_id = self.kwargs['player_id']
-#         return Friendship.objects.filter(player_id=player_id)
-
-# class BlockFriendView(APIView):
-#     def post(self, request, player_id, friend_id):
-#         player = get_object_or_404(Player, id=player_id)
-#         friend = get_object_or_404(Player, id=friend_id)
-#         try:
-#             friendship = Friendship.objects.get(player=player, friend=friend)
-#             friendship.blocked = True
-#             friendship.save()
-#             return Response({'status': 'friend blocked'}, status=status.HTTP_200_OK)
-#         except Friendship.DoesNotExist:
-#             return Response({'error': 'friendship does not exist'}, status=status.HTTP_404_NOT_FOUND)
-        
-
-# class UnblockFriendView(APIView):
-#     def post(self, request,player_id, friend_id):
-#         player = get_object_or_404(Player, id=player_id)
-#         friend = get_object_or_404(Player, id=friend_id)
-#         try:
-
-#             friendship = Friendship.objects.get(player=player, friend=friend)
-#             friendship.blocked = False
-#             friendship.save()
-#             return Response({'status': 'friend unblocked'}, status=status.HTTP_200_OK)
-#         except Friendship.DoesNotExist:
-#             return Response({'error': 'friendship does not exist'}, status=status.HTTP_404_NOT_FOUND)
-
  
 class PlayerView(APIView):
     def get(self, request):
@@ -281,15 +216,7 @@ class PlayerView(APIView):
         player = get_object_or_404(Player, user_id=player_id)
         serializer = PlayerSerializer(player)
         return(Response(serializer.data, status=status.HTTP_200_OK))
-    # def patch(self, request):
-    #     player_id  = request.user.id
-    #     player = get_object_or_404(Player, user_id=player_id)
-    #     serializer = PlayerSerializer(player, data=request.data, partial=True)
-    #     if serializer.is_valid():
-    #         serializer.save()
-    #         return Response({"message" : "sir 3la lah you can do it"}, status=status.HTTP_200_OK)
-    #     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
+    
 class OtherPlayerView(APIView):
     def get(self, request, player_id):
         requesting_user = request.user
@@ -320,13 +247,6 @@ class SearchAPIView(APIView):
             serializer = CurrentUserSerializer(results, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response({"results": []}, status=status.HTTP_200_OK)
-    
-
-
-
-
-
-
 
 
 class NotificationListView(APIView):
@@ -342,3 +262,64 @@ class ListFriendsView(APIView):
         friends = [friendship.friend if friendship.player == current_user else friendship.player for friendship in friendships]
         serializer = CurrentUserSerializer(friends, many=True)
         return Response(serializer.data)
+    
+
+
+
+class TournamentsManagementView(APIView):
+    def get(self, request):
+        tournament = Tournament.objects.filter(tournament_participants=request.user)
+        if tournament:
+            serializer = TournamentSerializer(tournament)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        else:
+            # checki wach nrado empty object wla 404 f status code 
+            return Response({}, status=status.HTTP_200_OK)
+
+    def post(self, request):
+        serializer = TournamentCreateSerializer(data=request.data, context={'request': request})
+        if serializer.is_valid():
+            invited_users = serializer.validated_data.pop('invitedUsers', [])
+            tournament = Tournament.objects.create(tournament_creator=request.user, **serializer.validated_data)
+            tournament.tournament_participants.add(self.request.user)
+            for user_id in invited_users:
+                user = get_object_or_404(User, id=user_id)
+                TournamentInvitation.objects.create(tournament=tournament, player=user)
+                channel_layer = get_channel_layer()
+                async_to_sync(channel_layer.group_send)(
+                    f'notifications_{user_id}',
+                    {
+                        'type': 'notification_message',
+                        'message': 'you have been invited to a tournament'
+                    }
+                )
+            return Response({'message': 'Tournament created successfully'}, status=status.HTTP_201_CREATED)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        
+
+class TournamentInvitationView(APIView):
+    def get(self, request):
+        invitation = get_object_or_404(TournamentInvitation, player=request.user)
+        serializer = TournamentInvitationSerializer(invitation)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def patch(self, request, tournament_id):
+        tournament = get_object_or_404(Tournament, id=tournament_id)
+        player = request.user
+        invitation = get_object_or_404(TournamentInvitation, tournament=tournament, player=player)
+        action = request.data.get('status')
+        if action not in ['accept', 'reject']:
+            return Response({'error': 'Invalid action. Choose "accept" or "reject".'}, status=status.HTTP_400_BAD_REQUEST)
+        if action == 'accept':
+            tournament.tournament_participants.add(player)
+            if tournament.tournament_participants.count() == 4:
+                tournament.tournament_status = True
+                tournament.assign_tournament_stage()
+                tournament.save()
+            invitation.delete()
+            return Response({'message': 'Invitation accepted.'}, status=status.HTTP_200_OK)
+        elif action == 'reject':
+            invitation.delete()
+            return Response({'message': 'Invitation rejected.'}, status=status.HTTP_200_OK)
+    

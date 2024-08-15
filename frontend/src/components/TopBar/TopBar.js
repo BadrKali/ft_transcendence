@@ -60,15 +60,16 @@ const TopBar = () => {
   }
 
   const handleAccept = (id, type) => {
-      handleClose();
-      let url = `${BACKEND_URL}/user/friends-request/${id}/response/`;
-      let body = JSON.stringify({ 'status': 'accept' });
-  
-      if (type === 'Game Challenge') {
-          url = `${BACKEND_URL}/api/game/game-challenges/${id}/response`;
-          body = JSON.stringify({ 'status': 'accepted' });
-      }
-      fetch(url, {
+    handleClose();
+    let url = `${BACKEND_URL}/user/friends-request/${id}/response/`;
+    let body = JSON.stringify({ 'status': 'accept' });
+
+    if (type === 'Game Challenge') {
+        url = `${BACKEND_URL}/api/game/game-challenges/${id}/response/`;
+        body = JSON.stringify({ 'status': 'accepted' });
+    }
+
+    fetch(url, {
         method: 'PATCH',
         headers: {
             'Content-Type': 'application/json',
@@ -83,18 +84,25 @@ const TopBar = () => {
         return response.json();
     })
     .then(data => {
-        console.log('Friend request accepted:', data);
-        SuccessToast('Friend request accepted');
-        // alert('Friend request accepted');
+        console.log('Game challenge accepted:', data);
+        SuccessToast('Game challenge accepted');
     })
     .catch(error => {
-        console.error('Error accepting friend request:', error);
-        ErrorToast('Error accepting friend request');
-        // alert('Error accepting friend request');
+        console.error('Error accepting game challenge:', error);
+        ErrorToast('Error accepting game challenge');
     });
-  };
+    // Send a Response to the oppenent
+    fetch(`${BACKEND_URL}/api/game/game-response/${id}/`, {
+      method: 'POST',
+      headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${auth.accessToken}`
+      },
+      body: body
+  });
+};
 
-  const handleReject = (id, type) => {
+const handleReject = (id, type) => {
     handleClose();
     let url = `${BACKEND_URL}/user/friends-request/${id}/response/`;
     let body = JSON.stringify({ 'status': 'reject' });
@@ -105,29 +113,36 @@ const TopBar = () => {
     }
 
     fetch(url, {
-      method: 'PATCH',
+        method: 'PATCH',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${auth.accessToken}`
+        },
+        body: body
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return response.json();
+    })
+    .then(data => {
+        console.log('Game challenge rejected:', data);
+        SuccessToast('Game challenge rejected');
+    })
+    .catch(error => {
+        console.error('Error rejecting game challenge:', error);
+        ErrorToast('Error rejecting game challenge');
+    });
+    // Send a Response to the oppenent
+    fetch(`${BACKEND_URL}/api/game/game-response/${id}/`, {
+      method: 'POST',
       headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${auth.accessToken}`
       },
       body: body
-      })
-      .then(response => {
-          if (!response.ok) {
-              throw new Error('Network response was not ok');
-          }
-          return response.json();
-      })
-      .then(data => {
-          console.log('Friend request rejected:', data);
-          SuccessToast('Friend request rejected');
-          // alert('Friend request rejected');
-      })
-      .catch(error => {
-          console.error('Error rejecting friend request:', error);
-          ErrorToast('Error rejecting friend request');
-          // alert('Error rejecting friend request');
-      });
+  });
   };
 
   const handleIconClick = async () => {

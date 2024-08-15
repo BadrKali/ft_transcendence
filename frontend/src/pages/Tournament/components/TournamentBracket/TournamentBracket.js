@@ -13,7 +13,7 @@ function TournamentBracket() {
 
   return (
     <div className='bracket-container'>
-        <div className="first-eight-players">
+        {/* <div className="first-eight-players">
             <div className="player-items">
                 {EightPlayer.map((players) => (
                   <TournamentsItem key={players.id} players={players}/>
@@ -32,7 +32,7 @@ function TournamentBracket() {
                     </div>
                   ))}
             </div>
-        </div>
+        </div> */}
         <div className="second-four-player">
             <div className="player-items">
                   {FourPlayer.map((players) => (
