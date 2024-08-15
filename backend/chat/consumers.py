@@ -106,7 +106,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
         created_at = created_at.replace(microsecond=0)
         requiredMsg = message.objects.filter(content=self.msgcontent, created_at__second=created_at.second)
         requiredMsg.update(seen=True)
-        # print(requiredMsg)
+        print(requiredMsg)
 
 
     async def msgs_areReaded(self, event):

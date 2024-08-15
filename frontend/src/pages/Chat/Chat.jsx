@@ -25,6 +25,7 @@ function reformeDate(datestr) {
   return `${hours}:${minutes}`;
 }
 
+
 const Chat = () => {
   const [ChatList, setChatList] = useState(null);
   const [conversationMsgs, setconversationMsgs] = useState(null);
@@ -35,15 +36,33 @@ const Chat = () => {
   const [sendMessage, setSendMessage] = useState(0);
   const [ChatPartner, setChatPartner] = useState(null)
 
+  const  updateUnreadMsgs = (message) =>{
+    if (message.receiver_id === CurrentUser?.user_id && message.receiver_id !== message.sender_id){
+      setChatList(prevChatList => {
+        return prevChatList.map((contact) => {
+          if (contact.id === message.sender_id) {
+            return {        
+                ...contact,
+                unreadMessages: contact.unreadMessages + 1
+            };
+          } else {
+            return contact;
+          }
+        });
+      });
+    }
+}
+
   if (clientSocket) {
   clientSocket.onmessage = (event) => {
     const data = JSON.parse(event.data);
     const notif = new Audio(receivedmsgsound);
     
     if (data.type === 'newchat.message'){
-      // You are receiver you got notif so ! not your self too
+      // console.log(data.message)
+      // You are receiver you got notif sound! not your self too talk with your self .
       if (data.message.receiver_id === CurrentUser?.user_id && data.message.sender_id !== CurrentUser?.user_id){ 
-          notif.play();
+          notif.play(); //when User didn't interact with site the browser reject playing sound and throw exception Handle it later !
         }
       if (ChatPartner){
         if ((data.message.sender_id === CurrentUser?.user_id && data.message.receiver_id === ChatPartner?.id) ||
@@ -59,10 +78,19 @@ const Chat = () => {
               }
           setconversationMsgs(prevConversationMsgs => [...prevConversationMsgs, data.message]);
         }
+        else{
+          // console.log('There is ChatPartner but not required one !') // update unread ! there is a Chatpartner but not required one !
+          updateUnreadMsgs(data.message)
         }
-    }
+        }
+        else {
+          // console.log('Will Go and Update the unread messages with :=> ' + data.message.sender_id) // no Partner no conversation Selected
+          updateUnreadMsgs(data.message)
+      }
+      }
       
     if (data.type === "last.message"){
+      // console.log(da÷ta.message)
       let result = ChatList.filter((contact) =>{
         return (contact.id === data.message.sender_id) || (contact.id === data.message.receiver_id)
       })
@@ -86,12 +114,9 @@ const Chat = () => {
 
     if (data.type === "msgs.areReaded"){
         // console.log(` You readed all msg With `, data.message.all_readed_From)
-        const contactToUpdate = ChatList.filter((contact) =>{
-          return (contact.username === data.message.all_readed_From)
-        })
         setChatList(prevChatList => {
           return prevChatList.map((contact) => {
-            if (contact.username === contactToUpdate[0].username) {
+            if (contact.username === data.message.all_readed_From) {
               return {        
                   ...contact,
                   unreadMessages : 0
@@ -101,8 +126,6 @@ const Chat = () => {
             }
           });
         });
-
-
       }
   };
 }
