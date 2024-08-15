@@ -50,7 +50,7 @@ const Chat = () => {
           (data.message.sender_id === ChatPartner?.id && data.message.receiver_id === CurrentUser?.user_id)){
             if (data.message.receiver_id === CurrentUser.user_id){
                 data.message.seen = true;
-                console.log(data.message)
+                // console.log(data.message)
                 // clientSocket.send Stored on Db as unread but being on a conv is should be setted as read !
                 clientSocket.send(JSON.stringify({type : 'Update_msgStatus', messageData : {
                   content : data.message.content,
@@ -85,7 +85,7 @@ const Chat = () => {
     }
 
     if (data.type === "msgs.areReaded"){
-        console.log(` You readed all msg With `, data.message.all_readed_From)
+        // console.log(` You readed all msg With `, data.message.all_readed_From)
         const contactToUpdate = ChatList.filter((contact) =>{
           return (contact.username === data.message.all_readed_From)
         })
