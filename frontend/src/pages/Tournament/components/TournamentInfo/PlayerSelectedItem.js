@@ -6,7 +6,7 @@ function PlayerSelectedItem({player}) {
   return (
     <div className='slectedPlayerItem'>
         <div className='imagePlayerSelected'>
-            <img src={player.image}/>
+            <img src={`http://127.0.0.1:8000${player.image}`}/>
         </div>
         <p>{player.label}</p>
     </div>

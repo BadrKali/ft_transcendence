@@ -17,6 +17,7 @@ export const RealTimeProvider = ({ children }) => {
     const { auth } = useAuth();
     const [hasNotification, setHasNotification] = useState(false);
     const [gameChallenge, setGameChallenge] = useState(null);
+
     const clearNotification = () => {
         setHasNotification(false);
     };
@@ -43,6 +44,7 @@ export const RealTimeProvider = ({ children }) => {
                 }));
             } else if (dataFromServer.type === 'notification') {
                 setHasNotification(true);
+                console.log(dataFromServer)
                 // InfoToast("You have a new notification"); //add it here
             }
         };
