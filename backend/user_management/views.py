@@ -23,7 +23,7 @@ from django.http import HttpResponseForbidden
 from game.models import UserAchievement
 from .models import Tournament, TournamentInvitation, TournamentParticipants
 from .serializers import TournamentSerializer, TournamentCreateSerializer , TournamentInvitationSerializer, TournamentParticipantsSerializer
-
+from .taskManager import *
 
 class FriendRequestManagementView(APIView):
     
@@ -302,6 +302,14 @@ class TournamentsManagementView(APIView):
             return Response({'message': 'Tournament created successfully'}, status=status.HTTP_201_CREATED)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request):
+        tournament = Tournament.objects.filter(tournament_creator=request.user).first()
+        if tournament:
+            tournament.delete()
+            return Response({'message': 'Tournament deleted successfully'}, status=status.HTTP_200_OK)
+        else:
+            return Response({'error': 'Tournament not found.'}, status=status.HTTP_404_NOT_FOUND)
         
 
 class TournamentInvitationView(APIView):
