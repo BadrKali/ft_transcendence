@@ -16,7 +16,7 @@ class FriendshipSerializer(serializers.ModelSerializer):
     def get_friend(self, obj):
         return PlayerSerializer(obj.friend).data
     
-    
+
 class PlayerSerializer(serializers.ModelSerializer):
     username = serializers.CharField(source='user.username')
     avatar = serializers.ImageField(source='user.avatar')
@@ -62,6 +62,8 @@ class NotificationSerializer(serializers.ModelSerializer):
 
 
 class TournamentSerializer(serializers.ModelSerializer):
+    tournament_participants = CurrentUserSerializer(many=True, read_only=True)
+
     class Meta:
         model = Tournament
         fields = [
@@ -80,7 +82,13 @@ class TournamentSerializer(serializers.ModelSerializer):
 class TournamentInvitationSerializer(serializers.ModelSerializer):
     class Meta:
         model = TournamentInvitation
-        fields = ['id', 'tournament', 'player', 'invitation_status', 'invitation_date']
+        fields = [
+            'id', 
+            'tournament', 
+            'player', 
+            'invitation_status', 
+            'invitation_date'
+        ]
 
 class TournamentCreateSerializer(serializers.ModelSerializer):
     invitedUsers = serializers.ListField(child=serializers.IntegerField())
