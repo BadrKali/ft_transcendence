@@ -194,7 +194,8 @@ class BlockUnblockView(APIView):
         blocker = request.user
         if blocked_id:
             blocked = get_object_or_404(User, id=blocked_id)
-            is_blocked = BlockedUsers.objects.filter(Q(blocker=blocker, blocked=blocked)).exists()
+            #i edit this to check both ways if you blocked or blocked you
+            is_blocked = BlockedUsers.objects.filter(Q(blocker=blocker, blocked=blocked) | Q(blocker=blocked, blocked=blocker)).exists()
             return Response({'is_blocked': is_blocked}, status=status.HTTP_200_OK)
         else:
             blocked_users = BlockedUsers.objects.filter(blocker=blocker).select_related('blocked')
@@ -285,6 +286,11 @@ class TournamentsManagementView(APIView):
             for user_id in invited_users:
                 user = get_object_or_404(User, id=user_id)
                 TournamentInvitation.objects.create(tournament=tournament, player=user)
+                Notification.objects.create(
+                    recipient=user,
+                    sender=request.user,
+                    message='you have been invited to a tournament'
+                )
                 channel_layer = get_channel_layer()
                 async_to_sync(channel_layer.group_send)(
                     f'notifications_{user_id}',
