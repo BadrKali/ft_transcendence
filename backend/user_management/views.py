@@ -23,7 +23,7 @@ from django.http import HttpResponseForbidden
 from game.models import UserAchievement
 from .models import Tournament, TournamentInvitation, TournamentParticipants
 from .serializers import TournamentSerializer, TournamentCreateSerializer , TournamentInvitationSerializer, TournamentParticipantsSerializer
-from .taskManager import *
+# from .taskManager import *
 
 class FriendRequestManagementView(APIView):
     

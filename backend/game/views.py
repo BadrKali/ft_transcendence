@@ -7,8 +7,8 @@ from rest_framework import status
 from rest_framework.views import APIView
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
-from .models import GameHistory, Achievement, UserAchievement, GameSettings, GameRoom, GameChallenge
-from .serializers import GameHistorySerializer, AchievementSerializer, UserAchievementSerializer, GameSettingsSerializer, GameRoomSerializer
+from .models import GameHistory, Achievement, UserAchievement, GameSettings, GameRoom, GameChallenge, InviteGameRoom
+from .serializers import GameHistorySerializer, AchievementSerializer, UserAchievementSerializer, GameSettingsSerializer, GameRoomSerializer, InviteGameRoomSerializer
 from user_management.models import Player, Notification
 from authentication .models import User
 from django.shortcuts import get_object_or_404
@@ -99,14 +99,26 @@ class GameRoomView(APIView):
 class SendChallengeView(APIView):
     def post(self, request):
         player_receiver_id = request.data.get('player_receiver_id')
+        
         if not player_receiver_id:
             return Response({'error': 'player_receiver_id is required.'}, status=status.HTTP_400_BAD_REQUEST)
+        
         try:
             player_receiver = get_object_or_404(User, id=player_receiver_id)
             player_sender = request.user
-            friend_request = GameChallenge(player_sender=player_sender, player_receiver=player_receiver)
-            friend_request.save()
-            Notification.objects.create(
+            player1, created= Player.objects.get_or_create(user_id=request.user.id)
+            player2, created = Player.objects.get_or_create(user_id=player_receiver_id)
+            try:
+                invite_game_room, created = InviteGameRoom.objects.get_or_create(player1=player1, player2=player2)
+                game_challenge = GameChallenge.objects.create(
+                    player_sender=player_sender,
+                    player_receiver=player_receiver,
+                    invite_game_room=invite_game_room
+                )
+            except Exception as e:
+                print(f"Error creating InviteGameRoom: {e}")
+            print("DEBUG_______________--------++++++++++++")
+            Notification.objects.create (
                 recipient=player_receiver,
                 sender=player_sender,
                 message='has challenged you to a game!'
@@ -116,14 +128,18 @@ class SendChallengeView(APIView):
                 f'notifications_{player_receiver.id}',
                 {
                     'type': 'notification_match',
-                    'message': f'{player_sender.username} invite you to play a game.',
-                    'sender': request.user.id, 
+                    'message': f'{player_sender.username} has invited you to play a game.',
+                    'sender': player_sender.id, 
                 }
             )
+
             return Response({'message': 'Challenge sent successfully.'}, status=status.HTTP_201_CREATED)
 
         except User.DoesNotExist:
             return Response({'error': 'Player not found.'}, status=status.HTTP_404_NOT_FOUND)
+
+        except Player.DoesNotExist:
+            return Response({'error': 'Player instance not found for the sender or receiver.'}, status=status.HTTP_404_NOT_FOUND)
 
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
@@ -149,12 +165,19 @@ class GameChallengeResponse(APIView):
             game_challenge.status = 'A'
             game_challenge.save()
             game_challenge.delete()
+            invite_game_room = game_challenge.invite_game_room
+            invite_game_room.player2 = Player.objects.get(user=player_receiver)
+            invite_game_room.save()
+            print("InviteGameRoom is created")
             return Response({'message': 'Game challenge accepted.'}, status=status.HTTP_200_OK)
         
         elif action == 'rejected':
             game_challenge.status = 'D'
             game_challenge.save()
+            invite_game_room = game_challenge.invite_game_room
+            invite_game_room.delete()
             game_challenge.delete()
+            print(f"invite_game_room && game_challenge are deleted")
             return Response({'message': 'Game challenge rejected.'}, status=status.HTTP_200_OK)
 
 class GameInvitationResponse(APIView):
@@ -175,7 +198,19 @@ class GameInvitationResponse(APIView):
         async_to_sync(channel_layer.group_send)(
             f'notifications_{current_user.id}',
             {
-                'type': 'notification_message',
+                'type': 'join_game',
                 'message': message,
             }
         )
+        return Response({'message': 'Game challenge accepted.'}, status=status.HTTP_200_OK)
+    
+class InviteGameRoomView(APIView):
+    def get(self, request, room_id):
+        try:
+            room = InviteGameRoom.objects.get(id=room_id)
+            print(f"{room.player1}")
+            print(f"{room.player2}")
+            serializer = InviteGameRoomSerializer(room)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except InviteGameRoom.DoesNotExist:
+            return Response({"error": "Game room not found"}, status=status.HTTP_404_NOT_FOUND)

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import Underground from './UnderGround';
 import hell from '../../Game-assets/hell.png';
 import forest from '../../Game-assets/forest.png';
@@ -9,12 +9,14 @@ import GameMode from './GameMode';
 import axios from 'axios';
 import useAuth from "../../../../hooks/useAuth.js";
 
+
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
 
 const PingPong = () => {
     const { auth } = useAuth();
     const [selectedBackground, setSelectedBackground] = useState(null);
+
     const handleBackgroundSelect = (background) => {
         setSelectedBackground(background);
     };

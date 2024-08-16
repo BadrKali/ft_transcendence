@@ -17,6 +17,8 @@ export const RealTimeProvider = ({ children }) => {
     const { auth } = useAuth();
     const [hasNotification, setHasNotification] = useState(false);
     const [gameChallenge, setGameChallenge] = useState(null);
+    const [gameAccepted, setGameAccepted] = useState(false);
+    const [joinGame, setJoinGame] = useState(false);
     const clearNotification = () => {
         setHasNotification(false);
     };
@@ -33,6 +35,7 @@ export const RealTimeProvider = ({ children }) => {
 
         ws.onmessage = (message) => {
             const dataFromServer = JSON.parse(message.data);
+            console.log({dataFromServer});
             if (dataFromServer.type === 'match_notification') {
                 setGameChallenge(dataFromServer);
             } else if (dataFromServer.type === 'status_update') {
@@ -44,6 +47,9 @@ export const RealTimeProvider = ({ children }) => {
             } else if (dataFromServer.type === 'notification') {
                 setHasNotification(true);
                 // InfoToast("You have a new notification"); //add it here
+            } else if (dataFromServer.type === 'join_game') {
+                console.log("Joining Game From RealTimeProvider");
+                setJoinGame(true);
             }
         };
 
@@ -60,7 +66,7 @@ export const RealTimeProvider = ({ children }) => {
         };
     }, [auth.accessToken]);
 
-    const handleAccept = (id) => {
+    const handleAcceptGame = (id) => {
         setGameChallenge(null);
         let url = `${BACKEND_URL}/api/game/game-challenges/${id}/response/`;
         let body = JSON.stringify({ 'status': 'accepted' });
@@ -80,13 +86,21 @@ export const RealTimeProvider = ({ children }) => {
         })
         .then(data => {
             console.log('Game challenge accepted:', data);
-            SuccessToast('Game challenge accepted');
+            setGameAccepted(true);
         })
         .catch(error => {
             console.error('Error accepting game challenge:', error);
         });
+        fetch(`${BACKEND_URL}/api/game/game-response/${id}/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${auth.accessToken}`
+            },
+            body: body
+        })
     }
-    const handleReject = (id) => {
+    const handleRejectGame = (id) => {
         setGameChallenge(null);
         let url = `${BACKEND_URL}/api/game/game-challenges/${id}/response/`;
         let body = JSON.stringify({ 'status': 'rejected' });
@@ -113,16 +127,8 @@ export const RealTimeProvider = ({ children }) => {
         });
 }
 return (
-        <RealTimeContext.Provider value={{ setNotifications, notifications, friendsStatus, hasNotification, setHasNotification, clearNotification }}>
+        <RealTimeContext.Provider value={{ setNotifications, notifications, friendsStatus, hasNotification, setHasNotification, clearNotification, gameChallenge, handleAcceptGame, handleRejectGame, gameAccepted, joinGame, setGameAccepted, setJoinGame }}>
             {children}
-            {gameChallenge && (
-            <GameChallengeNotification 
-                notif={gameChallenge}
-                message={`${gameChallenge.message}`}
-                onAccept={handleAccept}
-                onReject={handleReject}
-            />
-        )}
             <ToastContainer />
         </RealTimeContext.Provider>
     );

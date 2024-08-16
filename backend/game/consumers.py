@@ -4,6 +4,8 @@ from channels.db import database_sync_to_async
 import json
 import asyncio
 import math
+from django.db.models import Q
+
 
 class GameState:
     # WINNING_SCORE = 2
@@ -47,7 +49,7 @@ class GameState:
 
         player1_username = await self.get_player_username(room.player1)
         player2_username = await self.get_player_username(room.player2)
-
+        # print("")
         player1 = {
             'username': player1_username,
             'id': 1,
@@ -197,6 +199,8 @@ class GameConsumer(AsyncWebsocketConsumer):
 
         if action == "random":
             await self.handle_random_action()
+        elif action == "invite":
+            await self.handle_invite_action()
         elif action == "player_movement":
             username = data.get('user')
             direction = data.get('direction')
@@ -214,6 +218,48 @@ class GameConsumer(AsyncWebsocketConsumer):
                 }
             }
         )
+    
+    async def handle_invite_action(self):
+        from .models import InviteGameRoom
+        try:
+            invite_game_room = await sync_to_async(
+                lambda: InviteGameRoom.objects.filter(
+                    Q(player1=self.player) | Q(player2=self.player)
+                ).first()
+            )()
+
+            if invite_game_room:
+                self.room_name = f"game_room_{invite_game_room.id}"
+                self.room_id = invite_game_room.id
+                self.room_group_name = self.room_name
+                self.channel_layer.group_add(self.room_group_name, self.channel_name)
+                await sync_to_async(invite_game_room.set_player_connected)(self.player)
+                await sync_to_async(invite_game_room.check_and_update_status)()
+                if not invite_game_room.is_waiting:
+                    self.game_state = game_state_manager.get_or_create_game_state(self.room_id)
+                    self.game_state.add_player("", invite_game_room)
+                    print("The game has started successfully.")
+                    await self.notify_players(invite_game_room)
+            else:
+                print("InviteGameRoom not found")
+        except Exception as e:
+            print(f"{e}")
+
+
+    @database_sync_to_async
+    def get_invite_state(self, room):
+        if room.player1 == self.player:
+            room.player1_connected = True
+            print("Player1 connected.")
+        elif room.player2 == self.player:
+            room.player2_connected = True
+            print("Player2 connected.")
+        if room.player1_connected and room.player2_connected:
+            print("Both players are ready to play.")
+            self.game_state = game_state_manager.get_or_create_game_state(self.room_id)
+            room.is_waiting = False
+        room.save()
+
 
     async def handle_random_action(self):
         player_str = await self.get_player_str()
@@ -225,7 +271,7 @@ class GameConsumer(AsyncWebsocketConsumer):
             asyncio.create_task(self.start_game_loop())
         else:
             await self.notify_waiting_player(room)
-
+        
     @database_sync_to_async
     def get_players(self, room):
         return room.player1, room.player2
@@ -267,6 +313,7 @@ class GameConsumer(AsyncWebsocketConsumer):
     @database_sync_to_async
     def get_player(self, user):
         from user_management.models import Player
+        print(f"{Player.objects.get(user=user)} ++++++++++++_________+_+_+_+_+___+)_+)_")
         return Player.objects.get(user=user)
 
     @database_sync_to_async
@@ -286,12 +333,12 @@ class GameConsumer(AsyncWebsocketConsumer):
             self.room_name = f"game_room_{room.id}"
             self.room_id = room.id
             self.game_state = game_state_manager.get_or_create_game_state(self.room_id)
-
         self.room_group_name = self.room_name
         await self.channel_layer.group_add(self.room_group_name, self.channel_name)
         return room
 
     async def notify_players(self, room):
+        print(f"{room} ROOOOOOOOOOOOM")
         message = {
             'type': 'game.start',
             'message': 'start_game',

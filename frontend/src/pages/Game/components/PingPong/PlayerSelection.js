@@ -4,11 +4,13 @@ import useAuth from '../../../../hooks/useAuth';
 import players from '../../Data';
 import defit from '../../Game-assets/defit.png';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const WS_BACKEND_URL = process.env.REACT_APP_WS_BACKEND_URL;
 
 const PlayerSelection = ({ onPlayerSelect, onCancel }) => {
+  const navigate = useNavigate();
   const { auth } = useAuth();
   const { data, isLoading, error } = useFetch(`${BACKEND_URL}/user/friends/list/`);
   const ws = useRef(null);
@@ -44,6 +46,7 @@ const PlayerSelection = ({ onPlayerSelect, onCancel }) => {
     } catch (error) {
       console.log("Failed to save game settings");
     }
+    navigate('/invite-game', { replace : true });
   };
 
   return (

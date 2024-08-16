@@ -19,7 +19,7 @@ import { SuccessToast } from '../ReactToastify/SuccessToast'
 import { ErrorToast } from '../ReactToastify/ErrorToast'
 import { InfoToast } from '../ReactToastify/InfoToast'
 import LanguageSelector from './LanguageSelector'
-
+import GameChallengeNotification from '../Notification/GameChallengeNotification'
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
@@ -41,6 +41,7 @@ const TopBar = () => {
   const [modalOpen, setModalOpen] = useState(false);
   const [modalOpenBlocked, setModalOpenBlocked] = useState(false);
   const [selectedNotification, setSelectedNotification] = useState(null);
+  const {gameChallenge, handleAcceptGame, handleRejectGame, gameAccepted, joinGame, setGameAccepted} = useContext(RealTimeContext);
 
   const handleNotificationClick = (notif) => {
     setSelectedNotification(notif);
@@ -50,6 +51,13 @@ const TopBar = () => {
   const handleListBlockedClick = () => {
     setModalOpenBlocked(true);
   }
+
+  useEffect(() => {
+    if (gameAccepted) {
+      setGameAccepted(false);
+      navigate('/invite-game', { replace:true });
+    }
+  }, [gameAccepted, navigate]);
 
   const handleClose = () => {
     setModalOpen(false);
@@ -241,8 +249,17 @@ const handleReject = (id, type) => {
     setNotif(!showNotif);
     clearNotification();
   };
+  
   return (
     <div className='topbar-container'>
+      {gameChallenge && (
+            <GameChallengeNotification 
+                notif={gameChallenge}
+                message={`${gameChallenge.message}`}
+                onAccept={handleAcceptGame}
+                onReject={handleRejectGame}
+            />
+      )}
       <div className='topbar-search'>
         <Icon name='search' className='topbar-search-icon'/>
         <input placeholder='Search' value={query}  type='text' onChange={handleChange}/>
