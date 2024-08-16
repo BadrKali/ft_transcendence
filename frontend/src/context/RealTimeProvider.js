@@ -46,6 +46,7 @@ export const RealTimeProvider = ({ children }) => {
                 }));
             } else if (dataFromServer.type === 'notification') {
                 setHasNotification(true);
+                console.log(dataFromServer)
                 // InfoToast("You have a new notification"); //add it here
             } else if (dataFromServer.type === 'join_game') {
                 console.log("Joining Game From RealTimeProvider");

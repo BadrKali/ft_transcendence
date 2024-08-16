@@ -289,7 +289,7 @@ class TournamentsManagementView(APIView):
                 Notification.objects.create(
                     recipient=user,
                     sender=request.user,
-                    message='you have been invited to a tournament'
+                    message='invited you to a tournament'
                 )
                 channel_layer = get_channel_layer()
                 async_to_sync(channel_layer.group_send)(

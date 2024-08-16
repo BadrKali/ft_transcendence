@@ -27,9 +27,6 @@ function Friends() {
     }
   }, [data]);
 
-  useEffect (() => {
-    console.log(listFriend)
-  }, [listFriend])
 
   
   function handleItemClick(list) {
