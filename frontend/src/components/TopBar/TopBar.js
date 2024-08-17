@@ -67,7 +67,7 @@ const TopBar = () => {
     setModalOpenBlocked(false)
   }
 
-  const handleAccept = (id, type) => {
+  const handleAccept = async (id, type) => {
     handleClose();
     let url = `${BACKEND_URL}/user/friends-request/${id}/response/`;
     let body = JSON.stringify({ 'status': 'accept' });
@@ -75,6 +75,32 @@ const TopBar = () => {
     if (type === 'Game Challenge') {
         url = `${BACKEND_URL}/api/game/game-challenges/${id}/response/`;
         body = JSON.stringify({ 'status': 'accepted' });
+    }else if ( type == 'Tournament'){
+        try {
+          const response = await fetch(`${BACKEND_URL}/user/tournament/invitations/`, {
+              method: 'GET',
+              headers: {
+                  'Content-Type': 'application/json',
+                  'Authorization': `Bearer ${auth.accessToken}`
+              }
+          });
+
+          if (!response.ok) {
+              throw new Error('Failed to fetch tournament details');
+          }
+
+          const data = await response.json();
+          const tournamentId = data.tournament;
+          console.log(data);
+
+          url = `${BACKEND_URL}/user/tournament/invitations/${tournamentId}`;
+          body = JSON.stringify({ 'status': 'accept' });
+
+      } catch (error) {
+          console.error('Error fetching tournament details:', error);
+          ErrorToast('Error fetching tournament details');
+          return;
+      }
     }
 
     fetch(url, {
@@ -100,17 +126,17 @@ const TopBar = () => {
         ErrorToast('Error accepting game challenge');
     });
     // Send a Response to the oppenent
-    fetch(`${BACKEND_URL}/api/game/game-response/${id}/`, {
-      method: 'POST',
-      headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${auth.accessToken}`
-      },
-      body: body
-  });
+  //   fetch(`${BACKEND_URL}/api/game/game-response/${id}/`, {
+  //     method: 'POST',
+  //     headers: {
+  //         'Content-Type': 'application/json',
+  //         'Authorization': `Bearer ${auth.accessToken}`
+  //     },
+  //     body: body
+  // });
 };
 
-const handleReject = (id, type) => {
+const handleReject = async (id, type) => {
     handleClose();
     let url = `${BACKEND_URL}/user/friends-request/${id}/response/`;
     let body = JSON.stringify({ 'status': 'reject' });
@@ -119,6 +145,34 @@ const handleReject = (id, type) => {
         url = `${BACKEND_URL}/api/game/game-challenges/${id}/response/`;
         body = JSON.stringify({ 'status': 'rejected' });
     }
+    else if (type === 'Tournament') {
+      try {
+
+          const response =  await fetch(`${BACKEND_URL}/user/tournament/invitations/`, {
+              method: 'GET',
+              headers: {
+                  'Content-Type': 'application/json',
+                  'Authorization': `Bearer ${auth.accessToken}`
+              }
+          });
+
+          if (!response.ok) {
+              throw new Error('Failed to fetch tournament details');
+          }
+
+          const data = await response.json();
+          const tournamentId = data.tournament;
+
+
+          url = `${BACKEND_URL}/user/tournament/invitations/${tournamentId}`;
+          body = JSON.stringify({ 'status': 'reject' });
+
+      } catch (error) {
+          console.error('Error fetching tournament details:', error);
+          ErrorToast('Error fetching tournament details');
+          return;
+      }
+  }
 
     fetch(url, {
         method: 'PATCH',
@@ -143,14 +197,14 @@ const handleReject = (id, type) => {
         ErrorToast('Error rejecting game challenge');
     });
     // Send a Response to the oppenent
-    fetch(`${BACKEND_URL}/api/game/game-response/${id}/`, {
-      method: 'POST',
-      headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${auth.accessToken}`
-      },
-      body: body
-  });
+  //   fetch(`${BACKEND_URL}/api/game/game-response/${id}/`, {
+  //     method: 'POST',
+  //     headers: {
+  //         'Content-Type': 'application/json',
+  //         'Authorization': `Bearer ${auth.accessToken}`
+  //     },
+  //     body: body
+  // });
   };
 
   const handleIconClick = async () => {

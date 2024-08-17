@@ -65,6 +65,9 @@ const NotificationPopup = ({ isOpen, onClose, notif, onAccept, onReject })=> {
     console.log(notif.message)
     if (notif.message === 'has challenged you to a game!') {
       setTypeNotif('Game Challenge');
+    }
+    else if( notif.message === 'invited you to a tournament'){
+      setTypeNotif('Tournament');
     } else if (notif.message === 'You Got a new Achievment'){
       setTypeNotif('Achievement')
     } 

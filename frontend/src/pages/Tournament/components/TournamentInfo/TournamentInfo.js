@@ -16,13 +16,13 @@ const TournamentInfo = () => {
   const [joinedTournament, setJoinedTournament] = useState(false);
   const {data ,isLoading, error} = useFetch(`${BACKEND_URL}/user/tournament/`)
 
-  // useEffect (() => {
-  //   if (data && Object.keys(data).length > 0)
-  //       setJoinedTournament(true)
-  //   else
-  //       setJoinedTournament(false)
+  useEffect (() => {
+    if (data && Object.keys(data).length > 0)
+        setJoinedTournament(true)
+    else
+        setJoinedTournament(false)
 
-  // },[data])
+  },[data])
   return (
     <div className='overView-container'>
 
