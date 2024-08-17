@@ -1,5 +1,6 @@
 import React from 'react'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import useFetch from '../../../../hooks/useFetch'
 import Icon from '../../../../assets/Icon/icons'
 import { avatars } from '../../../../assets/assets'
 import './joinedTournament.css'
@@ -7,23 +8,50 @@ import { CircularProgressbar, buildStyles } from 'react-circular-progressbar';
 import 'react-circular-progressbar/dist/styles.css';
 import MainButton from '../../../../components/MainButton/MainButton'
 
-function JoinedTournament() {
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
+
+
+function JoinedTournament({TournamentData}) {
     const [joinedOwner, setjoinedOwner] = useState(true);
+    const [profilData, setProfilData] = useState([]);
+    const date = new Date(TournamentData.tournament_date);
+    const {data ,isLoading, error} = useFetch(`${BACKEND_URL}/user/stats/${TournamentData.tournament_creator}`)
+
+
+    const formattedDate = date.toLocaleDateString('en-GB', {
+        day: '2-digit',
+        month: 'short',
+    });
+
+    const formattedTime = date.toLocaleTimeString('en-GB', {
+        hour: '2-digit',
+        minute: '2-digit',
+    });
+
+    useEffect(() => {
+        if (data) {
+          setProfilData(data);
+        }
+      }, [data]);
+      
+    console.log(TournamentData)
+
   return (
     <div className="joined-tournament">
-       <h1 className='tournament-title'>You are in : Titel of Tournament</h1>
-        <div  className='tournament-info-container'>
+       <h1 className='tournament-title'>{TournamentData.tournament_name}</h1>
+       
+       <div className={`tournament-info-container ${TournamentData.tournament_map}`}>
             <div className='tournament-info-item'>
                 <Icon name='chump_cup' className="tournament-info-icon"/>
                 <div className='tournament-info-item-txt'>
-                    <p>20 000 coin</p>
+                    <p>{TournamentData.tournament_prize}</p>
                     <span>Total Prize Pool</span>
                 </div>
             </div>
             <div className='tournament-info-item'>
                 <Icon name='calendar' className="tournament-info-icon"/>
                 <div className='tournament-info-item-txt'>
-                    <p>30 Sep  18:00</p>
+                    <p>{`${formattedDate} ${formattedTime}`}</p>
                     <span>Tournament Start</span>
                 </div>
             </div>
@@ -38,17 +66,19 @@ function JoinedTournament() {
                 <Icon name='location' className="tournament-info-icon"/>
                 <div className='tournament-info-item-txt'>
                     <p>Map</p>
-                    <span>UnderGround Hell</span>
+                    <span>{TournamentData.tournament_map}</span>
                 </div>
             </div>
             <div className='tournament-subscribers'>
                 <div className='tournament-subscribers-avatars'>
-                    <img className='image1' src={avatars[0].img}/>
-                    <img className='image2' src={avatars[1].img}/>
-                    <img className='image3' src={avatars[2].img}/>
-                    <img className='image4' src={avatars[3].img}/>
+                {TournamentData.tournament_participants.map((player, index) => (
+                    <img key={index} className={`image${index + 1}`} src={`${BACKEND_URL}${player.avatar}`} alt={`Player ${index + 1}`} />
+               
+                ))}
                 </div>
-                <span className='tournament-subscribers-counter'>7/10 Joined</span>
+                <span className='tournament-subscribers-counter'>
+                    {TournamentData.tournament_participants.length}/4 Joined
+                </span>
             </div>
         </div>
         <div className='tournament-desc'>
@@ -67,8 +97,8 @@ function JoinedTournament() {
                     <div className='tournament-top-player-avatar'>
                         <img src={avatars[0].img}/>
                         <div className='nameRank'>
-                            <span>Perdoxii_noyat</span>
-                            <span>Rank : Gold</span>
+                            <span>{profilData.username}</span>
+                            <span>Rank : {profilData.rank}</span>
                         </div>
                     </div>
                     <div className='tournament-top-player-stats'>
@@ -126,7 +156,15 @@ function JoinedTournament() {
             {joinedOwner ? (
                 <div> 
 
-                    <MainButton type="submit" content="Start"/>
+                    <div
+                        style={{
+                            display: 'inline-block',
+                            pointerEvents: TournamentData.tournament_participants.length < 4 ? 'none' : 'auto',
+                            opacity: TournamentData.tournament_participants.length < 4 ? 0.5 : 1
+                        }}
+                    >
+                        <MainButton type="submit" content="Start"/>
+                    </div>
                     <MainButton type="submit" content="Cancle"/>
                 </div>
             ) : (
