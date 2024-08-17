@@ -49,7 +49,7 @@ class GameState:
 
         player1_username = await self.get_player_username(room.player1)
         player2_username = await self.get_player_username(room.player2)
-        # print("")
+        print("HELOOOOOOOO WORLD")
         player1 = {
             'username': player1_username,
             'id': 1,
@@ -232,12 +232,12 @@ class GameConsumer(AsyncWebsocketConsumer):
                 self.room_name = f"game_room_{invite_game_room.id}"
                 self.room_id = invite_game_room.id
                 self.room_group_name = self.room_name
-                self.channel_layer.group_add(self.room_group_name, self.channel_name)
+                await self.channel_layer.group_add(self.room_group_name, self.channel_name)
                 await sync_to_async(invite_game_room.set_player_connected)(self.player)
                 await sync_to_async(invite_game_room.check_and_update_status)()
                 if not invite_game_room.is_waiting:
                     self.game_state = game_state_manager.get_or_create_game_state(self.room_id)
-                    self.game_state.add_player("", invite_game_room)
+                    await self.game_state.add_player("", invite_game_room)
                     print("The game has started successfully.")
                     await self.notify_players(invite_game_room)
             else:
@@ -346,6 +346,7 @@ class GameConsumer(AsyncWebsocketConsumer):
             'room_id': room.id,
             'game_state': self.game_state.get_state()
         }
+        print(f"GROUP NAAME {self.channel_layer}")
         await self.channel_layer.group_send(
             self.room_group_name,
             {
