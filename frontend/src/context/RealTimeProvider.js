@@ -89,7 +89,6 @@ export const RealTimeProvider = ({ children }) => {
         .then(data => {
             console.log('Game challenge accepted:', data);
             setShowGameSettings(true);
-            // setGameAccepted(true);
         })
         .catch(error => {
             console.error('Error accepting game challenge:', error);

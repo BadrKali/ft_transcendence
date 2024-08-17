@@ -86,7 +86,7 @@ const Invite = () => {
                 setPlayer2Id(data.player2_id);
                 setGameState(data.game_state);
             } else if (data.action === 'connected') {
-                // setShowWaiting(true);
+                setShowWaiting(true);
                 setRoomId(data.room_id);
             } else if (data.action === 'update_game_state')  {
                 setGameState(data.game_state);
@@ -157,7 +157,7 @@ const Invite = () => {
         }
 
         function drawNet() {
-            for (let i = 0; i <= canvas.height; i += net.height * 2) {
+            for (let i = 0; i <= canvas.height; i++) {
                 drawRect(net.x, net.y + i, net.width, net.height, net.color);
             }
         }
@@ -235,7 +235,7 @@ const Invite = () => {
         }
 
         let framePerSecond = 50;
-        let interval = 1000 / framePerSecond;
+        let interval = 1 / framePerSecond;
         let lastTime = Date.now();
 
         function loop() {

@@ -37,7 +37,7 @@ class GameState:
     
     def check_winning_condition(self):
         for player in self.state['players'].values():
-            if player['score'] >= 1:
+            if player['score'] >= 5:
                 self.state['game_over'] = True
                 self.state['winner'] = player['username']
                 return True
@@ -240,6 +240,8 @@ class GameConsumer(AsyncWebsocketConsumer):
                     await self.game_state.add_player("", invite_game_room)
                     print("The game has started successfully.")
                     await self.notify_players(invite_game_room)
+                    asyncio.create_task(self.start_game_loop())
+
             else:
                 print("InviteGameRoom not found")
         except Exception as e:
@@ -283,7 +285,7 @@ class GameConsumer(AsyncWebsocketConsumer):
         }))
 
     async def start_game_loop(self):
-        frame_duration = 1 / 30
+        frame_duration = 1 / 50
         while self.keep_running:
             self.game_state.update_ball_position()
             if self.game_state.check_winning_condition():
