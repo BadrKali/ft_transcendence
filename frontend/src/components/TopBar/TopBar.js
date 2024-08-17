@@ -162,7 +162,7 @@ const handleReject = async (id, type) => {
 
           const data = await response.json();
           const tournamentId = data.tournament;
-
+          console.log(data)
 
           url = `${BACKEND_URL}/user/tournament/invitations/${tournamentId}`;
           body = JSON.stringify({ 'status': 'reject' });
