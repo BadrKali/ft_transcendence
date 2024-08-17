@@ -80,7 +80,6 @@ const Invite = () => {
         socket.onmessage = async (event) => {
             const data = JSON.parse(event.data);
             if (data.action === 'start_game') {
-                alert('START THE GAME');
                 setShowWaiting(false);
                 setRoomId(data.room_id);
                 setPlayer1Id(data.player1_id);

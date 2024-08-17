@@ -20,7 +20,7 @@ import { ErrorToast } from '../ReactToastify/ErrorToast'
 import { InfoToast } from '../ReactToastify/InfoToast'
 import LanguageSelector from './LanguageSelector'
 import GameChallengeNotification from '../Notification/GameChallengeNotification'
-
+import GameSettingsPopUp from '../GameSettingsPopUp/GameSettingsPopUp'
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
 const TopBar = () => {
@@ -41,7 +41,7 @@ const TopBar = () => {
   const [modalOpen, setModalOpen] = useState(false);
   const [modalOpenBlocked, setModalOpenBlocked] = useState(false);
   const [selectedNotification, setSelectedNotification] = useState(null);
-  const {gameChallenge, handleAcceptGame, handleRejectGame, gameAccepted, joinGame, setGameAccepted} = useContext(RealTimeContext);
+  const {gameChallenge, handleAcceptGame, handleRejectGame, gameAccepted, joinGame, setGameAccepted, showGameSettings, setShowGameSettings} = useContext(RealTimeContext);
 
   const handleNotificationClick = (notif) => {
     setSelectedNotification(notif);
@@ -303,7 +303,9 @@ const handleReject = async (id, type) => {
     setNotif(!showNotif);
     clearNotification();
   };
-  
+  const handleExitGameSettings = () => {
+    setShowGameSettings(false);
+  }
   return (
     <div className='topbar-container'>
       {gameChallenge && (
@@ -314,6 +316,9 @@ const handleReject = async (id, type) => {
                 onReject={handleRejectGame}
             />
       )}
+      {/* {showGameSettings && (
+        <GameSettingsPopUp onExit={handleExitGameSettings}/>
+      )} */}
       <div className='topbar-search'>
         <Icon name='search' className='topbar-search-icon'/>
         <input placeholder='Search' value={query}  type='text' onChange={handleChange}/>

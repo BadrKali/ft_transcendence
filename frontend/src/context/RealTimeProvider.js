@@ -5,7 +5,7 @@ import GameChallengeNotification from '../components/Notification/GameChallengeN
 import { SuccessToast } from '../components/ReactToastify/SuccessToast'
 import { ErrorToast } from '../components/ReactToastify/ErrorToast'
 import {InfoToast} from '../components/ReactToastify/InfoToast';
-
+import GameSettingsPopUp from '../components/GameSettingsPopUp/GameSettingsPopUp';
 const WS_BACKEND_URL = process.env.REACT_APP_WS_BACKEND_URL;
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
@@ -19,6 +19,7 @@ export const RealTimeProvider = ({ children }) => {
     const [gameChallenge, setGameChallenge] = useState(null);
     const [gameAccepted, setGameAccepted] = useState(false);
     const [joinGame, setJoinGame] = useState(false);
+    const [showGameSettings, setShowGameSettings] = useState(true);
     const clearNotification = () => {
         setHasNotification(false);
     };
@@ -87,7 +88,8 @@ export const RealTimeProvider = ({ children }) => {
         })
         .then(data => {
             console.log('Game challenge accepted:', data);
-            setGameAccepted(true);
+            setShowGameSettings(true);
+            // setGameAccepted(true);
         })
         .catch(error => {
             console.error('Error accepting game challenge:', error);
@@ -126,11 +128,17 @@ export const RealTimeProvider = ({ children }) => {
         .catch(error => {
             console.error('Error rejecting game challenge:', error);
         });
-}
+    }
+    const handleExitGameSettings = () => {
+        setShowGameSettings(false);
+    }
 return (
-        <RealTimeContext.Provider value={{ setNotifications, notifications, friendsStatus, hasNotification, setHasNotification, clearNotification, gameChallenge, handleAcceptGame, handleRejectGame, gameAccepted, joinGame, setGameAccepted, setJoinGame }}>
+        <RealTimeContext.Provider value={{ setNotifications, notifications, friendsStatus, hasNotification, setHasNotification, clearNotification, gameChallenge, handleAcceptGame, handleRejectGame, gameAccepted, joinGame, setGameAccepted, setJoinGame, showGameSettings, setShowGameSettings }}>
             {children}
             <ToastContainer />
+            {showGameSettings && (
+                <GameSettingsPopUp onExit={handleExitGameSettings}/>
+            )}
         </RealTimeContext.Provider>
     );
 };
