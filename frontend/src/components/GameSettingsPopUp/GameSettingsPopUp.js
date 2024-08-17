@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import hell from "../../pages/Game/Game-assets/hell.png";
 import forest from "../../pages/Game/Game-assets/forest.png";
 import graveyard from "../../pages/Game/Game-assets/graveyard.png";
@@ -13,16 +13,21 @@ import wKey from '../../pages/Game/Game-assets/w.png';
 import "./GameSettingsPopUp.css";
 import useFetch from "../../hooks/useFetch";
 import useAuth from "../../hooks/useAuth";
+import axios from "axios";
+import { RealTimeContext } from "../../context/RealTimeProvider";
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
 const GameSettingsPopUp = ({ onExit }) => {
     const {auth} = useAuth();
     const areasArray = [hell, forest, graveyard];
+    const areasNames = ["hell", "forest", "graveyard"];
     const paddleColors = ['#BC4F00', '#33FF57', '#3357FF', '#F3FF33', '#FF33F5'];
     const [currentAreaIndex, setCurrentAreaIndex] = useState(0);
     const [currentColorIndex, setCurrentColorIndex] = useState(0);
     const [selectedOption, setSelectedOption] = useState(null);
+    const {setGameAccepted} = useContext(RealTimeContext);
+
 
     const handleLeftClick = () => {
         const newIndex = (currentAreaIndex - 1 + areasArray.length) % areasArray.length;
@@ -46,9 +51,27 @@ const GameSettingsPopUp = ({ onExit }) => {
     const handleSelectOption = (option) => {
         setSelectedOption(option);
     };
-    // const handleSubmit = async () => {
-    //     const gameSettings 
-    // }
+    const handleSubmit = async () => {
+        const gameSettings = {
+            background: areasNames[currentAreaIndex],
+            paddle: paddleColors[currentColorIndex],
+            keys: selectedOption,
+            gameMode: "invite",
+        }
+        try  {
+            const response = await axios.post(`${BACKEND_URL}/api/game/game-settings/current-user/`, gameSettings, {
+                headers : {
+                    'Content-Type' : 'application/json',
+                    'Authorization': `Bearer ${auth.accessToken}`,
+                }
+            });
+            console.log("Game Settings saved", response.data);
+        } catch (error) {
+            console.log("Failed to save game settings");
+        }
+        setGameAccepted(true);
+        onExit();
+    }
 
     return (
         <div className="gameSettings-container">
@@ -77,7 +100,7 @@ const GameSettingsPopUp = ({ onExit }) => {
                     <img src={rightPaddleArrow} alt="Right" onClick={handlePaddleRightClick} />
                 </div>
             </div>
-            <button onClick={onExit} className="cancel-button">Submit</button>
+            <button onClick={handleSubmit} className="cancel-button">Submit</button>
         </div>
     );
 };

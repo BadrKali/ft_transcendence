@@ -19,7 +19,7 @@ export const RealTimeProvider = ({ children }) => {
     const [gameChallenge, setGameChallenge] = useState(null);
     const [gameAccepted, setGameAccepted] = useState(false);
     const [joinGame, setJoinGame] = useState(false);
-    const [showGameSettings, setShowGameSettings] = useState(true);
+    const [showGameSettings, setShowGameSettings] = useState(false);
     const clearNotification = () => {
         setHasNotification(false);
     };
