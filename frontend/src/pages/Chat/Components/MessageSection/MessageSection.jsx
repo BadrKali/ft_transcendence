@@ -17,6 +17,7 @@ import { SendMessageEventContext } from "../../Chat.jsx";
 import { chatPartnerContext } from "../../Chat.jsx";
 import notificationSound from "../../ChatAssets/notification.mp3";
 
+
 export const PickerClickContext = createContext();
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
@@ -55,6 +56,12 @@ const SendMessage = ({ message, setMessage }) => {
   const {stateValue: clientSocket} = useContext(clientSocketContext);
   const {setSendMessage} = useContext(SendMessageEventContext)
 
+//////////////////////////////REMOVE///////////////////////////////////
+    const constconversationmsg = useContext(conversationMsgContext) //REMOVE
+    const ChatList = useContext(ChatListContext)
+    const PickedUsername = useContext(PickedConvContext)
+
+/////////////////////////////////////////////////////////////////
   const handleSendMessage = () => {
     if (message.trim()) {
       PickerClicksetter((prev) => (prev ? !prev : prev));
@@ -67,12 +74,29 @@ const SendMessage = ({ message, setMessage }) => {
       };
 
       clientSocket?.send(JSON.stringify({type: 'newchat.message', messageData: messageData}));
+      
 
       const notif = new Audio(notificationSound);
       notif.play();
       setSendMessage(prev => prev + 1)
 
-
+            // // REMOVE ///////////////////////////////////
+            // console.log('------------Debug Start--------------')
+            // console.log(clientSocket)
+            // console.log('-------Clientsocket------------')
+            // console.log(messageData)
+            // console.log('---------MessageData-----------')
+            // console.log(ChatPartner)
+            // console.log('---------CahtPartner-----------')
+            // console.log(CurrentUser)
+            // console.log('---------CurrentUser-----------')
+            // console.log(ChatList)
+            // console.log('---------ChatList--------------')
+            // console.log(PickedUsername)
+            // console.log('---------PickedUsername--------')
+            // console.log('--------------Debug End---------------')
+            // //////////////////////////////////////////////
+            
       setMessage("");
     }
     // *********************************************************

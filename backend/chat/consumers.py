@@ -10,6 +10,10 @@ from django.core.exceptions import ObjectDoesNotExist
 from dateutil.parser import parse
 from django.utils import timezone
 from django.db.models import Q
+from user_management .models import BlockedUsers
+from datetime import datetime
+from .views import format_date
+
 
 
 class ChatConsumer(AsyncWebsocketConsumer):
@@ -28,7 +32,8 @@ class ChatConsumer(AsyncWebsocketConsumer):
         await (self.channel_layer.group_discard(
                 self.room_group_name,
                 self.channel_name
-        ))
+        )
+        )
 
     async def receive(self, text_data=None):
         self.extracted_msg = json.loads(text_data)
@@ -45,6 +50,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
         # add if users are blocked or not !
         if (self.extracted_msg.get('type') == 'newchat.message'):
             await self.Broadcast_newMsg()
+    
     async def start_chat(self):
         Isconversation_exist = await self.get_record_if_exist()
         if (Isconversation_exist):
@@ -55,21 +61,78 @@ class ChatConsumer(AsyncWebsocketConsumer):
             }
             )
         else:
-            print('=-=-=- We never Talked=-=-=-')
+            sender_block_profilOwner = await self.check_blockStatus(self.sender_id, self.profil_Id)
+            if sender_block_profilOwner:
+                await self.channel_layer.group_send(
+                    f"room_{self.sender_id}",{
+                        'type': 'Blocke_Warning',
+                        'message': self.extracted_msg.get('messageData')
+                    }
+                )
+            else:
+                await self.Process_First_msg()
+    
+    async def Process_First_msg(self):
+        self.MSGsender = await self.get_obj_ById(self.sender_id)
+        self.MSGreceiver = await self.get_obj_ById(self.profil_Id)
+        ContactData = {
+            "id"             :  self.MSGreceiver.id,
+            "avatar"         :  self.MSGreceiver.avatar.url,
+            "username"       :  self.MSGreceiver.username,
+            "unreadMessages" : 0,
+            "lastMessage"    : 'Say Hi ',
+            "created_at"     : datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+            "lastTime"       : format_date(datetime.now()),
+            "status"         : True
+        }
+        print('====================')
+        print (ContactData)
+        print('--** CONTACT SECTION **--')
+
+        await (self.channel_layer.group_send)(
+            f'room_{self.sender_id}',{
+                'type': 'start_Firstconv',
+                'message': ContactData
+            }
+            )
+
+    @database_sync_to_async
+    def save_record(self):
+        return message.objects.create(
+                           sender_id=self.MSGsender,
+                           receiver_id = self.MSGreceiver,
+                           content= "I would like to send you msg",
+                           seen = False,
+                        #    type = 'WELCOME_MSG'
+                        )
+    
+    async def start_Firstconv(self, event):
+        await (self.send( text_data=json.dumps(event) ))
+
+    @database_sync_to_async
+    def get_obj_ById(self, _id_):
+        return User.objects.get(id=_id_)
+
+    async def Blocke_Warning(self, event):
+        await (self.send( text_data=json.dumps(event) ))
+
+    @database_sync_to_async
+    def check_blockStatus(self, blocker_id, blocked_id):
+        blocker = User.objects.get(id=blocker_id)
+        blocked = User.objects.get(id=blocked_id)
+        is_blocked = BlockedUsers.objects.filter(Q(blocker=blocker, blocked=blocked)).exists()
+        return is_blocked
     
     async def Pick_existed_conv(self, event):
         await (self.send( text_data=json.dumps(event) ))
         
     @database_sync_to_async
     def get_record_if_exist(self):
-        profil_Id = self.extracted_msg.get('messageData').get('user_id')
-        print('Profil user_id is :' +  str(profil_Id) + 'requester :' + str(self.sender_id))
-        totalRecord = message.objects.filter((Q(sender_id=profil_Id) & Q(receiver_id=self.sender_id)) |
-                                      (Q(sender_id=self.sender_id) & Q(receiver_id=profil_Id))).count()
-        if (totalRecord):
-            return True
-        return False
-
+        self.profil_Id = self.extracted_msg.get('messageData').get('user_id')
+        print('Profil user_id is :' +  str(self.profil_Id) + 'requester :' + str(self.sender_id))
+        return message.objects.filter((Q(sender_id=self.profil_Id) & Q(receiver_id=self.sender_id)) |
+                                      (Q(sender_id=self.sender_id) & Q(receiver_id=self.profil_Id))).exists()
+        
     async def processRead_Event(self, currentUserId, FriendUsername):
         try:
             FriendId = await self.get_user_id(FriendUsername)
@@ -145,8 +208,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
         await (self.send( text_data=json.dumps(event) ))
         
     async def newchat_message(self, event):
-        await (self.send(
-            text_data=json.dumps(event) ))
+        await (self.send(text_data=json.dumps(event) ))
         
 
     async def last_message(self, event):

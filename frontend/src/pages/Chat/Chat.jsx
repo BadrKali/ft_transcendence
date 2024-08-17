@@ -61,6 +61,8 @@ const Chat = () => {
     const data = JSON.parse(event.data);
     const notif = new Audio(receivedmsgsound);
     
+    console.log(data.type)
+    
     if (data.type === 'newchat.message'){
       // console.log(data.message)
       // You are receiver you got notif sound! not your self too talk with your self .
@@ -132,12 +134,32 @@ const Chat = () => {
         });
       }
 
-      if (data.type === "Pick_existed_conv"){
+    if (data.type === "Pick_existed_conv"){
         console.log(`Pick the Conversation With ${data.message.username}`)
         // Here is the issue the Pickedusername change 
         // but the chatlist is not yet setted because contact Section is not rendred !
           setPickerUsername(data.message.username)
       }
+    
+    if (data.type === 'Blocke_Warning'){
+      // I'm blocking this User
+      console.log('Block Warning here is the Data needed !')
+      console.log(data.message)
+      
+    }
+
+    if (data.type === 'start_Firstconv'){
+      setChatList(prevChatList => {
+        if (prevChatList === null) {
+          return [data.message];
+        } else {
+          return [data.message, ...prevChatList];
+        }
+      });
+      setPickerUsername(data.message.username)
+    }
+    
+
   };
 }
 
@@ -168,6 +190,7 @@ const Chat = () => {
       abortController.abort(); 
     };
   }, [sendMessage, auth.accessToken]); //PickedUsername -dependencies will change
+  // I fogot why I added PickedUsername ???
 
   const handleConversationSelect = (conversationId) => {
     setPickerUsername(conversationId);
