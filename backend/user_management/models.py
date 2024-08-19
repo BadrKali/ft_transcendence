@@ -5,6 +5,7 @@ from django.core.exceptions import ValidationError
 from django.shortcuts import get_object_or_404
 import random
 
+
 def user_avatar_upload_path(instance, filename):
     return f"player/{instance.id}/user_avatar/{filename}"
 
@@ -115,6 +116,7 @@ class Tournament(models.Model):
     tournament_stage = models.CharField(max_length=100, default="semi-finals") # hadi f ina stage wasla tournament
     tournament_participants = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='tournament_participants')
 
+
     def assign_tournament_prize(self):
         print(self.tournament_creator.player.rank)
         if self.tournament_creator.player.rank == 'BRONZE':
@@ -124,11 +126,16 @@ class Tournament(models.Model):
         elif self.tournament_creator.player.rank == 'GOLD':
             self.tournament_prize = 6000
 
+    
     def assign_opponent(self):
+        from game.models import TournamentGameRoom
         participants = list(self.tournament_participants.all())
         random.shuffle(participants)
         for i in range(0, len(participants), 2):
             TournamentParticipants.objects.create(tournament=self, player1=participants[i], player2=participants[i+1])
+            TournamentGameRoom.objects.create(player1=participants[i].player, player2=participants[i+1].player)
+        # print('al;dk;aksd;aksd;aksd;kas;dka;sdkalsd;askd;askd;asdk;k;askdas;dkl;adkas;kd;asdk;askd;askda;skd;askld')
+
 
     def assign_tournament_stage(self):
         if self.tournament_participants.count() == 4:

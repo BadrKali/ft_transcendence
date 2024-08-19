@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from django.conf import settings
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
@@ -6,24 +7,18 @@ from rest_framework import generics
 from rest_framework.views import APIView
 from django.shortcuts import get_object_or_404
 from django.core.exceptions import ValidationError
-from .models import Friendship, Player, FriendInvitation, BlockedUsers, Notification
-from .serializers import PlayerSerializer, FriendshipSerializer, FriendInvitationsSerializer
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from django.db.utils import IntegrityError
-from game.models import Achievement
-from game.serializers import AchievementSerializer
-from .serializers import FriendInvitation, NotificationSerializer
-from django.conf import settings
+from game.models import Achievement, UserAchievement
 from authentication .models import User
 from authentication .serializers import CurrentUserSerializer
 from django.db.models import Q
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
 from django.http import HttpResponseForbidden
-from game.models import UserAchievement
-from .models import Tournament, TournamentInvitation, TournamentParticipants
-from .serializers import TournamentSerializer, TournamentCreateSerializer , TournamentInvitationSerializer, TournamentParticipantsSerializer
-# from .taskManager import *
+from .models import Tournament, TournamentInvitation, TournamentParticipants, Friendship, Player, FriendInvitation, BlockedUsers, Notification
+from .serializers import TournamentSerializer, TournamentCreateSerializer , TournamentInvitationSerializer, TournamentParticipantsSerializer, FriendInvitation, NotificationSerializer,  PlayerSerializer, FriendshipSerializer
+
 
 class FriendRequestManagementView(APIView):
     
@@ -331,6 +326,8 @@ class TournamentInvitationView(APIView):
                 tournament.assign_opponent()
                 tournament.tournament_status = True
                 tournament.assign_tournament_stage()
+
+                # TournamentGameRoom.objects.create(player1=player, player2=tournament.get_opponent(player))
                 tournament.save()
             invitation.delete()
             return Response({'message': 'Invitation accepted.'}, status=status.HTTP_200_OK)

@@ -167,3 +167,27 @@ class GameChallenge(models.Model):
     def __str__(self) -> str:
         return f"invitation from {self.player_sender.username} to {self.player_receiver.username} - status : {self.invite_status}"
 
+
+
+class TournamentGameRoom(models.Model):
+    player1 = models.ForeignKey(Player, related_name='tournament_player1', on_delete=models.CASCADE, null=True, blank=True)
+    player2 = models.ForeignKey(Player, related_name='tournament_player2', on_delete=models.CASCADE, null=True, blank=True)
+    is_waiting = models.BooleanField(default=True)
+    crateated_at = models.DateTimeField(auto_now_add=True)
+    player1_connected = models.BooleanField(default=False)
+    player2_connected = models.BooleanField(default=False)
+
+    def set_player_connected(self, player):
+        if self.player1 == player:
+            self.player1_connected = True
+            print("player1 connected")
+        elif self.player2 == player:
+            self.player2_connected = True
+            print("player2 connected")
+        self.save()
+    
+def check_and_update_status(self):
+        if self.player1_connected and self.player2_connected:
+            self.is_waiting = False
+            self.save()
+
