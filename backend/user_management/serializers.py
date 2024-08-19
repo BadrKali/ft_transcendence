@@ -67,6 +67,7 @@ class TournamentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Tournament
         fields = [
+            'id', 
             'tournament_creator',
             'tournament_name',
             'tournament_prize',
