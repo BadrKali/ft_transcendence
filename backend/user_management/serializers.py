@@ -80,6 +80,7 @@ class TournamentSerializer(serializers.ModelSerializer):
 
 #check if the user is not present with the invited users
 class TournamentInvitationSerializer(serializers.ModelSerializer):
+    tournament = TournamentSerializer()
     class Meta:
         model = TournamentInvitation
         fields = [

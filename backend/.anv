@@ -1,4 +1,0 @@
-GRANT_TYPE      = 'authorization_code'
-CLIENT_ID       = 'u-s4t2ud-18b1720f14dffbeb3b422170a77366fdaa14d72c18405a86f15053c0f21ee25a'
-CLIENT_SECRET   = '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'
-REDIRECT_URI   = 'http://localhost:3000/42_api/'
