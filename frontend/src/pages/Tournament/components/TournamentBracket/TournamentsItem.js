@@ -6,7 +6,7 @@ const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
 function TournamentsItem({players}) {
   const unknownAvatar = avatars[4].img;
-  console.log(players)
+
   return (
     <div className="tournamentsItem-match-container">
       <div className={players.win ? 'tournamentsItem-container wone' : 'tournamentsItem-container losse'}>

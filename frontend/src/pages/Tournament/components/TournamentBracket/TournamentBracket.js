@@ -7,6 +7,10 @@ import EightPlayer from '../../../../assets/TournamentEightPlayer'
 // import FourPlayer from '../../../../assets/TournamentFourPlayers'
 // import TwoPlayer from '../../../../assets/TournamentTwoPlayers'
 import useAuth from '../../../../hooks/useAuth'
+import TournamentPlayersItem from './TournamentPlayersItem'
+import { CircularProgressbar, buildStyles } from 'react-circular-progressbar';
+import 'react-circular-progressbar/dist/styles.css';
+import { avatars } from '../../../../assets/assets'
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
@@ -18,6 +22,8 @@ function TournamentBracket() {
   const {data: matches ,isLoading, error} = useFetch(`${BACKEND_URL}/user/tournament/SEMI-FINALS`)
   const [FourPlayer, setFourPlayer] = useState([]);
   const [TwoPlayer, setTwoPlayer] = useState([]);
+  const unknownAvatar = avatars[4].img;
+
   const defaultTwoMatches = [
     { id: 1, player1: {}, player2: {} },
     { id: 2, player1: {}, player2: {} },
@@ -135,6 +141,61 @@ function TournamentBracket() {
         <div className="winner">
          <Icon name='TournamentWin' className='tournament-win' />
         </div>
+        <div className='TournamentPlayers'>
+                <h2>SEMI FINAL</h2>
+            {matchesToDisplayTwo.map((players) => (
+                    <TournamentPlayersItem key={players.id} players={players}/>
+                  ))}
+               <h2>FINAL</h2>
+            {matchesToDisplayOne.map((players) => (
+                    <TournamentPlayersItem key={players.id} players={players}/>
+                  ))}
+              <div className='TournamentWinner'>
+                <h2>WINNER</h2>
+                <div className='TheWinnerCard'>
+                  <div className='WinnerImage'>
+                    <img src={unknownAvatar}/>
+                  </div>
+                  <div className='WinerNameRank'>
+                    <p>Name of User</p>
+                    <p>Rank : GOLD</p>
+                  </div>
+                  <div className='winerProgress'>
+                          <CircularProgressbar
+                                value={75}
+                                text={`${75}%`}
+                                styles={buildStyles({
+                                    pathColor: '#F62943',
+                                    textColor: '#F62943',
+                                    trailColor: '#A9A6A6',
+                                    backgroundColor: '#11141B',
+                                })}
+                            />
+                            <CircularProgressbar
+                                value={75}
+                                text={`${75}%`}
+                                styles={buildStyles({
+                                    pathColor: '#F62943',
+                                    textColor: '#F62943',
+                                    trailColor: '#A9A6A6',
+                                    backgroundColor: '#11141B',
+                                })}
+                            />
+                            <CircularProgressbar
+                                value={75}
+                                text={`${75}%`}
+                                styles={buildStyles({
+                                    pathColor: '#F62943',
+                                    textColor: '#F62943',
+                                    trailColor: '#A9A6A6',
+                                    backgroundColor: '#11141B',
+                                })}
+                            />
+                  </div>
+                </div>
+              </div>
+        </div>
+        
     </div>
   )
 }
