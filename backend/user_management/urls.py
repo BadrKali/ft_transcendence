@@ -10,6 +10,7 @@ urlpatterns = [
     path('block-unblock/', BlockUnblockView.as_view(), name='block_unblock_user_list'),
     path('stats/', PlayerView.as_view(), name='player_view'),
     path('stats/<int:player_id>', OtherPlayerView.as_view(), name='player_view'),
+    path('stats/username/<str:username>', OtherPlayerView.as_view(), name='player_view'),
     path('search/', SearchAPIView.as_view(), name='search-api'),
     path('friends/list/', ListFriendsView.as_view(), name='friends_list'),
     path('notifications/', NotificationListView.as_view(), name='notifications_list'),
@@ -17,6 +18,7 @@ urlpatterns = [
     path('tournament/<str:stage>', TournamentByStageView.as_view(), name='tournament_management'),
     path('tournament/invitations/', TournamentInvitationView.as_view(), name='tournament_management'),
     path('tournament/invitations/<int:tournament_id>', TournamentInvitationView.as_view(), name='tournament_invitation_handler'),
+
     # path('friends/create/<int:friend_id>/', CreateFriendshipView.as_view(), name='create_friendship'),
     # path('friends/delete/<int:player_id>/<int:friend_id>/', DeleteFriendshipView.as_view(), name='delete_friendship'),
     # path('friends/list/<int:player_id>/', FriendsListView.as_view(), name='friends_list'),

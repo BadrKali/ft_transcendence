@@ -42,7 +42,8 @@ const TopBar = () => {
   const [modalOpenBlocked, setModalOpenBlocked] = useState(false);
   const [selectedNotification, setSelectedNotification] = useState(null);
   const {gameChallenge, handleAcceptGame, handleRejectGame, gameAccepted, joinGame, setGameAccepted, showGameSettings, setShowGameSettings} = useContext(RealTimeContext);
-
+ 
+  
   const handleNotificationClick = (notif) => {
     setSelectedNotification(notif);
     setModalOpen(true);

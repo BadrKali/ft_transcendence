@@ -26,34 +26,42 @@ const Profil = () => {
   const navigate = useNavigate();
   const { auth }  = useAuth()
   const location = useLocation();
-  const { userData } = location.state || {};
-  let playerId = userData.id;
-  if (!playerId)
-      playerId = userData.user_id;
-  const {data ,isLoading, error} = useFetch(`${BACKEND_URL}/user/stats/${playerId}`)
+  const { nameOfUser } = useParams();
+  // const {data: getId ,isLoading: IdIsLoading, error: IdError} = useFetch(`${BACKEND_URL}/user/user-id/${nameOfUser}/`)
 
+
+  // const { userData } = location.state || {};
+  // let playerId = userData.id;
+  // if (!playerId)
+  //     playerId = userData.user_id;
+
+  const {data ,isLoading, error} = useFetch(`${BACKEND_URL}/user/stats/username/${nameOfUser}`)
+
+  // console.log(nameOfUser + " jajajajaja")
   useEffect(() => {
     if (data) {
       setProfilData(data);
     }
   }, [data]);
   
+  
   if (error) {
-    if (error === 'You are blocked from viewing this content.') {
-        navigate('/')
-        return null;
-    }
-    return <div>{error}</div>;
+      if (error === 'You are blocked from viewing this content.') {
+          navigate('/')
+          return null;
+      }
+      return <div>{error}</div>;
   } 
-
+ 
+  console.log(profilData)
   return (
     <div className='dashboard-contianer'>
        <div className='profil-icons'>
           <div className='profil-buttons'>
-            <AddFriendUnfriendButton FriendId={userData.id} />
+            <AddFriendUnfriendButton FriendId={profilData.user_id} />
             <ChatFriendButton profilData={profilData}/>
             <ChallangefriendButton />
-            <BlockUnblockButton blockedId={userData.id}/>
+            <BlockUnblockButton blockedId={profilData.user_id}/>
         </div>
        </div>
        <div className="dashboard-profil">
@@ -66,7 +74,7 @@ const Profil = () => {
                 <MatchHistory profil={profilData}/> 
                 </div>
                 <div className="achievments-container-profil">
-                <Achievments userId={userData.id}/>
+                <Achievments userId={profilData.user_id}/>
                 </div>
               </div>
               <div className='lineChart-container'>

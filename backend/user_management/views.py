@@ -213,16 +213,28 @@ class PlayerView(APIView):
         return(Response(serializer.data, status=status.HTTP_200_OK))
     
 class OtherPlayerView(APIView):
-    def get(self, request, player_id):
+    def get(self, request, player_id=None, username=None):
         requesting_user = request.user
-        player = get_object_or_404(Player, user_id=player_id)
-        profile_user = player.user
 
-        if BlockedUsers.objects.filter(blocker=profile_user, blocked=requesting_user).exists():
-            return HttpResponseForbidden('You are blocked from viewing this profile.')
+        try:
+            if player_id:
+                player = get_object_or_404(Player, user_id=player_id)
+            elif username:
+                user = get_object_or_404(User, username=username)
+                player = get_object_or_404(Player, user=user)
+            else:
+                return Response({'error': 'Either player_id or username must be provided'}, status=status.HTTP_400_BAD_REQUEST)
 
-        serializer = PlayerSerializer(player)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+            profile_user = player.user
+
+            if BlockedUsers.objects.filter(blocker=profile_user, blocked=requesting_user).exists():
+                return HttpResponseForbidden('You are blocked from viewing this profile.')
+
+            serializer = PlayerSerializer(player)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except User.DoesNotExist:
+            return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
+
     
 
 class GamePlayersView(APIView):
@@ -343,3 +355,5 @@ class TournamentByStageView(APIView):
         print(serilaizer.data)
         return Response(serilaizer.data,  status=status.HTTP_200_OK)
     
+
+

@@ -48,7 +48,7 @@ const routes = [
               { path: "tournament", element: <Tournament /> },
               { path: "leaderboard", element: <LeaderBoard /> },
               { path: "setting", element: <Setting /> },
-              { path: "/user/:userId", element: <Profil /> },
+              { path: "/user/:nameOfUser", element: <Profil /> },
             ],
           },
         ],
