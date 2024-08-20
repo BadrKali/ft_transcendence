@@ -53,6 +53,14 @@ const TopBar = () => {
     setModalOpenBlocked(true);
   }
 
+  const handleMyProfilClick = () => {
+      navigate(`/user/${profilData.username}`)
+  }
+
+  const handleSettingClick = () => {
+      navigate(`/setting`)
+  }
+
   useEffect(() => {
     if (gameAccepted) {
       setGameAccepted(false);
@@ -364,9 +372,9 @@ const handleReject = async (id, type) => {
           <span>{profilData.username}</span>
           <div  className={isProfilActive ? "dropDwonProfil profilActive" : "dropDwonProfil"}>
             <div className='dropList'>
-              <p className='list'>View My Profil</p>
+              <p className='list' onClick={handleMyProfilClick}>View My Profil</p>
               <p className='list' onClick={handleListBlockedClick}>List Blocked</p>
-              <p className='list'>Setting</p>
+              <p className='list' onClick={handleSettingClick}>Setting</p>
               <p className='list'>Log Out</p>
             </div>
           </div>
