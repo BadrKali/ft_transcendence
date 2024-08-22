@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import { CSSTransition, TransitionGroup } from 'react-transition-group';
 import './profil.css'
 import DashProfil from './components/DashProfil'
 import MatchHistory from './components/MatchHistory'
@@ -55,36 +56,40 @@ const Profil = () => {
  
   console.log(profilData)
   return (
-    <div className='dashboard-contianer'>
-       <div className='profil-icons'>
-          <div className='profil-buttons'>
-            <AddFriendUnfriendButton FriendId={profilData.user_id} />
-            <ChatFriendButton profilData={profilData}/>
-            <ChallangefriendButton />
-            <BlockUnblockButton blockedId={profilData.user_id}/>
-        </div>
-       </div>
-       <div className="dashboard-profil">
-          <div className="profilHistoryAcgievmeants-container-profil">
-              <div className="profil-container-profil">
-                <DashProfil profil={profilData}/>
-              </div>
-              <div className="historyAchievments-container-profil">
-                <div className="history-container-profil">
-                <MatchHistory profil={profilData}/> 
-                </div>
-                <div className="achievments-container-profil">
-                <Achievments userId={profilData.user_id}/>
-                </div>
-              </div>
-              <div className='lineChart-container'>
-                <h2>Graph Growth</h2>
-                <LineChart />
+    <TransitionGroup className="profilTransition">
+      <CSSTransition key={profilData.user_id} timeout={300} classNames="fade">
+        <div className='dashboard-contianer'>
+          <div className='profil-icons'>
+              <div className='profil-buttons'>
+                <AddFriendUnfriendButton FriendId={profilData.user_id} />
+                <ChatFriendButton profilData={profilData}/>
+                <ChallangefriendButton />
+                <BlockUnblockButton blockedId={profilData.user_id}/>
+            </div>
+          </div>
+          <div className="dashboard-profil">
+              <div className="profilHistoryAcgievmeants-container-profil">
+                  <div className="profil-container-profil">
+                    <DashProfil profil={profilData}/>
+                  </div>
+                  <div className="historyAchievments-container-profil">
+                    <div className="history-container-profil">
+                    <MatchHistory profil={profilData}/> 
+                    </div>
+                    <div className="achievments-container-profil">
+                    <Achievments userId={profilData.user_id}/>
+                    </div>
+                  </div>
+                  <div className='lineChart-container'>
+                    <h2>Graph Growth</h2>
+                    <LineChart />
+                  </div>
               </div>
           </div>
-       </div>
 
-    </div>
+        </div>
+      </CSSTransition>
+    </TransitionGroup>
   )
 }
 
