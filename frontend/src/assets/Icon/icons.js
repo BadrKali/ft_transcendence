@@ -41,6 +41,7 @@ import {ReactComponent as ChatFriend} from './chatFriend.svg'
 import {ReactComponent as AddFriend} from './addFriend.svg'
 import {ReactComponent as Achiev1} from './Achiev.svg'
 import {ReactComponent as inputTournamant} from './inputTournamant.svg'
+import {ReactComponent as English} from './English.svg'
 
 // import { ReactComponent as school_icon } from './school_icon.png'
 
@@ -88,6 +89,8 @@ const icons = {
     BlockFriend : BlockFriend,
     Achiev1 : Achiev1,
     inputTournamant : inputTournamant,
+    English : English,
+
     // school_icon: school_icon
 }
 
