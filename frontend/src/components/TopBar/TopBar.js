@@ -219,7 +219,7 @@ const handleReject = async (id, type) => {
   const handleIconClick = async () => {
     setNotif(!showNotif);
 
-    if (!showNotif) {
+    if (!showNotif) {  
       try {
         const response = await fetch(`${BACKEND_URL}/user/notifications/`, {
           method: 'GET',
@@ -230,8 +230,18 @@ const handleReject = async (id, type) => {
         });
         if (response.ok) {
           const data = await response.json();
-          setNotifications(data);
-          clearNotification(); 
+          console.log(data);
+          setNotifications(data.length > 0 ? data : []);
+          clearNotification();  
+
+  
+          await fetch(`${BACKEND_URL}/user/notifications/`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${auth.accessToken}`
+            }
+          });
         } else {
           console.error('Failed to fetch notifications');
         }
@@ -239,7 +249,7 @@ const handleReject = async (id, type) => {
         console.error('Error fetching notifications:', error);
       }
     }
-  };
+};
 
   useEffect(() => {
     if (response1.data) {

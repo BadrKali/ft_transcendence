@@ -143,7 +143,7 @@
     width: 50%;
 }
 
-.fade-enter {
+/* .fade-enter {
   opacity: 0;
 }
 .fade-enter-active {
@@ -156,4 +156,4 @@
 .fade-exit-active {
   opacity: 0;
   transition: opacity 300ms;
-}
+} */

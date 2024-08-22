@@ -57,7 +57,7 @@ const Profil = () => {
   console.log(profilData)
   return (
     <TransitionGroup className="profilTransition">
-      <CSSTransition key={profilData.user_id} timeout={300} classNames="fade">
+      <CSSTransition key={profilData.user_id}  classNames="fade">
         <div className='dashboard-contianer'>
           <div className='profil-icons'>
               <div className='profil-buttons'>

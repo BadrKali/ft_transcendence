@@ -30,8 +30,30 @@ export const RealTimeProvider = ({ children }) => {
         }
         const ws = new WebSocket(`${WS_BACKEND_URL}/ws/notifications/?token=${auth.accessToken}`);
 
-        ws.onopen = () => {
+        ws.onopen = async () => {
             console.log("Client Connected to the server");
+        
+            try {
+                const response = await fetch(`${BACKEND_URL}/user/missed-notifications/`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${auth.accessToken}`
+                    }
+                });
+        
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.hasNotification) {
+                        setHasNotification(true);  
+                        setNotifications(data.notifications);  
+                    }
+                } else {
+                    console.error('Failed to fetch missed notifications');
+                }
+            } catch (error) {
+                console.error('Error fetching missed notifications:', error);
+            }
         };
 
         ws.onmessage = (message) => {
@@ -47,7 +69,6 @@ export const RealTimeProvider = ({ children }) => {
                 }));
             } else if (dataFromServer.type === 'notification') {
                 setHasNotification(true);
-                console.log(dataFromServer)
                 // InfoToast("You have a new notification"); //add it here
             } else if (dataFromServer.type === 'join_game') {
                 console.log("Joining Game From RealTimeProvider");

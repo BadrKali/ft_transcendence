@@ -261,10 +261,18 @@ class SearchAPIView(APIView):
 
 
 class NotificationListView(APIView):
-    def get(self, request):
-        notifications = Notification.objects.filter(recipient=request.user).order_by('-timestamp')
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, *args, **kwargs):
+        user = request.user
+        notifications = Notification.objects.filter(recipient=user).order_by('-timestamp')
         serializer = NotificationSerializer(notifications, many=True)
         return Response(serializer.data)
+
+    def post(self, request, *args, **kwargs):
+        user = request.user
+        Notification.objects.filter(recipient=user, is_read=False).update(is_read=True)
+        return Response({"status": "success"}, status=200)
 
 class ListFriendsView(APIView):
     def get(self, request, *args, **kwargs):
@@ -359,5 +367,13 @@ class TournamentByStageView(APIView):
         print(serilaizer.data)
         return Response(serilaizer.data,  status=status.HTTP_200_OK)
     
-
-
+class MissedNotificationsAPIView(APIView):
+    def get(self, request, *args, **kwargs):
+        user = request.user
+        missed_notifications = Notification.objects.filter(recipient=user, is_read=False)
+        
+        serializer = NotificationSerializer(missed_notifications, many=True)
+        return Response({
+            "hasNotification": missed_notifications.exists(),
+            "notifications": serializer.data
+        }, status=status.HTTP_200_OK)
