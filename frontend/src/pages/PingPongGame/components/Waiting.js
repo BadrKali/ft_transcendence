@@ -1,11 +1,11 @@
 import "./waiting.css";
 import React, { useEffect, useState } from 'react';
-import './random.css';
+import '../stylesheet/game-style.css';
 import rectangle from '../asstes/rec2.png';
 import avatar1 from '../asstes/avatar1.png';
 import avatar2 from '../asstes/avatar2.png';
 import avatar3 from '../asstes/avatar4.png';
-import vs from '../asstes/VS.png';
+// import vs from '../asstes/VS.png';
 
 const Waiting = ({player}) => {
     const [timer, setTimer] = useState(10);

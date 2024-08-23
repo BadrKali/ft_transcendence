@@ -58,7 +58,8 @@ class GameState:
             'y': (self.state['canvas']['height'] - 140) / 2,
             'width': 10,
             'height': 140,
-            'color': player1_settings.paddle if player1_settings else 'WHITE'
+            'color': player1_settings.paddle if player1_settings else 'WHITE',
+            'disconnect' : 0,
         }
         player2 = {
             'username': player2_username,
@@ -68,7 +69,8 @@ class GameState:
             'y': (self.state['canvas']['height'] - 140) / 2,
             'width': 10,
             'height': 140,
-            'color': player2_settings.paddle if player2_settings else 'WHITE'
+            'color': player2_settings.paddle if player2_settings else 'WHITE',
+            'disconnect' : 0,
         }
 
         self.state['players'][player1_username] = player1
@@ -101,8 +103,11 @@ class GameState:
 
     def remove_player(self, username):
         if username in self.state['players']:
-            del self.state['players'][username]
-            print(f"Player removed: {username}, Current players: {list(self.state['players'].keys())}")
+            if self.state['players'][username]['disconnect'] == 1:
+                del self.state['players'][username]
+                print(f"Player removed: {username}, Current players: {list(self.state['players'].keys())}")
+            else :
+                self.state['players'][username]['disconnect'] += 1
 
     def reset_ball(self):
         self.state['ball']['x'] = self.state['canvas']['width'] / 2
@@ -311,6 +316,7 @@ class GameConsumer(AsyncWebsocketConsumer):
                 }
             )
             await asyncio.sleep(frame_duration)
+        print("Loop Stopped")
 
     @database_sync_to_async
     def get_player(self, user):
@@ -350,8 +356,7 @@ class GameConsumer(AsyncWebsocketConsumer):
         }
         print(f"GROUP NAAME {self.channel_layer}")
         await self.channel_layer.group_send(
-            self.room_group_name,
-            {
+            self.room_group_name, {
                 'type': 'send_message',
                 'message': message
             }

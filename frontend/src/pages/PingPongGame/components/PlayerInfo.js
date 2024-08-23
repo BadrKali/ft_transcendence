@@ -21,7 +21,9 @@ const PlayerInfo = ({ player1, player2, onStartGame}) => {
 
         return () => clearInterval(interval);
     }, [timer]);
-
+    if (!player1 || !player2) {
+        return <div><h1>Loading...</h1></div>;
+    }
     return (
         <div className="player-info-container">
             {!isGameStarting && (
