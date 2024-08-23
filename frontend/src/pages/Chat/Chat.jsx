@@ -6,8 +6,9 @@ import UserParams from "./Components/UserParams/UserParams";
 import useAuth from "../../hooks/useAuth";
 import { CurrentUserContext } from "./usehooks/ChatContext.js";
 import { clientSocketContext } from "./usehooks/ChatContext.js";
+import { blockPopUpContext } from "./usehooks/ChatContext.js";
 import receivedmsgsound from "./ChatAssets/receivemsgnotif.mp3"
-import { useLocation } from 'react-router-dom';
+import BlockPopUps from "./Components/BlockPopUps/BlockPopUps.jsx";
 
 
 
@@ -36,8 +37,9 @@ const Chat = () => {
   const { stateValue: clientSocket } = useContext(clientSocketContext);
   const CurrentUser = useContext(CurrentUserContext);
   const [sendMessage, setSendMessage] = useState(0);
-  const [ChatPartner, setChatPartner] = useState(null)
-  const location = useLocation();
+  const [ChatPartner, setChatPartner] = useState(null);
+  const [firstMsgSender, setfirstMsgSender] = useState(null);
+  const{blockpopUp, setblockpopUp} = useContext(blockPopUpContext)
 
   const  updateUnreadMsgs = (message) =>{
     if (message.receiver_id === CurrentUser?.user_id && message.receiver_id !== message.sender_id){
@@ -56,27 +58,54 @@ const Chat = () => {
     }
 }
 
+const alreadyHaveConversation = (id) =>{
+    if (ChatList === null)
+      return false;
+    return ChatList.some((contact) => contact?.id === id)
+}
+
+const sortConversations = () =>{
+  setChatList(prevChatList => {
+    const sortedChatList = [...prevChatList].sort((a, b) => {
+      return a.created_at.localeCompare(b.created_at);
+    });
+    return sortedChatList;
+  });
+}
+
   if (clientSocket) {
   clientSocket.onmessage = (event) => {
     const data = JSON.parse(event.data);
     const notif = new Audio(receivedmsgsound);
-    
-    console.log(data.type)
-    
+
+
     if (data.type === 'newchat.message'){
-      // console.log(data.message)
       // You are receiver you got notif sound! not your self too talk with your self .
       if (data.message.receiver_id === CurrentUser?.user_id && data.message.sender_id !== CurrentUser?.user_id){ 
           notif.play().then(() => {}).catch((error) => {
             // Ignore the error 
           });
+            if (alreadyHaveConversation(data.message.sender_id) === false){
+              firstMsgSender.unreadMessages = 0
+              firstMsgSender.lastMessage = data.message.content
+              firstMsgSender.created_at = data.message.created_at
+              firstMsgSender.lastTime = reformeDate(data.message.created_at)
+              firstMsgSender.status = true
+              setChatList(prevChatList => {
+                  if (prevChatList === null) {
+                    return [firstMsgSender];
+                  } else {
+                    return [firstMsgSender, ...prevChatList];
+                  }
+              });
+            }
+
         }
       if (ChatPartner){
         if ((data.message.sender_id === CurrentUser?.user_id && data.message.receiver_id === ChatPartner?.id) ||
           (data.message.sender_id === ChatPartner?.id && data.message.receiver_id === CurrentUser?.user_id)){
             if (data.message.receiver_id === CurrentUser.user_id){
                 data.message.seen = true;
-                // console.log(data.message)
                 // clientSocket.send Stored on Db as unread but being on a conv is should be setted as read !
                 clientSocket.send(JSON.stringify({type : 'Update_msgStatus', messageData : {
                   content : data.message.content,
@@ -94,7 +123,7 @@ const Chat = () => {
           // console.log('Will Go and Update the unread messages with :=> ' + data.message.sender_id) // no Partner no conversation Selected
           updateUnreadMsgs(data.message)
       }
-      }
+    }
       
     if (data.type === "last.message"){
       let result = ChatList.filter((contact) =>{
@@ -103,6 +132,7 @@ const Chat = () => {
     if (result.length > 1){
         result= result.filter((Conversation) => Conversation.id !== CurrentUser.user_id)
     }
+    
     setChatList(prevChatList => {
       return prevChatList.map((contact) => {
         if (contact.id === result[0].id) {
@@ -116,10 +146,13 @@ const Chat = () => {
         }
       });
     });
+
+    sortConversations();
     }
 
     if (data.type === "msgs.areReaded"){
-        // console.log(` You readed all msg With `, data.message.all_readed_From)
+        console.log(` You readed all msg With `, data.message.all_readed_From)
+
         setChatList(prevChatList => {
           return prevChatList.map((contact) => {
             if (contact.username === data.message.all_readed_From) {
@@ -142,13 +175,19 @@ const Chat = () => {
       }
     
     if (data.type === 'Blocke_Warning'){
-      // I'm blocking this User
-      console.log('Block Warning here is the Data needed !')
-      console.log(data.message)
-      
+      console.log('Data.type is : ' + data.type)
+      console.log('Should Show The popup !')
+      setblockpopUp(true)
+      setTimeout(()=>{
+        setblockpopUp(false)
+      }, 2000)
     }
 
     if (data.type === 'start_Firstconv'){
+      if (CurrentUser.user_id !== data.message.SenderData.id){
+        setfirstMsgSender(data.message.SenderData)
+      }
+      else {
       setChatList(prevChatList => {
         if (prevChatList === null) {
           return [data.message];
@@ -158,8 +197,7 @@ const Chat = () => {
       });
       setPickerUsername(data.message.username)
     }
-    
-
+    }
   };
 }
 
@@ -189,7 +227,7 @@ const Chat = () => {
     return () => {
       abortController.abort(); 
     };
-  }, [sendMessage, auth.accessToken]); //PickedUsername -dependencies will change
+  }, [auth.accessToken]); //PickedUsername -dependencies will change
   // I fogot why I added PickedUsername ???
 
   const handleConversationSelect = (conversationId) => {

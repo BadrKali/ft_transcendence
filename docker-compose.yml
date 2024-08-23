@@ -1,0 +1,46 @@
+services:
+  frontend:
+    build: ./frontend/
+    image: frontimg:abait-ta
+    container_name: frontend
+    ports:
+      - "3000:3000"
+    restart: always
+    env_file:
+      - ./frontend/.env
+    depends_on:
+      - backend
+
+  backend:
+    build: ./backend/
+    image: backimg:abait-ta
+    container_name: backend
+    ports:
+      - "8000:8000"
+    restart: always
+    env_file:
+      - ./backend/.env.database
+    depends_on:
+      - postgres
+
+  postgres:
+    image: postgres:14.2
+    container_name: postgres
+    ports:
+      - "5432:5432"
+    restart: always
+    env_file:
+      - ./backend/.env.database
+    volumes:
+      - postgresVM:/var/lib/postgresql/data
+      
+  redis:
+    image: redis:7
+    container_name: redis
+    ports:
+      - "6379:6379"
+    restart: on-failure
+
+
+volumes:
+  postgresVM:

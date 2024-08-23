@@ -4,7 +4,7 @@ import EmptyChatAnimation from "../../ChatAssets/EmptyChatAnimation.json";
 import online from "../../ChatAssets/online.json";
 import offline from "../../ChatAssets/offline.json";
 import NoPickedConv from "../../ChatAssets/NoConversationchoiced.json";
-import { Smiley, Image, Files, FadersHorizontal } from "phosphor-react";
+import { Smiley, Image, Files, Gear } from "phosphor-react";
 import Lottie from "lottie-react";
 import data from "@emoji-mart/data";
 import Picker from "@emoji-mart/react";
@@ -16,6 +16,7 @@ import { clientSocketContext } from "../../usehooks/ChatContext.js";
 import { SendMessageEventContext } from "../../Chat.jsx";
 import { chatPartnerContext } from "../../Chat.jsx";
 import notificationSound from "../../ChatAssets/notification.mp3";
+import BlockPopUps from "../BlockPopUps/BlockPopUps.jsx";
 
 
 export const PickerClickContext = createContext();
@@ -56,12 +57,6 @@ const SendMessage = ({ message, setMessage }) => {
   const {stateValue: clientSocket} = useContext(clientSocketContext);
   const {setSendMessage} = useContext(SendMessageEventContext)
 
-//////////////////////////////REMOVE///////////////////////////////////
-    const constconversationmsg = useContext(conversationMsgContext) //REMOVE
-    const ChatList = useContext(ChatListContext)
-    const PickedUsername = useContext(PickedConvContext)
-
-/////////////////////////////////////////////////////////////////
   const handleSendMessage = () => {
     if (message.trim()) {
       PickerClicksetter((prev) => (prev ? !prev : prev));
@@ -75,28 +70,9 @@ const SendMessage = ({ message, setMessage }) => {
 
       clientSocket?.send(JSON.stringify({type: 'newchat.message', messageData: messageData}));
       
-
       const notif = new Audio(notificationSound);
       notif.play();
-      setSendMessage(prev => prev + 1)
-
-            // // REMOVE ///////////////////////////////////
-            // console.log('------------Debug Start--------------')
-            // console.log(clientSocket)
-            // console.log('-------Clientsocket------------')
-            // console.log(messageData)
-            // console.log('---------MessageData-----------')
-            // console.log(ChatPartner)
-            // console.log('---------CahtPartner-----------')
-            // console.log(CurrentUser)
-            // console.log('---------CurrentUser-----------')
-            // console.log(ChatList)
-            // console.log('---------ChatList--------------')
-            // console.log(PickedUsername)
-            // console.log('---------PickedUsername--------')
-            // console.log('--------------Debug End---------------')
-            // //////////////////////////////////////////////
-            
+      setSendMessage(prev => prev + 1)   
       setMessage("");
     }
     // *********************************************************
@@ -187,10 +163,9 @@ const ChatHeader = () => {
           </div>
           <div className={styles.ChatSettings}>
             {" "}
-            <FadersHorizontal
-              onClick={handleParamsClick}
-              size={40}
-              color="#6a6c74"
+            <Gear onClick={handleParamsClick}
+              size={32}
+              color=" #8D93AC"
             />{" "}
           </div>
         </>
@@ -241,6 +216,7 @@ const ChatInput = () => {
     <div className={styles.ChatInputHolder}>
       {Pickerusername.length ? (
         <>
+          <BlockPopUps/>
           <div
             className={styles.ImportOptions}
             style={{ display: ImportItemsClicked ? "flex" : "none" }}

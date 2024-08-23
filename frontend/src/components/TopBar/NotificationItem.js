@@ -24,7 +24,7 @@ function NotificationItem({notif, onClick }) {
     }
   }, [data]);
 
-  
+  // ALSO
   return (
       <div className="notifCard" onClick={() => onClick(notif)}>
         <div className="notifImage">

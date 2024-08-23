@@ -20,6 +20,7 @@ import { NotificationProvider } from "./components/Notification/NotificationCont
 import AppLayout from "./App";
 import RealTimeProvider from "./context/RealTimeProvider";
 import { SocketClientProvider } from "./pages/Chat/usehooks/ChatContext";
+import { BlockPopUpProvider } from "./pages/Chat/usehooks/ChatContext";
 import { CurrentUserProvider } from "./pages/Chat/usehooks/ChatContext";
 import Invite from './pages/PingPongGame/Invite/Invite';
 
@@ -44,7 +45,11 @@ const routes = [
             children: [
               { path: "/", element: <DashBoard /> },
               { path: "game", element: <Game /> },
-              { path: "chat", element: <CurrentUserProvider> <Chat /> </CurrentUserProvider> },
+              { path: "chat", element: <CurrentUserProvider> 
+                                              <BlockPopUpProvider >
+                                                        <Chat />
+                                              </BlockPopUpProvider>
+                                       </CurrentUserProvider> },
               { path: "tournament", element: <Tournament /> },
               { path: "leaderboard", element: <LeaderBoard /> },
               { path: "setting", element: <Setting /> },

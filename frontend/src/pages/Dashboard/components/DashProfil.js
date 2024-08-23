@@ -19,7 +19,7 @@ function DashProfil({profilData}) {
     //  const winPer = Math.floor((playerData.games_won / playerData.games_played) * 100);
     const winPer = Math.floor((30 / 100) * 100);
     const lossPer = 100 - winPer ;
-
+// ALSO
     return (
         <div className={`profilInfo ${isArabic ? 'rtl' : 'ltr'}`}>
             <div className="userInfo">

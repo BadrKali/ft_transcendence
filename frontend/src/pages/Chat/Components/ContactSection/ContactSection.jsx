@@ -6,6 +6,7 @@ import NoOneTotalkTo from "../../ChatAssets/NoOneTotalkTo.json";
 import Lottie from "lottie-react";
 import { ChatListContext } from "../../Chat.jsx";
 import { PickedConvContext } from "../../Chat.jsx";
+import { CurrentUserContext } from "../../usehooks/ChatContext.js";
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
@@ -33,6 +34,7 @@ const ChatConversation = ({
 }) => {
 
   const PickedUsername = useContext(PickedConvContext);
+
   function HandleClick() {
     onSelectConversation(ConversationData.username);
   }

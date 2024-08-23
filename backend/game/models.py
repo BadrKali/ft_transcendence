@@ -190,4 +190,3 @@ def check_and_update_status(self):
         if self.player1_connected and self.player2_connected:
             self.is_waiting = False
             self.save()
-

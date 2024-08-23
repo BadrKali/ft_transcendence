@@ -18,6 +18,19 @@ return (
 )
 }
 
+export const blockPopUpContext = createContext()
+
+export const BlockPopUpProvider = ({children}) =>{
+  const [blockpopUp, setblockpopUp] = useState(false);
+
+  return (
+    <blockPopUpContext.Provider value={{blockpopUp: blockpopUp, setblockpopUp: setblockpopUp}}>
+        {children}
+    </blockPopUpContext.Provider>
+)
+}
+
+
 
 export const clientSocketContext = createContext();
 

@@ -14,8 +14,13 @@ from pathlib import Path
 from datetime import timedelta
 from dotenv import load_dotenv
 import os
+# from decouple import Config
+
+
 
 load_dotenv()
+
+# config = Config("../.env.database")
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -30,7 +35,7 @@ SECRET_KEY = 'django-insecure-*vhv@l8+%lbvd^ag(ste@uc^ww0yim&%j1!km-ixvp$k%fnxh&
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": (
@@ -49,7 +54,6 @@ SIMPLE_JWT = {
 }
 
 # Application definition
-
 INSTALLED_APPS = [
     'daphne',
     'django.contrib.admin',
@@ -102,6 +106,17 @@ ASGI_APPLICATION = 'backend.asgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE'  : 'django.db.backends.postgresql_psycopg2',
+#         'NAME'    : 'project_db',
+#         'USER'    : 'canis',
+#         'PASSWORD': 'canis',
+#         'HOST'    : 'postgres',
+#         'PORT'    : '5432',
+#     }
+# }
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
@@ -158,6 +173,7 @@ AUTH_USER_MODEL = 'authentication.User'
 CORS_ALLOW_ALL_ORIGINS = True
 
 CORS_ALLOWED_ORIGINS = [
+    # "http://frontend:3000",
     "http://localhost:3000",
 ]
 
@@ -168,3 +184,12 @@ CHANNEL_LAYERS = {
         "BACKEND": "channels.layers.InMemoryChannelLayer",
     }
 }
+
+# CHANNEL_LAYERS = {
+#     'default': {
+#         'BACKEND': 'channels.layers.RedisChannelLayer',  # Use Redis as the channel layer backend
+#         'CONFIG': {
+#             'hosts': [('redis', 6379)],  # Adjust the host and port as per your Redis configuration
+#         },
+#     },
+# }

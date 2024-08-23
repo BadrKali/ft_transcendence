@@ -13,6 +13,7 @@ from django.db.models import Q
 from user_management .models import BlockedUsers
 from datetime import datetime
 from .views import format_date
+import openai
 
 
 
@@ -71,23 +72,27 @@ class ChatConsumer(AsyncWebsocketConsumer):
                 )
             else:
                 await self.Process_First_msg()
-    
+                
     async def Process_First_msg(self):
+        print(self.profil_Id)
+        # me
         self.MSGsender = await self.get_obj_ById(self.sender_id)
+        # Brahim 
         self.MSGreceiver = await self.get_obj_ById(self.profil_Id)
         ContactData = {
             "id"             :  self.MSGreceiver.id,
             "avatar"         :  self.MSGreceiver.avatar.url,
             "username"       :  self.MSGreceiver.username,
             "unreadMessages" : 0,
-            "lastMessage"    : 'Say Hi ',
+            "lastMessage"    : 'Say Hi 👋',
             "created_at"     : datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
             "lastTime"       : format_date(datetime.now()),
-            "status"         : True
+            "status"         : self.MSGreceiver.is_online,
+            "SenderData"     : __user_serializer__(self.MSGsender).data
         }
-        print('====================')
-        print (ContactData)
-        print('--** CONTACT SECTION **--')
+        print('=-=-=-Here is the object for receiver')
+        print(ContactData)
+        print('-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-')
 
         await (self.channel_layer.group_send)(
             f'room_{self.sender_id}',{
@@ -95,16 +100,13 @@ class ChatConsumer(AsyncWebsocketConsumer):
                 'message': ContactData
             }
             )
-
-    @database_sync_to_async
-    def save_record(self):
-        return message.objects.create(
-                           sender_id=self.MSGsender,
-                           receiver_id = self.MSGreceiver,
-                           content= "I would like to send you msg",
-                           seen = False,
-                        #    type = 'WELCOME_MSG'
-                        )
+        # I have no focus When I added this line payattention !
+        await (self.channel_layer.group_send)( 
+            f'room_{self.MSGreceiver.id}',{
+                'type': 'start_Firstconv',
+                'message': ContactData
+            }
+            )
     
     async def start_Firstconv(self, event):
         await (self.send( text_data=json.dumps(event) ))
@@ -129,7 +131,6 @@ class ChatConsumer(AsyncWebsocketConsumer):
     @database_sync_to_async
     def get_record_if_exist(self):
         self.profil_Id = self.extracted_msg.get('messageData').get('user_id')
-        print('Profil user_id is :' +  str(self.profil_Id) + 'requester :' + str(self.sender_id))
         return message.objects.filter((Q(sender_id=self.profil_Id) & Q(receiver_id=self.sender_id)) |
                                       (Q(sender_id=self.sender_id) & Q(receiver_id=self.profil_Id))).exists()
         
@@ -152,37 +153,49 @@ class ChatConsumer(AsyncWebsocketConsumer):
     
     async def Broadcast_newMsg(self):
         self.receiver_id = self.extracted_msg.get('messageData').get('receiver_id')
-        await self.save_to_db();
-        try :
-            await (self.channel_layer.group_send)(
-            f'room_{self.receiver_id}',{
-                'type': 'newchat.message',
-                'message': self.extracted_msg.get('messageData')
-            }
-            )
-            if (self.receiver_id != self.extracted_msg.get('messageData').get('sender_id')):
+
+        senderBlockedreceiver = await self.check_blockStatus(self.sender_id, self.receiver_id)
+        receiverBlockedSender = await self.check_blockStatus(self.receiver_id, self.sender_id)
+        if not senderBlockedreceiver and not receiverBlockedSender:
+            await self.save_to_db();
+            try :
                 await (self.channel_layer.group_send)(
-                f"room_{self.extracted_msg.get('messageData').get('sender_id')}",{
-                        'type': 'newchat.message',
-                        'message': self.extracted_msg.get('messageData')
-                 }
+                f'room_{self.receiver_id}',{
+                    'type': 'newchat.message',
+                    'message': self.extracted_msg.get('messageData')
+                }
                 )
-                await (self.channel_layer.group_send)(
+                if (self.receiver_id != self.extracted_msg.get('messageData').get('sender_id')):
+                    await (self.channel_layer.group_send)(
                     f"room_{self.extracted_msg.get('messageData').get('sender_id')}",{
-                          'type': 'last.message',
-                        'message': self.extracted_msg.get('messageData')
+                            'type': 'newchat.message',
+                            'message': self.extracted_msg.get('messageData')
+                     }
+                    )
+                    await (self.channel_layer.group_send)(
+                        f"room_{self.extracted_msg.get('messageData').get('sender_id')}",{
+                              'type': 'last.message',
+                            'message': self.extracted_msg.get('messageData')
+                        }
+                    )
+            # Trigger event last Message !
+                await (self.channel_layer.group_send)(
+                f'room_{self.receiver_id}',{
+                    'type': 'last.message',
+                    'message': self.extracted_msg.get('messageData')
+                }
+                )
+            except Exception as e:
+                print(f"An error occurred: {e}")
+        else:
+            # Blocke_Warning
+            await self.channel_layer.group_send(
+            f"room_{self.sender_id}",{
+                    'type': 'Blocke_Warning',
+                    'message': None
                     }
                 )
-        # Trigger event last Message !
-            await (self.channel_layer.group_send)(
-            f'room_{self.receiver_id}',{
-                'type': 'last.message',
-                'message': self.extracted_msg.get('messageData')
-            }
-            )
-        except Exception as e:
-            print(f"An error occurred: {e}")
-    
+            # handle ÷ block with my prefered type
 
     @database_sync_to_async
     def get_user_id(self, username):
@@ -201,7 +214,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
         created_at = created_at.replace(microsecond=0)
         requiredMsg = message.objects.filter(content=self.msgcontent, created_at__second=created_at.second)
         requiredMsg.update(seen=True)
-        print(requiredMsg)
+        # print(requiredMsg)
 
 
     async def msgs_areReaded(self, event):
