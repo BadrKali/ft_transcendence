@@ -10,9 +10,15 @@ services:
       - ./frontend/.env
     depends_on:
       - backend
+    volumes:
+    - ./frontend:/front
+    - /front/node_modules
 
   backend:
     build: ./backend/
+    command: >
+      bash -c "./MAKE_MIGRATIONS.sh && 
+      python manage.py runserver 0.0.0.0:8000"
     image: backimg:abait-ta
     container_name: backend
     ports:
@@ -22,6 +28,9 @@ services:
       - ./backend/.env.database
     depends_on:
       - postgres
+    volumes:
+    - ./backend:/back
+
 
   postgres:
     image: postgres:14.2
@@ -32,7 +41,7 @@ services:
     env_file:
       - ./backend/.env.database
     volumes:
-      - postgresVM:/var/lib/postgresql/data
+      - postgres_data:/var/lib/postgresql/data
       
   redis:
     image: redis:7
@@ -41,6 +50,5 @@ services:
       - "6379:6379"
     restart: on-failure
 
-
 volumes:
-  postgresVM:
+  postgres_data:

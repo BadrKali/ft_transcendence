@@ -15,9 +15,8 @@ class Player(models.Model):
     PLAYER_FIRST_GAMES_PLAYED = 0
     PLAYER_FIRST_GAMES_WON = 0
     PLAYER_FIRST_GAMES_XP = 0
-
-
-    rank = models.CharField(max_length=1,default=PLAYER_RANK_BRONZE)
+ 
+    rank = models.CharField(max_length=15,default=PLAYER_RANK_BRONZE)
     rank_progress = models.DecimalField(max_digits=5, decimal_places=2, default=PLAYER_FIRST_RANK_PROGRESS)
     games_played = models.IntegerField(default=PLAYER_FIRST_GAMES_PLAYED)
     games_won = models.IntegerField(default=PLAYER_FIRST_GAMES_WON)

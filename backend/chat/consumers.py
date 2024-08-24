@@ -75,9 +75,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
                 
     async def Process_First_msg(self):
         print(self.profil_Id)
-        # me
         self.MSGsender = await self.get_obj_ById(self.sender_id)
-        # Brahim 
         self.MSGreceiver = await self.get_obj_ById(self.profil_Id)
         ContactData = {
             "id"             :  self.MSGreceiver.id,
