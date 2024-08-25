@@ -21,6 +21,7 @@ import { InfoToast } from '../ReactToastify/InfoToast'
 import LanguageSelector from './LanguageSelector'
 import GameChallengeNotification from '../Notification/GameChallengeNotification'
 import GameSettingsPopUp from '../GameSettingsPopUp/GameSettingsPopUp'
+import { UserContext } from '../../context/UserContext'
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
 const TopBar = () => {
@@ -42,7 +43,7 @@ const TopBar = () => {
   const [modalOpenBlocked, setModalOpenBlocked] = useState(false);
   const [selectedNotification, setSelectedNotification] = useState(null);
   const {gameChallenge, handleAcceptGame, handleRejectGame, gameAccepted, joinGame, setGameAccepted, showGameSettings, setShowGameSettings} = useContext(RealTimeContext);
- 
+  const { userData, userDataLoading, userDataError } = useContext(UserContext);
   
   const handleNotificationClick = (notif) => {
     setSelectedNotification(notif);
@@ -219,7 +220,7 @@ const handleReject = async (id, type) => {
   const handleIconClick = async () => {
     setNotif(!showNotif);
 
-    if (!showNotif) {  
+    if (!showNotif) {
       try {
         const response = await fetch(`${BACKEND_URL}/user/notifications/`, {
           method: 'GET',
@@ -230,18 +231,8 @@ const handleReject = async (id, type) => {
         });
         if (response.ok) {
           const data = await response.json();
-          console.log(data);
-          setNotifications(data.length > 0 ? data : []);
-          clearNotification();  
-
-  
-          await fetch(`${BACKEND_URL}/user/notifications/`, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${auth.accessToken}`
-            }
-          });
+          setNotifications(data);
+          clearNotification(); 
         } else {
           console.error('Failed to fetch notifications');
         }
@@ -249,7 +240,7 @@ const handleReject = async (id, type) => {
         console.error('Error fetching notifications:', error);
       }
     }
-};
+  };
 
   useEffect(() => {
     if (response1.data) {
@@ -377,9 +368,9 @@ const handleReject = async (id, type) => {
         </div>
         <div className='profile-pic-container'  onClick={handleProfilClick}>
           <div className='profile-pic'>
-            <img src={`${BACKEND_URL}${profilData.avatar}`}/>
+            <img src={`${BACKEND_URL}${userData.avatar}`}/>
           </div>
-          <span>{profilData.username}</span>
+          <span>{userData.username}</span>
           <div  className={isProfilActive ? "dropDwonProfil profilActive" : "dropDwonProfil"}>
             <div className='dropList'>
               <p className='list' onClick={handleMyProfilClick}>View My Profil</p>
