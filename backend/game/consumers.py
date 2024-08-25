@@ -5,7 +5,7 @@ import json
 import asyncio
 import math
 from django.db.models import Q
-
+import time
 
 class GameState:
     # WINNING_SCORE = 2
@@ -187,6 +187,7 @@ class GameConsumer(AsyncWebsocketConsumer):
             self.keep_running = True
             self.room_name = None
             self.room_group_name = None
+            self.game_state = None
             await self.accept()
             await self.send(text_data=json.dumps({
                 'action': 'connected',
@@ -195,22 +196,25 @@ class GameConsumer(AsyncWebsocketConsumer):
 
     async def disconnect(self, close_code):
         self.keep_running = False
+        print("Hello Baby")
         if self.room_group_name:
             await self.leave_room()
 
     async def receive(self, text_data):
         data = json.loads(text_data)
         action = data.get('action')
-
         if action == "random":
             await self.handle_random_action()
         elif action == "invite":
             await self.handle_invite_action()
         elif action == "player_movement":
-            username = data.get('user')
-            direction = data.get('direction')
-            self.game_state.player_mouvement(username, direction)
-            await self.send_player_movement_update()
+            if self.game_state:
+                username = data.get('user')
+                direction = data.get('direction')
+                self.game_state.player_mouvement(username, direction)
+                await self.send_player_movement_update()
+            else:
+                print("Error: game_state is not initialized")
 
     async def send_player_movement_update(self):
         await self.channel_layer.group_send(
@@ -240,35 +244,45 @@ class GameConsumer(AsyncWebsocketConsumer):
                 await self.channel_layer.group_add(self.room_group_name, self.channel_name)
                 await sync_to_async(invite_game_room.set_player_connected)(self.player)
                 await sync_to_async(invite_game_room.check_and_update_status)()
+                self.game_state = game_state_manager.get_or_create_game_state(self.room_id)
                 if not invite_game_room.is_waiting:
-                    self.game_state = game_state_manager.get_or_create_game_state(self.room_id)
                     await self.game_state.add_player("", invite_game_room)
                     print("The game has started successfully.")
                     await self.notify_players(invite_game_room)
                     asyncio.create_task(self.start_game_loop())
-
             else:
                 print("InviteGameRoom not found")
         except Exception as e:
             print(f"{e}")
 
 
-    @database_sync_to_async
-    def get_invite_state(self, room):
-        if room.player1 == self.player:
-            room.player1_connected = True
-            print("Player1 connected.")
-        elif room.player2 == self.player:
-            room.player2_connected = True
-            print("Player2 connected.")
-        if room.player1_connected and room.player2_connected:
-            print("Both players are ready to play.")
-            self.game_state = game_state_manager.get_or_create_game_state(self.room_id)
-            room.is_waiting = False
-        room.save()
+    # @database_sync_to_async
+    # def get_invite_state(self, room):
+    #     if room.player1 == self.player:
+    #         room.player1_connected = True
+    #         print("Player1 connected.")
+    #     elif room.player2 == self.player:
+    #         room.player2_connected = True
+    #         print("Player2 connected.")
+    #     if room.player1_connected and room.player2_connected:
+    #         print("Both players are ready to play.")
+    #         self.game_state = game_state_manager.get_or_create_game_state(self.room_id)
+    #         room.is_waiting = False
+    #     room.save()
 
 
     async def handle_random_action(self):
+        from .models import GameRoom
+        # try:
+        #     game_room = await sync_to_async(
+        #         lambda: GameRoom.objects.filter(
+        #             Q(player1=self.player) | Q(player2=self.player)
+        #         ).first()
+        #     )()
+        #     if game_room:
+        #         print("game_room is found")
+        # except Exception as e:
+        #     print(f"{e}")
         player_str = await self.get_player_str()
         room = await self.find_or_create_room(player_str)
 
@@ -290,8 +304,9 @@ class GameConsumer(AsyncWebsocketConsumer):
         }))
 
     async def start_game_loop(self):
-        frame_duration = 1 / 50
+        frame_duration = 1 / 60
         while self.keep_running:
+            start_time = time.time()
             self.game_state.update_ball_position()
             if self.game_state.check_winning_condition():
                 await self.channel_layer.group_send(
@@ -315,7 +330,11 @@ class GameConsumer(AsyncWebsocketConsumer):
                     }
                 }
             )
-            await asyncio.sleep(frame_duration)
+            elapsed_time = time.time() - start_time
+            if elapsed_time < frame_duration:
+                await asyncio.sleep(frame_duration - elapsed_time)
+            else:
+                frame_duration = max(1 / 30, frame_duration * 0.9)
         print("Loop Stopped")
 
     @database_sync_to_async
@@ -370,6 +389,14 @@ class GameConsumer(AsyncWebsocketConsumer):
         player = self.player
         game_room = await self.get_game_room(player)
         if game_room:
+            await self.channel_layer.group_send(
+                    self.room_group_name,
+                    {
+                        'type': 'send_message',
+                        'message': "",
+                        'action': 'Opponent disconnected',
+                    }
+                )
             self.game_state.remove_player(str(player))
             await self.update_game_room(game_room, player)
 

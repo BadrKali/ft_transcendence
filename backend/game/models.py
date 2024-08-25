@@ -73,7 +73,11 @@ class GameRoom(models.Model):
     player2 = models.ForeignKey(Player, related_name='player2', on_delete=models.CASCADE, null=True, blank=True)
     is_waiting = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
-
+    player1_disconnected_at = models.DateTimeField(null=True, blank=True)
+    player2_disconnected_at = models.DateTimeField(null=True, blank=True)
+    player1_reconnected = models.BooleanField(default=False)
+    player2_reconnected = models.BooleanField(default=False)
+    
     def add_player(self, player):
         if not self.player1:
             self.player1 = player

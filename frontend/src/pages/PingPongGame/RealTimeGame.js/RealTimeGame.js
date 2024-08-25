@@ -87,6 +87,8 @@ const RealTimeGame = ({ mode }) => {
             case 'game_over':
                 endGame(data);
                 break;
+            case 'Opponent disconnected':
+                alert("SomeOne is Disconnected");
             default:
                 if (data.message) {
                     alert(data.message);
@@ -106,7 +108,8 @@ const RealTimeGame = ({ mode }) => {
 
     const endGame = (data) => {
         setGameRunning(false);
-        alert(`${data.game_state.winner} has won the game!`);
+        // alert(`${data.game_state.winner} has won the game!`);
+        navigate('/game', { replace:true });
     };
 
     const initializeCanvas = () => {
@@ -187,8 +190,19 @@ const RealTimeGame = ({ mode }) => {
     };
 
     const handleKeyDown = (evt) => {
-        const direction = (keys === 'ws' && evt.key === 'w') || (keys !== 'ws' && evt.key === 'ArrowUp') ? 'up' : 'down';
-        sendPlayerMovement(currentUser?.username, direction);
+        let direction = null;
+    
+        if (keys === 'ws') {
+            if (evt.key === 'w') direction = 'up';
+            if (evt.key === 's') direction = 'down';
+        } else {
+            if (evt.key === 'ArrowUp') direction = 'up';
+            if (evt.key === 'ArrowDown') direction = 'down';
+        }
+    
+        if (direction) {
+            sendPlayerMovement(currentUser?.username, direction);
+        }
     };
 
     const sendPlayerMovement = (username, direction) => {
@@ -239,8 +253,10 @@ const RealTimeGame = ({ mode }) => {
 
     useEffect(() => {
         window.addEventListener('keydown', handleKeyDown);
-        return () => window.removeEventListener('keydown', handleKeyDown);
-    }, [keys]);
+        return () => {
+            window.removeEventListener('keydown', handleKeyDown);
+        };
+    }, [keys, currentUser]);
 
     useEffect(() => {
         initializeCanvas();
