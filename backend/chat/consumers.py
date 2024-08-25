@@ -26,7 +26,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
         await (self.channel_layer.group_add)(
             self.room_group_name,
             self.channel_name
-        )
+        ) 
         await self.accept()
 
     async def disconnect(self, __quitcode__):
@@ -51,7 +51,47 @@ class ChatConsumer(AsyncWebsocketConsumer):
         # add if users are blocked or not !
         if (self.extracted_msg.get('type') == 'newchat.message'):
             await self.Broadcast_newMsg()
-    
+
+        if (self.extracted_msg.get('type') == 'typing_event'):
+            await self.handleTypingEvent()
+
+        if (self.extracted_msg.get('type') == 'deactivate_typing_event'):
+            receiver = self.extracted_msg.get('messageData').get('receiver_id')
+            await (self.channel_layer.group_send)(
+                    f'room_{receiver}',{
+                    'type': 'deactivate_typing_event',
+                    'message': self.extracted_msg.get('messageData')
+                }
+                )
+            
+    async def deactivate_typing_event(self, event):
+        await (self.send( text_data=json.dumps(event) ))
+        
+    async def handleTypingEvent(self):
+        sender = self.extracted_msg.get('messageData').get('sender_id')
+        receiver = self.extracted_msg.get('messageData').get('receiver_id')
+        
+        senderBlockedreceiver = await self.check_blockStatus(sender, receiver)
+        receiverBlockedSender = await self.check_blockStatus(receiver, sender)
+
+        if not senderBlockedreceiver and not receiverBlockedSender:
+            AlreadyTalked = await self.already_have_record(sender, receiver)
+            if AlreadyTalked:
+                await (self.channel_layer.group_send)(
+                    f'room_{receiver}',{
+                    'type': 'receive_typing',
+                    'message': self.extracted_msg.get('messageData')
+                }
+                )
+
+    async def receive_typing(self, event):
+        await (self.send( text_data=json.dumps(event) ))
+        
+    @database_sync_to_async
+    def already_have_record (self, sender, receiver) :
+        return message.objects.filter((Q(sender_id=receiver) & Q(receiver_id=sender)) |
+                                      (Q(sender_id=sender) & Q(receiver_id=receiver))).exists()
+
     async def start_chat(self):
         Isconversation_exist = await self.get_record_if_exist()
         if (Isconversation_exist):
@@ -74,7 +114,6 @@ class ChatConsumer(AsyncWebsocketConsumer):
                 await self.Process_First_msg()
                 
     async def Process_First_msg(self):
-        print(self.profil_Id)
         self.MSGsender = await self.get_obj_ById(self.sender_id)
         self.MSGreceiver = await self.get_obj_ById(self.profil_Id)
         ContactData = {
@@ -88,10 +127,6 @@ class ChatConsumer(AsyncWebsocketConsumer):
             "status"         : self.MSGreceiver.is_online,
             "SenderData"     : __user_serializer__(self.MSGsender).data
         }
-        print('=-=-=-Here is the object for receiver')
-        print(ContactData)
-        print('-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-')
-
         await (self.channel_layer.group_send)(
             f'room_{self.sender_id}',{
                 'type': 'start_Firstconv',
@@ -221,7 +256,6 @@ class ChatConsumer(AsyncWebsocketConsumer):
     async def newchat_message(self, event):
         await (self.send(text_data=json.dumps(event) ))
         
-
     async def last_message(self, event):
         await (self.send(
             text_data=json.dumps(event) ))

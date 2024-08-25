@@ -18,6 +18,8 @@ export const PickedConvContext = createContext();
 export const conversationSetterContext = createContext();
 export const SendMessageEventContext = createContext();
 export const chatPartnerContext = createContext();
+// status : false | true ,sender_id : null | value
+export const TypingContext = createContext();
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
@@ -40,6 +42,7 @@ const Chat = () => {
   const [ChatPartner, setChatPartner] = useState(null);
   const [firstMsgSender, setfirstMsgSender] = useState(null);
   const{blockpopUp, setblockpopUp} = useContext(blockPopUpContext)
+  const [typingData, setTypingData] = useState({status: false, sender_id: null})
 
   const  updateUnreadMsgs = (message) =>{
     if (message.receiver_id === CurrentUser?.user_id && message.receiver_id !== message.sender_id){
@@ -78,6 +81,16 @@ const sortConversations = () =>{
     const data = JSON.parse(event.data);
     const notif = new Audio(receivedmsgsound);
 
+    if (data.type === 'receive_typing'){
+      setTypingData({status: true,
+        sender_id : data.message.sender_id
+      })
+    }
+    if (data.type === 'deactivate_typing_event'){
+      setTypingData({status: false,
+        sender_id : data.message.sender_id
+      })
+    }
 
     if (data.type === 'newchat.message'){
       // You are receiver you got notif sound! not your self too talk with your self .
@@ -280,11 +293,13 @@ const sortConversations = () =>{
             <ChatListContext.Provider value={{ ChatList, setChatList }}>
               <PickedConvContext.Provider value={PickedUsername}>
               <chatPartnerContext.Provider value={{ChatPartner, setChatPartner}}>
+                <TypingContext.Provider value={{status : typingData.status, setTypingData}}>
                   <ContactSection handleConversationSelect={handleConversationSelect} />
                   <SendMessageEventContext.Provider value ={{sendMessage, setSendMessage}}>
                     <MessageSection />
                       </SendMessageEventContext.Provider>
                     {PickedUsername ? <UserParams /> : null}
+                    </TypingContext.Provider>
                 </chatPartnerContext.Provider>
               </PickedConvContext.Provider>
             </ChatListContext.Provider>

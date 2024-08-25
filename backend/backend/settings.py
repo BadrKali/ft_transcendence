@@ -185,7 +185,6 @@ CORS_ALLOW_CREDENTIALS = True
 #         "BACKEND": "channels.layers.InMemoryChannelLayer",
 #     }
 # }
-
 CHANNEL_LAYERS = {
     'default': {
         'BACKEND': 'channels_redis.core.RedisChannelLayer',

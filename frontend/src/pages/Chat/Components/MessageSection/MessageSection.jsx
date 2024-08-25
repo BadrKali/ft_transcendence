@@ -17,7 +17,8 @@ import { SendMessageEventContext } from "../../Chat.jsx";
 import { chatPartnerContext } from "../../Chat.jsx";
 import notificationSound from "../../ChatAssets/notification.mp3";
 import BlockPopUps from "../BlockPopUps/BlockPopUps.jsx";
-
+import { TypingContext } from "../../Chat.jsx";
+import typinganimation from "../../ChatAssets/lastTyping.json"
 
 export const PickerClickContext = createContext();
 
@@ -56,6 +57,37 @@ const SendMessage = ({ message, setMessage }) => {
   const PickerClicksetter = useContext(PickerClickContext);
   const {stateValue: clientSocket} = useContext(clientSocketContext);
   const {setSendMessage} = useContext(SendMessageEventContext)
+  const {status, setTypingData} = useContext(TypingContext)
+  let typingTimeoutId = null; //Pay Attention to this fucking 0
+
+  useEffect(() =>{
+  const messageData = {
+      sender_id    : CurrentUser?.user_id,
+      receiver_id  : ChatPartner?.id
+    }
+    if (message.length && message.length % 2 === 0){
+        clientSocket?.send(JSON.stringify({type: "typing_event", messageData: messageData}))
+
+      // ********* 4 seconds Logic********************************************************************************
+          if (typingTimeoutId !== null) {                                                                             
+            clearTimeout(typingTimeoutId);
+          }
+
+          typingTimeoutId = setTimeout(() => {
+            clientSocket?.send(JSON.stringify({ type: "deactivate_typing_event", messageData: messageData }));
+            }, 5000);
+      // ***********************************************************************************************************
+      
+    }
+  
+      if (message.length === 0){
+      clientSocket?.send(JSON.stringify({type: "deactivate_typing_event", messageData: messageData}))
+      clearTimeout(typingTimeoutId);
+      typingTimeoutId = null;
+  }
+  
+}, [message])
+
 
   const handleSendMessage = () => {
     if (message.trim()) {
@@ -311,11 +343,35 @@ const MessageDisplayer = ({ message, IsIncoming }) => {
   );
 };
 
+const Typing =() => {
+  const {ChatPartner} = useContext(chatPartnerContext);
+
+  return (
+    <div className={styles.MsgIncom}>
+        <div className={styles.receiverAvatar}>
+        <img
+          className={styles.avatar}
+          src={ `${BACKEND_URL}` + ChatPartner?.avatar //Here is the shit added target receiver Here !
+          }
+          alt="user-avatar"
+        />
+      </div>
+
+      <div className={styles.msgContent}>
+          <Lottie animationData={typinganimation}/>
+        <h1 className={styles.SendingTime}> now </h1>
+      </div>
+
+    </div>
+  )
+}
+
 const ChatMainHolder = () => {
   const Pickedusername = useContext(PickedConvContext);
   const conversationMsg = useContext(conversationMsgContext);
   const messagesEndRef = useRef(null);
   const CurrentUser = useContext(CurrentUserContext);
+  const {status} = useContext(TypingContext)
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -328,6 +384,7 @@ const ChatMainHolder = () => {
   return (
     <div className={styles.ChatMainHolder}>
       {Pickedusername.length ? (
+       
         <div className={styles.ConversationMessages}>
           {conversationMsg?.map((elem, index) => {
             return (
@@ -339,8 +396,11 @@ const ChatMainHolder = () => {
                 }
               />
             );
+    
+            
           })}
           <div ref={messagesEndRef} />
+          { status ? <Typing/> : null }
         </div>
       ) : (
         <div className={styles.StartMessageHolder}>

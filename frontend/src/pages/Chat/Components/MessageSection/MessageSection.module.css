@@ -291,7 +291,6 @@
 }
 
 .MsgIncom{
-
     animation: sliding linear;
     animation-timeline: View();
     animation-range: entry -1000%  30%;

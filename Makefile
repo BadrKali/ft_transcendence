@@ -1,5 +1,7 @@
 PROJECT = ft_transcendence
 
+Get_Host=${HOST}
+
 # full docker-compose path
 # THIS WILL CHANGE UPT TO THE FOLDER path
 COMPOSE = /goinfre/${USER}/ft_transcendence/docker-compose.yml
