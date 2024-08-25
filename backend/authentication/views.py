@@ -135,7 +135,9 @@ class CallbackView(APIView):
     permission_classes = [AllowAny]
     def post(self, request, *args, **kwargs):
         code = request.data.get('code')
+        print(f"code: {code}")
         if not code:
+            print("you touched my tralala")
             return Response({"error": "No code provided"}, status=400)
         data = {
             'grant_type'  : 'authorization_code',

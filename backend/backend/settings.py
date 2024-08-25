@@ -21,6 +21,7 @@ from channels_redis.core import RedisChannelLayer
 
 load_dotenv('../.env.database')
 load_dotenv('../.env')
+
 # config = Config("../.env.database")
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
