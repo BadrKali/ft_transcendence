@@ -14,12 +14,13 @@ from pathlib import Path
 from datetime import timedelta
 from dotenv import load_dotenv
 import os
+from channels_redis.core import RedisChannelLayer
 # from decouple import Config
 
 
 
-load_dotenv()
-
+load_dotenv('../.env.database')
+load_dotenv('../.env')
 # config = Config("../.env.database")
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -107,22 +108,22 @@ ASGI_APPLICATION = 'backend.asgi.application'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE'  : 'django.db.backends.postgresql_psycopg2',
-#         'NAME'    : 'project_db',
-#         'USER'    : 'canis',
-#         'PASSWORD': 'canis',
-#         'HOST'    : 'postgres',
-#         'PORT'    : '5432',
-#     }
-# }
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE'  : 'django.db.backends.postgresql_psycopg2',
+        'NAME'    : os.getenv('POSTGRES_DB'),
+        'USER'    : os.getenv('POSTGRES_USER'),
+        'PASSWORD': os.getenv('POSTGRES_PASSWORD'),
+        'HOST'    : os.getenv('POSTGRES_HOST'),
+        'PORT'    : os.getenv('POSTGRES_PORT'),
     }
 }
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
+#     }
+# }
 
 
 # Password validation
@@ -173,23 +174,23 @@ AUTH_USER_MODEL = 'authentication.User'
 CORS_ALLOW_ALL_ORIGINS = True
 
 CORS_ALLOWED_ORIGINS = [
-    # "http://frontend:3000",
+    "http://frontend:3000",
     "http://localhost:3000",
 ]
 
 CORS_ALLOW_CREDENTIALS = True
 
-CHANNEL_LAYERS = {
-    "default": {
-        "BACKEND": "channels.layers.InMemoryChannelLayer",
-    }
-}
-
 # CHANNEL_LAYERS = {
-#     'default': {
-#         'BACKEND': 'channels.layers.RedisChannelLayer',  # Use Redis as the channel layer backend
-#         'CONFIG': {
-#             'hosts': [('redis', 6379)],  # Adjust the host and port as per your Redis configuration
-#         },
-#     },
+#     "default": {
+#         "BACKEND": "channels.layers.InMemoryChannelLayer",
+#     }
 # }
+
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            'hosts': [('redis', 6379)],
+        },
+    },
+}

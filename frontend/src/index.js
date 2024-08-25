@@ -23,6 +23,7 @@ import { SocketClientProvider } from "./pages/Chat/usehooks/ChatContext";
 import { BlockPopUpProvider } from "./pages/Chat/usehooks/ChatContext";
 import { CurrentUserProvider } from "./pages/Chat/usehooks/ChatContext";
 import Invite from './pages/PingPongGame/Invite/Invite';
+import { UserProvider } from "./context/UserContext";
 
 
 const routes = [
@@ -41,7 +42,14 @@ const routes = [
         element: <ProtectedRoutes />,
         children: [
           {
-            element: <AppLayout />,
+            element:     
+            <RealTimeProvider>
+              <SocketClientProvider>
+                  <UserProvider>
+                      <AppLayout />
+                  </UserProvider>
+              </SocketClientProvider>
+            </RealTimeProvider>,
             children: [
               { path: "/", element: <DashBoard /> },
               { path: "game", element: <Game /> },
@@ -71,10 +79,6 @@ const router = createBrowserRouter(routes);
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <AuthProvider>
-    <RealTimeProvider>
-        <SocketClientProvider>
           <RouterProvider router={router} />
-        </SocketClientProvider>
-    </RealTimeProvider>
   </AuthProvider>
 );
