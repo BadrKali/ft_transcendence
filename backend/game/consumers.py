@@ -33,8 +33,15 @@ class GameState:
             },
             'players': {},
             'game_over': False,
+            'game_running': True,
         }
     
+    def get_running(self):
+        return self.state['game_running']
+    
+    def update_game_running(self):
+        self.state['game_running'] = False
+
     def check_winning_condition(self):
         for player in self.state['players'].values():
             if player['score'] >= 5:
@@ -197,6 +204,7 @@ class GameConsumer(AsyncWebsocketConsumer):
     async def disconnect(self, close_code):
         self.keep_running = False
         print("Hello Baby")
+        self.game_state.update_game_running()
         if self.room_group_name:
             await self.leave_room()
 
@@ -305,7 +313,7 @@ class GameConsumer(AsyncWebsocketConsumer):
 
     async def start_game_loop(self):
         frame_duration = 1 / 60
-        while self.keep_running:
+        while self.game_state.get_running():
             start_time = time.time()
             self.game_state.update_ball_position()
             if self.game_state.check_winning_condition():
@@ -331,11 +339,10 @@ class GameConsumer(AsyncWebsocketConsumer):
                 }
             )
             elapsed_time = time.time() - start_time
-            if elapsed_time < frame_duration:
-                await asyncio.sleep(frame_duration - elapsed_time)
-            else:
-                frame_duration = max(1 / 30, frame_duration * 0.9)
+            sleep_duration = max(0, frame_duration - elapsed_time)
+            await asyncio.sleep(sleep_duration)
         print("Loop Stopped")
+
 
     @database_sync_to_async
     def get_player(self, user):

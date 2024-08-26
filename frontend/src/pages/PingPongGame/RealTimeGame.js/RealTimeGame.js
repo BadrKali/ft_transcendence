@@ -183,7 +183,6 @@ const RealTimeGame = ({ mode }) => {
         const loop = () => {
             if (!gameRunning) return;
             render();
-            requestAnimationFrame(loop);
         };
 
         loop();
@@ -191,7 +190,6 @@ const RealTimeGame = ({ mode }) => {
 
     const handleKeyDown = (evt) => {
         let direction = null;
-    
         if (keys === 'ws') {
             if (evt.key === 'w') direction = 'up';
             if (evt.key === 's') direction = 'down';
@@ -199,7 +197,6 @@ const RealTimeGame = ({ mode }) => {
             if (evt.key === 'ArrowUp') direction = 'up';
             if (evt.key === 'ArrowDown') direction = 'down';
         }
-    
         if (direction) {
             sendPlayerMovement(currentUser?.username, direction);
         }

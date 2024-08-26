@@ -4,7 +4,7 @@ Get_Host=${HOST}
 
 # full docker-compose path
 # THIS WILL CHANGE UPT TO THE FOLDER path
-COMPOSE = /goinfre/${USER}/ft_transcendence/docker-compose.yml
+COMPOSE = /Users/mohamed/Desktop/ft_transcendence/docker-compose.yml
 
 up: 
 	docker compose -f ${COMPOSE} up
