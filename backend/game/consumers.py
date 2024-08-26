@@ -244,7 +244,6 @@ class GameConsumer(AsyncWebsocketConsumer):
                     Q(player1=self.player) | Q(player2=self.player)
                 ).first()
             )()
-
             if invite_game_room:
                 self.room_name = f"game_room_{invite_game_room.id}"
                 self.room_id = invite_game_room.id
