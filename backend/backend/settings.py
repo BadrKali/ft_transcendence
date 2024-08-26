@@ -20,7 +20,8 @@ from channels_redis.core import RedisChannelLayer
 
 
 load_dotenv('../.env.database')
-load_dotenv('../.env')
+# load_dotenv('../.env')
+load_dotenv()
 
 # config = Config("../.env.database")
 

@@ -18,6 +18,7 @@ from game.models import  Achievement,UserAchievement
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
 from user_management.models import Notification
+import pyotp
 # Create your views here.
 
 token_url = 'https://api.intra.42.fr/oauth/token'
@@ -161,8 +162,12 @@ class CallbackView(APIView):
         api_42_id = user_info['id']
         username = user_info['login']
         email = user_info.get('email', '')
-        avatarList = [0, 1, 2, 4]
-        user, created = User.objects.get_or_create(api_42_id=api_42_id, defaults={'username': f"{username}{api_42_id}", 'avatar' : f'avatars/{random.choice(avatarList)}.png','email': email})
+        avatar = user_info['image']['link']
+        # avatarList = [0, 1, 2, 4]
+        user, created = User.objects.get_or_create(api_42_id=api_42_id, defaults={'username': f"{username}{api_42_id}", 'avatar' : avatar,'email': email})
+        if created:
+            user.set_avatar_from_url(avatar)
+            user.save()
         # khasni nzid wa7ed check ila ken l user already exist 
         refresh = RefreshToken.for_user(user)
         access_token = str(refresh.access_token)
@@ -179,3 +184,17 @@ class CallbackView(APIView):
         )
         return response
 
+
+class TwoFactorAuthView(APIView):
+    def post(self, request):
+        user = request.user
+        key = "JBSWY3DPEHPK3PXP"
+        uri = pyotp.totp.TOTP(key).provisioning_uri(name="test", issuer_name="PongyGame")
+        print(uri)
+        # return(Response({"asd": "ads"}, status=status.HTTP_200_OK))
+        return Response({"uri": uri}, status=status.HTTP_200_OK)
+    
+
+    def patch(self, request):
+        #to do : check if the user is authenticated
+        pass
