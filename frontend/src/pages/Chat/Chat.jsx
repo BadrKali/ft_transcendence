@@ -75,9 +75,26 @@ const sortConversations = () =>{
   });
 }
 
+const updateLastMessage = (data, result) =>{
+  setChatList(prevChatList => {
+    return prevChatList.map((contact) => {
+      if (contact.id === result[0]?.id) {
+        return {        
+            ...contact,
+            lastTime : reformeDate(data.message.created_at),
+            lastMessage : data.message.content
+        };
+      } else {
+        return contact;
+      }
+    });
+  });
+  sortConversations();
+}
   if (clientSocket) {
-  clientSocket.onmessage = (event) => {
-    const data = JSON.parse(event.data);
+    clientSocket.onmessage = (event) => {
+      const data = JSON.parse(event.data);
+      console.log('data.type is : ' + data.type)
     const notif = new Audio(receivedmsgsound);
 
     if (data.type === 'receive_typing'){
@@ -85,6 +102,7 @@ const sortConversations = () =>{
         sender_id : data.message.sender_id
       })
     }
+
     if (data.type === 'deactivate_typing_event'){
       setTypingData({status: false,
         sender_id : data.message.sender_id
@@ -132,22 +150,7 @@ const sortConversations = () =>{
     if (result.length > 1){
         result= result.filter((Conversation) => Conversation.id !== CurrentUser.user_id)
     }
-    
-    setChatList(prevChatList => {
-      return prevChatList.map((contact) => {
-        if (contact.id === result[0].id) {
-          return {        
-              ...contact,
-              lastTime : reformeDate(data.message.created_at),
-              lastMessage : data.message.content
-          };
-        } else {
-          return contact;
-        }
-      });
-    });
-
-    sortConversations();
+    updateLastMessage(data, result)
     }
 
     if (data.type === "msgs.areReaded"){
@@ -210,6 +213,7 @@ const sortConversations = () =>{
         }
         const data = await response.json();
         setChatList(data);
+        console.log('I refetcheeeed did you get last update or not ??')
       } catch (error) {
         console.error(error.message);
       }

@@ -198,6 +198,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
         senderBlockedreceiver = await self.check_blockStatus(self.sender_id, self.receiver_id)
         receiverBlockedSender = await self.check_blockStatus(self.receiver_id, self.sender_id)
         if not senderBlockedreceiver and not receiverBlockedSender:
+            already_have_conv = await self.already_have_record(self.sender_id, self.receiver_id)
             await self.save_to_db();
             try :
                 receiver_status = await self.get_user_status(self.receiver_id);
@@ -208,12 +209,14 @@ class ChatConsumer(AsyncWebsocketConsumer):
                             'message': self.extracted_msg.get('messageData')
                         }
                         )
-                    await (self.channel_layer.group_send)(
-                        f'room_{self.receiver_id}',{
-                            'type': 'last.message',
-                            'message': self.extracted_msg.get('messageData')
-                        }
-                        )
+                    if already_have_conv :
+                        print('Now We will Send you last Message because we already talked ! => ', already_have_conv)
+                        await (self.channel_layer.group_send)(
+                            f'room_{self.receiver_id}',{
+                                'type': 'last.message',
+                                'message': self.extracted_msg.get('messageData')
+                            }
+                            )
                 if (self.receiver_id != self.extracted_msg.get('messageData').get('sender_id')):
                     await (self.channel_layer.group_send)(
                     f"room_{self.extracted_msg.get('messageData').get('sender_id')}",{
@@ -230,14 +233,12 @@ class ChatConsumer(AsyncWebsocketConsumer):
             except Exception as e:
                 print(f"An error occurred: {e}")
         else:
-            # Blocke_Warning
             await self.channel_layer.group_send(
             f"room_{self.sender_id}",{
                     'type': 'Blocke_Warning',
                     'message': None
                     }
                 )
-            # handle ÷ block with my prefered type
 
     @database_sync_to_async
     def get_user_id(self, username):
