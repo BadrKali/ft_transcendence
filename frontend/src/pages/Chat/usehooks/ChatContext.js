@@ -30,8 +30,6 @@ export const BlockPopUpProvider = ({children}) =>{
 )
 }
 
-
-
 export const clientSocketContext = createContext();
 
 export const SocketClientProvider = ({children}) =>{
@@ -43,6 +41,9 @@ export const SocketClientProvider = ({children}) =>{
     if (!auth.accessToken)
         return;
     const clientSocket = new WebSocket(`${WS_BACKEND_URL}/ws/chat/?token=${auth.accessToken}`);
+    
+    console.log(clientSocket.onmessage);
+    
     clientSocket.onopen = () => {
         setsocket(clientSocket);
         console.log(" WebSocket instanciated : onopen => Clunca ")

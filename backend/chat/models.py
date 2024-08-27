@@ -29,4 +29,5 @@ class message(models.Model):
         return message.objects.filter((Q(sender_id=currentUserId) & Q(receiver_id=user2_Id)) |
                                       (Q(sender_id=user2_Id) & Q(receiver_id=currentUserId))).order_by('-created_at').first()
     def GetUserStatus(user_Id):
-        return User.objects.filter(id=user_Id).first().is_active
+
+        return User.objects.filter(id=user_Id).first().is_online

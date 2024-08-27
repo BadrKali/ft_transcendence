@@ -2,21 +2,28 @@ PROJECT = ft_transcendence
 
 Get_Host=${HOST}
 
-# full docker-compose path
-# THIS WILL CHANGE UPT TO THE FOLDER path
 COMPOSE = /Users/mohamed/Desktop/ft_transcendence/docker-compose.yml
 
+COMPOSEGOINFRE = /goinfre/${USER}/ft_transcendence/docker-compose.yml
+
+ifeq ($(filter ${USER},abait-ta bel-kala),)
+    COMPOSEFILE = $(COMPOSE)
+else
+    COMPOSEFILE = $(COMPOSEGOINFRE)
+endif
+
+
 up: 
-	docker compose -f ${COMPOSE} up
+	docker compose -f ${COMPOSEFILE} up
 
 stop:
-	docker compose -f ${COMPOSE} stop
+	docker compose -f ${COMPOSEFILE} stop
 
 start:
-	docker compose -f ${COMPOSE} start
+	docker compose -f ${COMPOSEFILE} start
 
 down:
-	docker compose -f ${COMPOSE} down --rmi all -v
+	docker compose -f ${COMPOSEFILE} down --rmi all -v
 
 fclean: down
 	docker system prune -af

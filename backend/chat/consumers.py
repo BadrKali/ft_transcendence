@@ -14,6 +14,8 @@ from user_management .models import BlockedUsers
 from datetime import datetime
 from .views import format_date
 import openai
+from django.shortcuts import get_object_or_404
+
 
 
 
@@ -133,13 +135,14 @@ class ChatConsumer(AsyncWebsocketConsumer):
                 'message': ContactData
             }
             )
-        # I have no focus When I added this line payattention !
-        await (self.channel_layer.group_send)( 
-            f'room_{self.MSGreceiver.id}',{
-                'type': 'start_Firstconv',
-                'message': ContactData
-            }
-            )
+        # Dont' send start_first_conv event to msg receiver for first time!
+        # # I have no focus When I added this line payattention !
+        # await (self.channel_layer.group_send)( 
+        #     f'room_{self.MSGreceiver.id}',{ 
+        #         'type': 'start_Firstconv',
+        #         'message': ContactData
+        #     }
+        #     )
     
     async def start_Firstconv(self, event):
         await (self.send( text_data=json.dumps(event) ))
@@ -184,6 +187,11 @@ class ChatConsumer(AsyncWebsocketConsumer):
            }
         )
     
+    @database_sync_to_async
+    def get_user_status(self, user_id):
+        userObj = get_object_or_404(User, pk=user_id)
+        return userObj.is_online
+
     async def Broadcast_newMsg(self):
         self.receiver_id = self.extracted_msg.get('messageData').get('receiver_id')
 
@@ -192,12 +200,20 @@ class ChatConsumer(AsyncWebsocketConsumer):
         if not senderBlockedreceiver and not receiverBlockedSender:
             await self.save_to_db();
             try :
-                await (self.channel_layer.group_send)(
-                f'room_{self.receiver_id}',{
-                    'type': 'newchat.message',
-                    'message': self.extracted_msg.get('messageData')
-                }
-                )
+                receiver_status = await self.get_user_status(self.receiver_id);
+                if receiver_status :
+                    await (self.channel_layer.group_send)(
+                        f'room_{self.receiver_id}',{
+                            'type': 'newchat.message',
+                            'message': self.extracted_msg.get('messageData')
+                        }
+                        )
+                    await (self.channel_layer.group_send)(
+                        f'room_{self.receiver_id}',{
+                            'type': 'last.message',
+                            'message': self.extracted_msg.get('messageData')
+                        }
+                        )
                 if (self.receiver_id != self.extracted_msg.get('messageData').get('sender_id')):
                     await (self.channel_layer.group_send)(
                     f"room_{self.extracted_msg.get('messageData').get('sender_id')}",{
@@ -211,13 +227,6 @@ class ChatConsumer(AsyncWebsocketConsumer):
                             'message': self.extracted_msg.get('messageData')
                         }
                     )
-            # Trigger event last Message !
-                await (self.channel_layer.group_send)(
-                f'room_{self.receiver_id}',{
-                    'type': 'last.message',
-                    'message': self.extracted_msg.get('messageData')
-                }
-                )
             except Exception as e:
                 print(f"An error occurred: {e}")
         else:
