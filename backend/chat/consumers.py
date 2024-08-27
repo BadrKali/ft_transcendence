@@ -135,13 +135,14 @@ class ChatConsumer(AsyncWebsocketConsumer):
                 'message': ContactData
             }
             )
-        # I have no focus When I added this line payattention !
-        await (self.channel_layer.group_send)( 
-            f'room_{self.MSGreceiver.id}',{
-                'type': 'start_Firstconv',
-                'message': ContactData
-            }
-            )
+        # Dont' send start_first_conv event to msg receiver for first time!
+        # # I have no focus When I added this line payattention !
+        # await (self.channel_layer.group_send)( 
+        #     f'room_{self.MSGreceiver.id}',{ 
+        #         'type': 'start_Firstconv',
+        #         'message': ContactData
+        #     }
+        #     )
     
     async def start_Firstconv(self, event):
         await (self.send( text_data=json.dumps(event) ))

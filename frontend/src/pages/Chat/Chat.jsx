@@ -39,7 +39,7 @@ const Chat = () => {
   const CurrentUser = useContext(CurrentUserContext);
   const [sendMessage, setSendMessage] = useState(0);
   const [ChatPartner, setChatPartner] = useState(null);
-  const [firstMsgSender, setfirstMsgSender] = useState(null);
+  const [requestRefetch, setrequestRefetch] = useState(false);
   const{blockpopUp, setblockpopUp} = useContext(blockPopUpContext)
   const [typingData, setTypingData] = useState({status: false, sender_id: null})
 
@@ -77,7 +77,6 @@ const sortConversations = () =>{
 
   if (clientSocket) {
   clientSocket.onmessage = (event) => {
-    console.log('I have my own on message YAY', CurrentUser?.username)
     const data = JSON.parse(event.data);
     const notif = new Audio(receivedmsgsound);
 
@@ -99,21 +98,8 @@ const sortConversations = () =>{
             // Ignore the error 
           });
             if (alreadyHaveConversation(data.message.sender_id) === false){
-              
-              firstMsgSender.unreadMessages = 0
-              firstMsgSender.lastMessage = data.message.content
-              firstMsgSender.created_at = data.message.created_at
-              firstMsgSender.lastTime = reformeDate(data.message.created_at)
-              firstMsgSender.status = true
-              setChatList(prevChatList => {
-                  if (prevChatList === null) {
-                    return [firstMsgSender];
-                  } else {
-                    return [firstMsgSender, ...prevChatList];
-                  }
-              });
+              setrequestRefetch(true)
             }
-
         }
       if (ChatPartner){
         if ((data.message.sender_id === CurrentUser?.user_id && data.message.receiver_id === ChatPartner?.id) ||
@@ -182,15 +168,12 @@ const sortConversations = () =>{
       }
 
     if (data.type === "Pick_existed_conv"){
-        console.log(`Pick the Conversation With ${data.message.username}`)
         // Here is the issue the Pickedusername change 
         // but the chatlist is not yet setted because contact Section is not rendred !
           setPickerUsername(data.message.username)
       }
     
     if (data.type === 'Blocke_Warning'){
-      console.log('Data.type is : ' + data.type)
-      console.log('Should Show The popup !')
       setblockpopUp(true)
       setTimeout(()=>{
         setblockpopUp(false)
@@ -198,12 +181,6 @@ const sortConversations = () =>{
     }
 
     if (data.type === 'start_Firstconv'){
-      console.log('Is the firstMessageSender : ')
-      if (CurrentUser.user_id !== data.message.SenderData.id){
-        console.log('True')
-        setfirstMsgSender(data.message.SenderData)
-      }
-      else {
       setChatList(prevChatList => {
         if (prevChatList === null) {
           return [data.message];
@@ -212,7 +189,6 @@ const sortConversations = () =>{
         }
       });
       setPickerUsername(data.message.username)
-    }
     }
   };
 }
@@ -243,7 +219,7 @@ const sortConversations = () =>{
     return () => {
       abortController.abort(); 
     };
-  }, [auth.accessToken]); //PickedUsername -dependencies will change
+  }, [requestRefetch, auth.accessToken]); //PickedUsername -dependencies will change
   // I fogot why I added PickedUsername ???
 
   const handleConversationSelect = (conversationId) => {
