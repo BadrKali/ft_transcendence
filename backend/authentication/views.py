@@ -24,17 +24,12 @@ import pyotp
 token_url = 'https://api.intra.42.fr/oauth/token'
 user_info_url = 'https://api.intra.42.fr/v2/me'
 
-
-
- 
-
 class UserView(APIView):
     pass
     # def get(self ,request, user_id):
     #     user = get_object_or_404(User, pk=user_id)
     #     serializer = CurrentUserSerializer(user)
     #     return(Response(serializer.data))
-
 
 class CurrentUserView(APIView):
     def patch(self, request):

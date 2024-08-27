@@ -8,7 +8,6 @@ import { CurrentUserContext } from "./usehooks/ChatContext.js";
 import { clientSocketContext } from "./usehooks/ChatContext.js";
 import { blockPopUpContext } from "./usehooks/ChatContext.js";
 import receivedmsgsound from "./ChatAssets/receivemsgnotif.mp3"
-import BlockPopUps from "./Components/BlockPopUps/BlockPopUps.jsx";
 
 
 
@@ -78,6 +77,7 @@ const sortConversations = () =>{
 
   if (clientSocket) {
   clientSocket.onmessage = (event) => {
+    console.log('I have my own on message YAY', CurrentUser?.username)
     const data = JSON.parse(event.data);
     const notif = new Audio(receivedmsgsound);
 
@@ -99,6 +99,7 @@ const sortConversations = () =>{
             // Ignore the error 
           });
             if (alreadyHaveConversation(data.message.sender_id) === false){
+              
               firstMsgSender.unreadMessages = 0
               firstMsgSender.lastMessage = data.message.content
               firstMsgSender.created_at = data.message.created_at
@@ -197,7 +198,9 @@ const sortConversations = () =>{
     }
 
     if (data.type === 'start_Firstconv'){
+      console.log('Is the firstMessageSender : ')
       if (CurrentUser.user_id !== data.message.SenderData.id){
+        console.log('True')
         setfirstMsgSender(data.message.SenderData)
       }
       else {
