@@ -44,7 +44,7 @@ class GameState:
 
     def check_winning_condition(self):
         for player in self.state['players'].values():
-            if player['score'] >= 5:
+            if player['score'] >= 10:
                 self.state['game_over'] = True
                 self.state['winner'] = player['username']
                 return True
@@ -61,7 +61,10 @@ class GameState:
         else:
             print("player2 won")
             return player2['username'], player1['username']
-
+    def winner_score(self, winner):
+        return self.state['players'][winner]['score']
+    def loser_score(self, loser):
+        return self.state['players'][loser]['score']
     async def add_player(self, username, room):
         player1_settings = await self.get_player_settings(room.player1)
         player2_settings = await self.get_player_settings(room.player2)
@@ -269,7 +272,7 @@ class GameConsumer(AsyncWebsocketConsumer):
                     await self.game_state.add_player("", invite_game_room)
                     print("The game has started successfully.")
                     await self.notify_players(invite_game_room)
-                    asyncio.create_task(self.start_game_loop())
+                    asyncio.create_task(self.start_game_loop(invite_game_room))
             else:
                 print("InviteGameRoom not found")
         except Exception as e:
@@ -309,7 +312,7 @@ class GameConsumer(AsyncWebsocketConsumer):
         if not room.is_waiting:
             await self.game_state.add_player(player_str, room)
             await self.notify_players(room)
-            asyncio.create_task(self.start_game_loop())
+            asyncio.create_task(self.start_game_loop(room))
         else:
             await self.notify_waiting_player(room)
         
@@ -323,13 +326,15 @@ class GameConsumer(AsyncWebsocketConsumer):
             'game_state': self.game_state.get_state(),
         }))
 
-    async def start_game_loop(self):
+    async def start_game_loop(self, room):
+        from .models import GameHistory
         frame_duration = 1 / 60
         while self.game_state.get_running():
             start_time = time.time()
             self.game_state.update_ball_position()
             if self.game_state.check_winning_condition():
                 winner , loser = await self.game_state.get_winner_loser()
+                await self.save_game_history(winner, loser, room)
                 await self.channel_layer.group_send(
                     self.room_group_name,
                     {
@@ -342,6 +347,7 @@ class GameConsumer(AsyncWebsocketConsumer):
                         }
                     }
                 )
+
                 break
             await self.channel_layer.group_send(
                 self.room_group_name,
@@ -358,7 +364,30 @@ class GameConsumer(AsyncWebsocketConsumer):
             await asyncio.sleep(sleep_duration)
         print("Loop Stopped")
 
-
+    @sync_to_async
+    def save_game_history(self, winner, loser, room):
+        from .models import GameHistory
+        from user_management.models import Player
+        try:
+            player1 = self.game_state.get_player_username(room.player1)
+            if player1 == winner:
+                winner_user = room.player1
+                loser_user = room.player2
+            else :
+                winner_user = room.player2
+                loser_user = room.player1
+            GameHistory.objects.create(
+                winner_user=winner_user,
+                loser_user=loser_user,
+                winner_score=self.game_state.winner_score(winner),
+                loser_score=self.game_state.loser_score(loser),
+                game_type='pingpong',
+                match_type='single'
+            )
+            print("Game Match Saved Bel MEZYAAAN")
+        except Player.DoesNotExist:
+            print("Error: One of the players does not exist.")
+    
     @database_sync_to_async
     def get_player(self, user):
         from user_management.models import Player
