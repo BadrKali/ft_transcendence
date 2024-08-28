@@ -44,7 +44,7 @@ class GameState:
 
     def check_winning_condition(self):
         for player in self.state['players'].values():
-            if player['score'] >= 10:
+            if player['score'] >= 3:
                 self.state['game_over'] = True
                 self.state['winner'] = player['username']
                 return True
@@ -334,7 +334,6 @@ class GameConsumer(AsyncWebsocketConsumer):
             self.game_state.update_ball_position()
             if self.game_state.check_winning_condition():
                 winner , loser = await self.game_state.get_winner_loser()
-                await self.save_game_history(winner, loser, room)
                 await self.channel_layer.group_send(
                     self.room_group_name,
                     {
@@ -347,7 +346,8 @@ class GameConsumer(AsyncWebsocketConsumer):
                         }
                     }
                 )
-
+                await self.save_game_history(winner, loser, room)
+                await self.update_xp(winner, loser, room)
                 break
             await self.channel_layer.group_send(
                 self.room_group_name,
@@ -364,6 +364,17 @@ class GameConsumer(AsyncWebsocketConsumer):
             await asyncio.sleep(sleep_duration)
         print("Loop Stopped")
 
+    @sync_to_async
+    def update_xp(self, winner, loser, room):
+        player1 = self.game_state.get_player_username(room.player1)
+        if player1 == winner:
+            room.player1.update_xp(True)
+            room.player2.update_xp(False)
+        else:
+            room.player1.update_xp(False)
+            room.player2.update_xp(True)
+        print("UPDATE XP F JIB")
+    
     @sync_to_async
     def save_game_history(self, winner, loser, room):
         from .models import GameHistory

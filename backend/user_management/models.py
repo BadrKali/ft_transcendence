@@ -11,12 +11,22 @@ def user_avatar_upload_path(instance, filename):
 
 class Player(models.Model):
     PLAYER_RANK_BRONZE = 'BRONZE'
+    PLAYER_RANK_SILVER = 'SILVER'
+    PLAYER_RANK_GOLD = 'GOLD'
     PLAYER_FIRST_RANK_PROGRESS = 0
     PLAYER_FIRST_GAMES_PLAYED = 0
     PLAYER_FIRST_GAMES_WON = 0
     PLAYER_FIRST_GAMES_XP = 0
- 
-    rank = models.CharField(max_length=15,default=PLAYER_RANK_BRONZE)
+
+    RANK_XP_THRESHOLDS = {
+        PLAYER_RANK_BRONZE: 1000,
+        PLAYER_RANK_SILVER: 2000,
+        PLAYER_RANK_GOLD: 3000,
+    }
+    
+    RANK_ORDER = [PLAYER_RANK_BRONZE, PLAYER_RANK_SILVER, PLAYER_RANK_GOLD]
+    
+    rank = models.CharField(max_length=15, default=PLAYER_RANK_BRONZE)
     rank_progress = models.DecimalField(max_digits=5, decimal_places=2, default=PLAYER_FIRST_RANK_PROGRESS)
     games_played = models.IntegerField(default=PLAYER_FIRST_GAMES_PLAYED)
     games_won = models.IntegerField(default=PLAYER_FIRST_GAMES_WON)
@@ -26,6 +36,29 @@ class Player(models.Model):
 
     def __str__(self) -> str:
         return self.user.username
+
+    def update_xp(self, won: bool):
+        print(f"Before: {self.xp}")
+        if won:
+            self.xp += 50
+            self.games_won += 1
+            print(f"{self.user.username} +50XP")
+        else:
+            self.xp -= 20
+            self.xp = max(0, self.xp)
+            print(f"{self.user.username} -20XP")
+        print(f"After: {self.xp}")
+
+        self.games_played += 1
+        current_rank_index = self.RANK_ORDER.index(self.rank)
+        max_xp_for_current_rank = self.RANK_XP_THRESHOLDS[self.rank]
+        
+        if self.xp >= max_xp_for_current_rank and current_rank_index < len(self.RANK_ORDER) - 1:
+            self.rank = self.RANK_ORDER[current_rank_index + 1]
+            self.xp = 0 
+
+        self.save()
+
 
 class FriendInvitation(models.Model):
     INVITATION_CHOICES = [
