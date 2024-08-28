@@ -1,0 +1,50 @@
+import "./matchresult.css";
+import useFetch from "../../../hooks/useFetch";
+import { useEffect, useState } from "react";
+import winnerImg from "../asstes/winner.png";
+import sad from "../asstes/sad.png";
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
+
+const MatchResult = ({ winner, onBack }) => {
+    const [profileData, setProfileData] = useState(null);
+    const { data, error, isLoading } = useFetch(`${BACKEND_URL}/user/stats`);
+    const [won, setWon] = useState(false);
+    // if (profileData.username === winner) {
+    //     setWon(true);
+    // }
+
+    useEffect(() => {
+        if (data) {
+            setProfileData(data);
+        }
+    }, [data]);
+
+    return (
+        <div className="match-result">
+            {profileData && profileData.avatar && profileData.username && (
+                <>
+                <img 
+                    src={`http://127.0.0.1:8000${profileData.avatar}`} 
+                    alt="User Avatar" 
+                    className={`user-avatar ${profileData.username === winner ? 'winner' : 'loser'}`} 
+                />
+                <h1>{profileData.username}</h1>
+                </>
+            )}
+            {profileData && profileData.username && profileData.username === winner ? (
+                <>
+                    <h1 className="winnerXP">+50PX</h1>
+                    <h1 className="resultTitre">YOU WON<img src={winnerImg} alt="" className="something"/></h1>
+                </>
+            ) : (
+                <>
+                    <h1 className="loserXP">-20XP</h1>
+                    <h1 className="resultTitre">Good Luck Next Time<img src={sad} alt="" className="something"/></h1>
+                </>
+            )}
+            <button onClick={onBack} className="backToLobby">Back To Lobby</button>
+        </div>
+    );
+};
+
+export default MatchResult;

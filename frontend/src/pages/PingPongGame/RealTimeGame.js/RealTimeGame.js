@@ -11,6 +11,7 @@ import graveyard from "../asstes/graveyard.png";
 import avatar1 from '../asstes/avatar1.png';
 import avatar2 from '../asstes/avatar2.png';
 import exit from "../asstes/right-arrow.png";
+import MatchResult from '../components/MatchResult';
 import "../stylesheet/game-style.css";
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
@@ -34,9 +35,13 @@ const RealTimeGame = ({ mode }) => {
     const canvasRef = useRef(null);
     const [gameRunning, setGameRunning] = useState(true);
     const [showExitPopup, setShowExitPopup] = useState(false);
+    const [showResult, setShowResult] = useState(false);
+    const [backToLobby, setBackToLobby] = useState(false);
     const [pauseGame, setPauseGame] = useState(false);
     const [message, setMessage] = useState("");
-
+    const [profileData, setProfileData] = useState(null);
+    const [won, setWon] = useState(false);
+    const [winner, setWinner] = useState("");
     useEffect(() => {
         switch (mode) {
             case "invite":
@@ -58,6 +63,12 @@ const RealTimeGame = ({ mode }) => {
     const { data: player1 } = useFetch(player1Id ? `${BACKEND_URL}/user/stats/${player1Id}` : null);
     const { data: player2 } = useFetch(player2Id ? `${BACKEND_URL}/user/stats/${player2Id}` : null);
     const { data: currentUser } = useFetch(`${BACKEND_URL}/user/stats`);
+    
+    useEffect(() => {
+        if (currentUser) {
+            setProfileData(currentUser);
+        }
+    }, [currentUser])
 
     const initializeWebSocket = () => {
         const ws = new WebSocket(`${WS_BACKEND_URL}/ws/game/?token=${auth.accessToken}`);
@@ -108,8 +119,8 @@ const RealTimeGame = ({ mode }) => {
 
     const endGame = (data) => {
         setGameRunning(false);
-        // alert(`${data.game_state.winner} has won the game!`);
-        navigate('/game', { replace:true });
+        setWinner(data.winner);
+        setShowResult(true);
     };
 
     const initializeCanvas = () => {
@@ -184,7 +195,6 @@ const RealTimeGame = ({ mode }) => {
             if (!gameRunning) return;
             render();
         };
-
         loop();
     };
 
@@ -257,18 +267,24 @@ const RealTimeGame = ({ mode }) => {
 
     useEffect(() => {
         initializeCanvas();
-    }, [gameState, player1, player2]);
+    }, [gameState, player1, player2, gameRunning]);
 
     const handleStartGame = () => {
         setStartGame(true);
     }
-
+    const handleBackToLobby = () => {
+        setShowResult(false);
+        navigate('/game', { replace:true});
+    }
     return (
         <div className="pingponggame-container random-game" style={{ backgroundImage: `url(${background})` }}>
             {room && player1 && player2 && (
                 <div className="player-info-container">
                     <PlayerInfo player1={player1} player2={player2} onStartGame={handleStartGame} socket={socket}/>
                 </div>
+            )}
+            {showResult && (
+                <MatchResult player={currentUser} winner={winner} onBack={handleBackToLobby}/>
             )}
             {showWaiting && (
                 <Waiting player={currentUser}/>

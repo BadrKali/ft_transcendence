@@ -50,6 +50,18 @@ class GameState:
                 return True
         return False
 
+    async def get_winner_loser(self):
+        players = list(self.state['players'].values())
+        player1 = players[0]
+        player2 = players[1]
+        
+        if player1['score'] > player2['score']:
+            print("player1 won")
+            return player1['username'], player2['username']
+        else:
+            print("player2 won")
+            return player2['username'], player1['username']
+
     async def add_player(self, username, room):
         player1_settings = await self.get_player_settings(room.player1)
         player2_settings = await self.get_player_settings(room.player2)
@@ -87,6 +99,7 @@ class GameState:
         print(f"Player 2: {player2}")
         print(f"Current players: {list(self.state['players'].keys())}")
 
+     
     async def get_player_username(self, player):
         return await sync_to_async(lambda: player.user.username)()
 
@@ -316,6 +329,7 @@ class GameConsumer(AsyncWebsocketConsumer):
             start_time = time.time()
             self.game_state.update_ball_position()
             if self.game_state.check_winning_condition():
+                winner , loser = await self.game_state.get_winner_loser()
                 await self.channel_layer.group_send(
                     self.room_group_name,
                     {
@@ -323,6 +337,8 @@ class GameConsumer(AsyncWebsocketConsumer):
                         'message': {
                             'action': 'game_over',
                             'game_state': self.game_state.get_state(),
+                            'winner': winner,
+                            'loser': loser
                         }
                     }
                 )
