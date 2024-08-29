@@ -15,9 +15,74 @@ from datetime import datetime
 from .views import format_date
 import openai
 from django.shortcuts import get_object_or_404
+from dotenv import load_dotenv
+import os
 
 
+load_dotenv()
+API_KEY= os.getenv('api_key')
 
+client = openai.OpenAI(
+    api_key=API_KEY,
+    base_url="https://api.aimlapi.com",
+)
+
+class ChatBotConsumer(AsyncWebsocketConsumer):
+    async def connect(self):
+        if self.scope['user'].is_anonymous:
+            await self.close()
+
+        self.sender_id = self.scope['user'].id
+        self.room_group_name = f'{self.sender_id}_withBot'
+
+        await (self.channel_layer.group_add)(
+            self.room_group_name,
+            self.channel_name
+        )
+        self.messages = [ {"role" : "system", "content": "You are a king helpful assistant."} ]
+        await self.accept()
+        
+    async def disconnect(self, __quitcode__):
+        await (self.channel_layer.group_discard(
+                self.room_group_name,
+                self.channel_name
+        )
+        )
+            
+    async def receive(self, text_data=None):
+        self.msgData = json.loads(text_data)
+        if self.msgData.get('type') == 'send_to_bot' :
+            await (self.channel_layer.group_send)(
+                    f'{self.sender_id}_withBot',{
+                    'type': 'bot_msg',
+                    'message': self.msgData.get('message') })
+            
+            limiter = 'just response to me in 3 lines please'
+            self.messages.append({"role" : "user", "content" : self.msgData.get('message').get('content') + limiter})
+            try :
+                chat_completion = client.chat.completions.create(
+                model="mistralai/Mistral-7B-Instruct-v0.2",
+                    messages=self.messages,
+                    temperature=0.7,
+                    max_tokens=128,
+                )
+                response = chat_completion.choices[0].message.content
+                await (self.channel_layer.group_send)(
+                  f'{self.sender_id}_withBot',{
+                        'type': 'bot_msg',
+                        'message': {
+                            "sender_id" : 0,
+                            "receiver_id" : self.sender_id,
+                            "content"   : response,
+                            "created_at" : datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                        }    
+                })
+                self.messages.append({"role" : "assistant", "content" : response})
+            except Exception as e:
+                print(f"Exception An error Occured {e}")
+    
+    async def bot_msg(self, event):
+        await (self.send( text_data=json.dumps(event) ))
 
 class ChatConsumer(AsyncWebsocketConsumer):
     async def connect(self):

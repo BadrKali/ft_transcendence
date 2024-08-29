@@ -79,7 +79,6 @@ const SendMessage = ({ message, setMessage }) => {
       // ***********************************************************************************************************
       
     }
-  
       if (message.length === 0){
       clientSocket?.send(JSON.stringify({type: "deactivate_typing_event", messageData: messageData}))
       clearTimeout(typingTimeoutId);
@@ -144,12 +143,6 @@ const Emojies = ({ SetPicker }) => {
 };
 
 const InputField = ({ message, handleWritedMessage, inputRef }) => {
-  // useEffect(()=>{
-  //   if (message.length != 0){
-  //     const notif = new Audio(typingSound);
-  //     notif.play();
-  //   }
-  // }, [message])
   return (
     <input
       ref={inputRef}
@@ -396,8 +389,6 @@ const ChatMainHolder = () => {
                 }
               />
             );
-    
-            
           })}
           <div ref={messagesEndRef} />
           { status ? <Typing/> : null }

@@ -34,15 +34,16 @@ export const clientSocketContext = createContext();
 
 export const SocketClientProvider = ({children}) =>{
     const [socket, setsocket] = useState(null);
+    const [botSocket, setbotSocket] = useState(null);
     const { auth } = useAuth();
+    const [eventData , seteventReceived ] = useState(null);
 
 
   useEffect(() => {
     if (!auth.accessToken)
         return;
     const clientSocket = new WebSocket(`${WS_BACKEND_URL}/ws/chat/?token=${auth.accessToken}`);
-    
-    console.log(clientSocket.onmessage);
+    const forBotSocket = new WebSocket(`${WS_BACKEND_URL}/ws/chatbot/?token=${auth.accessToken}`)
     
     clientSocket.onopen = () => {
         setsocket(clientSocket);
@@ -57,15 +58,39 @@ export const SocketClientProvider = ({children}) =>{
       console.log('WebSocket error : Clunca socket : ', error);
     }
 
+    // ****************************************************************************************
+    forBotSocket.onopen = () => {
+        setbotSocket(forBotSocket);
+        console.log(" WebSocket instanciated : onopen => ChatBot ")
+    };
+
+    forBotSocket.onclose = () => {
+      console.log('WebSocket closed : onclose ChatBot');
+    };
+
+    forBotSocket.onerror = (error)=>{
+      console.log('WebSocket error : ChatBot socket : ', error);
+    }
+    forBotSocket.onmessage = (event) =>{
+      const eventdata = JSON.parse(event.data);
+      seteventReceived(eventdata)
+    }
+    // ****************************************************************************************
     return () => {
       if (socket)
         socket.close();
+      
+      if (botSocket)
+        botSocket.close();
+    
     };
   }, [auth.accessToken]);
 
     const socketstate ={
         stateValue : socket,
-        socketsetter: setsocket
+        socketsetter: setsocket,
+        botSocket : botSocket,
+        eventData: eventData
     }
     
 return (

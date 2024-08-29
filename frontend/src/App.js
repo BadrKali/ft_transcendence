@@ -7,10 +7,12 @@ import './App.css'
 import Notification from './components/Notification/Notification';
 import ToastContainer from './components/ReactToastify/ToastContainer';
 import { UserContext, UserProvider } from './context/UserContext';
+import BotIcon from './components/BotIcon/BotIcon'
+import Draggable from 'react-draggable';
 
 const AppLayout = () => {
   const { userData, userDataLoading, userDataError } = useContext(UserContext);
-
+  
   if (userDataLoading) {
     return <div>Loading...</div>; // 
   }
@@ -22,6 +24,7 @@ const AppLayout = () => {
   return (
     <div className='app'>
       <SideBar />
+      
       <main className='main'>
         <TopBar />
         <div className='page-content'>
@@ -30,6 +33,7 @@ const AppLayout = () => {
           </div>
         </div>
       </main>
+      <BotIcon />
       <ToastContainer />
     </div>
   );

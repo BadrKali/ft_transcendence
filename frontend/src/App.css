@@ -6,13 +6,13 @@
   height: 100vh;
   min-width: 1300px;
   min-height: 1100px;
+  background-color: var(--bg-body);
 }
 
 .main {
   width: calc(100% - 280px);
   /* border: 1px solid blue; */
   min-width: 1100px;
-  background-color: var(--bg-body);
   color: var(--font-color);
 }
 
