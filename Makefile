@@ -6,7 +6,7 @@ COMPOSE = /Users/mohamed/Desktop/ft_transcendence/docker-compose.yml
 
 COMPOSEGOINFRE = /goinfre/${USER}/ft_transcendence/docker-compose.yml
 
-ifeq ($(filter ${USER},abait-ta bel-kala),)
+ifeq ($(filter ${USER},abait-ta bel-kala youlhafi),)
     COMPOSEFILE = $(COMPOSE)
 else
     COMPOSEFILE = $(COMPOSEGOINFRE)

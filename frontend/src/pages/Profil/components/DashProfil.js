@@ -6,16 +6,44 @@ import { avatars } from '../../../assets/assets'
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
-function DashProfil({profil}) {
-  const [progress, setProgress] = useState('0%');
+function DashProfil({profil , isBlockingHim, isBlockedMe}) {
 
-  useEffect(() => {
-      setTimeout(() => {
-        setProgress('67%');
-      }, 500); 
-    }, []);
-    //  const winPer = Math.floor((playerData.games_won / playerData.games_played) * 100);
-    const winPer = Math.floor((30 / 100) * 100);
+    const [progress, setProgress] = useState('0%');
+    useEffect(() => {
+        setTimeout(() => {
+          setProgress('67%');
+        }, 500); 
+      }, []);
+
+    if (isBlockedMe || isBlockingHim) {
+        return (
+            <div className='profilInfo'>
+      
+            <div className="userInfo">
+                <div className='userContainer'>
+                    <div className="userImage" >
+                        <img src={`${BACKEND_URL}${profil.avatar}`}/>
+                    </div>
+                    <div className="userProgress">
+                        <div className="progresInfo">
+                            <div className="nameRank">
+                                <h4>{profil.username}</h4>
+                                <h4>Rank : {profil.rank}</h4>
+                            </div>
+                            <div className='BlockedMessage'>
+                                {isBlockedMe ? <h3>You got blocked from this user</h3> : <h3>You have blocked this user</h3>}
+                            </div>
+                        </div>
+                        
+                    </div>
+                </div>
+            </div>
+    
+        </div>
+        );
+    }
+
+     const winPer = Math.floor((profil.games_won / profil.games_played) * 100);
     const lossPer = 100 - winPer ;
   return (
     <div className='profilInfo'>
@@ -33,7 +61,7 @@ function DashProfil({profil}) {
                         </div>
                         <div className="userXp box">
                             <p>User_xp</p>
-                            <p>900xp</p>
+                            <p>{profil.xp}xp</p>
                         </div>
                         <div className="totalGames box">
                             <p>Total Games</p>
@@ -54,7 +82,7 @@ function DashProfil({profil}) {
                             <div className='filledBar' style={{ width: progress }}></div>
                         </div>
                     </div>
-            </div>
+                </div>
             </div>
         </div>
 

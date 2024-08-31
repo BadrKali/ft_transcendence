@@ -91,6 +91,14 @@
     cursor: pointer;
 }
 
+.profil-button.disabled {
+  opacity: 0.5; 
+  pointer-events: none;
+  cursor: not-allowed; 
+}
+
+
+
 .profil-button:hover {
     background-color: #2E313D;
     transform: scale(1.05);

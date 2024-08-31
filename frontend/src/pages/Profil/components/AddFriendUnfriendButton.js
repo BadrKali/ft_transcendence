@@ -7,9 +7,10 @@ import { SuccessToast } from '../../../components/ReactToastify/SuccessToast'
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
-function AddFriendUnfriendButton({ FriendId }) {
+function AddFriendUnfriendButton({ FriendId , isBlockedMe, isBlockingHim}) {
     const { auth }  = useAuth()
     const [isRequest, setIsRequst] = useState('Friend request does not exist.')
+    const isDisabled = isBlockingHim || isBlockedMe;
 
     useEffect(() => {
         const fetchRequestStatus = async () => {
@@ -154,7 +155,7 @@ function AddFriendUnfriendButton({ FriendId }) {
 
     const { text, action } = getButtonAction();
     return (
-        <div className='AddFriend-button profil-button' onClick={action}>
+        <div className={`AddFriend-button  profil-button ${isDisabled ? 'disabled' : ''}`} onClick={action}>
             <Icon name='AddFriend' className='Add-Friend profil-icon' />
             <p>{text}</p>
         </div>

@@ -1,5 +1,7 @@
 import React from 'react';
+import { useState, useEffect } from 'react';
 import './lineChart.css'
+import useAuth from '../../../hooks/useAuth';
 import { Line } from 'react-chartjs-2';
 import {
     Chart as ChartJS,
@@ -22,22 +24,46 @@ ChartJS.register(
     Legend
 );
 
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
+
 const LineChart = () => {
-    const data = {
-        labels: [
-            'Day 1', 'Day 2', 'Day 3', 'Day 4', 'Day 5', 
-            'Day 6', 'Day 7', 'Day 8', 'Day 9', 'Day 10', 
-            'Day 11', 'Day 12', 'Day 13', 'Day 14', 'Day 15'
-        ],
+    const { auth }  = useAuth()
+    const [chartData, setChartData] = useState({
+        labels: [],
         datasets: [
             {
-                data: [5, 10, 15, 20, 25, 30, 22, 40, 45, 50, 55, 60, 50, 70, 75],
+                data: [],
                 fill: false,
                 backgroundColor: '#F62943',
                 borderColor: '#F62943',
             },
         ],
-    };
+    });
+
+    useEffect(() => {
+        fetch(`${BACKEND_URL}/user/xp-history/`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${auth.accessToken}`
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            setChartData({
+                labels: data.labels,
+                datasets: [
+                    {
+                        data: data.xp,
+                        fill: false,
+                        backgroundColor: '#F62943',
+                        borderColor: '#F62943',
+                    },
+                ],
+            });
+        })
+        .catch(error => console.error('Error fetching XP history:', error));
+    }, [auth.accessToken]);
 
     const options = {
         responsive: true,
@@ -67,7 +93,7 @@ const LineChart = () => {
 
     return (
         <div className='chart-line'>
-            <Line data={data} options={options} style={{ width: '100%', height: '100%' }}/>
+            <Line data={chartData} options={options} style={{ width: '100%', height: '100%' }}/>
         </div>
     )
         

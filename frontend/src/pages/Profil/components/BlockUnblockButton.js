@@ -9,9 +9,11 @@ const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
 
 
-const BlockUnblockButton = ({ blockedId }) => {
+const BlockUnblockButton = ({ blockedId ,isBlockedMe }) => {
     const [isBlocked, setIsBlocked] = useState(false);
     const { auth }  = useAuth()
+
+
 
     useEffect(() => {
         const fetchBlockStatus = async () => {
@@ -67,7 +69,7 @@ const BlockUnblockButton = ({ blockedId }) => {
 
 
     return (
-        <div className='BlockFriend-button profil-button' onClick={handleBlockUnblock}>
+        <div className={`BlockFriend-button profil-button ${isBlockedMe ? 'disabled' : ''}`} onClick={handleBlockUnblock}>
             <Icon name="BlockFriend" className='Block-Friend profil-icon' />
             <p>{isBlocked ? 'Unblock' : 'Block'}</p>
         </div>

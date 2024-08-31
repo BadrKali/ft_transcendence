@@ -16,7 +16,7 @@ from django.db.models import Q
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
 from django.http import HttpResponseForbidden
-from .models import Tournament, TournamentInvitation, TournamentParticipants, Friendship, Player, FriendInvitation, BlockedUsers, Notification
+from .models import Tournament, TournamentInvitation, TournamentParticipants, Friendship, Player, FriendInvitation, BlockedUsers, Notification, XPHistory
 from .serializers import TournamentSerializer, TournamentCreateSerializer , TournamentInvitationSerializer, TournamentParticipantsSerializer, FriendInvitation, NotificationSerializer,  PlayerSerializer, FriendshipSerializer
 
 
@@ -227,11 +227,23 @@ class OtherPlayerView(APIView):
 
             profile_user = player.user
 
-            if BlockedUsers.objects.filter(blocker=profile_user, blocked=requesting_user).exists():
-                return HttpResponseForbidden('You are blocked from viewing this profile.')
+            is_blocked = BlockedUsers.objects.filter(
+                blocker=profile_user, 
+                blocked=requesting_user
+            ).exists()
+
+            is_blocking = BlockedUsers.objects.filter(
+                blocker=requesting_user, 
+                blocked=profile_user
+            ).exists()
+        
 
             serializer = PlayerSerializer(player)
-            return Response(serializer.data, status=status.HTTP_200_OK)
+            response_data = serializer.data
+
+            response_data['is_blocked'] = is_blocked
+            response_data['is_blocking'] = is_blocking
+            return Response(response_data, status=status.HTTP_200_OK)
         except User.DoesNotExist:
             return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
 
@@ -377,3 +389,13 @@ class MissedNotificationsAPIView(APIView):
             "hasNotification": missed_notifications.exists(),
             "notifications": serializer.data
         }, status=status.HTTP_200_OK)
+
+class XPHistoryView(APIView):
+    def get(self, request, format=None):
+        player = request.user.player
+        xp_history = XPHistory.objects.filter(player=player).order_by('date')
+        data = {
+            'labels': [entry.date.strftime('%Y-%m-%d') for entry in xp_history],
+            'xp': [entry.xp for entry in xp_history]
+        }
+        return Response(data)

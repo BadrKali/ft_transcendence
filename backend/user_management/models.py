@@ -1,5 +1,6 @@
 from django.db import models
 from django.conf import settings
+from datetime import date
 # Create your models here.
 from django.core.exceptions import ValidationError
 from django.shortcuts import get_object_or_404
@@ -8,6 +9,14 @@ import random
 
 def user_avatar_upload_path(instance, filename):
     return f"player/{instance.id}/user_avatar/{filename}"
+
+class XPHistory(models.Model):
+    player = models.ForeignKey('Player', on_delete=models.CASCADE, related_name='xp_history')
+    xp = models.IntegerField()
+    date = models.DateField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.player.user.username} - {self.xp} XP on {self.date}"
 
 class Player(models.Model):
     PLAYER_RANK_BRONZE = 'BRONZE'
@@ -56,7 +65,12 @@ class Player(models.Model):
         if self.xp >= max_xp_for_current_rank and current_rank_index < len(self.RANK_ORDER) - 1:
             self.rank = self.RANK_ORDER[current_rank_index + 1]
             self.xp = 0 
-
+        
+        XPHistory.objects.update_or_create(
+            player=self,
+            date=date.today(),
+            defaults={'xp': self.xp}
+        )
         self.save()
 
 

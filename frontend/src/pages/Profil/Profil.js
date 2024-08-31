@@ -37,22 +37,27 @@ const Profil = () => {
   //     playerId = userData.user_id;
 
   const {data ,isLoading, error} = useFetch(`${BACKEND_URL}/user/stats/username/${nameOfUser}`)
+  const [isBlockedMe, setIsBlocked] = useState(false);
+  const [isBlockingHim, setIsBlocking] = useState(false); 
 
   // console.log(nameOfUser + " jajajajaja")
   useEffect(() => {
     if (data) {
       setProfilData(data);
+      setIsBlocked(data.is_blocked);
+      setIsBlocking(data.is_blocking);
     }
   }, [data]);
   
   
-  if (error) {
-      if (error === 'You are blocked from viewing this content.') {
-          navigate('/')
-          return null;
-      }
-      return <div>{error}</div>;
-  } 
+//   useEffect(() => {
+//     if (error) {
+//         console.log(error);
+//         if (error === 'You are blocked from viewing this content.' || error === 'You have blocked this user from viewing your profile.') {
+//             setIsBlocked(true); 
+//         }
+//     }
+// }, [error]);
  
   console.log(profilData)
   return (
@@ -61,16 +66,16 @@ const Profil = () => {
         <div className='dashboard-contianer'>
           <div className='profil-icons'>
               <div className='profil-buttons'>
-                <AddFriendUnfriendButton FriendId={profilData.user_id} />
-                <ChatFriendButton profilData={profilData}/>
-                <ChallangefriendButton />
-                <BlockUnblockButton blockedId={profilData.user_id}/>
+                <AddFriendUnfriendButton FriendId={profilData.user_id} isBlockingHim={isBlockingHim} isBlockedMe={isBlockedMe} />
+                <ChatFriendButton profilData={profilData} isBlockingHim={isBlockingHim} isBlockedMe={isBlockedMe} />
+                <ChallangefriendButton  isBlockingHim={isBlockingHim} isBlockedMe={isBlockedMe} />
+                <BlockUnblockButton blockedId={profilData.user_id} isBlockingHim={isBlockingHim} isBlockedMe={isBlockedMe}/>
             </div>
           </div>
           <div className="dashboard-profil">
               <div className="profilHistoryAcgievmeants-container-profil">
                   <div className="profil-container-profil">
-                    <DashProfil profil={profilData}/>
+                    <DashProfil profil={profilData} isBlockingHim={isBlockingHim} isBlockedMe={isBlockedMe}/>
                   </div>
                   <div className="historyAchievments-container-profil">
                     <div className="history-container-profil">

@@ -4,9 +4,11 @@ import { useNavigate } from 'react-router-dom';
 import { clientSocketContext } from '../../Chat/usehooks/ChatContext';
 
 
-const ChatFriendButton = ({profilData: ChatPartnerData}) => {
+const ChatFriendButton = ({profilData: ChatPartnerData, isBlockedMe, isBlockingHim}) => {
   const navigate = useNavigate();
   const { stateValue: clientSocket } = useContext(clientSocketContext);
+  const isDisabled = isBlockingHim || isBlockedMe;
+
 
     const handleItemClick = () => {
         navigate(`/chat`, {state :{
@@ -24,7 +26,7 @@ const ChatFriendButton = ({profilData: ChatPartnerData}) => {
     };
 
     return (
-        <div className='ChatFriend-button profil-button' onClick={() => handleItemClick()}>
+        <div className={`Challangefriend-button profil-button ${isDisabled ? 'disabled' : ''}`} onClick={() => handleItemClick()}>
             <Icon name='ChatFriend' className='Chat-Friend profil-icon' />
             <p>Message</p>
         </div>
