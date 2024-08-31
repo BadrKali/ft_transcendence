@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState , useContext} from 'react'
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
 import './profil.css'
 import DashProfil from './components/DashProfil'
@@ -16,6 +16,8 @@ import AddFriendUnfriendButton from './components/AddFriendUnfriendButton'
 import ChatFriendButton from './components/ChatFriendButton'
 import ChallangefriendButton from './components/ChallangefriendButton'
 import LineChart from '../Dashboard/components/LineChart'
+import { UserContext } from '../../context/UserContext';
+
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
@@ -28,19 +30,12 @@ const Profil = () => {
   const { auth }  = useAuth()
   const location = useLocation();
   const { nameOfUser } = useParams();
-  // const {data: getId ,isLoading: IdIsLoading, error: IdError} = useFetch(`${BACKEND_URL}/user/user-id/${nameOfUser}/`)
-
-
-  // const { userData } = location.state || {};
-  // let playerId = userData.id;
-  // if (!playerId)
-  //     playerId = userData.user_id;
-
+  const {userData} =  useContext(UserContext)
   const {data ,isLoading, error} = useFetch(`${BACKEND_URL}/user/stats/username/${nameOfUser}`)
   const [isBlockedMe, setIsBlocked] = useState(false);
   const [isBlockingHim, setIsBlocking] = useState(false); 
 
-  // console.log(nameOfUser + " jajajajaja")
+
   useEffect(() => {
     if (data) {
       setProfilData(data);
@@ -49,28 +44,21 @@ const Profil = () => {
     }
   }, [data]);
   
-  
-//   useEffect(() => {
-//     if (error) {
-//         console.log(error);
-//         if (error === 'You are blocked from viewing this content.' || error === 'You have blocked this user from viewing your profile.') {
-//             setIsBlocked(true); 
-//         }
-//     }
-// }, [error]);
- 
-  console.log(profilData)
+  const isOwnProfile = userData.username === nameOfUser
+
   return (
     <TransitionGroup className="profilTransition">
       <CSSTransition key={profilData.user_id}  classNames="fade">
         <div className='dashboard-contianer'>
           <div className='profil-icons'>
-              <div className='profil-buttons'>
-                <AddFriendUnfriendButton FriendId={profilData.user_id} isBlockingHim={isBlockingHim} isBlockedMe={isBlockedMe} />
-                <ChatFriendButton profilData={profilData} isBlockingHim={isBlockingHim} isBlockedMe={isBlockedMe} />
-                <ChallangefriendButton  isBlockingHim={isBlockingHim} isBlockedMe={isBlockedMe} />
-                <BlockUnblockButton blockedId={profilData.user_id} isBlockingHim={isBlockingHim} isBlockedMe={isBlockedMe}/>
-            </div>
+              {!isOwnProfile && (
+                <div className='profil-buttons'>
+                    <AddFriendUnfriendButton FriendId={profilData.user_id} isBlockingHim={isBlockingHim} isBlockedMe={isBlockedMe} />
+                    <ChatFriendButton profilData={profilData} isBlockingHim={isBlockingHim} isBlockedMe={isBlockedMe} />
+                    <ChallangefriendButton  isBlockingHim={isBlockingHim} isBlockedMe={isBlockedMe} />
+                    <BlockUnblockButton blockedId={profilData.user_id} isBlockingHim={isBlockingHim} isBlockedMe={isBlockedMe}/>
+                </div>
+              )}
           </div>
           <div className="dashboard-profil">
               <div className="profilHistoryAcgievmeants-container-profil">
