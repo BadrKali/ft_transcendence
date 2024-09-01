@@ -43,7 +43,8 @@ const TopBar = () => {
   const [modalOpenBlocked, setModalOpenBlocked] = useState(false);
   const [selectedNotification, setSelectedNotification] = useState(null);
   const {gameChallenge, handleAcceptGame, handleRejectGame, gameAccepted, joinGame, setGameAccepted, showGameSettings, setShowGameSettings} = useContext(RealTimeContext);
-  const { userData, userDataLoading, userDataError } = useContext(UserContext);
+  const { userData, userDataLoading, userDataError, updateUserFriends } = useContext(UserContext);
+
   
   const handleNotificationClick = (notif) => {
     setSelectedNotification(notif);
@@ -101,7 +102,6 @@ const TopBar = () => {
 
           const data = await response.json();
           const tournamentId = data.tournament.id;
-          console.log(data);
 
           url = `${BACKEND_URL}/user/tournament/invitations/${tournamentId}`;
           body = JSON.stringify({ 'status': 'accept' });

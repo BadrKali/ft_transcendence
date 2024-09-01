@@ -1,17 +1,17 @@
 import React from 'react'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useContext } from 'react'
 import './achievments.css'
 import AchievmentsData from '../../../assets/AchievmentsData'
 import AchievmentsItem from './AchievmentsItem'
 import useFetch from '../../../hooks/useFetch'
+import { UserContext } from '../../../context/UserContext'
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
 
 function Achievments() {
   const [achievements, setAchievements] = useState(AchievmentsData.map(achiev => ({ ...achiev, unlocked: "false" })));
-
-  const { data: userAchievements, isLoading, error } = useFetch(`${BACKEND_URL}/api/game/achievements/me`);
+  const {userAchievements} = useContext(UserContext)
 
   useEffect(() => {
     if (userAchievements && userAchievements.length) {
@@ -22,7 +22,6 @@ function Achievments() {
       setAchievements(updatedAchievements);
     }
   }, [userAchievements]);
-  console.log(userAchievements)
 
   return (
     <div className='achievmentsContainer'>
