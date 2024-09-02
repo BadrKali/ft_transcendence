@@ -2,11 +2,14 @@ import React, { useState, useEffect, useContext } from 'react';
 import Icon from '../../../assets/Icon/icons';
 import { useNavigate } from 'react-router-dom';
 import { clientSocketContext } from '../../Chat/usehooks/ChatContext';
+import { ProfileContext } from '../../../context/ProfilContext';
 
 
-const ChatFriendButton = ({profilData: ChatPartnerData, isBlockedMe, isBlockingHim}) => {
+
+const ChatFriendButton = ({profilData: ChatPartnerData}) => {
   const navigate = useNavigate();
   const { stateValue: clientSocket } = useContext(clientSocketContext);
+  const {isBlockedMe, isBlockingHim} = useContext(ProfileContext)
   const isDisabled = isBlockingHim || isBlockedMe;
 
 

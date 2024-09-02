@@ -79,72 +79,78 @@ const TopBar = () => {
   }
 
   const handleAccept = async (id, type) => {
-    handleClose();
+    handleClose(); 
+
     let url = `${BACKEND_URL}/user/friends-request/${id}/response/`;
     let body = JSON.stringify({ 'status': 'accept' });
 
-    if (type === 'Game Challenge') {
-        url = `${BACKEND_URL}/api/game/game-challenges/${id}/response/`;
-        body = JSON.stringify({ 'status': 'accepted' });
-    }else if ( type == 'Tournament'){
-        try {
-          const response = await fetch(`${BACKEND_URL}/user/tournament/invitations/`, {
-              method: 'GET',
-              headers: {
-                  'Content-Type': 'application/json',
-                  'Authorization': `Bearer ${auth.accessToken}`
-              }
-          });
+    try {
+        if (type === 'Game Challenge') {
+            url = `${BACKEND_URL}/api/game/game-challenges/${id}/response/`;
+            body = JSON.stringify({ 'status': 'accepted' });
+        } else if (type === 'Tournament') {
 
-          if (!response.ok) {
-              throw new Error('Failed to fetch tournament details');
-          }
+            const response = await fetch(`${BACKEND_URL}/user/tournament/invitations/`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${auth.accessToken}`
+                }
+            });
 
-          const data = await response.json();
-          const tournamentId = data.tournament.id;
+            if (!response.ok) {
+                throw new Error('Failed to fetch tournament details');
+            }
 
-          url = `${BACKEND_URL}/user/tournament/invitations/${tournamentId}`;
-          body = JSON.stringify({ 'status': 'accept' });
+            const data = await response.json();
+            const tournamentId = data.tournament.id;
 
-      } catch (error) {
-          console.error('Error fetching tournament details:', error);
-          ErrorToast('Error fetching tournament details');
-          return;
-      }
-    }
+            url = `${BACKEND_URL}/user/tournament/invitations/${tournamentId}/response/`;
+            body = JSON.stringify({ 'status': 'accept' });
+        }
 
-    fetch(url, {
-        method: 'PATCH',
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${auth.accessToken}`
-        },
-        body: body
-    })
-    .then(response => {
-        if (!response.ok) {
+
+        const patchResponse = await fetch(url, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${auth.accessToken}`
+            },
+            body: body
+        });
+
+        if (!patchResponse.ok) {
             throw new Error('Network response was not ok');
         }
-        return response.json();
-    })
-    .then(data => {
-        console.log('Game challenge accepted:', data);
-        SuccessToast('Game challenge accepted');
-    })
-    .catch(error => {
-        console.error('Error accepting game challenge:', error);
-        ErrorToast('Error accepting game challenge');
-    });
-    // Send a Response to the oppenent
-  //   fetch(`${BACKEND_URL}/api/game/game-response/${id}/`, {
-  //     method: 'POST',
-  //     headers: {
-  //         'Content-Type': 'application/json',
-  //         'Authorization': `Bearer ${auth.accessToken}`
-  //     },
-  //     body: body
-  // });
+
+        const patchData = await patchResponse.json();
+        console.log(`${type} accepted:`, patchData);
+        SuccessToast(`${type} accepted`);
+
+        if (type === '/    FRIEND REQUEST    /') {
+          const friendsResponse = await fetch(`${BACKEND_URL}/user/friends/list/`, {
+            method: 'GET',
+                headers: {
+                  'Content-Type': 'application/json',
+                  'Authorization': `Bearer ${auth.accessToken}`
+                }
+              });
+              
+              if (!friendsResponse.ok) {
+                throw new Error('Network response was not ok');
+              }
+              
+              const updatedFriendsData = await friendsResponse.json();
+              console.log(updatedFriendsData)
+            updateUserFriends(updatedFriendsData);
+        }
+
+    } catch (error) {
+        console.error(`Error accepting ${type.toLowerCase()}:`, error);
+        ErrorToast(`Error accepting ${type.toLowerCase()}`);
+    }
 };
+
 
 const handleReject = async (id, type) => {
     handleClose();

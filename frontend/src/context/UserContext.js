@@ -15,6 +15,7 @@ export const UserProvider = ({ children }) => {
     const [matchHistory, setMatchHistory] = useState(null);
     const [matchHistoryLoading, setMatchHistoryLoading] = useState(true);
 
+
     const { data: userDataFetch, isLoading: userLoading, isError: userDataError } = useFetch(`${BACKEND_URL}/user/stats/`);
     const { data: userAchievementsFetch, isLoading: achievementsLoading, isError: userAchievementsError } = useFetch(`${BACKEND_URL}/api/game/achievements/me`);
     const { data: userFriendsFetch, isLoading: friendsLoading, isError: userFriendsError } = useFetch(`${BACKEND_URL}/user/friends/list/`);
@@ -63,10 +64,7 @@ export const UserProvider = ({ children }) => {
     };
 
     const updateUserFriends = (newFriends) => {
-        setUserFriends((prevFriends) => ({
-            ...prevFriends,
-            ...newFriends,
-        }));
+        setUserFriends(newFriends);
     };
 
     const updateMatchHistory = (newMatches) => {
@@ -75,7 +73,7 @@ export const UserProvider = ({ children }) => {
             ...newMatches,
         }));
     };
-    console.log(userFriends)
+
     return (
         <UserContext.Provider value={{
             userData, 

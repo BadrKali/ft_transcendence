@@ -20,12 +20,12 @@ function Friends() {
   const [listFriend, setListFriend] = useState([]);
   const navigate = useNavigate();
   const {userFriends, userFriendsLoading} = useContext(UserContext)
-  const {data ,isLoading, error} = useFetch(`${BACKEND_URL}/user/friends/list/`)
-  useEffect(() => {
-    if (data) {
-      setListFriend(data);
-    }
-  }, [data]);
+  // const {data ,isLoading, error} = useFetch(`${BACKEND_URL}/user/friends/list/`)
+  // useEffect(() => {
+  //   if (data) {
+  //     setListFriend(data);
+  //   }
+  // }, [data]);
   
   function handleItemClick(list) {
     navigate(`/user/${list.username}`, {

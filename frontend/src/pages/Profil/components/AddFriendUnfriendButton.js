@@ -1,15 +1,20 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 import useAuth from '../../../hooks/useAuth';
 import Icon from '../../../assets/Icon/icons'
 import { InfoToast } from '../../../components/ReactToastify/InfoToast'
 import { ErrorToast } from '../../../components/ReactToastify/ErrorToast'
 import { SuccessToast } from '../../../components/ReactToastify/SuccessToast'
+import { UserContext } from '../../../context/UserContext';
+import { ProfileContext } from '../../../context/ProfilContext';
+
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
-function AddFriendUnfriendButton({ FriendId , isBlockedMe, isBlockingHim}) {
+function AddFriendUnfriendButton({ FriendId }) {
     const { auth }  = useAuth()
     const [isRequest, setIsRequst] = useState('Friend request does not exist.')
+    const {updateUserFriends} = useContext(UserContext)
+    const {isBlockedMe, isBlockingHim} = useContext(ProfileContext)
     const isDisabled = isBlockingHim || isBlockedMe;
 
     useEffect(() => {
@@ -105,6 +110,21 @@ function AddFriendUnfriendButton({ FriendId , isBlockedMe, isBlockingHim}) {
 
             const data = await response.json();
             setIsRequst(data.message);
+            const friendsResponse = await fetch(`${BACKEND_URL}/user/friends/list/`, {
+                method: 'GET',
+                    headers: {
+                      'Content-Type': 'application/json',
+                      'Authorization': `Bearer ${auth.accessToken}`
+                    }
+                  });
+                  
+                  if (!friendsResponse.ok) {
+                    throw new Error('Network response was not ok');
+                  }
+                  
+                  const updatedFriendsData = await friendsResponse.json();
+                  console.log(updatedFriendsData)
+                updateUserFriends(updatedFriendsData);
 
         } catch (error) {
             ErrorToast(error.message);

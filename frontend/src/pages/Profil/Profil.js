@@ -17,6 +17,7 @@ import ChatFriendButton from './components/ChatFriendButton'
 import ChallangefriendButton from './components/ChallangefriendButton'
 import LineChart from '../Dashboard/components/LineChart'
 import { UserContext } from '../../context/UserContext';
+import { ProfileProvider } from '../../context/ProfilContext';
 
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
@@ -47,15 +48,15 @@ const Profil = () => {
   const isOwnProfile = userData.username === nameOfUser
 
   return (
-    <TransitionGroup className="profilTransition">
-      <CSSTransition key={profilData.user_id}  classNames="fade">
+
+    <ProfileProvider key={profilData.user_id} userId={profilData.user_id}>
         <div className='dashboard-contianer'>
           <div className='profil-icons'>
               {!isOwnProfile && (
                 <div className='profil-buttons'>
-                    <AddFriendUnfriendButton FriendId={profilData.user_id} isBlockingHim={isBlockingHim} isBlockedMe={isBlockedMe} />
-                    <ChatFriendButton profilData={profilData} isBlockingHim={isBlockingHim} isBlockedMe={isBlockedMe} />
-                    <ChallangefriendButton  isBlockingHim={isBlockingHim} isBlockedMe={isBlockedMe} />
+                    <AddFriendUnfriendButton FriendId={profilData.user_id}  />
+                    <ChatFriendButton profilData={profilData}  />
+                    <ChallangefriendButton   />
                     <BlockUnblockButton blockedId={profilData.user_id} isBlockingHim={isBlockingHim} isBlockedMe={isBlockedMe}/>
                 </div>
               )}
@@ -81,8 +82,8 @@ const Profil = () => {
           </div>
 
         </div>
-      </CSSTransition>
-    </TransitionGroup>
+    </ProfileProvider>
+
   )
 }
 

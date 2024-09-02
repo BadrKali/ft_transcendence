@@ -1,12 +1,14 @@
 import React from 'react'
-import  { useState, useEffect } from 'react';
+import  { useState, useEffect, useContext } from 'react';
 import './dashProfil.css'
 import { avatars } from '../../../assets/assets'
+import { ProfileContext } from '../../../context/ProfilContext';
 
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
-function DashProfil({profil , isBlockingHim, isBlockedMe}) {
+function DashProfil({profil}) {
+    const {isBlockedMe, isBlockingHim} = useContext(ProfileContext)
 
     const [progress, setProgress] = useState('0%');
     useEffect(() => {
