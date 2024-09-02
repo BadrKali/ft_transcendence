@@ -10,31 +10,28 @@ import { SuccessToast } from '../../components/ReactToastify/SuccessToast';
 import { ErrorToast } from '../../components/ReactToastify/ErrorToast';
 import MainButton from '../../components/MainButton/MainButton';
 import { UserContext } from '../../context/UserContext';
-
+import TwoFaModal from './components/TwoFaModal/TwoFaModal';
 
 const SETTING_ENDPOINT = "http://127.0.0.1:8000/auth/user/me/"
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
-
 const Setting = () => {
-  const { auth }  = useAuth()
+  const { auth }  = useAuth();
   const [activeAvatar, setActiveAvatar] = useState(null);
   const [avatarFile, setAvatarFile] = useState(null);
   const { updateUserData } = useContext(UserContext);
+  const [showTwoFaModal, setShowTwoFaModal] = useState(false);
 
-  
+  const toggleTwoFaModal = () => {
+    setShowTwoFaModal(!showTwoFaModal);
+  }
+
   const [updatedvalues, setUpdatedvalues] = useState({
     username : "",
     email : "",
     old_password : "",
     new_password : "",
-  })
-
-
-  const handleTwoFaClick = (e) => {
-    e.preventDefault();
-    // 2FA setup logic will be added here
-  }
+  });
 
   const handleFormSubmit = async (e) => {
     e.preventDefault();
@@ -69,12 +66,11 @@ const Setting = () => {
     } catch (e) {
         ErrorToast('Failed to update settings. Please try again.');
     }
-};
-
+  };
 
   const handleInputChange = (e) => {
     setUpdatedvalues({ ...updatedvalues, [e.target.name]: e.target.value });
-};
+  };
 
   return (
     <>
@@ -94,7 +90,7 @@ const Setting = () => {
           </div>
           <div className={Style.SettingSection}>
             <div className={Style.SettingInfo}>
-              <h3>Personal Informations</h3>
+              <h3>Personal Information</h3>
               <p>Update your information about you and details here</p>
             </div>
             <div className={Style.InputSection}>
@@ -119,19 +115,17 @@ const Setting = () => {
               <h3>Two-factor Authenticator App <span>Enabled</span></h3>
               <p>Use an Authenticator App as your two-factor authentication (2FA). When you sign in you'll be asked to use the security code provided by your Authenticator.</p>
             </div>
-            <button type="button" onClick={handleTwoFaClick}>Set Up</button>
+            <button type="button" onClick={toggleTwoFaModal}>Set Up</button>
           </div>
           <MainButton type="submit" onClick={handleFormSubmit} content="Update"/>
         </form>
+        {/* <TwoFaModal show={showTwoFaModal} handleClose={toggleTwoFaModal}/> */}
       </div> 
     </>
   );
 }
 
 export default Setting;
-
-
-
 
 
 

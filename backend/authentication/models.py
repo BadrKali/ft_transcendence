@@ -2,6 +2,8 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 # Create your models here.
 from user_management.models import Player
+import pyotp
+
 
 
 class User(AbstractUser):
@@ -9,6 +11,9 @@ class User(AbstractUser):
     avatar = models.ImageField(upload_to='avatars/', null=True, blank=True)
     api_42_id = models.CharField(max_length=255, unique=True, null=True, blank=True)
     is_online = models.BooleanField(default=False)
+    is_2fa_enabled = models.BooleanField(default=False)
+    is_2fa_verified = models.BooleanField(default=False)
+    otp_secret = models.CharField(max_length=255, null=True, blank=True)
     
     def save(self, *args, **kwargs):
         created = self.pk is None
@@ -26,5 +31,15 @@ class User(AbstractUser):
             File(open(result[0], 'rb'))
         )
 
+    def generate_otp_secret(self):
+        if not self.otp_secret:
+            self.otp_secret = pyotp.random_base32()
+            self.save()
+
+    # Method to get the provisioning URI for Google Authenticator
+    def get_otp_uri(self):
+        return pyotp.totp.TOTP(self.otp_secret).provisioning_uri(
+            name=self.email, issuer_name="PongyGame"
+        )
     def __str__(self) -> str:
         return self.username

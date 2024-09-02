@@ -180,16 +180,32 @@ class CallbackView(APIView):
         return response
 
 
-class TwoFactorAuthView(APIView):
+class Enable2FA(APIView):
+
+    def get(self, request):
+        request.user.generate_otp_secret()
+        otp_uri = request.user.get_otp_uri()
+        return Response({"otp_uri": otp_uri}, status=status.HTTP_200_OK)
+    
     def post(self, request):
         user = request.user
-        key = "JBSWY3DPEHPK3PXP"
-        uri = pyotp.totp.TOTP(key).provisioning_uri(name="test", issuer_name="PongyGame")
-        print(uri)
-        # return(Response({"asd": "ads"}, status=status.HTTP_200_OK))
-        return Response({"uri": uri}, status=status.HTTP_200_OK)
+        otp = request.data.get('otp')
+        if not otp:
+            return Response({"error": "OTP is required"}, status=status.HTTP_400_BAD_REQUEST)
+        if pyotp.TOTP(user.otp_secret).verify(otp):
+            user.is_2fa_verified = True
+            user.is_2fa_enabled = True
+            user.save()
+            return Response({"message": "2FA has been verified"}, status=status.HTTP_200_OK)
+        return Response({"error": "Invalid OTP"}, status=status.HTTP_400_BAD_REQUEST)
     
 
-    def patch(self, request):
-        #to do : check if the user is authenticated
-        pass
+class Disable2FA(APIView):
+    def post(self, request):
+        user = request.user
+        user.otp_secret = None
+        user.is_2fa_enabled = False
+        user.is_2fa_verified = False
+        user.save()
+        return Response({"message": "2FA has been disabled"}, status=status.HTTP_200_OK)
+    
