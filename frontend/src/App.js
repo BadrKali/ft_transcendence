@@ -9,10 +9,11 @@ import ToastContainer from './components/ReactToastify/ToastContainer';
 import { UserContext, UserProvider } from './context/UserContext';
 import BotIcon from './components/BotIcon/BotIcon'
 import Draggable from 'react-draggable';
+import useAuth from './hooks/useAuth';
 
 const AppLayout = () => {
   const { userData, userDataLoading, userDataError } = useContext(UserContext);
-  
+
   if (userDataLoading) {
     return <div>Loading...</div>; // 
   }

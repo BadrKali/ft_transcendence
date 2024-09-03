@@ -24,6 +24,7 @@ import { BlockPopUpProvider } from "./pages/Chat/usehooks/ChatContext";
 import { CurrentUserProvider } from "./pages/Chat/usehooks/ChatContext";
 import Invite from './pages/PingPongGame/Invite/Invite';
 import { UserProvider } from "./context/UserContext";
+import Design from "./pages/Design/Design";
 
 
 const routes = [
@@ -68,6 +69,7 @@ const routes = [
       },
     ],
   },
+  { path: "design", element: <Design /> },
   {path: 'bot-game', element: <Bot />},
   {path: 'local-game', element: <LocalGame />},
   {path: 'random-game', element: <Random/>},
