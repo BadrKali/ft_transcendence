@@ -14,19 +14,29 @@ export const UserProvider = ({ children }) => {
     const [userFriendsLoading, setUserFriendsLoading] = useState(true);
     const [matchHistory, setMatchHistory] = useState(null);
     const [matchHistoryLoading, setMatchHistoryLoading] = useState(true);
+    const [notifications, setNotifications] = useState(null);
+
 
 
     const { data: userDataFetch, isLoading: userLoading, isError: userDataError } = useFetch(`${BACKEND_URL}/user/stats/`);
     const { data: userAchievementsFetch, isLoading: achievementsLoading, isError: userAchievementsError } = useFetch(`${BACKEND_URL}/api/game/achievements/me`);
     const { data: userFriendsFetch, isLoading: friendsLoading, isError: userFriendsError } = useFetch(`${BACKEND_URL}/user/friends/list/`);
     const { data: matchHistoryFetch, isLoading: matchHistoryLoadingFetch, isError: matchHistoryError } = useFetch(`${BACKEND_URL}/api/game/game-history/`);
-
+    const { data: NotificationFetch, isLoading: NotificationLoadingFetch, isError: NotificationError } = useFetch(`${BACKEND_URL}/user/notifications/`);
+  
     useEffect(() => {
         if (userDataFetch) {
             setUserData(userDataFetch);
             setUserDataLoading(false);
         }
     }, [userDataFetch]);
+
+    useEffect(() => {
+        if (NotificationFetch) {
+            setNotifications(NotificationFetch);
+        
+        }
+    }, [NotificationFetch]);
 
     useEffect(() => {
         if (userAchievementsFetch) {
@@ -67,6 +77,11 @@ export const UserProvider = ({ children }) => {
         setUserFriends(newFriends);
     };
 
+    const updateUserNotification = (newNotifcation) => {
+        setNotifications(newNotifcation);
+    };
+
+
     const updateMatchHistory = (newMatches) => {
         setMatchHistory((prevMatches) => ({
             ...prevMatches,
@@ -88,10 +103,13 @@ export const UserProvider = ({ children }) => {
             matchHistory,
             matchHistoryLoading,
             matchHistoryError,
+            notifications,
             updateUserData, 
             updateUserAchievements,
             updateUserFriends,
-            updateMatchHistory
+            updateMatchHistory,
+            updateUserNotification,
+            setNotifications
         }}>
             {children}
         </UserContext.Provider>

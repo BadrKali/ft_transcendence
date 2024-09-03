@@ -43,13 +43,13 @@ const routes = [
         children: [
           {
             element:     
-            <RealTimeProvider>
-              <SocketClientProvider>
                   <UserProvider>
-                      <AppLayout />
-                  </UserProvider>
-              </SocketClientProvider>
-            </RealTimeProvider>,
+                    <RealTimeProvider>
+                      <SocketClientProvider>
+                              <AppLayout />
+                      </SocketClientProvider>
+                    </RealTimeProvider>
+                  </UserProvider>,
             children: [
               { path: "/", element: <DashBoard /> },
               { path: "game", element: <Game /> },

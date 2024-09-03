@@ -37,13 +37,13 @@ const TopBar = () => {
   const response1 = useFetch(`${BACKEND_URL}/user/stats/`)
   const navigate = useNavigate();
   const { hasNotification, clearNotification} = useContext(RealTimeContext);
-  const [notifications, setNotifications] = useState([]);
+  // const [notifications, setNotifications] = useState([]);
   const { auth }  = useAuth()
   const [modalOpen, setModalOpen] = useState(false);
   const [modalOpenBlocked, setModalOpenBlocked] = useState(false);
   const [selectedNotification, setSelectedNotification] = useState(null);
   const {gameChallenge, handleAcceptGame, handleRejectGame, gameAccepted, joinGame, setGameAccepted, showGameSettings, setShowGameSettings} = useContext(RealTimeContext);
-  const { userData, userDataLoading, userDataError, updateUserFriends } = useContext(UserContext);
+  const { userData, userDataLoading, userDataError, updateUserFriends, notifications, setNotifications} = useContext(UserContext);
 
   
   const handleNotificationClick = (notif) => {
@@ -226,18 +226,18 @@ const handleReject = async (id, type) => {
   const handleIconClick = async () => {
     setNotif(!showNotif);
 
-    if (!showNotif) {
-      try {
-        const response = await fetch(`${BACKEND_URL}/user/notifications/`, {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${auth.accessToken}`
-          }
-        });
-        if (response.ok) {
-          const data = await response.json();
-          setNotifications(data);
+    // if (!showNotif) {
+    //   try {
+    //     const response = await fetch(`${BACKEND_URL}/user/notifications/`, {
+    //       method: 'GET',
+    //       headers: {
+    //         'Content-Type': 'application/json',
+    //         'Authorization': `Bearer ${auth.accessToken}`
+    //       }
+    //     });
+    //     if (response.ok) {
+    //       const data = await response.json();
+    //       setNotifications(data);
           clearNotification(); 
           await fetch(`${BACKEND_URL}/user/notifications/`, {
             method: 'POST',
@@ -246,13 +246,13 @@ const handleReject = async (id, type) => {
                 'Authorization': `Bearer ${auth.accessToken}`
             }
         });
-        } else {
-          console.error('Failed to fetch notifications');
-        }
-      } catch (error) {
-        console.error('Error fetching notifications:', error);
-      }
-    }
+    //     } else {
+    //       console.error('Failed to fetch notifications');
+    //     }
+    //   } catch (error) {
+    //     console.error('Error fetching notifications:', error);
+    //   }
+    // }
   };
 
   useEffect(() => {
@@ -365,7 +365,7 @@ const handleReject = async (id, type) => {
           <Icon  name='notification' className={showNotif ? 'topbar-notification-icon active-icon' : 'topbar-notification-icon' }/>
           {hasNotification && <span className="notification-badge"></span>}
           <div  className={showNotif ? "dropDwon active" : "dropDwon"}>
-              {notifications.length > 0 ?
+              {notifications && notifications.length > 0 ?
                   notifications.map((notif) => (
                     <NotificationItem key={notif.id} notif={notif} onClick={() => handleNotificationClick(notif)}  />
                   )) : (

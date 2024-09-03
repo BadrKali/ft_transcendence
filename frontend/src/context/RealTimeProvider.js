@@ -6,6 +6,8 @@ import { SuccessToast } from '../components/ReactToastify/SuccessToast'
 import { ErrorToast } from '../components/ReactToastify/ErrorToast'
 import {InfoToast} from '../components/ReactToastify/InfoToast';
 import GameSettingsPopUp from '../components/GameSettingsPopUp/GameSettingsPopUp';
+import { UserContext } from './UserContext';
+
 const WS_BACKEND_URL = process.env.REACT_APP_WS_BACKEND_URL;
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
@@ -20,7 +22,37 @@ export const RealTimeProvider = ({ children }) => {
     const [gameAccepted, setGameAccepted] = useState(false);
     const [joinGame, setJoinGame] = useState(false);
     const [showGameSettings, setShowGameSettings] = useState(false);
+    const {updateUserNotification} =  useContext(UserContext)
 
+    const [shouldFetchNotifications, setShouldFetchNotifications] = useState(false);
+
+
+    useEffect(() => {
+        if (shouldFetchNotifications) {
+            const fetchNotifications = async () => {
+                try {
+                    const response = await fetch(`${BACKEND_URL}/user/notifications/`, {
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${auth.accessToken}`,
+                        },
+                    });
+                    if (!response.ok) {
+                        throw new Error('Failed to fetch notifications');
+                    }
+                    const NotificationFetch = await response.json();
+                    console.log(NotificationFetch)
+                    updateUserNotification(NotificationFetch);
+                } catch (error) {
+                    console.error('Error fetching notifications:', error);
+                } finally {
+                    setShouldFetchNotifications(false);
+                }
+            };
+    
+            fetchNotifications();
+        }
+    }, [shouldFetchNotifications]);
     
     const clearNotification = () => {
         setHasNotification(false);
@@ -71,8 +103,9 @@ export const RealTimeProvider = ({ children }) => {
                     [user_id]: status
                 }));
             } else if (dataFromServer.type === 'notification') {
-                setHasNotification(true);
-                // InfoToast("You have a new notification"); //add it here
+                    setHasNotification(true);
+                    setShouldFetchNotifications(true);
+            
             } else if (dataFromServer.type === 'join_game') {
                 console.log("Joining Game From RealTimeProvider");
                 setJoinGame(true);
