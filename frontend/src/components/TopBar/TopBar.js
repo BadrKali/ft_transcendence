@@ -239,6 +239,13 @@ const handleReject = async (id, type) => {
           const data = await response.json();
           setNotifications(data);
           clearNotification(); 
+          await fetch(`${BACKEND_URL}/user/notifications/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${auth.accessToken}`
+            }
+        });
         } else {
           console.error('Failed to fetch notifications');
         }

@@ -12,37 +12,11 @@ const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
 function AddFriendUnfriendButton({ FriendId }) {
     const { auth }  = useAuth()
-    const [isRequest, setIsRequst] = useState('Friend request does not exist.')
     const {updateUserFriends} = useContext(UserContext)
-    const {isBlockedMe, isBlockingHim} = useContext(ProfileContext)
+    const {isBlockedMe, isBlockingHim, isRequest, setIsRequst} = useContext(ProfileContext)
     const isDisabled = isBlockingHim || isBlockedMe;
-
-    useEffect(() => {
-        const fetchRequestStatus = async () => {
-            const url = `${BACKEND_URL}/user/friends-request/${FriendId}/`;
-            try {
-                const response = await fetch(url, {
-                    method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${auth.accessToken}`,
-                    },
-                });
-                if (response.ok) {
-                    const data = await response.json();
-                    setIsRequst(data.message)
-                    console.log(data.message);
-                } else {
-                    console.error('Error fetching block status:', response.statusText);
-                }
-            } catch (error) {
-                console.error('Error fetching block status:', error);
-            }
-        };
-
-        fetchRequestStatus();
-    }, [FriendId]);
-
+ 
+    
     const handleAddFriend = async () => {
         try {
             const response = await fetch(`${BACKEND_URL}/user/friends-request/${FriendId}/`, {
@@ -158,7 +132,6 @@ function AddFriendUnfriendButton({ FriendId }) {
       };
 
     const getButtonAction = () => {
-        console.log(isRequest);
         switch (isRequest) {
           case 'Friend request does not exist.':
             return { text: 'Add Friend', action: handleAddFriend };
@@ -174,6 +147,7 @@ function AddFriendUnfriendButton({ FriendId }) {
       };
 
     const { text, action } = getButtonAction();
+
     return (
         <div className={`AddFriend-button  profil-button ${isDisabled ? 'disabled' : ''}`} onClick={action}>
             <Icon name='AddFriend' className='Add-Friend profil-icon' />

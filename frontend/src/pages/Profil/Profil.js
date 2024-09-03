@@ -18,7 +18,8 @@ import ChallangefriendButton from './components/ChallangefriendButton'
 import LineChart from '../Dashboard/components/LineChart'
 import { UserContext } from '../../context/UserContext';
 import { ProfileProvider } from '../../context/ProfilContext';
-
+import Lottie from 'lottie-react';
+import loadingAnimation from '../../components/OauthTwo/loading-animation.json'
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
@@ -26,15 +27,15 @@ const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
 const Profil = () => {
   const { userId } = useParams();
-  const [profilData, setProfilData] = useState([]);
+  const [profilData, setProfilData] = useState(null);
   const navigate = useNavigate();
   const { auth }  = useAuth()
   const location = useLocation();
   const { nameOfUser } = useParams();
   const {userData} =  useContext(UserContext)
-  const {data ,isLoading, error} = useFetch(`${BACKEND_URL}/user/stats/username/${nameOfUser}`)
   const [isBlockedMe, setIsBlocked] = useState(false);
   const [isBlockingHim, setIsBlocking] = useState(false); 
+  const {data ,isLoading, error} = useFetch(`${BACKEND_URL}/user/stats/username/${nameOfUser}`)
 
 
   useEffect(() => {
@@ -46,10 +47,17 @@ const Profil = () => {
   }, [data]);
   
   const isOwnProfile = userData.username === nameOfUser
+  if (isLoading || !profilData) {
+    return (
+      <div className='oauth-loading'>
+        <Lottie animationData={loadingAnimation} style={{ width: 400, height: 400 }} />; 
+      </div>
+    );
+  }
 
   return (
 
-    <ProfileProvider key={profilData.user_id} userId={profilData.user_id}>
+    <ProfileProvider key={profilData.user_id} >
         <div className='dashboard-contianer'>
           <div className='profil-icons'>
               {!isOwnProfile && (
@@ -57,7 +65,7 @@ const Profil = () => {
                     <AddFriendUnfriendButton FriendId={profilData.user_id}  />
                     <ChatFriendButton profilData={profilData}  />
                     <ChallangefriendButton   />
-                    <BlockUnblockButton blockedId={profilData.user_id} isBlockingHim={isBlockingHim} isBlockedMe={isBlockedMe}/>
+                    <BlockUnblockButton blockedId={profilData.user_id}/>
                 </div>
               )}
           </div>

@@ -49,6 +49,7 @@ export const RealTimeProvider = ({ children }) => {
                     if (data.hasNotification) {
                         setHasNotification(true);  
                         setNotifications(data.notifications);  
+                        console.log(data)
                     }
                 } else {
                     console.error('Failed to fetch missed notifications');

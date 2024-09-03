@@ -175,6 +175,10 @@ class BlockUnblockView(APIView):
         blocking = BlockedUsers(blocker=blocker, blocked=blocked)
         blocking.save()
         Friendship.objects.filter(Q(player=blocker, friend=blocked) | Q(player=blocked, friend=blocker)).delete()
+        FriendInvitation.objects.filter(
+            Q(player_sender=blocker, player_receiver=blocked) | 
+            Q(player_sender=blocked, player_receiver=blocker)
+        ).delete()
         return Response({'message': 'User has been blocked successfully.'}, status=status.HTTP_201_CREATED)
     def delete(self, request, blocked_id):
         blocker = request.user

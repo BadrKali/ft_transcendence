@@ -10,12 +10,11 @@ const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
 
 
-const BlockUnblockButton = ({ blockedId ,isBlockedMe }) => {
-    const {profilisBlocked, setIsBlocked,isBlockingHim,setIsBlocking} = useContext(ProfileContext)
-    const { auth }  = useAuth()
-    
+const BlockUnblockButton = ({ blockedId }) => {
 
-    console.log(profilisBlocked)
+    const {profilisBlocked, setIsBlocked,isBlockingHim,isBlockedMe,setIsBlocking,setIsRequst} = useContext(ProfileContext)
+    const { auth }  = useAuth()
+
     const handleBlockUnblock = async () => {
         const url = `${BACKEND_URL}/user/${blockedId}/block-unblock/`;
         try {
@@ -30,6 +29,7 @@ const BlockUnblockButton = ({ blockedId ,isBlockedMe }) => {
             if (response.ok) {
                 setIsBlocked(!profilisBlocked);
                 setIsBlocking(!isBlockingHim);
+                setIsRequst('Friend request does not exist.')
                 SuccessToast(`User has been ${profilisBlocked ? 'unblocked' : 'blocked'} successfully.`);
 
             } else {
@@ -49,6 +49,7 @@ const BlockUnblockButton = ({ blockedId ,isBlockedMe }) => {
         <div className={`BlockFriend-button profil-button ${isBlockedMe ? 'disabled' : ''}`} onClick={handleBlockUnblock}>
             <Icon name="BlockFriend" className='Block-Friend profil-icon' />
             <p>{profilisBlocked ? 'Unblock' : 'Block'}</p>
+
         </div>
     );
 };
