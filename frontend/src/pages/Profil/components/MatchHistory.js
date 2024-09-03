@@ -2,7 +2,9 @@ import React from 'react'
 import { useState, useEffect } from 'react'
 import useFetch from '../../../hooks/useFetch'
 import useAuth from '../../../hooks/useAuth';
-import { useNavigate } from 'react-router-dom';      
+import { useNavigate } from 'react-router-dom';   
+import { useContext } from 'react';  
+import { ProfileContext } from '../../../context/ProfilContext'; 
 import History from '../../../assets/MatchHistoryData'
 import HistoryItem from './HistoryItem'
 import './matchHistory.css'
@@ -11,25 +13,16 @@ const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
 
 function MatchHistory({profil}) {
-  const [history, setHistory] = useState([]);
+
   const navigate = useNavigate();
   const { auth }  = useAuth()
+  const {history} = useContext(ProfileContext)
 
-
-  console.log(profil)
-  const {data ,isLoading, error} = useFetch(`${BACKEND_URL}/api/game/game-history/${profil.user_id}`)
-  useEffect(() => {
-     if (data) {
-       setHistory(data);
-     }
-   }, [data]);
-
- 
 
    const handleItemClick = async (history) => {
-      let playerId = history.winner_user;
+      let playerId = history.winner_user.user_id;
       if (history.is_winner) {
-        playerId = history.loser_user;
+        playerId = history.loser_user.user_id;
       }
    
    

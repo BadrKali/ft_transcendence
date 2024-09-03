@@ -80,7 +80,7 @@ export const RealTimeProvider = ({ children }) => {
                     const data = await response.json();
                     if (data.hasNotification) {
                         setHasNotification(true);  
-                        setNotifications(data.notifications);  
+                        // setNotifications(data.notifications);  
                         console.log(data)
                     }
                 } else {

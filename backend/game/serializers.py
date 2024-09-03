@@ -3,6 +3,8 @@ from .models import GameHistory, Achievement, UserAchievement, GameSettings, Gam
 from user_management.serializers import PlayerSerializer
 
 class GameHistorySerializer(serializers.ModelSerializer):
+    winner_user = PlayerSerializer()
+    loser_user = PlayerSerializer()
     is_winner = serializers.SerializerMethodField()
 
     class Meta:

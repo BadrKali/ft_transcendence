@@ -225,34 +225,14 @@ const handleReject = async (id, type) => {
 
   const handleIconClick = async () => {
     setNotif(!showNotif);
-
-    // if (!showNotif) {
-    //   try {
-    //     const response = await fetch(`${BACKEND_URL}/user/notifications/`, {
-    //       method: 'GET',
-    //       headers: {
-    //         'Content-Type': 'application/json',
-    //         'Authorization': `Bearer ${auth.accessToken}`
-    //       }
-    //     });
-    //     if (response.ok) {
-    //       const data = await response.json();
-    //       setNotifications(data);
-          clearNotification(); 
-          await fetch(`${BACKEND_URL}/user/notifications/`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${auth.accessToken}`
-            }
-        });
-    //     } else {
-    //       console.error('Failed to fetch notifications');
-    //     }
-    //   } catch (error) {
-    //     console.error('Error fetching notifications:', error);
-    //   }
-    // }
+    clearNotification(); 
+    await fetch(`${BACKEND_URL}/user/notifications/`, {
+      method: 'POST',
+      headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${auth.accessToken}`
+      }
+    });
   };
 
   useEffect(() => {

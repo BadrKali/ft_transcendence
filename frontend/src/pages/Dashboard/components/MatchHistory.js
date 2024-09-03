@@ -17,11 +17,13 @@ function MatchHistory({profilData}) {
   const navigate = useNavigate();
   const { auth }  = useAuth()
   const {matchHistory} = useContext(UserContext)
- 
+  
+
+
   const handleItemClick = async (history) => {
-    let playerId = history.winner_user;
+    let playerId = history.winner_user.user_id;
     if (history.is_winner) {
-      playerId = history.loser_user;
+      playerId = history.loser_user.user_id;
     }
   
   

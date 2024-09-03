@@ -24,6 +24,10 @@ export const ProfileProvider = ({ children, userId }) => {
     const [isBlockedMe, setIsBlockedMe] = useState(false);
     const [isBlockingHim, setIsBlocking] = useState(false); 
     const [isRequest, setIsRequst] = useState(null)
+    const [history, setHistory] = useState(null);
+    const [HistoryLoading, setHistoryLoading] = useState(true);
+
+
     const { nameOfUser } = useParams();
     const [isProfileDataReady, setIsProfileDataReady] = useState(false); 
 
@@ -117,12 +121,41 @@ export const ProfileProvider = ({ children, userId }) => {
         
         fetchBlockStatus();
     }, [profilData, auth.accessToken]);
+
+    useEffect(() => {
+        const fetchGameHistory = async () => {
+            if (!profilData) return;
+            const url = `${BACKEND_URL}/api/game/game-history/${profilData.user_id}`;
+            try {
+                const response = await fetch(url, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${auth.accessToken}`,
+                    },
+                });
+                if (response.ok) {
+                    const data = await response.json();
+                    setHistory(data);
+                } else {
+                    console.error('Error fetching block status:', response.statusText);
+                }
+            } catch (error) {
+                console.error('Error fetching block status:', error);
+            }
+            finally {
+                setHistoryLoading(false);
+            }
+        };
+        
+        fetchGameHistory();
+    }, [profilData, auth.accessToken]);
   
     useEffect(() => {
-        if (!profileDataLoading && !profileBlockLoading && !profileFriendLoading) {
+        if (!profileDataLoading && !profileBlockLoading && !profileFriendLoading && !HistoryLoading) {
             setIsProfileDataReady(true);
         }
-    }, [profileDataLoading, profileBlockLoading, profileFriendLoading]);
+    }, [profileDataLoading, profileBlockLoading, profileFriendLoading, HistoryLoading]);
 
     if (!isProfileDataReady) {
         return (
@@ -142,6 +175,7 @@ export const ProfileProvider = ({ children, userId }) => {
             isBlockedMe,
             isBlockingHim,
             isRequest,
+            history,
             setIsBlocked,
             setIsBlockedMe,
             setIsBlocking,
