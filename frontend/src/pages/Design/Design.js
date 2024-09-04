@@ -53,7 +53,7 @@ const Design = () => {
     setVerificationStatus('idle')
     
     if (newOtp.every(data => data !== '')) {
-      veryfyOtp(newOtp.join(''));
+      // veryfyOtp(newOtp.join(''));
     }
 
   };

@@ -69,7 +69,7 @@ const routes = [
       },
     ],
   },
-  { path: "design", element: <Design /> },
+  // { path: "design", element: <Design /> },
   {path: 'bot-game', element: <Bot />},
   {path: 'local-game', element: <LocalGame />},
   {path: 'random-game', element: <Random/>},

@@ -21,6 +21,7 @@ const Setting = () => {
   const [avatarFile, setAvatarFile] = useState(null);
   const { updateUserData } = useContext(UserContext);
   const [showTwoFaModal, setShowTwoFaModal] = useState(false);
+  const [qrCodeUrl, setQrCodeUrl] = useState(null);
 
   const toggleTwoFaModal = () => {
     setShowTwoFaModal(!showTwoFaModal);
@@ -115,11 +116,11 @@ const Setting = () => {
               <h3>Two-factor Authenticator App <span>Enabled</span></h3>
               <p>Use an Authenticator App as your two-factor authentication (2FA). When you sign in you'll be asked to use the security code provided by your Authenticator.</p>
             </div>
-            <button type="button" onClick={toggleTwoFaModal}>Set Up</button>
+            <button type="button" onClick={toggleTwoFaModal} className={Style.twoFaButton}>Set Up</button>
+              {showTwoFaModal && <TwoFaModal handleClose={toggleTwoFaModal}/>}
           </div>
           <MainButton type="submit" onClick={handleFormSubmit} content="Update"/>
         </form>
-        {/* <TwoFaModal show={showTwoFaModal} handleClose={toggleTwoFaModal}/> */}
       </div> 
     </>
   );
