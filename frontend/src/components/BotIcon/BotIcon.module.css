@@ -214,3 +214,10 @@
     color: #E8E8EA;
     opacity: 0.5;
 }
+
+@media screen and (max-width: 950px) {
+
+    .botParentHolder{
+        display: none;
+    }
+}

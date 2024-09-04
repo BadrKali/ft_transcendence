@@ -7,6 +7,7 @@
     flex-direction: column;
     height: 90%;
     margin-top: 20px;
+
     /* padding: 20px; */
 }
 
@@ -40,6 +41,7 @@
     align-items: center;
     justify-content: center;
     margin: 10px;
+
 }
 
 .userImage img {
@@ -58,6 +60,7 @@
     width: 75%;
     margin-left: 10px;
     padding: 20px 10px;
+
     /* background-color:beige; */
 }
 
@@ -68,6 +71,8 @@
     /* border: solid 1px white; */
 
    margin-right: 70px;
+
+ 
 
 }
 
@@ -91,6 +96,7 @@
     display: flex;
     align-items: center;
     margin-top: 15px;
+
     /* border: solid 1px white ; */
 }
 
@@ -144,3 +150,27 @@
     margin-left: 0;
     margin-right: 20px;
   }
+
+@media screen and (max-width: 950px) {
+  .userContainer{
+    display: flex;
+    flex-direction: column;
+  }
+  .userImage{
+    height: 50% !important;
+
+  }
+  .userProgress{
+    height: 50% !important;
+    width: 100% !important;
+
+  }
+  .progresInfo{
+    height: 50% !important;
+
+  }
+  .progresBar{
+    height: 50% !important;
+
+  }
+}

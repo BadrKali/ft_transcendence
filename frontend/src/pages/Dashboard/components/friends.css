@@ -112,3 +112,10 @@
     align-self: center;
     opacity: 0.1;
 }
+
+@media screen and (max-width: 950px) {
+    .friendsContainer{
+        padding-left: 0 !important;
+
+    }
+}

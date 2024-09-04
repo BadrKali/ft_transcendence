@@ -151,17 +151,41 @@
     width: 50%;
 }
 
-/* .fade-enter {
-  opacity: 0;
+@media screen and (max-width: 950px) {
+  .dashboard-profil{
+    flex-direction: column; 
+
+  }
+  .profilHistoryAcgievmeants-container-profil{
+    height: 100%;
+    width: 100%;
+
+  }
+  .profil-container-profil{
+    width: 100%;
+    height: 30%;
+ 
+
+  }
+  .lineChart-container{
+    display: none;
+  }
+
+  .historyAchievments-container-profil{
+ 
+    display: flex;
+    flex-direction: column;
+    height: 70%;
+  }
+
+  .history-container-profil{
+    width: 100%;
+    height: 50%;
+  }
+
+  .achievments-container-profil{
+    width: 100%;
+    height: 50%;
+  }
+
 }
-.fade-enter-active {
-  opacity: 1;
-  transition: opacity 300ms;
-}
-.fade-exit {
-  opacity: 1;
-}
-.fade-exit-active {
-  opacity: 0;
-  transition: opacity 300ms;
-} */

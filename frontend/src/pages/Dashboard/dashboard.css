@@ -82,6 +82,7 @@
 .historyAchievments-container{
     height: 50%;
     display: flex;
+    
 }
 
 .history-container{
@@ -114,3 +115,45 @@
     animation: slideInLeftFriends 1s ease-out;
 }
 
+@media screen and (max-width: 950px) {
+  .dashboard {
+    flex-direction: column; 
+
+  }
+  .profilHistoryAcgievmeants-container{
+    height: 60%;
+    width: 100%;
+
+  }
+  .profil-container{
+    width: 100%;
+    height: 50%;
+ 
+
+  }
+  .lineChart-container{
+    display: none;
+  }
+
+  .historyAchievments-container{
+ 
+    display: flex;
+    flex-direction: column;
+    height: 50%;
+  }
+
+  .history-container{
+    width: 100%;
+    height: 100%;
+  }
+
+  .achievments-container{
+   display: none;
+  }
+  .friends-container{
+
+    height: 35%;
+    width: 100%;
+    /* display: none; */
+  }
+}
