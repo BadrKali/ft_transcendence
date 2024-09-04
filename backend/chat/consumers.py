@@ -12,6 +12,7 @@ from django.utils import timezone
 from django.db.models import Q
 from user_management .models import BlockedUsers
 from datetime import datetime
+import pytz
 from .views import format_date
 import openai
 from django.shortcuts import get_object_or_404
@@ -74,7 +75,7 @@ class ChatBotConsumer(AsyncWebsocketConsumer):
                             "sender_id" : 0,
                             "receiver_id" : self.sender_id,
                             "content"   : response,
-                            "created_at" : datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                            "created_at" : datetime.now(pytz.utc).strftime("%Y-%m-%d %H:%M:%S")
                         }    
                 })
                 self.messages.append({"role" : "assistant", "content" : response})
