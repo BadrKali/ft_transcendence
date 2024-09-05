@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useContext } from 'react';
 import './TwoFaModal.css';
 import Icon from '../../../../assets/Icon/icons';
 import Lottie from 'lottie-react';
@@ -7,12 +7,30 @@ import check from './check.json';
 import failed from './failed.json';
 import {QRCodeSVG} from 'qrcode.react';
 import useAuth from '../../../../hooks/useAuth';
+import { UserContext } from '../../../../context/UserContext';
 
-const TwoFaModal = ({handleClose}) => {
+
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
+
+const fetchData = async (url, token) => {
+    const response = await fetch(url, {
+      methode: 'GET',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      }
+    });
+  const data = await response.json();
+  console.log(data)
+  return data;
+}
+
+const TwoFaModal = ({handleClose, qrUrl}) => {
   const [otp, setOtp] = useState(['', '', '', '', '', '']);
   const [verificationStatus, setVerificationStatus] = useState('idle');
   const {auth} = useAuth();
   const inputRefs = useRef([]);
+  const { userData , updateUserData } = useContext(UserContext);
+  console.log('qrUrl: ', `http://localhost:8000/${qrUrl}`);
 
   useEffect(() => {
     inputRefs.current[0].focus();
@@ -26,14 +44,16 @@ const TwoFaModal = ({handleClose}) => {
         method: 'POST',
         headers:{
           'Content-Type': 'application/json',
-          'Authorization': `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzI1NDU2MzU4LCJpYXQiOjE3MjUzNDg3MTgsImp0aSI6IjU1MjZlN2I0YWI1YzRkNzM5MGQ3ZjkwYzdiODRmOWRmIiwidXNlcl9pZCI6MX0.URxru2D-xrfEy1KFtey13MznmCGrXZC8H9sI4LngExM`
+          'Authorization': `Bearer ${auth.accessToken}`
         },
         body: JSON.stringify({otp: otpCode})
       });
       if(response.ok) {
         setVerificationStatus('success');
+        const response = fetchData(`${BACKEND_URL}/user/stats/`, auth.accessToken);
+        // console.log('response: ', response.data);
       } else {
-        setVerificationStatus('success');
+        setVerificationStatus('failed');
       }
     } catch (error) {
       console.log('Error verifying OTP: ', error);
@@ -67,7 +87,7 @@ const TwoFaModal = ({handleClose}) => {
   const renderVerificationStatus = () => {
     if (verificationStatus === 'idle') {
       return  <div className="qrcodeContainer">
-                  <img src="https://www.imgonline.com.ua/examples/qr-code.png" alt="QR Code for 2FA setup" />
+                  <img src={`http://localhost:8000/${qrUrl}`} alt="QR Code for 2FA setup" />
               </div> ;
     }
 
@@ -87,6 +107,9 @@ const TwoFaModal = ({handleClose}) => {
   return (
     <div className="MyContainer">
       <div className="TwoFaModalContainer">
+        <button className="close-button" onClick={handleClose}>
+          <Icon name="cancelCircle" className="cancelCircle" />
+        </button>
         <div className="TwoFaModalHead">
           <Icon name="TwoFaIcon" className="TwoFaIcon" />
           <h1>Set up two factor authentication (2FA)</h1>
@@ -114,6 +137,7 @@ const TwoFaModal = ({handleClose}) => {
           <button 
             className="setup-button" 
             disabled={otp.some(digit => digit === '')}
+            onClick={handleClose}
           >
             Complete Setup
           </button>

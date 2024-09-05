@@ -19,8 +19,9 @@ from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
 from user_management.models import Notification
 import pyotp
+import qrcode
 # Create your views here.
-
+ 
 token_url = 'https://api.intra.42.fr/oauth/token'
 user_info_url = 'https://api.intra.42.fr/v2/me'
 
@@ -179,13 +180,16 @@ class CallbackView(APIView):
         )
         return response
 
-
+ 
 class Enable2FA(APIView):
 
     def get(self, request):
         request.user.generate_otp_secret()
         otp_uri = request.user.get_otp_uri()
-        return Response({"otp_uri": otp_uri}, status=status.HTTP_200_OK)
+        file_name = f'{request.user.username}_2fa.png'
+        file_path = f'media/2fa/{file_name}'
+        qrcode.make(otp_uri).save(file_path)
+        return Response({"otp_uri": file_path}, status=status.HTTP_200_OK)
     
     def post(self, request):
         user = request.user
@@ -201,7 +205,7 @@ class Enable2FA(APIView):
     
 
 class Disable2FA(APIView):
-    def post(self, request):
+    def delete(self, request):
         user = request.user
         user.otp_secret = None
         user.is_2fa_enabled = False

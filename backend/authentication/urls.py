@@ -11,5 +11,5 @@ urlpatterns = [
     path("user/me/<int:user_id>", UserView.as_view(), name="get_user_info"),
     path("callback/", CallbackView.as_view(), name="auth_callback"),
     path("enable2fa/", Enable2FA.as_view(), name="enable_2fa"),
-    path("desable2fa/", Disable2FA.as_view(), name="disable_2fa"),
+    path("disable2fa/", Disable2FA.as_view(), name="disable_2fa"),
 ] 

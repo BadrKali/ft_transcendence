@@ -15,17 +15,49 @@ import TwoFaModal from './components/TwoFaModal/TwoFaModal';
 const SETTING_ENDPOINT = "http://127.0.0.1:8000/auth/user/me/"
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
+const fetchQrCodeUrl = async (token) => {
+  const response = await fetch('http://localhost:8000/auth/enable2fa/', {
+    method: 'GET',
+    headers: {
+      authorization: `Bearer ${token}`
+    }
+  });
+
+  const data = await response.json();
+  return data;
+}
+
+
 const Setting = () => {
   const { auth }  = useAuth();
   const [activeAvatar, setActiveAvatar] = useState(null);
   const [avatarFile, setAvatarFile] = useState(null);
-  const { updateUserData } = useContext(UserContext);
+  const { userData , updateUserData } = useContext(UserContext);
   const [showTwoFaModal, setShowTwoFaModal] = useState(false);
   const [qrCodeUrl, setQrCodeUrl] = useState(null);
 
-  const toggleTwoFaModal = () => {
-    setShowTwoFaModal(!showTwoFaModal);
+  const toggleTwoFaModal = async () => {
+    const data = await fetchQrCodeUrl(auth.accessToken);
+    console.log(data);
+    setQrCodeUrl(data.otp_uri);
+    setShowTwoFaModal(true);
   }
+
+  const closeTwoFaModal = () => {
+    setShowTwoFaModal(false);
+  }
+
+  const disableTwoFa = async () => {
+    const response = await fetch('http://localhost:8000/auth/disable2fa/', {
+      method: 'DELETE',
+      headers: {
+        authorization: `Bearer ${auth.accessToken}`
+      }
+    });
+    SuccessToast('Profile updated successfully!');
+
+  }
+
 
   const [updatedvalues, setUpdatedvalues] = useState({
     username : "",
@@ -113,11 +145,20 @@ const Setting = () => {
           <div className={Style.SettingSep}></div>
           <div className={Style.TwoFactorContainer}>
             <div className={Style.SettingInfo}>
-              <h3>Two-factor Authenticator App <span>Enabled</span></h3>
+            <h3>
+            Two-factor Authenticator App{' '}
+            {userData.is_2fa_enabled ? (
+              <span style={{ backgroundColor: 'green', color: 'white', padding: '2px 6px', borderRadius: '4px', fontSize: '13px'}}>Enabled</span>) 
+              : 
+              (<span style={{ backgroundColor: 'red', color: 'white', padding: '2px 6px', borderRadius: '4px', fontSize: '13px' }}>Disabled</span>)
+            }
+            </h3>
               <p>Use an Authenticator App as your two-factor authentication (2FA). When you sign in you'll be asked to use the security code provided by your Authenticator.</p>
             </div>
-            <button type="button" onClick={toggleTwoFaModal} className={Style.twoFaButton}>Set Up</button>
-              {showTwoFaModal && <TwoFaModal handleClose={toggleTwoFaModal}/>}
+            {!userData.is_2fa_enabled ? (<button type="button" onClick={toggleTwoFaModal} className={Style.twoFaButton}>Enable</button> ) 
+            : 
+            (<button type="button" onClick={disableTwoFa} className={Style.twoFaButton}>Disable</button> )}
+            {showTwoFaModal && <TwoFaModal handleClose={closeTwoFaModal} qrUrl={qrCodeUrl}/>}
           </div>
           <MainButton type="submit" onClick={handleFormSubmit} content="Update"/>
         </form>

@@ -20,11 +20,13 @@ class FriendshipSerializer(serializers.ModelSerializer):
 class PlayerSerializer(serializers.ModelSerializer):
     username = serializers.CharField(source='user.username')
     avatar = serializers.ImageField(source='user.avatar')
+    is_2fa_enabled = serializers.BooleanField(source='user.is_2fa_enabled')
 
     class Meta:
         model = Player
         fields = [
-            'user_id', 
+            'user_id',
+            'is_2fa_enabled',
             'username',
             'avatar', 
             'rank', 

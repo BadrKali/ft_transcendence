@@ -180,6 +180,28 @@
 
 }
 
+
+
+.close-button {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 5px;
+}
+
+.cancelCircle {
+  width: 35px;
+  height: 35px;
+  color: var(--border-color);
+}
+
+.close-button:hover .cancelCircle {
+  color: #F62943;
+}
+
 @media (max-width: 768px) {
     .TwoFaModalContainer {
         width: 90%;
