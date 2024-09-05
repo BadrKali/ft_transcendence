@@ -13,11 +13,14 @@ import avatar2 from '../asstes/avatar2.png';
 import exit from "../asstes/right-arrow.png";
 import MatchResult from '../components/MatchResult';
 import "../stylesheet/game-style.css";
+import WaitForReconnection from '../components/WaitForReconnection';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const WS_BACKEND_URL = process.env.REACT_APP_WS_BACKEND_URL;
 
 const RealTimeGame = ({ mode }) => {
+    const [opponentDisconnected, showOpponentDisconnected] = useState(false);
+    const [opponent, setOpponent] = useState(null);
     const [endPoint, setEndPoint] = useState("");
     const navigate = useNavigate();
     const { auth } = useAuth();
@@ -63,12 +66,17 @@ const RealTimeGame = ({ mode }) => {
     const { data: player1 } = useFetch(player1Id ? `${BACKEND_URL}/user/stats/${player1Id}` : null);
     const { data: player2 } = useFetch(player2Id ? `${BACKEND_URL}/user/stats/${player2Id}` : null);
     const { data: currentUser } = useFetch(`${BACKEND_URL}/user/stats`);
-    
+
     useEffect(() => {
         if (currentUser) {
             setProfileData(currentUser);
         }
-    }, [currentUser])
+        if (currentUser === player1) {
+            setOpponent(player2);
+        } else {
+            setOpponent(player1);
+        }
+    }, [currentUser, player1, player2])
 
     const initializeWebSocket = () => {
         const ws = new WebSocket(`${WS_BACKEND_URL}/ws/game/?token=${auth.accessToken}`);
@@ -98,8 +106,12 @@ const RealTimeGame = ({ mode }) => {
             case 'game_over':
                 endGame(data);
                 break;
-            case 'Opponent disconnected':
-                alert("SomeOne is Disconnected");
+            case 'opponent_disconnected':
+                showOpponentDisconnected(true);
+                break;
+            case 'opponent_back':
+                showOpponentDisconnected(false);
+                break;
             default:
                 if (data.message) {
                     alert(data.message);
@@ -200,13 +212,23 @@ const RealTimeGame = ({ mode }) => {
 
     const handleKeyDown = (evt) => {
         let direction = null;
-        if (keys === 'ws') {
-            if (evt.key === 'w') direction = 'up';
-            if (evt.key === 's') direction = 'down';
-        } else {
-            if (evt.key === 'ArrowUp') direction = 'up';
-            if (evt.key === 'ArrowDown') direction = 'down';
+        switch(evt.key) {
+            case 'w':
+                direction = 'up'
+                break
+            case 's':
+                direction = 'down'
+                break
+            case 'ArrowUp':
+                direction = 'up'
+                break
+            case 'ArrowDown':
+                direction = 'down'
+                break
+            default:
+                break
         }
+
         if (direction) {
             sendPlayerMovement(currentUser?.username, direction);
         }
@@ -227,10 +249,26 @@ const RealTimeGame = ({ mode }) => {
         setShowExitPopup(true);
     };
 
+    useEffect(() => {
+        const handleVisibilityChange = () => {
+            if (document.hidden) {
+                socket?.send(JSON.stringify({ action: 'user_left' }));
+            } else {
+                socket?.send(JSON.stringify({ action: 'user_back' }));
+            }
+        };
+        document.addEventListener('visibilitychange', handleVisibilityChange);
+    
+        return () => {
+            document.removeEventListener('visibilitychange', handleVisibilityChange);
+        };
+    }, [socket]);
+
     const confirmExitGame = (confirm) => {
         setShowExitPopup(false);
         if (confirm) {
             setGameRunning(false);
+            socket.close();
             navigate('/game', {replace:true})
         } else {
             setPauseGame(false);
@@ -274,6 +312,7 @@ const RealTimeGame = ({ mode }) => {
     }
     const handleBackToLobby = () => {
         setShowResult(false);
+        socket.close();
         navigate('/game', { replace:true});
     }
     return (
@@ -282,6 +321,9 @@ const RealTimeGame = ({ mode }) => {
                 <div className="player-info-container">
                     <PlayerInfo player1={player1} player2={player2} onStartGame={handleStartGame} socket={socket}/>
                 </div>
+            )}
+            {opponentDisconnected && (
+                <WaitForReconnection opponent={opponent}/>
             )}
             {showResult && (
                 <MatchResult player={currentUser} winner={winner} onBack={handleBackToLobby}/>

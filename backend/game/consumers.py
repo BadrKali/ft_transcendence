@@ -39,8 +39,8 @@ class GameState:
     def get_running(self):
         return self.state['game_running']
     
-    def update_game_running(self):
-        self.state['game_running'] = False
+    def update_game_running(self, status):
+        self.state['game_running'] = status
 
     def check_winning_condition(self):
         for player in self.state['players'].values():
@@ -220,7 +220,7 @@ class GameConsumer(AsyncWebsocketConsumer):
     async def disconnect(self, close_code):
         self.keep_running = False
         print("Hello Baby")
-        self.game_state.update_game_running()
+        self.game_state.update_game_running(False)
         if self.room_group_name:
             await self.leave_room()
 
@@ -239,6 +239,18 @@ class GameConsumer(AsyncWebsocketConsumer):
                 await self.send_player_movement_update()
             else:
                 print("Error: game_state is not initialized")
+        elif action == "user_left":
+            self.game_state.update_game_running(False)
+            await self.leave_room()
+        elif action == "user_back":
+            await self.channel_layer.group_send(
+                    self.room_group_name,
+                    {
+                        'type': 'send_message',
+                        'message': { 'action': 'opponent_disconnected' },
+                    }
+                )
+            self.game_state.update_game_running(True)
 
     async def send_player_movement_update(self):
         await self.channel_layer.group_send(
@@ -278,34 +290,7 @@ class GameConsumer(AsyncWebsocketConsumer):
         except Exception as e:
             print(f"{e}")
 
-
-    # @database_sync_to_async
-    # def get_invite_state(self, room):
-    #     if room.player1 == self.player:
-    #         room.player1_connected = True
-    #         print("Player1 connected.")
-    #     elif room.player2 == self.player:
-    #         room.player2_connected = True
-    #         print("Player2 connected.")
-    #     if room.player1_connected and room.player2_connected:
-    #         print("Both players are ready to play.")
-    #         self.game_state = game_state_manager.get_or_create_game_state(self.room_id)
-    #         room.is_waiting = False
-    #     room.save()
-
-
     async def handle_random_action(self):
-        from .models import GameRoom
-        # try:
-        #     game_room = await sync_to_async(
-        #         lambda: GameRoom.objects.filter(
-        #             Q(player1=self.player) | Q(player2=self.player)
-        #         ).first()
-        #     )()
-        #     if game_room:
-        #         print("game_room is found")
-        # except Exception as e:
-        #     print(f"{e}")
         player_str = await self.get_player_str()
         room = await self.find_or_create_room(player_str)
 
@@ -455,8 +440,7 @@ class GameConsumer(AsyncWebsocketConsumer):
                     self.room_group_name,
                     {
                         'type': 'send_message',
-                        'message': "",
-                        'action': 'Opponent disconnected',
+                        'message': { 'action': 'opponent_disconnected' },
                     }
                 )
             self.game_state.remove_player(str(player))
