@@ -26,6 +26,11 @@
     box-sizing: border-box;
   }
   
+  .error-message {
+    color: red;
+    font-size: 0.9rem;
+    text-align: center;
+}
   .modal-blocked  h2 {
     color: #FFFFFF; 
     margin-top: 20px;

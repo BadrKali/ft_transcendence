@@ -138,7 +138,7 @@ function TournamentBracket() {
                   ))}
               </div>
         </div>
-        <div className="winner">
+        <div className="winner-tounament">
          <Icon name='TournamentWin' className='tournament-win' />
         </div>
         <div className='TournamentPlayers'>

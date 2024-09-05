@@ -1,11 +1,18 @@
 import React from 'react'
 import { useState } from 'react';
 import CreatTournamentPopUp from './CreatTournamentPopUp'
+import Lottie from 'lottie-react';
 import './noTournament.css'
 import MainButton from '../../../../components/MainButton/MainButton';
+import popularTournaments from '../../../../assets/tournament';
+import PopularTournaments from './PopularTournaments';
+import sadFace from '../../../../assets/sadFace.json'
 
 function NoTournament() {
     const [modalCreat, setModalCreat] = useState(false);
+    const tounemrntExist = true
+
+      
 
     const handleCreatTournament = () => {
         setModalCreat(true);
@@ -17,70 +24,26 @@ function NoTournament() {
   return (
     <div className="no-tournament">
         <div className="tournament-page">
-            <div className="how-it-works-section">
-                <h1>Welcome to the Tournament Creator</h1>
-                <h2>How It Works</h2>
-                <div className="steps-container">
-                <div className="step">
-                    <div className="icon">🏓</div>
-                    <h3>Step 1</h3>
-                    <p>Choose Your Tournament Name and Format</p>
-                </div>
-                <div className="step">
-                    <div className="icon">📅</div>
-                    <h3>Step 2</h3>
-                    <p>Set the Date, Time, and Player Count</p>
-                </div>
-                <div className="step">
-                    <div className="icon">🔗</div>
-                    <h3>Step 3</h3>
-                    <p>Share the Invite and Let the Fun Begin!</p>
-                </div>
-                </div>
-            </div>
-
-  
-            <div className="why-create-section">
-                <h2>Why Create Your Own Tournament</h2>
-                <div className="benefits-container">
-                <div className="benefits">
-                    <ul>
-                    <li>✅ Full Control: Customize everything</li>
-                    <li>✅ Easy Management: Track scores easily</li>
-                    <li>✅ Social Interaction: Engage with players</li>
-                    </ul>
-                </div>
-            
-                </div>
-            </div>
-
+            {tounemrntExist &&
+            <h2>Popular Tournaments</h2>
+            }
             <div className="examples-section">
-                <h2>Popular Tournaments</h2>
-                <div className="examples-container">
-                <div className="example undergroundHell">
-                    {/* <img src="tournament1.jpg" alt="Summer Ping Pong Slam" /> */}
-                    <h3>Summer Ping Pong Slam</h3>
-                    <p>A fun tournament with friends!</p>
-                </div>
-                <div className="example undergroundForest">
-                    {/* <img src="tournament2.jpg" alt="Weekend Warriors’ Tournament" /> */}
-                    <h3>Weekend Warriors’ Tournament</h3>
-                    <p>Compete over the weekend!</p>
-                </div>
-                <div className="example undergroundGraveyard">
-                    {/* <img src="tournament3.jpg" alt="Office Showdown" /> */}
-                    <h3>Office Showdown</h3>
-                    <p>Who’s the best in the office?</p>
-                </div>
-                </div>
+                {tounemrntExist ? 
+                (popularTournaments.map((tounament) => (
+                    <PopularTournaments key={tounament.id} tounament={tounament}/>
+                    )))
+                : (
+                    <div className='sadFaceAnimation'>
+                         <div className='sadFace'><Lottie animationData={sadFace} /> </div>
+                        <h2>No tournaments available at the moment</h2>
+                    </div>
+                )}
             </div>
-
         </div>
         <div className='CreatYourTournament'>
-            <h2>Your Tournament, Your Rules – Ready to Get Started?</h2>
             <div className='StartedTournamentButton'>
 
-                <MainButton type="submit" functionHandler={handleCreatTournament} content="Started"/>
+                <MainButton type="submit" functionHandler={handleCreatTournament} content="Creat Tounament"/>
                 {/* <button onClick={handleCreatTournament}>Creat Tournament</button> */}
                 </div>
                 <CreatTournamentPopUp isOpen={modalCreat} onClose={handleClosePopup}/>

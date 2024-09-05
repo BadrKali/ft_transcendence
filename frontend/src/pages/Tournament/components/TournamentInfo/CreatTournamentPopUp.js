@@ -20,6 +20,9 @@ const CreatTournamentPopUp = ({ isOpen, onClose})=> {
     const [tournamentTitle, setTournamentTitle] = useState('');
     const [listFriend, setListFriend] = useState([]);
     const {data ,isLoading, error} = useFetch(`${BACKEND_URL}/user/friends/list/`)
+    const [MapError, setMapError] = useState(false);
+    const [NameError, setNameError] = useState(false);
+    const [PlayersError, setPlayersError] = useState(false);
 
     useEffect(() => {
         if (data) {
@@ -27,22 +30,20 @@ const CreatTournamentPopUp = ({ isOpen, onClose})=> {
         }
       }, [data]);
 
-      useEffect (() => {
-        console.log(listFriend)
-      }, [listFriend])
-    
-
     const handleMapSelection = (mapName) => {
         setSelectedMap(mapName);
+        setMapError(false)
     };
 
     const handlePlayerSelection = (selectedOptions) => {
         setSelectedPlayers(selectedOptions || []);
+        setPlayersError(false)
     };
 
 
     const handleTitleChange = (event) => {
         setTournamentTitle(event.target.value);
+        setNameError(false)
     };
 
 
@@ -54,7 +55,25 @@ const CreatTournamentPopUp = ({ isOpen, onClose})=> {
             tournament_map: selectedMap,
             invitedUsers: selectedPlayers.map(player => player.value),
         };
-        console.log(postData)
+
+        if (!selectedMap){
+            setMapError(true)
+        }else{
+            setMapError(false)
+        }
+
+        if (!tournamentTitle){
+            setNameError(true)
+        }else{
+            setNameError(false)
+        }
+
+        if (selectedPlayers.length === 0 || selectedPlayers.length > 3){
+            setPlayersError(true)
+        }else{
+            setPlayersError(false)
+        }
+
         try {
             const response = await fetch(`${BACKEND_URL}/user/tournament/`, {
                 method: 'POST',
@@ -138,10 +157,11 @@ const CreatTournamentPopUp = ({ isOpen, onClose})=> {
 
     const [blockedUsers, setBlockedUsers] = useState([]);
 
-    console.log(isOpen)
+
     if (!isOpen) {
         return null;
     }
+
   return (
     <div className="modal-creatTournament">
       <div className="modal-creatTournamentPopup">
@@ -154,16 +174,17 @@ const CreatTournamentPopUp = ({ isOpen, onClose})=> {
                     <div
                         className={`undergroundHell mapBox ${selectedMap === 'undergroundHell' ? 'selected' : ''}`}
                         onClick={() => handleMapSelection('undergroundHell')}
-                    ></div>
+                        ></div>
                     <div
                         className={`undergroundForest mapBox ${selectedMap === 'undergroundForest' ? 'selected' : ''}`}
                         onClick={() => handleMapSelection('undergroundForest')}
-                    ></div>
+                        ></div>
                     <div
                         className={`undergroundGraveyard mapBox ${selectedMap === 'undergroundGraveyard' ? 'selected' : ''}`}
                         onClick={() => handleMapSelection('undergroundGraveyard')}
-                    ></div>
+                        ></div>
                 </div>
+                {MapError && <p className="error-message">No map selected</p>}
             </div>
             <div className='selectTitle-container'>
                 <h4>Tournament Title</h4>
@@ -177,6 +198,8 @@ const CreatTournamentPopUp = ({ isOpen, onClose})=> {
                             />
                             <Icon name='inputTournamant' className='inputTournamant-icon' />
                 </div>
+                {NameError && <p className="error-message">You need to choice a Title </p>}
+
             </div>
             <div className='selectPlayer-container '>
                 <h4>Select Players</h4>
@@ -202,6 +225,8 @@ const CreatTournamentPopUp = ({ isOpen, onClose})=> {
                         <MainButton type="submit" functionHandler={handleCreateTournament} content="Creat" />
                     </div>
             </div>
+            {PlayersError && <p className="error-message">Player selected must be 4 in Total</p>}
+
         </div>
       </div>
     </div>

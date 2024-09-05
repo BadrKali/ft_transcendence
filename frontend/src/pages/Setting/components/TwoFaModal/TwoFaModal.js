@@ -20,7 +20,6 @@ const fetchData = async (url, token) => {
       }
     });
   const data = await response.json();
-  console.log(data)
   return data;
 }
 
@@ -51,6 +50,7 @@ const TwoFaModal = ({handleClose, qrUrl}) => {
       if(response.ok) {
         setVerificationStatus('success');
         const response = fetchData(`${BACKEND_URL}/user/stats/`, auth.accessToken);
+        updateUserData(response)
         // console.log('response: ', response.data);
       } else {
         setVerificationStatus('failed');

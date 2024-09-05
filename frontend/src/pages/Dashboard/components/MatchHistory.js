@@ -2,11 +2,13 @@ import React from 'react'
 import { useState, useEffect, useContext } from 'react'
 import useFetch from '../../../hooks/useFetch'
 import useAuth from '../../../hooks/useAuth';
+import Lottie from 'lottie-react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import History from '../../../assets/MatchHistoryData'
 import HistoryItem from './HistoryItem'
 import './matchHistory.css'
+import sadFace from '../../../assets/sadFace.json'
 import { UserContext } from '../../../context/UserContext';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
@@ -64,7 +66,10 @@ function MatchHistory({profilData}) {
             </div>
           ))
         ) : (
-          <p>{t('No match history available.')}</p>
+          <div className='sadFaceAnimationGame'>
+              <div className='sadeFaceGame'><Lottie  animationData={sadFace} /> </div>
+              <h3>{t('No match history available.')}</h3>
+          </div>
         )}
       </div>
     </div>
