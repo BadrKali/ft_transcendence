@@ -45,6 +45,7 @@ const RealTimeGame = ({ mode }) => {
     const [profileData, setProfileData] = useState(null);
     const [won, setWon] = useState(false);
     const [winner, setWinner] = useState("");
+    const [sendGotIt, setSendGotIt] = useState(false);
     useEffect(() => {
         switch (mode) {
             case "invite":
@@ -97,7 +98,7 @@ const RealTimeGame = ({ mode }) => {
                 break;
             case 'connected':
                 setRoomId(data.room_id);
-                setShowWaiting(true);
+                // setShowWaiting(true);
                 break;
             case 'update_game_state':
             case 'update_player_movement':
@@ -109,9 +110,15 @@ const RealTimeGame = ({ mode }) => {
             case 'opponent_disconnected':
                 showOpponentDisconnected(true);
                 break;
-            case 'opponent_back':
+            case 'opponent_connected':
                 showOpponentDisconnected(false);
+                setSendGotIt(true);
                 break;
+            case "reconnected":
+                startNewGame(data);
+                setStartGame(true);
+                setGameRunning(true);
+                setSendGotIt(true);
             default:
                 if (data.message) {
                     alert(data.message);
@@ -119,6 +126,21 @@ const RealTimeGame = ({ mode }) => {
                 break;
         }
     };
+
+    useEffect(() => {
+        if (sendGotIt && socket) {
+            socket.send(JSON.stringify({ action: "got_it"}));
+            setSendGotIt(false);
+            alert("HAKUNA MATATA")
+        }
+    }, [socket, sendGotIt]);
+
+    // const handleRelaunchGame = (data) => {
+    //     // setGameState(data.game_state);
+    //     startNewGame(data)
+    //     showOpponentDisconnected(false);
+    //     setShowWaiting(false);
+    // }
 
     const startNewGame = (data) => {
         setMessage("game Startd");
@@ -249,20 +271,6 @@ const RealTimeGame = ({ mode }) => {
         setShowExitPopup(true);
     };
 
-    useEffect(() => {
-        const handleVisibilityChange = () => {
-            if (document.hidden) {
-                socket?.send(JSON.stringify({ action: 'user_left' }));
-            } else {
-                socket?.send(JSON.stringify({ action: 'user_back' }));
-            }
-        };
-        document.addEventListener('visibilitychange', handleVisibilityChange);
-    
-        return () => {
-            document.removeEventListener('visibilitychange', handleVisibilityChange);
-        };
-    }, [socket]);
 
     const confirmExitGame = (confirm) => {
         setShowExitPopup(false);
@@ -304,6 +312,12 @@ const RealTimeGame = ({ mode }) => {
     }, [keys, currentUser]);
 
     useEffect(() => {
+        window.onpopstate = () => {
+            socket.send(JSON.stringify({ action: "user_left"}));
+        };
+    }, [socket])
+
+    useEffect(() => {
         initializeCanvas();
     }, [gameState, player1, player2, gameRunning]);
 
@@ -331,7 +345,7 @@ const RealTimeGame = ({ mode }) => {
             {showWaiting && (
                 <Waiting player={currentUser}/>
             )}
-            {startGame && (
+            {startGame && room && player1 && player2 && (
                 <>
                     <ScoreBoard
                         user1Score={score1}

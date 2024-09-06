@@ -34,8 +34,12 @@ class GameState:
             'players': {},
             'game_over': False,
             'game_running': True,
+            'keep_running': True,
         }
-    
+    def get_keep_running(self):
+        return self.state['keep_running']
+    def update_keep_running(self, status):
+        self.state['keep_running'] = status
     def get_running(self):
         return self.state['game_running']
     
@@ -61,10 +65,13 @@ class GameState:
         else:
             print("player2 won")
             return player2['username'], player1['username']
+        
     def winner_score(self, winner):
         return self.state['players'][winner]['score']
+    
     def loser_score(self, loser):
         return self.state['players'][loser]['score']
+    
     async def add_player(self, username, room):
         player1_settings = await self.get_player_settings(room.player1)
         player2_settings = await self.get_player_settings(room.player2)
@@ -82,6 +89,7 @@ class GameState:
             'height': 140,
             'color': player1_settings.paddle if player1_settings else 'WHITE',
             'disconnect' : 0,
+            'status': True,
         }
         player2 = {
             'username': player2_username,
@@ -93,6 +101,7 @@ class GameState:
             'height': 140,
             'color': player2_settings.paddle if player2_settings else 'WHITE',
             'disconnect' : 0,
+            'status': True,
         }
 
         self.state['players'][player1_username] = player1
@@ -102,7 +111,26 @@ class GameState:
         print(f"Player 2: {player2}")
         print(f"Current players: {list(self.state['players'].keys())}")
 
-     
+    async def reconnect_player(self, username, room):
+        player = self.state['players'][username]
+        player['status'] = True
+        print(f"Current players: {list(self.state['players'].keys())}")
+
+    async def update_player_status(self, username, status):
+        player = self.state['players'][username]
+        player['status'] = status
+    
+    async def get_players_status(self):
+        players = self.state['players']
+        player1 = list(players.values())[0]
+        player2 = list(players.values())[1]
+        player1_status = player1['status']
+        player2_status = player2['status']
+        if player1_status and player2_status:
+            return True
+        else:
+            return False
+    
     async def get_player_username(self, player):
         return await sync_to_async(lambda: player.user.username)()
 
@@ -129,8 +157,10 @@ class GameState:
             if self.state['players'][username]['disconnect'] == 1:
                 del self.state['players'][username]
                 print(f"Player removed: {username}, Current players: {list(self.state['players'].keys())}")
+                return True
             else :
                 self.state['players'][username]['disconnect'] += 1
+                return False
 
     def reset_ball(self):
         self.state['ball']['x'] = self.state['canvas']['width'] / 2
@@ -237,20 +267,39 @@ class GameConsumer(AsyncWebsocketConsumer):
                 direction = data.get('direction')
                 self.game_state.player_mouvement(username, direction)
                 await self.send_player_movement_update()
-            else:
-                print("Error: game_state is not initialized")
         elif action == "user_left":
-            self.game_state.update_game_running(False)
-            await self.leave_room()
-        elif action == "user_back":
+            print("A user Has left the Page 0000000")
+            await self.handle_player_left()
+        elif action == "got_it":
+            print("GOT IT BABY")
+            room = self.get_game_room()
+            asyncio.create_task(self.start_game_loop(room))
+
+    async def handle_player_left(self):
+        player_str = await self.get_player_str()
+        self.game_state.update_game_running(False)
+        winner , loser = await self.game_state.get_winner_loser()
+        if self.game_state.remove_player(player_str):
             await self.channel_layer.group_send(
-                    self.room_group_name,
-                    {
-                        'type': 'send_message',
-                        'message': { 'action': 'opponent_disconnected' },
+                self.room_group_name,
+                {
+                    'type': 'send_message',
+                    'message': {
+                        'action': 'game_over',
+                        'game_state': self.game_state.get_state(),
+                        'winner': winner,
+                        'loser': loser
                     }
-                )
-            self.game_state.update_game_running(True)
+                }
+            )
+        else:
+            await self.game_state.update_player_status(player_str, False)
+            await self.channel_layer.group_send(
+                self.room_group_name, {
+                    'type': 'send_message',
+                    'message': { 'action': 'opponent_disconnected' },
+                }
+            )
 
     async def send_player_movement_update(self):
         await self.channel_layer.group_send(
@@ -291,16 +340,58 @@ class GameConsumer(AsyncWebsocketConsumer):
             print(f"{e}")
 
     async def handle_random_action(self):
+        from .models import GameRoom
         player_str = await self.get_player_str()
+        room = await self.check_for_reconnection(player_str)
+        if room:
+            await self.handle_reconnection(player_str, room)
+            return
         room = await self.find_or_create_room(player_str)
-
         if not room.is_waiting:
             await self.game_state.add_player(player_str, room)
             await self.notify_players(room)
             asyncio.create_task(self.start_game_loop(room))
         else:
             await self.notify_waiting_player(room)
-        
+
+    async def check_for_reconnection(self, player_str):
+        from .models import GameRoom
+        try :
+            room = await sync_to_async(
+                lambda: GameRoom.objects.filter(
+                    Q(player1=self.player) | Q(player2=self.player)
+                ).first()
+            )()
+            if room:
+                self.room_name = f"game_room_{room.id}"
+                self.room_id = room.id
+                self.room_group_name = self.room_name
+                self.game_state = game_state_manager.get_or_create_game_state(self.room_id)
+            return room if room else None
+        except GameRoom.DoesNotExist:
+            return None
+
+    async def handle_reconnection(self, player_str, room):
+        await self.game_state.reconnect_player(player_str, room)
+        await self.notify_reconnection(player_str, room)
+
+    async def notify_reconnection(self, player_str, room):
+        self.game_state.update_game_running(True)
+        # await self.send(text_data=json.dumps({
+        #     'action': 'reconnected',
+        #     'game_state': self.game_state.get_state(),
+        # }))
+        await self.channel_layer.group_send(
+                self.room_group_name, {
+                    'type': 'send_message',
+                    'message': {
+                        'action': 'opponent_connected',
+                        'game_state': self.game_state.get_state(),
+                    },
+                }
+            )
+        # await self.notify_players(room)
+    
     @database_sync_to_async
     def get_players(self, room):
         return room.player1, room.player2
@@ -312,7 +403,6 @@ class GameConsumer(AsyncWebsocketConsumer):
         }))
 
     async def start_game_loop(self, room):
-        from .models import GameHistory
         frame_duration = 1 / 60
         while self.game_state.get_running():
             start_time = time.time()
@@ -380,7 +470,6 @@ class GameConsumer(AsyncWebsocketConsumer):
                 game_type='pingpong',
                 match_type='single'
             )
-            print("Game Match Saved Bel MEZYAAAN")
         except Player.DoesNotExist:
             print("Error: One of the players does not exist.")
     
