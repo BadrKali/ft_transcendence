@@ -58,7 +58,7 @@ class ChatBotConsumer(AsyncWebsocketConsumer):
                     'type': 'bot_msg',
                     'message': self.msgData.get('message') })
             
-            limiter = 'just response to me in 3 lines please'
+            limiter = 'please give me a quick resume on 2 lines as maximum'
             self.messages.append({"role" : "user", "content" : self.msgData.get('message').get('content') + limiter})
             try :
                 chat_completion = client.chat.completions.create(
@@ -75,12 +75,23 @@ class ChatBotConsumer(AsyncWebsocketConsumer):
                             "sender_id" : 0,
                             "receiver_id" : self.sender_id,
                             "content"   : response,
+                            "color"     : "#fefeff",
                             "created_at" : datetime.now(pytz.utc).strftime("%Y-%m-%d %H:%M:%S")
                         }    
                 })
                 self.messages.append({"role" : "assistant", "content" : response})
             except Exception as e:
-                print(f"Exception An error Occured {e}")
+                await (self.channel_layer.group_send)(
+                  f'{self.sender_id}_withBot',{
+                        'type': 'bot_msg',
+                        'message': {
+                            "sender_id" : 0,
+                            "receiver_id" : self.sender_id,
+                            "content"   : "Error while getting response from AI try later",
+                            "color"     : "red",
+                            "created_at" : datetime.now(pytz.utc).strftime("%Y-%m-%d %H:%M:%S")
+                        }    
+                })
     
     async def bot_msg(self, event):
         await (self.send( text_data=json.dumps(event) ))

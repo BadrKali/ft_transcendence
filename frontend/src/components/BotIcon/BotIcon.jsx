@@ -7,6 +7,8 @@ import { CurrentUserContext } from '../../pages/Chat/usehooks/ChatContext'
 import AuthContext from '../../context/Auth/AuthProvider'
 import { UserContext } from '../../context/UserContext'
 import { clientSocketContext } from '../../pages/Chat/usehooks/ChatContext'
+import { Rnd } from 'react-rnd';
+
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
@@ -49,8 +51,8 @@ const MessageDisplayer = ({ message, IsIncoming }) => {
   const { userData } = useContext(UserContext);
 
   return (
-    <div className={IsIncoming ? botStyle.MsgIncom : botStyle.MsgOut}>
-      <div className={IsIncoming ? botStyle.receiverAvatar : botStyle.MyAvatar}>
+    <div style={{color : `${message.color}`}}  className={IsIncoming ? botStyle.MsgIncom : botStyle.MsgOut}>
+      <div style={{display : IsIncoming ? 'flex' : 'none'}} className={IsIncoming ? botStyle.receiverAvatar : botStyle.MyAvatar}>
       {IsIncoming === false ?
         <img
           className={botStyle.avatar}
@@ -76,12 +78,19 @@ const MessageDisplayer = ({ message, IsIncoming }) => {
 const MainChat = () =>{
   const { userData } = useContext(UserContext);
   const {eventData} = useContext(clientSocketContext)
-  const [conversations, setconversations] = useState([])
+  const [conversations, setconversations] = useState([]);
+  const messagesEndRef = useRef(null);
   
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  useEffect(() => {
+    scrollToBottom();
+  });
 
   useEffect(()=>{
     if (eventData?.type === 'bot_msg'){
-      console.log('-RECEIVE=')
       setconversations(prev => { 
         return  !prev.length ?  [eventData.message] : [...prev, eventData.message]
       })
@@ -102,9 +111,8 @@ const MainChat = () =>{
               }
             />
           })
-
         }
-
+        <div ref={messagesEndRef} />
         </div>
     </div>
   )
@@ -188,6 +196,10 @@ const BotIcon = () => {
   }
   
   return (
+    <Rnd default={{
+      x : window.innerWidth  - (window.innerWidth * 0.2),
+      y : window.innerHeight - (window.innerHeight * 0.2),
+    }}>
     <div className={botStyle.botParentHolder}>
           <div style={{ display: convDisplay ? "grid" : "none" }} className={botStyle.conversationHolder}>
             <BotHeader/>
@@ -196,6 +208,7 @@ const BotIcon = () => {
           </div>
           <Lottie  animationData={botBody} className={botStyle.botbody} onClick={handleDisplayConv}/>
     </div>
+    </Rnd>
   )
 }
 
