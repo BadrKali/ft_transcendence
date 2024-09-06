@@ -12,7 +12,7 @@ import { UserContext } from '../../../../context/UserContext';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
-const fetchData = async (url, token) => {
+export const fetchData = async (url, token) => {
   const response = await fetch(url, {
     method: 'GET',
     headers: {

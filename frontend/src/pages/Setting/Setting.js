@@ -11,6 +11,7 @@ import { ErrorToast } from '../../components/ReactToastify/ErrorToast';
 import MainButton from '../../components/MainButton/MainButton';
 import { UserContext } from '../../context/UserContext';
 import TwoFaModal from './components/TwoFaModal/TwoFaModal';
+import {fetchData} from './components/TwoFaModal/TwoFaModal'
 
 const SETTING_ENDPOINT = "http://127.0.0.1:8000/auth/user/me/"
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
@@ -54,7 +55,14 @@ const Setting = () => {
         authorization: `Bearer ${auth.accessToken}`
       }
     });
-    SuccessToast('Profile updated successfully!');
+    if (response.ok) {
+      SuccessToast('Profile updated successfully!');
+      const userData = await fetchData(`${BACKEND_URL}/user/stats/`, auth.accessToken);
+      updateUserData(userData);
+    }
+    else {
+      ErrorToast('Failed to update settings. Please try again.');
+    }
 
   }
 
