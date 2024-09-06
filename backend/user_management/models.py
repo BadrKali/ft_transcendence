@@ -5,6 +5,7 @@ from datetime import date
 from django.core.exceptions import ValidationError
 from django.shortcuts import get_object_or_404
 import random
+from  .achievement_service import AchievementService
 
 
 def user_avatar_upload_path(instance, filename):
@@ -51,6 +52,7 @@ class Player(models.Model):
         if won:
             self.xp += 50
             self.games_won += 1
+            AchievementService.check_and_award_ten_wins_achievement(self)
             print(f"{self.user.username} +50XP")
         else:
             self.xp -= 20
@@ -59,6 +61,7 @@ class Player(models.Model):
         print(f"After: {self.xp}")
 
         self.games_played += 1
+        AchievementService.check_and_award_first_game_achievement(self)
         current_rank_index = self.RANK_ORDER.index(self.rank)
         max_xp_for_current_rank = self.RANK_XP_THRESHOLDS[self.rank]
         

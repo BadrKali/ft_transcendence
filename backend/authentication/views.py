@@ -58,7 +58,7 @@ class UserRegistration(APIView):
             else:
                 return Response({"message": "No avatar provided"}, status=status.HTTP_400_BAD_REQUEST)
             user = serializer.save()
-            # self.unlock_first_register_achievement(user)
+            self.unlock_first_register_achievement(user)
             return Response({"message": "User registered successfully"}, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     

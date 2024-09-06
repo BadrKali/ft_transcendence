@@ -8,7 +8,7 @@ const AchievmentsData = [
     },
     {
         "id" : 1,
-        "title": "First Serve",
+        "title": "First Game",
         "description": "Complete your first game of Ping Pong.",
         "unlocked" : false,
         "image": "Achiev1"
@@ -30,8 +30,7 @@ const AchievmentsData = [
         "title": "Social Butterfly",
         "description": "Have more than 5 friends.",
         "unlocked" : false,
-
-    "image": "Achiev1"
+        "image": "Achiev1"
 
       },
       {
@@ -40,8 +39,7 @@ const AchievmentsData = [
         "title": "Smash Hit",
         "description": "Score 50 smash hits in Ping Pong.",
         "unlocked" : false,
-
-  "image": "Achiev1"
+        "image": "Achiev1"
 
       },
       {
@@ -50,50 +48,16 @@ const AchievmentsData = [
         "title": "Undefeated",
         "description": "Win 5 consecutive Ping Pong matches.",
         "unlocked" : false,
-
-  "image": "Achiev1"
-
-      },
-      {
-        "id" : 16,
-
-        "title": "First Win",
-        "description": "Win your first game of Tic-Tac-Toe.",
-        "unlocked" : false,
-
-  "image": "Achiev1"
+        "image": "Achiev1"
 
       },
-      {
-        "id" : 5,
-  
-        "title": "Strategist",
-        "description": "Win 20 games of Tic-Tac-Toe.",
-        "unlocked" : false,
-
-  "image": "Achiev1"
-
-      },
-      {
-        "id" : 6,
-
-        "title": "Unbeatable",
-        "description": "Win 10 consecutive games of Tic-Tac-Toe.",
-        "unlocked" : false,
-
-  "image": "Achiev1"
-
-      },
-
-  
       {
         "id" : 10,
 
         "title": "Daily Visitor",
         "description": "Log in every day for a week.",
         "unlocked" : false,
-
-  "image": "Achiev1"
+        "image": "Achiev1"
 
       },
       {
@@ -110,17 +74,15 @@ const AchievmentsData = [
         "title": "Champion",
         "description": "Win your first tournament.",
         "unlocked" : false,
-
-          "image": "Achiev1"
+        "image": "Achiev1"
 
       },
       {
         "id" : 13,
         "title": "Top Competitor",
-        "description": "Place in the top 3 in 5 different tournaments.",
+        "description": "Place in the top 2 in 5 different tournaments.",
         "unlocked" : false,
-
-         "image": "Achiev1"
+        "image": "Achiev1"
 
       },
       {

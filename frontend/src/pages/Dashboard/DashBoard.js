@@ -9,6 +9,7 @@ import Friends from './components/Friends'
 import useFetch from '../../hooks/useFetch'
 import LineChart from './components/LineChart'
 import { UserContext } from '../../context/UserContext'
+import FriendsMedia from './components/FriendsMedia'
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
@@ -36,6 +37,9 @@ const DashBoard = () => {
                 <DashProfil profilData={userData}/>
               </div>
               <div className="historyAchievments-container">
+                <div className='friends-container-media'>
+                    <FriendsMedia />
+                </div>
                 <div className="history-container">
                 <MatchHistory profilData={profilData} /> 
                 </div>
