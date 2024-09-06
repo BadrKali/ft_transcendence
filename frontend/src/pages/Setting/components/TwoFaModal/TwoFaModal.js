@@ -13,12 +13,12 @@ import { UserContext } from '../../../../context/UserContext';
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
 const fetchData = async (url, token) => {
-    const response = await fetch(url, {
-      methode: 'GET',
-      headers: {
-        'Authorization': `Bearer ${token}`,
-      }
-    });
+  const response = await fetch(url, {
+    method: 'GET',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+    }
+  });
   const data = await response.json();
   return data;
 }
@@ -39,9 +39,9 @@ const TwoFaModal = ({handleClose, qrUrl}) => {
     setVerificationStatus('loading');
     try {
       console.log('otpCode: ', otpCode);
-      const response = await fetch('http://localhost:8000/auth/enable2fa/',{
+      const response = await fetch('http://localhost:8000/auth/enable2fa/', {
         method: 'POST',
-        headers:{
+        headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${auth.accessToken}`
         },
@@ -49,16 +49,20 @@ const TwoFaModal = ({handleClose, qrUrl}) => {
       });
       if(response.ok) {
         setVerificationStatus('success');
-        const response = fetchData(`${BACKEND_URL}/user/stats/`, auth.accessToken);
-        updateUserData(response)
-        // console.log('response: ', response.data);
+        try {
+          const userData = await fetchData(`${BACKEND_URL}/user/stats/`, auth.accessToken);
+          console.log('userData: ', userData);
+          updateUserData(userData);
+        } catch (error) {
+          console.error('Error fetching user data:', error);
+        }
       } else {
         setVerificationStatus('failed');
       }
     } catch (error) {
       console.log('Error verifying OTP: ', error);
       setVerificationStatus('failed');
-  }
+    }
   }
 
   const handleChange = (element, index) => {
