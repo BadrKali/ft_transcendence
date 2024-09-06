@@ -19,11 +19,12 @@ const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const WS_BACKEND_URL = process.env.REACT_APP_WS_BACKEND_URL;
 
 const RealTimeGame = ({ mode }) => {
+    const canvasRef = useRef(null);
+    const navigate = useNavigate();
+    const { auth } = useAuth();
     const [opponentDisconnected, showOpponentDisconnected] = useState(false);
     const [opponent, setOpponent] = useState(null);
     const [endPoint, setEndPoint] = useState("");
-    const navigate = useNavigate();
-    const { auth } = useAuth();
     const [background, setBackground] = useState(null);
     const [keys, setKeys] = useState(null);
     const [roomId, setRoomId] = useState(null);
@@ -35,7 +36,6 @@ const RealTimeGame = ({ mode }) => {
     const [gameState, setGameState] = useState(null);
     const [score1, setScore1] = useState(0);
     const [score2, setScore2] = useState(0);
-    const canvasRef = useRef(null);
     const [gameRunning, setGameRunning] = useState(true);
     const [showExitPopup, setShowExitPopup] = useState(false);
     const [showResult, setShowResult] = useState(false);
@@ -46,6 +46,9 @@ const RealTimeGame = ({ mode }) => {
     const [won, setWon] = useState(false);
     const [winner, setWinner] = useState("");
     const [sendGotIt, setSendGotIt] = useState(false);
+    const [times, setTimes] = useState(0);
+
+
     useEffect(() => {
         switch (mode) {
             case "invite":
@@ -80,6 +83,9 @@ const RealTimeGame = ({ mode }) => {
     }, [currentUser, player1, player2])
 
     const initializeWebSocket = () => {
+        if (socket) {
+            socket.close();
+        }
         const ws = new WebSocket(`${WS_BACKEND_URL}/ws/game/?token=${auth.accessToken}`);
         ws.onopen = () => ws.send(JSON.stringify({ action: mode}));
         ws.onmessage = handleWebSocketMessage;
@@ -98,9 +104,11 @@ const RealTimeGame = ({ mode }) => {
                 break;
             case 'connected':
                 setRoomId(data.room_id);
-                // setShowWaiting(true);
+                setShowWaiting(true);
                 break;
             case 'update_game_state':
+                setGameState(data.game_state);
+                break;
             case 'update_player_movement':
                 setGameState(data.game_state);
                 break;
@@ -115,10 +123,15 @@ const RealTimeGame = ({ mode }) => {
                 setSendGotIt(true);
                 break;
             case "reconnected":
-                startNewGame(data);
+                setShowWaiting(false);
+                setRoomId(data.room_id);
+                setPlayer1Id(data.player1_id);
+                setPlayer2Id(data.player2_id);
+                setGameState(data.game_state)
                 setStartGame(true);
                 setGameRunning(true);
                 setSendGotIt(true);
+                break;
             default:
                 if (data.message) {
                     alert(data.message);
@@ -131,19 +144,10 @@ const RealTimeGame = ({ mode }) => {
         if (sendGotIt && socket) {
             socket.send(JSON.stringify({ action: "got_it"}));
             setSendGotIt(false);
-            alert("HAKUNA MATATA")
         }
     }, [socket, sendGotIt]);
 
-    // const handleRelaunchGame = (data) => {
-    //     // setGameState(data.game_state);
-    //     startNewGame(data)
-    //     showOpponentDisconnected(false);
-    //     setShowWaiting(false);
-    // }
-
     const startNewGame = (data) => {
-        setMessage("game Startd");
         setShowWaiting(false);
         setRoomId(data.room_id);
         setPlayer1Id(data.player1_id);
@@ -158,11 +162,19 @@ const RealTimeGame = ({ mode }) => {
     };
 
     const initializeCanvas = () => {
-        setMessage("helo baby");
-        if (!gameState || !canvasRef.current) return;
+        // if (!canvasRef.current) {
+        //     setMessage("NO CANVAS HERE")
+        //     return;
+        // } else if (!gameState) {
+        //     setMessage("NO Game State HERE")
+        //     return;
+        // }
         const canvas = canvasRef.current;
-        const ctx = canvas.getContext('2d');
-        if (!ctx) return;
+        const ctx = canvas?.getContext('2d');
+        if (!ctx || !canvas){ 
+            setMessage("HEHEEEEE BOY")
+            return;
+        }
         
         canvas.width = gameState.canvas.width;
         canvas.height = gameState.canvas.height;
@@ -236,14 +248,10 @@ const RealTimeGame = ({ mode }) => {
         let direction = null;
         switch(evt.key) {
             case 'w':
-                direction = 'up'
-                break
-            case 's':
-                direction = 'down'
-                break
             case 'ArrowUp':
                 direction = 'up'
                 break
+            case 's':
             case 'ArrowDown':
                 direction = 'down'
                 break
@@ -271,7 +279,6 @@ const RealTimeGame = ({ mode }) => {
         setShowExitPopup(true);
     };
 
-
     const confirmExitGame = (confirm) => {
         setShowExitPopup(false);
         if (confirm) {
@@ -294,7 +301,7 @@ const RealTimeGame = ({ mode }) => {
         if (auth.accessToken) {
             initializeWebSocket();
         }
-        return () => socket?.close();
+
     }, [auth.accessToken]);
 
     useEffect(() => {
@@ -314,21 +321,25 @@ const RealTimeGame = ({ mode }) => {
     useEffect(() => {
         window.onpopstate = () => {
             socket.send(JSON.stringify({ action: "user_left"}));
+            navigate("/game", {replace:true})
         };
     }, [socket])
 
     useEffect(() => {
-        initializeCanvas();
-    }, [gameState, player1, player2, gameRunning]);
+            initializeCanvas();
+            setMessage("")
+    }, [gameState, player1, canvasRef.current, player2, gameRunning]);
 
     const handleStartGame = () => {
         setStartGame(true);
     }
+
     const handleBackToLobby = () => {
         setShowResult(false);
         socket.close();
         navigate('/game', { replace:true});
     }
+
     return (
         <div className="pingponggame-container random-game" style={{ backgroundImage: `url(${background})` }}>
             {room && player1 && player2 && (
@@ -347,6 +358,7 @@ const RealTimeGame = ({ mode }) => {
             )}
             {startGame && room && player1 && player2 && (
                 <>
+                    <h1>{message}</h1>
                     <ScoreBoard
                         user1Score={score1}
                         user2Score={score2}
