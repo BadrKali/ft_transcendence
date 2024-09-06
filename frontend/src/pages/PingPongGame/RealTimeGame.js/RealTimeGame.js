@@ -249,20 +249,20 @@ const RealTimeGame = ({ mode }) => {
         setShowExitPopup(true);
     };
 
-    useEffect(() => {
-        const handleVisibilityChange = () => {
-            if (document.hidden) {
-                socket?.send(JSON.stringify({ action: 'user_left' }));
-            } else {
-                socket?.send(JSON.stringify({ action: 'user_back' }));
-            }
-        };
-        document.addEventListener('visibilitychange', handleVisibilityChange);
+    // useEffect(() => {
+    //     const handleVisibilityChange = () => {
+    //         if (document.hidden) {
+    //             socket?.send(JSON.stringify({ action: 'user_left' }));
+    //         } else {
+    //             socket?.send(JSON.stringify({ action: 'user_back' }));
+    //         }
+    //     };
+    //     document.addEventListener('visibilitychange', handleVisibilityChange);
     
-        return () => {
-            document.removeEventListener('visibilitychange', handleVisibilityChange);
-        };
-    }, [socket]);
+    //     return () => {
+    //         document.removeEventListener('visibilitychange', handleVisibilityChange);
+    //     };
+    // }, [socket]);
 
     const confirmExitGame = (confirm) => {
         setShowExitPopup(false);
