@@ -120,14 +120,14 @@ const RealTimeGame = ({ mode }) => {
                 break;
             case 'opponent_connected':
                 showOpponentDisconnected(false);
+                setGameState(data.game_state);
+                setGameRunning(true);
                 setSendGotIt(true);
                 break;
             case "reconnected":
                 setShowWaiting(false);
                 setRoomId(data.room_id);
-                setPlayer1Id(data.player1_id);
-                setPlayer2Id(data.player2_id);
-                setGameState(data.game_state)
+                setGameState(data.game_state);
                 setStartGame(true);
                 setGameRunning(true);
                 setSendGotIt(true);
@@ -142,10 +142,20 @@ const RealTimeGame = ({ mode }) => {
 
     useEffect(() => {
         if (sendGotIt && socket) {
-            socket.send(JSON.stringify({ action: "got_it"}));
+            socket.send(JSON.stringify({ action: "got_it" }));
             setSendGotIt(false);
         }
     }, [socket, sendGotIt]);
+
+    useEffect(() => {
+        if (gameState) {
+            const players = Object.values(gameState.players);
+            if (players.length === 2) {
+                setPlayer1Id(players[0].id);
+                setPlayer2Id(players[1].id);
+            }
+        }
+    }, [gameState]);
 
     const startNewGame = (data) => {
         setShowWaiting(false);
@@ -162,13 +172,6 @@ const RealTimeGame = ({ mode }) => {
     };
 
     const initializeCanvas = () => {
-        // if (!canvasRef.current) {
-        //     setMessage("NO CANVAS HERE")
-        //     return;
-        // } else if (!gameState) {
-        //     setMessage("NO Game State HERE")
-        //     return;
-        // }
         const canvas = canvasRef.current;
         const ctx = canvas?.getContext('2d');
         if (!ctx || !canvas){ 
@@ -321,6 +324,7 @@ const RealTimeGame = ({ mode }) => {
     useEffect(() => {
         window.onpopstate = () => {
             socket.send(JSON.stringify({ action: "user_left"}));
+            socket.close();
             navigate("/game", {replace:true})
         };
     }, [socket])
@@ -336,7 +340,6 @@ const RealTimeGame = ({ mode }) => {
 
     const handleBackToLobby = () => {
         setShowResult(false);
-        socket.close();
         navigate('/game', { replace:true});
     }
 

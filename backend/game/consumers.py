@@ -36,6 +36,7 @@ class GameState:
             'game_running': True,
             'keep_running': True,
         }
+
     def get_keep_running(self):
         return self.state['keep_running']
     def update_keep_running(self, status):
@@ -55,30 +56,32 @@ class GameState:
         return False
 
     async def get_winner_loser(self):
-        players = list(self.state['players'].values())
-        player1 = players[0]
-        player2 = players[1]
-        
-        if player1['score'] > player2['score']:
-            print("player1 won")
-            return player1['username'], player2['username']
-        else:
-            print("player2 won")
-            return player2['username'], player1['username']
-        
+        try:
+            players = list(self.state['players'].values())
+            player1 = players[0]
+            player2 = players[1]
+            
+            if player1['score'] > player2['score']:
+                print("player1 won")
+                return player1['username'], player2['username']
+            else:
+                print("player2 won")
+                return player2['username'], player1['username']
+        except:
+            return;
+
     def winner_score(self, winner):
         return self.state['players'][winner]['score']
-    
+
     def loser_score(self, loser):
         return self.state['players'][loser]['score']
-    
+
     async def add_player(self, username, room):
         player1_settings = await self.get_player_settings(room.player1)
         player2_settings = await self.get_player_settings(room.player2)
 
         player1_username = await self.get_player_username(room.player1)
         player2_username = await self.get_player_username(room.player2)
-        print("HELOOOOOOOO WORLD")
         player1 = {
             'username': player1_username,
             'id': 1,
@@ -241,6 +244,7 @@ class GameConsumer(AsyncWebsocketConsumer):
             self.room_name = None
             self.room_group_name = None
             self.game_state = None
+            self.room = None
             await self.accept()
             await self.send(text_data=json.dumps({
                 'action': 'connected',
@@ -271,6 +275,9 @@ class GameConsumer(AsyncWebsocketConsumer):
             await self.handle_player_left()
         elif action == "got_it":
             room = self.get_game_room()
+            if not room:
+                print(f"NO ROOM FOUD FOR {self.player}")
+            print(f"{self.room_group_name} GOT IT")
             asyncio.create_task(self.start_game_loop(room))
 
     async def handle_player_left(self):
@@ -363,12 +370,14 @@ class GameConsumer(AsyncWebsocketConsumer):
                 self.room_name = f"game_room_{room.id}"
                 self.room_id = room.id
                 self.room_group_name = self.room_name
+                await self.channel_layer.group_add(self.room_group_name, self.channel_name)
                 self.game_state = game_state_manager.get_or_create_game_state(self.room_id)
             return room if room else None
         except GameRoom.DoesNotExist:
             return None
 
     async def handle_reconnection(self, player_str, room):
+        self.room = room
         await self.game_state.reconnect_player(player_str, room)
         await self.notify_reconnection(player_str, room)
         await self.send_reconnection_info(room)
@@ -381,7 +390,7 @@ class GameConsumer(AsyncWebsocketConsumer):
         }))
 
     async def notify_reconnection(self, player_str, room):
-        self.game_state.update_game_running(True)
+        self.game_state.update_game_running(True) 
         await self.channel_layer.group_send(
             self.room_group_name, {
                 'type': 'send_message',
@@ -407,7 +416,7 @@ class GameConsumer(AsyncWebsocketConsumer):
         frame_duration = 1 / 60
         while self.game_state.get_running():
             start_time = time.time()
-            print(f"HELLO FROM START_GAME_LOOP {self.player}")
+            # print(f"HELLO FROM START_GAME_LOOP {self.player}")
             self.game_state.update_ball_position()
             if self.game_state.check_winning_condition():
                 winner , loser = await self.game_state.get_winner_loser()
@@ -537,11 +546,9 @@ class GameConsumer(AsyncWebsocketConsumer):
             await self.update_game_room(game_room, player)
 
     @database_sync_to_async
-    def get_game_room(self, player):
+    def get_game_room(self):
         from .models import GameRoom
-        game_room = GameRoom.objects.filter(player1=player).first()
-        if not game_room:
-            game_room = GameRoom.objects.filter(player2=player).first()
+        game_room = GameRoom.objects.filter(Q(player1=self.player) | Q(player2=self.player)).first()
         return game_room
 
     @database_sync_to_async
