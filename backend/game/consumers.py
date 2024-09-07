@@ -49,7 +49,7 @@ class GameState:
 
     def check_winning_condition(self):
         for player in self.state['players'].values():
-            if player['score'] >= 10:
+            if player['score'] >= 3:
                 self.state['game_over'] = True
                 self.state['winner'] = player['username']
                 return True
@@ -296,16 +296,15 @@ class GameConsumer(AsyncWebsocketConsumer):
             room = self.get_game_room()
             asyncio.create_task(self.start_game_loop(room))
         elif action == "im_waiting":
-            print("A PLAYER IS WAITIN FOR HIS OPPONENT")
             room = self.get_game_room()
             await self.waiting_for_reconnection(room) 
 
     async def waiting_for_reconnection(self, room):
-        timeout = 3
+        timeout = 10
         interval = 1 
         total_time_waited = 0
         winner = await self.game_state.get_player_username(self.player)
-
+        loser = None
         while total_time_waited < timeout:
             if await self.game_state.get_players_status():
                 print("Player has reconnected.")
@@ -320,12 +319,13 @@ class GameConsumer(AsyncWebsocketConsumer):
         }))
         # await self.save_game_history(winner, loser, room)
         # await self.update_xp(winner, loser, room)
+        # game_state_manager.remove_game_state(self.room_id)
+        # room.delete()
 
     @database_sync_to_async
     def delete_room(self):
         room = self.get_game_room()
         self.room.delete()
-        game_state_manager.remove_game_state(self.room_id)
 
     def send_winner_message(self, event): 
         self.send(text_data=json.dumps(event['message']))
@@ -455,8 +455,8 @@ class GameConsumer(AsyncWebsocketConsumer):
                         }
                     }
                 )
-                await self.save_game_history(winner, loser, room)
-                await self.update_xp(winner, loser, room)
+                # await self.save_game_history(winner, loser, room)
+                # await self.update_xp(winner, loser, room)
                 break
             await self.channel_layer.group_send(
                 self.room_group_name,
