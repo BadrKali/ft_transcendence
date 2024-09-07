@@ -2,11 +2,13 @@ import React from 'react'
 import { useState, useEffect } from 'react';
 import useFetch from '../../../hooks/useFetch';
 import './historyItem.css'
+import { useTranslation } from 'react-i18next';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
 function HistoryItem( {history} ) {
 
+    const { t } = useTranslation();
 
     
     let player = history.winner_user
@@ -26,23 +28,23 @@ function HistoryItem( {history} ) {
         <div className="playerInfo">
             <div className="nameRank">
                 <h4>{player.username}</h4>
-                <p style={{color: '#737373', paddingTop:'5px'}}>Rank : {player.rank}</p>
+                <p style={{color: '#737373', paddingTop:'5px'}}>{t('Rank')} : {player.rank}</p>
             </div>
             <div className='playerInfoBox'>
                 <div className="totalGames box">
-                    <p>Total Games</p>
+                    <p>{t('Total Games')}</p>
                     <p className='parg' style={{color: '#8D93AC'}}>{player.games_played}</p>
                 </div>
                 <div className="win box">
-                    <p>Win</p>
+                    <p>{t('Win')}</p>
                     <p className='parg' style={{color: '#8D93AC'}}>{winPer}%</p>
                 </div>
                 <div className="Loss box">
-                    <p>Game</p>
+                    <p>{t('Game')}</p>
                     <p className='parg' style={{color: '#8D93AC'}}>{history.game_type}</p>
                 </div>
                 <div className={history.is_winner ? "defeat box true" : "defeat box false"}>
-                    <p>DEFEAT</p>
+                    <p>{t('DEFEAT')}</p>
                     <p className='parg clr'>{history.winner_score}:{history.loser_score}</p>
                 </div>
             </div>

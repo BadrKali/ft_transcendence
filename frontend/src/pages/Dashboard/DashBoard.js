@@ -48,7 +48,7 @@ const DashBoard = () => {
                 </div>
               </div>
               <div className='lineChart-container'>
-                <h2>Graph Growth</h2>
+                <h2>{t('Graph Growth')}</h2>
                 <LineChart />
               </div>
           </div>

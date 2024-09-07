@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import { useContext } from 'react';  
 import { ProfileContext } from '../../../context/ProfilContext'; 
 import History from '../../../assets/MatchHistoryData'
+import { useTranslation } from 'react-i18next';
 import HistoryItem from './HistoryItem'
 import './matchHistory.css'
 
@@ -16,6 +17,7 @@ function MatchHistory({profil}) {
 
   const navigate = useNavigate();
   const { auth }  = useAuth()
+  const { t } = useTranslation();
   const {history} = useContext(ProfileContext)
 
 
@@ -52,22 +54,21 @@ function MatchHistory({profil}) {
       };
   return (
     <div className="macthContainer">
-        <div className="matchHeader">
-            <h2>Match History</h2>
-        </div>
-        <div className="historyCard">
-        {history.length > 0 ? (
-            history.map((historyItem) => (
-              <div key={historyItem.id} onClick={() => handleItemClick(historyItem)} >
-                <HistoryItem  history={historyItem} />
-              </div>
-            ))
-          ) : (
-            <p>No match history available.</p>
-        )}
-        </div>
-
+    <div className="matchHeader">
+      <h2>{t('Match History')}</h2>
     </div>
+    <div className="historyCard">
+      {history.length > 0 ? (
+        history.map((historyItem) => (
+          <div key={historyItem.id} onClick={() => handleItemClick(historyItem)}>
+            <HistoryItem history={historyItem} />
+          </div>
+        ))
+      ) : (
+        <p>{t('No match history available.')}</p>
+      )}
+    </div>
+  </div>
   )
 }
 

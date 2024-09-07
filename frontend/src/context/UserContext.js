@@ -31,6 +31,9 @@ export const UserProvider = ({ children }) => {
         }
     }, [userDataFetch]);
 
+
+
+
     useEffect(() => {
         if (NotificationFetch) {
             setNotifications(NotificationFetch);
@@ -77,6 +80,7 @@ export const UserProvider = ({ children }) => {
         setUserFriends(newFriends);
     };
 
+
     const updateUserNotification = (newNotifcation) => {
         setNotifications(newNotifcation);
     };
@@ -104,12 +108,14 @@ export const UserProvider = ({ children }) => {
             matchHistoryLoading,
             matchHistoryError,
             notifications,
+            
             updateUserData, 
             updateUserAchievements,
             updateUserFriends,
             updateMatchHistory,
             updateUserNotification,
-            setNotifications
+            setNotifications,
+            
         }}>
             {children}
         </UserContext.Provider>
