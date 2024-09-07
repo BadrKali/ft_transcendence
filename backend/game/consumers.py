@@ -120,6 +120,7 @@ class GameState:
         print(f"Current players: {list(self.state['players'].keys())}")
 
     async def update_player_status(self, username, status):
+        print(f"{username} status is {status}")
         player = self.state['players'][username]
         player['status'] = status
     
@@ -130,8 +131,10 @@ class GameState:
         player1_status = player1['status']
         player2_status = player2['status']
         if player1_status and player2_status:
+            print("BOTH PLAYERS ARE CONNECTED ++++++++++++++++++++")
             return True
         else:
+            print("SOMEONE HAS DISCONNECTED ++++++++++++++++++++")
             return False
     
     async def get_player_username(self, player):
@@ -157,7 +160,7 @@ class GameState:
 
     def remove_player(self, username):
         if username in self.state['players']:
-            if self.state['players'][username]['disconnect'] == 1:
+            if self.state['players'][username]['disconnect'] == 1 or self.check_winning_condition():
                 del self.state['players'][username]
                 print(f"Player removed: {username}, Current players: {list(self.state['players'].keys())}")
                 return True
@@ -263,15 +266,14 @@ class GameConsumer(AsyncWebsocketConsumer):
                     'message': {
                         'action': 'game_canceled',
                         'game_state': self.game_state.get_state(),
-                        'winner': winner,
-                        'loser': loser
                     }
                 }
             )
+            await self.leave_room()
         else:
             await self.game_state.update_player_status(player_str, False)
             await self.channel_layer.group_send(
-                self.room_group_name, { 
+                self.room_group_name, {
                     'type': 'send_message',
                     'message': { 'action': 'opponent_disconnected' },
                 }
@@ -293,6 +295,40 @@ class GameConsumer(AsyncWebsocketConsumer):
         elif action == "got_it":
             room = self.get_game_room()
             asyncio.create_task(self.start_game_loop(room))
+        elif action == "im_waiting":
+            print("A PLAYER IS WAITIN FOR HIS OPPONENT")
+            room = self.get_game_room()
+            await self.waiting_for_reconnection(room) 
+
+    async def waiting_for_reconnection(self, room):
+        timeout = 3
+        interval = 1 
+        total_time_waited = 0
+        winner = await self.game_state.get_player_username(self.player)
+
+        while total_time_waited < timeout:
+            if await self.game_state.get_players_status():
+                print("Player has reconnected.")
+                return  
+
+            await asyncio.sleep(interval)
+            total_time_waited += interval
+
+        await self.send(text_data=json.dumps({
+            'action': 'you_won',
+            'winner': winner
+        }))
+        # await self.save_game_history(winner, loser, room)
+        # await self.update_xp(winner, loser, room)
+
+    @database_sync_to_async
+    def delete_room(self):
+        room = self.get_game_room()
+        self.room.delete()
+        game_state_manager.remove_game_state(self.room_id)
+
+    def send_winner_message(self, event): 
+        self.send(text_data=json.dumps(event['message']))
 
     async def send_player_movement_update(self):
         await self.channel_layer.group_send(
@@ -336,13 +372,13 @@ class GameConsumer(AsyncWebsocketConsumer):
         player_str = await self.get_player_str()
         room = await self.check_for_reconnection(player_str)
         if room:
+            await self.game_state.reconnect_player(player_str, room)
             await self.handle_reconnection(player_str, room)
             return
         room = await self.find_or_create_room(player_str)
         if not room.is_waiting:
             await self.game_state.add_player(player_str, room)
             await self.notify_players(room)
-            asyncio.create_task(self.start_game_loop(room))
         else:
             await self.notify_waiting_player(room)
 
@@ -404,7 +440,6 @@ class GameConsumer(AsyncWebsocketConsumer):
         frame_duration = 1 / 60
         while self.game_state.get_running():
             start_time = time.time()
-            # print(f"HELLO FROM START_GAME_LOOP {self.player}")
             self.game_state.update_ball_position()
             if self.game_state.check_winning_condition():
                 winner , loser = await self.game_state.get_winner_loser()
@@ -448,6 +483,7 @@ class GameConsumer(AsyncWebsocketConsumer):
             else:
                 room.player1.update_xp(False)
                 room.player2.update_xp(True)
+            print("XP Updated")
         except Player.DoesNotExist:
             print("Error: One of the players does not exist.")
     
@@ -471,6 +507,7 @@ class GameConsumer(AsyncWebsocketConsumer):
                 game_type='pingpong',
                 match_type='single'
             )
+            print("Game History Saved")
         except Player.DoesNotExist:
             print("Error: One of the players does not exist.")
     
@@ -515,6 +552,8 @@ class GameConsumer(AsyncWebsocketConsumer):
                 'message': message
             }
         )
+        asyncio.create_task(self.start_game_loop(room))
+
 
     async def send_message(self, event):
         message = event['message']
@@ -524,13 +563,6 @@ class GameConsumer(AsyncWebsocketConsumer):
         player = self.player
         game_room = await self.get_game_room(player)
         if game_room:
-            await self.channel_layer.group_send(
-                    self.room_group_name,
-                    {
-                        'type': 'send_message',
-                        'message': { 'action': 'opponent_disconnected' },
-                    }
-                )
             await self.update_game_room(game_room, player)
 
     @database_sync_to_async
@@ -548,5 +580,6 @@ class GameConsumer(AsyncWebsocketConsumer):
         if not game_room.player1 and not game_room.player2:
             game_room.delete()
             game_state_manager.remove_game_state(self.room_id)
+            print("ALL SHIT IS DELETD")
         else:
             game_room.save()

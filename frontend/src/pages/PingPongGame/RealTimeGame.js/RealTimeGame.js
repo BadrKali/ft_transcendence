@@ -46,6 +46,7 @@ const RealTimeGame = ({ mode }) => {
     const [won, setWon] = useState(false);
     const [winner, setWinner] = useState("");
     const [sendGotIt, setSendGotIt] = useState(false);
+    const [sendWaiting, setSendWaiting] = useState(false);
     const [times, setTimes] = useState(0);
 
 
@@ -113,13 +114,14 @@ const RealTimeGame = ({ mode }) => {
                 setGameState(data.game_state);
                 break;
             case 'game_over':
-                endGame(data, "");
+                endGame(data);
                 break;
             case "game_canceled":
-                endGame(data, "canceled");
+                endGame(data);
                 break;
             case 'opponent_disconnected':
                 showOpponentDisconnected(true);
+                handleOpponentDisconnected()
                 break;
             case 'opponent_connected':
                 showOpponentDisconnected(false);
@@ -135,6 +137,10 @@ const RealTimeGame = ({ mode }) => {
                 setGameRunning(true);
                 setSendGotIt(true);
                 break;
+            case "you_won":
+                showOpponentDisconnected(false);
+                endGame(data);
+                break;
             default:
                 if (data.message) {
                     alert(data.message);
@@ -142,6 +148,22 @@ const RealTimeGame = ({ mode }) => {
                 break;
         }
     };
+
+    const handleOpponentDisconnected = () => {
+        showOpponentDisconnected(true);
+        setSendWaiting(true);
+    }
+    
+    useEffect(() => {
+        if (sendWaiting && socket) {
+            if (socket.readyState === WebSocket.OPEN) {
+                socket.send(JSON.stringify({ action: "im_waiting" }));
+            } else {
+                console.error('WebSocket is not open, unable to send message');
+            }
+            setSendWaiting(false);
+        }
+    }, [sendWaiting, socket]);
 
     useEffect(() => {
         if (sendGotIt && socket) {
@@ -168,17 +190,17 @@ const RealTimeGame = ({ mode }) => {
         setGameState(data.game_state);
     };
 
-    const endGame = (data, status) => {
+    const endGame = (data) => {
         setGameRunning(false);
-        setWinner(status === "canceled" ? currentUser : data.winner);
+        setWinner(data.winner);
         setShowResult(true);
     };
 
     const initializeCanvas = () => {
         const canvas = canvasRef.current;
+    
         const ctx = canvas?.getContext('2d');
         if (!ctx || !canvas){ 
-            setMessage("HEHEEEEE BOY")
             return;
         }
         
@@ -358,7 +380,7 @@ const RealTimeGame = ({ mode }) => {
                 <WaitForReconnection opponent={opponent}/>
             )}
             {showResult && (
-                <MatchResult player={currentUser} winner={winner} onBack={handleBackToLobby}/>
+                <MatchResult winner={winner} onBack={handleBackToLobby}/>
             )}
             {showWaiting && (
                 <Waiting player={currentUser}/>
