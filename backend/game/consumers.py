@@ -252,11 +252,30 @@ class GameConsumer(AsyncWebsocketConsumer):
             }))
 
     async def disconnect(self, close_code):
-        self.keep_running = False
-        print("Hello Baby")
-        # self.game_state.update_game_running(False)
-        # if self.room_group_name:
-        #     await self.leave_room()
+        player_str = await self.get_player_str()
+        self.game_state.update_game_running(False)
+        winner , loser = await self.game_state.get_winner_loser()
+        if self.game_state.remove_player(player_str):
+            await self.channel_layer.group_send(
+                self.room_group_name,
+                {
+                    'type': 'send_message',
+                    'message': {
+                        'action': 'game_canceled',
+                        'game_state': self.game_state.get_state(),
+                        'winner': winner,
+                        'loser': loser
+                    }
+                }
+            )
+        else:
+            await self.game_state.update_player_status(player_str, False)
+            await self.channel_layer.group_send(
+                self.room_group_name, { 
+                    'type': 'send_message',
+                    'message': { 'action': 'opponent_disconnected' },
+                }
+            )
 
     async def receive(self, text_data):
         data = json.loads(text_data)
@@ -271,40 +290,9 @@ class GameConsumer(AsyncWebsocketConsumer):
                 direction = data.get('direction')
                 self.game_state.player_mouvement(username, direction)
                 await self.send_player_movement_update()
-        elif action == "user_left":
-            await self.handle_player_left()
         elif action == "got_it":
             room = self.get_game_room()
-            if not room:
-                print(f"NO ROOM FOUD FOR {self.player}")
-            print(f"{self.room_group_name} GOT IT")
             asyncio.create_task(self.start_game_loop(room))
-
-    async def handle_player_left(self):
-        player_str = await self.get_player_str()
-        self.game_state.update_game_running(False)
-        winner , loser = await self.game_state.get_winner_loser()
-        if self.game_state.remove_player(player_str):
-            await self.channel_layer.group_send(
-                self.room_group_name,
-                {
-                    'type': 'send_message',
-                    'message': {
-                        'action': 'game_over',
-                        'game_state': self.game_state.get_state(),
-                        'winner': winner,
-                        'loser': loser
-                    }
-                }
-            )
-        else:
-            await self.game_state.update_player_status(player_str, False)
-            await self.channel_layer.group_send(
-                self.room_group_name, {
-                    'type': 'send_message',
-                    'message': { 'action': 'opponent_disconnected' },
-                }
-            )
 
     async def send_player_movement_update(self):
         await self.channel_layer.group_send(

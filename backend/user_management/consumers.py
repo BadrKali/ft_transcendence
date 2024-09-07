@@ -3,6 +3,7 @@ import json
 from django.db.models import Q
 from channels.db import database_sync_to_async
 from django.shortcuts import get_object_or_404
+from authentication.models import User
 
 class NotificationConsumer(AsyncWebsocketConsumer):
     async def connect(self):

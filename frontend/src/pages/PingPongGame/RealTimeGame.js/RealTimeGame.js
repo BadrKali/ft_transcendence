@@ -113,7 +113,10 @@ const RealTimeGame = ({ mode }) => {
                 setGameState(data.game_state);
                 break;
             case 'game_over':
-                endGame(data);
+                endGame(data, "");
+                break;
+            case "game_canceled":
+                endGame(data, "canceled");
                 break;
             case 'opponent_disconnected':
                 showOpponentDisconnected(true);
@@ -165,9 +168,9 @@ const RealTimeGame = ({ mode }) => {
         setGameState(data.game_state);
     };
 
-    const endGame = (data) => {
+    const endGame = (data, status) => {
         setGameRunning(false);
-        setWinner(data.winner);
+        setWinner(status === "canceled" ? currentUser : data.winner);
         setShowResult(true);
     };
 
@@ -323,10 +326,11 @@ const RealTimeGame = ({ mode }) => {
 
     useEffect(() => {
         window.onpopstate = () => {
-            socket.send(JSON.stringify({ action: "user_left"}));
             socket.close();
-            navigate("/game", {replace:true})
         };
+        window.onbeforeunload = () => {
+            socket.close();
+        }
     }, [socket])
 
     useEffect(() => {
