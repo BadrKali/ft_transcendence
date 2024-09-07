@@ -4,7 +4,6 @@ import './profil.css'
 import DashProfil from './components/DashProfil'
 import MatchHistory from './components/MatchHistory'
 import Achievments from './components/Achievments'
-import Friends from './components/Friends'
 import useFetch from '../../hooks/useFetch'
 import Icon from '../../assets/Icon/icons'
 import { useNavigate } from 'react-router-dom';
@@ -19,6 +18,7 @@ import LineChart from '../Dashboard/components/LineChart'
 import { UserContext } from '../../context/UserContext';
 import { ProfileProvider } from '../../context/ProfilContext';
 import Lottie from 'lottie-react';
+import { useTranslation } from 'react-i18next'
 import loadingAnimation from '../../components/OauthTwo/loading-animation.json'
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
@@ -27,6 +27,7 @@ const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
 const Profil = () => {
   const { userId } = useParams();
+  const { t } = useTranslation();
   const [profilData, setProfilData] = useState(null);
   const navigate = useNavigate();
   const { auth }  = useAuth()
@@ -83,7 +84,7 @@ const Profil = () => {
                     </div>
                   </div>
                   <div className='lineChart-container'>
-                    <h2>Graph Growth</h2>
+                    <h2>{t('Graph Growth')}</h2>
                     <LineChart />
                   </div>
               </div>

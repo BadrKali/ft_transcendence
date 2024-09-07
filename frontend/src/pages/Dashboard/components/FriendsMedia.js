@@ -12,6 +12,7 @@ import { RealTimeContext } from '../../../context/RealTimeProvider';
 import RealTimeProvider from '../../../context/RealTimeProvider'
 import { UserContext } from '../../../context/UserContext'
 import FriendsItemMedia from './FriendsItemMedia'
+import { useTranslation } from 'react-i18next'
 
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
@@ -20,6 +21,7 @@ function FriendsMedia() {
   const {friendsStatus} = useContext(RealTimeContext);
   const [listFriend, setListFriend] = useState([]);
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const {userFriends, userFriendsLoading} = useContext(UserContext)
   
   function handleItemClick(list) {
@@ -32,7 +34,7 @@ function FriendsMedia() {
     <div className='friendsContainerMedia'>
       <div className='friendsBoxMedia'>
         <div className='headerFrendMedia'>
-          <h2>FRIENDS</h2>
+          <h2>{t('FRIENDS')}</h2>
         </div>
         <div className='listFriendsMedia'>
           {userFriends && userFriends.length > 0 ? (

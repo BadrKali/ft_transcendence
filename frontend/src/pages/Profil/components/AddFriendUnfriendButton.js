@@ -6,6 +6,7 @@ import { ErrorToast } from '../../../components/ReactToastify/ErrorToast'
 import { SuccessToast } from '../../../components/ReactToastify/SuccessToast'
 import { UserContext } from '../../../context/UserContext';
 import { ProfileContext } from '../../../context/ProfilContext';
+import { useTranslation } from 'react-i18next';
 
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
@@ -14,6 +15,7 @@ function AddFriendUnfriendButton({ FriendId }) {
     const { auth }  = useAuth()
     const {updateUserFriends} = useContext(UserContext)
     const {isBlockedMe, isBlockingHim, isRequest, setIsRequst} = useContext(ProfileContext)
+    const { t } = useTranslation();
     const isDisabled = isBlockingHim || isBlockedMe;
  
     
@@ -134,15 +136,15 @@ function AddFriendUnfriendButton({ FriendId }) {
     const getButtonAction = () => {
         switch (isRequest) {
           case 'Friend request does not exist.':
-            return { text: 'Add Friend', action: handleAddFriend };
+            return { text: t('Add Friend'), action: handleAddFriend };
           case 'Friend request sent.':
-            return { text: 'Cancel Request', action: handleCancelRequest };
+            return { text: t('Cancel Request'), action: handleCancelRequest };
           case 'Friend request received.':
-            return { text: 'Reject Request', action: handleRejectRequest };
+            return { text: t('Reject Request'), action: handleRejectRequest };
           case 'Friends':
-            return { text: 'Unfriend', action: handleUnfriend };
+            return { text: t('Unfriend'), action: handleUnfriend };
           default:
-            return { text: 'Add Friend', action: handleAddFriend };
+            return { text: t('Add Friend'), action: handleAddFriend };
         }
       };
 

@@ -11,7 +11,7 @@ import style from '../../Chat/Components/ContactSection/ContactSection.module.cs
 import { RealTimeContext } from '../../../context/RealTimeProvider';
 import RealTimeProvider from '../../../context/RealTimeProvider'
 import { UserContext } from '../../../context/UserContext'
-
+import { useTranslation } from 'react-i18next'
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
@@ -20,6 +20,7 @@ function Friends() {
   const [listFriend, setListFriend] = useState([]);
   const navigate = useNavigate();
   const {userFriends, userFriendsLoading} = useContext(UserContext)
+  const { t } = useTranslation();
   // const {data ,isLoading, error} = useFetch(`${BACKEND_URL}/user/friends/list/`)
   // useEffect(() => {
   //   if (data) {
@@ -37,7 +38,7 @@ function Friends() {
     <div className='friendsContainer'>
       <div className='friendsBox'>
         <div className='headerFrends'>
-          <h2>FRIENDS</h2>
+          <h2>{t('FRIENDS')}</h2>
         </div>
         <div className='listFriends'>
           {userFriends && userFriends.length > 0 ? (

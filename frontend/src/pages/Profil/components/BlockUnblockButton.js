@@ -5,6 +5,7 @@ import { InfoToast } from '../../../components/ReactToastify/InfoToast';
 import { ErrorToast } from '../../../components/ReactToastify/ErrorToast';
 import { SuccessToast } from '../../../components/ReactToastify/SuccessToast';
 import { ProfileContext } from '../../../context/ProfilContext';
+import { useTranslation } from 'react-i18next';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
@@ -14,6 +15,8 @@ const BlockUnblockButton = ({ blockedId }) => {
 
     const {profilisBlocked, setIsBlocked,isBlockingHim,isBlockedMe,setIsBlocking,setIsRequst} = useContext(ProfileContext)
     const { auth }  = useAuth()
+    const { t } = useTranslation();
+
 
     const handleBlockUnblock = async () => {
         const url = `${BACKEND_URL}/user/${blockedId}/block-unblock/`;
@@ -48,7 +51,7 @@ const BlockUnblockButton = ({ blockedId }) => {
     return (
         <div className={`BlockFriend-button profil-button ${isBlockedMe ? 'disabled' : ''}`} onClick={handleBlockUnblock}>
             <Icon name="BlockFriend" className='Block-Friend profil-icon' />
-            <p>{profilisBlocked ? 'Unblock' : 'Block'}</p>
+            <p>{profilisBlocked ? t('Unblock') : t('Block')}</p>
 
         </div>
     );

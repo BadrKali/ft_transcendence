@@ -1,8 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { useEffect} from 'react';
 import useAuth from '../../hooks/useAuth';
 import './listBlockedPopup.css'
 import ListBlockedItem from './ListBlockedItem';
+import Lottie from 'lottie-react';
+import sadFace from '../../assets/sadFace.json'
+import { useTranslation } from 'react-i18next';
 
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
@@ -11,6 +14,8 @@ const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const ListBlockedPopup = ({ isOpen, onClose})=> {
     const { auth }  = useAuth()
     const [blockedUsers, setBlockedUsers] = useState([]);
+    const { t } = useTranslation();
+
 
     useEffect(() => {
         const fetchRequestStatus = async () => {
@@ -28,7 +33,8 @@ const ListBlockedPopup = ({ isOpen, onClose})=> {
                     setBlockedUsers(data.
                         blocked_users)
                     
-                } else {
+                }
+                 else {
                     console.error('Error fetching block status:', response.statusText);
                 }
             } catch (error) {
@@ -45,15 +51,19 @@ const ListBlockedPopup = ({ isOpen, onClose})=> {
   return (
     <div className="modal-listBlocked">
       <div className="modal-blocked">
-        <button className="modal-close-button" onClick={onClose}>&times;</button>
+        <button className="modalCloseButton" onClick={onClose}>&times;</button>
         <h2>List Blocked</h2>
         <div className='listBlocked'>
-            {blockedUsers.length > 0 ? (
+            {blockedUsers && blockedUsers.length > 0 ? (
                 blockedUsers.map((user) => (
                     <ListBlockedItem key={user.id} user={user}/>
                 ))
             ) : (
-                <p>No blocked users found.</p>
+                <div className='sadFaceAnimationGame'>
+                    <div className='sadeFaceGame'><Lottie  animationData={sadFace} /> </div>
+                    <h3>{t('No blocked users found')}</h3>
+                </div>
+
             )}
         </div>
       </div>
