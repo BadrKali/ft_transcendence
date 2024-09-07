@@ -35,7 +35,7 @@ const AppLayout = () => {
         </div>
       </main>
       <BotIcon />
-      <ToastContainer />
+      {/* <ToastContainer /> */}
     </div>
   );
 };

@@ -2,6 +2,7 @@ from channels.generic.websocket import AsyncWebsocketConsumer
 import json
 from django.db.models import Q
 from channels.db import database_sync_to_async
+from django.shortcuts import get_object_or_404
 
 class NotificationConsumer(AsyncWebsocketConsumer):
     async def connect(self):
@@ -36,8 +37,9 @@ class NotificationConsumer(AsyncWebsocketConsumer):
 
     @database_sync_to_async
     def set_user_status(self, is_online):
-        self.user.is_online = is_online
-        self.user.save()
+        user = get_object_or_404(User, id=self.user.id)
+        user.is_online = is_online
+        user.save()
 
     async def broadcast_status_update(self, online):
         friends_ids = await self.get_user_friends()
@@ -72,7 +74,7 @@ class NotificationConsumer(AsyncWebsocketConsumer):
             'status': status
         }))
     async def join_game(self, event):
-        print("hello from join Game");
+        print("hello from join Game")
         message = event['message']
         await self.send(text_data=json.dumps({
             'type' : 'join_game',
