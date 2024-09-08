@@ -450,7 +450,7 @@ class GameConsumer(AsyncWebsocketConsumer):
         }))
 
     async def start_game_loop(self, room):
-        frame_duration = 1 / 60
+        frame_duration = 1 / 50
         while self.game_state.get_running():
             start_time = time.time()
             self.game_state.update_ball_position()
@@ -566,7 +566,6 @@ class GameConsumer(AsyncWebsocketConsumer):
                 'message': message
             }
         )
-        asyncio.create_task(self.start_game_loop(room))
 
     async def send_message(self, event):
         message = event['message']
