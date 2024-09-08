@@ -39,8 +39,16 @@ class GameState:
 
     def get_keep_running(self):
         return self.state['keep_running']
+
+    async def update_game_over(self, is_over):
+        self.state['game_over'] = is_over
+
+    async def get_game_over(self):
+        return self.state['game_over']
+
     def update_keep_running(self, status):
         self.state['keep_running'] = status
+
     def get_running(self):
         return self.state['game_running']
     
@@ -62,10 +70,8 @@ class GameState:
             player2 = players[1]
             
             if player1['score'] > player2['score']:
-                print("player1 won")
                 return player1['username'], player2['username']
             else:
-                print("player2 won")
                 return player2['username'], player1['username']
         except:
             return;
@@ -160,9 +166,7 @@ class GameState:
 
     def remove_player(self, username):
         if username in self.state['players']:
-            if self.state['players'][username]['disconnect'] == 1 or self.check_winning_condition():
-                del self.state['players'][username]
-                print(f"Player removed: {username}, Current players: {list(self.state['players'].keys())}")
+            if self.state['players'][username]['disconnect'] == 1:
                 return True
             else :
                 self.state['players'][username]['disconnect'] += 1
@@ -249,6 +253,7 @@ class GameConsumer(AsyncWebsocketConsumer):
             self.game_state = None
             self.room = None
             await self.accept()
+            asyncio.sleep(3)
             await self.send(text_data=json.dumps({
                 'action': 'connected',
                 'message': 'Connection established',
@@ -258,18 +263,28 @@ class GameConsumer(AsyncWebsocketConsumer):
         player_str = await self.get_player_str()
         self.game_state.update_game_running(False)
         winner , loser = await self.game_state.get_winner_loser()
-        if self.game_state.remove_player(player_str):
+        is_game_over = await self.game_state.get_game_over()
+        if is_game_over:
+            print("Game is already over, handling disconnect accordingly")
+            await self.leave_room("game_over")
+            return
+        elif self.game_state.remove_player(player_str):
+            currentWinner = await self.game_state.get_player_username(self.player)
+            disconnectedPlayer = loser
+            await self.update_xp(self.player, disconnectedPlayer, self.room) 
+            await self.save_game_history(currentWinner, disconnectedPlayer, self.room)
             await self.channel_layer.group_send(
                 self.room_group_name,
                 {
                     'type': 'send_message',
                     'message': {
                         'action': 'game_canceled',
+                        'winner': currentWinner,
                         'game_state': self.game_state.get_state(),
                     }
                 }
             )
-            await self.leave_room()
+            await self.leave_room("game_canceled")
         else:
             await self.game_state.update_player_status(player_str, False)
             await self.channel_layer.group_send(
@@ -317,10 +332,6 @@ class GameConsumer(AsyncWebsocketConsumer):
             'action': 'you_won',
             'winner': winner
         }))
-        # await self.save_game_history(winner, loser, room)
-        # await self.update_xp(winner, loser, room)
-        # game_state_manager.remove_game_state(self.room_id)
-        # room.delete()
 
     @database_sync_to_async
     def delete_room(self):
@@ -372,11 +383,13 @@ class GameConsumer(AsyncWebsocketConsumer):
         player_str = await self.get_player_str()
         room = await self.check_for_reconnection(player_str)
         if room:
+            self.room = room
             await self.game_state.reconnect_player(player_str, room)
             await self.handle_reconnection(player_str, room)
             return
         room = await self.find_or_create_room(player_str)
         if not room.is_waiting:
+            self.room = room
             await self.game_state.add_player(player_str, room)
             await self.notify_players(room)
         else:
@@ -443,6 +456,7 @@ class GameConsumer(AsyncWebsocketConsumer):
             self.game_state.update_ball_position()
             if self.game_state.check_winning_condition():
                 winner , loser = await self.game_state.get_winner_loser()
+                await self.game_state.update_game_over(True)
                 await self.channel_layer.group_send(
                     self.room_group_name,
                     {
@@ -455,8 +469,8 @@ class GameConsumer(AsyncWebsocketConsumer):
                         }
                     }
                 )
-                # await self.save_game_history(winner, loser, room)
-                # await self.update_xp(winner, loser, room)
+                await self.update_xp(winner, loser, self.room)
+                await self.save_game_history(winner, loser, self.room)
                 break
             await self.channel_layer.group_send(
                 self.room_group_name,
@@ -502,10 +516,10 @@ class GameConsumer(AsyncWebsocketConsumer):
             GameHistory.objects.create(
                 winner_user=winner_user,
                 loser_user=loser_user,
-                winner_score=self.game_state.winner_score(winner),
-                loser_score=self.game_state.loser_score(loser),
-                game_type='pingpong',
-                match_type='single'
+                winner_score= self.game_state.winner_score(str(winner)),
+                loser_score= self.game_state.loser_score(loser),
+                game_type= 'pingpong',
+                match_type= 'single'
             )
             print("Game History Saved")
         except Player.DoesNotExist:
@@ -554,16 +568,13 @@ class GameConsumer(AsyncWebsocketConsumer):
         )
         asyncio.create_task(self.start_game_loop(room))
 
-
     async def send_message(self, event):
         message = event['message']
         await self.send(text_data=json.dumps(message))
 
-    async def leave_room(self):
+    async def leave_room(self, status):
         player = self.player
-        game_room = await self.get_game_room(player)
-        if game_room:
-            await self.update_game_room(game_room, player)
+        await self.update_game_room(self.room, player, status)
 
     @database_sync_to_async
     def get_game_room(self):
@@ -571,15 +582,19 @@ class GameConsumer(AsyncWebsocketConsumer):
         game_room = GameRoom.objects.filter(Q(player1=self.player) | Q(player2=self.player)).first()
         return game_room
 
-    @database_sync_to_async
-    def update_game_room(self, game_room, player):
-        if game_room.player1 == player:
+    @sync_to_async
+    def update_game_room(self, game_room, player, status):
+        if status in ["game_over", "game_canceled"]:
+            game_room.delete()
+            game_state_manager.remove_game_state(self.room_id)
+            print(f"ALL SHIT IS DELETD with status : {status}")
+            return
+        elif game_room.player1 == player:
             game_room.player1 = None
         elif game_room.player2 == player:
             game_room.player2 = None
-        if not game_room.player1 and not game_room.player2:
+        if not game_room.player1 and not game_room.player2: 
             game_room.delete()
             game_state_manager.remove_game_state(self.room_id)
-            print("ALL SHIT IS DELETD")
         else:
             game_room.save()

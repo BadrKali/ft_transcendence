@@ -47,7 +47,7 @@ const RealTimeGame = ({ mode }) => {
     const [winner, setWinner] = useState("");
     const [sendGotIt, setSendGotIt] = useState(false);
     const [sendWaiting, setSendWaiting] = useState(false);
-    const [times, setTimes] = useState(0);
+    const [gameOver, setGameOver] = useState();
 
 
     useEffect(() => {
@@ -114,14 +114,18 @@ const RealTimeGame = ({ mode }) => {
                 setGameState(data.game_state);
                 break;
             case 'game_over':
+                setGameOver(true);
                 endGame(data);
                 break;
             case "game_canceled":
+                setGameOver(true);
                 endGame(data);
                 break;
             case 'opponent_disconnected':
-                showOpponentDisconnected(true);
-                handleOpponentDisconnected()
+                if (!gameOver){
+                    showOpponentDisconnected(true);
+                    handleOpponentDisconnected()
+                }
                 break;
             case 'opponent_connected':
                 showOpponentDisconnected(false);
@@ -150,8 +154,10 @@ const RealTimeGame = ({ mode }) => {
     };
 
     const handleOpponentDisconnected = () => {
-        showOpponentDisconnected(true);
-        setSendWaiting(true);
+        if (!gameOver){
+            showOpponentDisconnected(true);
+            setSendWaiting(true);
+        }
     }
     
     useEffect(() => {
@@ -194,6 +200,9 @@ const RealTimeGame = ({ mode }) => {
         setGameRunning(false);
         setWinner(data.winner);
         setShowResult(true);
+        if (socket) {
+            socket.close();
+        }
     };
 
     const initializeCanvas = () => {
@@ -349,9 +358,11 @@ const RealTimeGame = ({ mode }) => {
     useEffect(() => {
         window.onpopstate = () => {
             socket.close();
+            navigate('/game', { replace:true});
         };
         window.onbeforeunload = () => {
             socket.close();
+            navigate('/game', { replace:true});
         }
     }, [socket])
 
@@ -368,7 +379,13 @@ const RealTimeGame = ({ mode }) => {
         setShowResult(false);
         navigate('/game', { replace:true});
     }
-
+    useEffect(() => {
+        return () => {
+            if (socket) {
+                socket.close();
+            }
+        };
+    }, [socket]);
     return (
         <div className="pingponggame-container random-game" style={{ backgroundImage: `url(${background})` }}>
             {room && player1 && player2 && (
