@@ -19,6 +19,8 @@ const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const WS_BACKEND_URL = process.env.REACT_APP_WS_BACKEND_URL;
 
 const RealTimeGame = ({ mode }) => {
+    const lastUpdateTime = useRef(0);
+    const animationFrameId = useRef(null);
     const canvasRef = useRef(null);
     const navigate = useNavigate();
     const { auth } = useAuth();
@@ -102,6 +104,7 @@ const RealTimeGame = ({ mode }) => {
         switch (data.action) {
             case 'start_game':
                 startNewGame(data);
+                setSendGotIt(true);
                 break;
             case 'connected':
                 setRoomId(data.room_id);
@@ -250,7 +253,7 @@ const RealTimeGame = ({ mode }) => {
         };
 
         const drawNet = () => {
-            for (let i = 0; i <= canvas.height; i++) {
+            for (let i = 0; i <= canvas.height; i+=15) {
                 drawRect(net.x, net.y + i, net.width, net.height, net.color);
             }
         };
@@ -274,11 +277,19 @@ const RealTimeGame = ({ mode }) => {
             drawArc(ball.x, ball.y, ball.radius, ball.color);
         };
 
-        const loop = () => {
+        const gameLoop = (timestamp) => {
             if (!gameRunning) return;
-            render();
+
+            const deltaTime = timestamp - lastUpdateTime.current;
+            const interpolation = Math.min(1, deltaTime / 16.67);
+
+            render(interpolation);
+
+            lastUpdateTime.current = timestamp;
+            animationFrameId.current = requestAnimationFrame(gameLoop);
         };
-        loop();
+
+        animationFrameId.current = requestAnimationFrame(gameLoop);
     };
 
     const handleKeyDown = (evt) => {
@@ -367,9 +378,15 @@ const RealTimeGame = ({ mode }) => {
     }, [socket])
 
     useEffect(() => {
+        if (gameState) {
             initializeCanvas();
-            setMessage("")
-    }, [gameState, player1, canvasRef.current, player2, gameRunning]);
+        }
+        return () => {
+            if (animationFrameId.current) {
+                cancelAnimationFrame(animationFrameId.current);
+            }
+        };
+    }, [gameState]);
 
     const handleStartGame = () => {
         setStartGame(true);
