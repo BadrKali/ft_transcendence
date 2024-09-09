@@ -404,9 +404,13 @@ class XPHistoryView(APIView):
 
 
 
+
 class LeaderboardView(APIView):
     def get(self, request):
-        players = Player.objects.annotate(
+        players = Player.objects.filter(
+            user__is_staff=False,
+            user__is_superuser=False
+        ).annotate(
             rank_order=Case(
                 When(rank='GOLD', then=Value(1)),
                 When(rank='SILVER', then=Value(2)),
@@ -417,4 +421,5 @@ class LeaderboardView(APIView):
         ).order_by('rank_order', '-xp')
         
         serializer = PlayerSerializer(players, many=True)
+        
         return Response(serializer.data)
