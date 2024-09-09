@@ -10,27 +10,23 @@ import NoOneTotalkTo from '../../Chat/ChatAssets/NoOneTotalkTo.json'
 import style from '../../Chat/Components/ContactSection/ContactSection.module.css'
 import { RealTimeContext } from '../../../context/RealTimeProvider';
 import RealTimeProvider from '../../../context/RealTimeProvider'
-
+import { UserContext } from '../../../context/UserContext'
+import { useTranslation } from 'react-i18next'
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
 function Friends() {
   const {friendsStatus} = useContext(RealTimeContext);
-  // {console.log("i am reandered yyaa0aah")}
-
   const [listFriend, setListFriend] = useState([]);
   const navigate = useNavigate();
-  const {data ,isLoading, error} = useFetch(`${BACKEND_URL}/user/friends/list/`)
-  useEffect(() => {
-    if (data) {
-      setListFriend(data);
-    }
-  }, [data]);
-
-  useEffect (() => {
-    console.log(listFriend)
-  }, [listFriend])
-
+  const {userFriends, userFriendsLoading} = useContext(UserContext)
+  const { t } = useTranslation();
+  // const {data ,isLoading, error} = useFetch(`${BACKEND_URL}/user/friends/list/`)
+  // useEffect(() => {
+  //   if (data) {
+  //     setListFriend(data);
+  //   }
+  // }, [data]);
   
   function handleItemClick(list) {
     navigate(`/user/${list.username}`, {
@@ -42,11 +38,11 @@ function Friends() {
     <div className='friendsContainer'>
       <div className='friendsBox'>
         <div className='headerFrends'>
-          <h2>FRIENDS</h2>
+          <h2>{t('FRIENDS')}</h2>
         </div>
         <div className='listFriends'>
-          {listFriend.length > 0 ? (
-            listFriend.map((list) => (
+          {userFriends && userFriends.length > 0 ? (
+            userFriends.map((list) => (
               <div key={list.id} onClick={() => handleItemClick(list)}>
                 <FriendsItem list={list} friendsStatus={friendsStatus}/>
               </div>

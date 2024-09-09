@@ -1,17 +1,14 @@
-import React, { useState, useContext, useEffect } from "react";
+import React, { useState, useContext } from "react";
 import style from "./ContactSection.module.css";
 import SearchBar from "../SearchBar/SearchBar.jsx";
 import { NotePencil } from "phosphor-react";
-import src from "../../ChatAssets/download.jpeg";
 import NoOneTotalkTo from "../../ChatAssets/NoOneTotalkTo.json";
 import Lottie from "lottie-react";
 import { ChatListContext } from "../../Chat.jsx";
-import { conversationMsgContext } from "../../Chat.jsx";
-import useAuth from "../../../../hooks/useAuth";
-
+import { PickedConvContext } from "../../Chat.jsx";
+import { CurrentUserContext } from "../../usehooks/ChatContext.js";
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
-const WS_BACKEND_URL = process.env.REACT_APP_WS_BACKEND_URL;
 
 const SendToNoneFriend = () => {
   function handleGlobalMessage() {
@@ -33,9 +30,11 @@ function LastMessageFormater(lastMessage) {
 
 const ChatConversation = ({
   ConversationData,
-  PickerUsername,
   onSelectConversation,
 }) => {
+
+  const PickedUsername = useContext(PickedConvContext);
+
   function HandleClick() {
     onSelectConversation(ConversationData.username);
   }
@@ -45,15 +44,14 @@ const ChatConversation = ({
       style={{
         borderRadius: "0.5rem",
         backgroundColor:
-          PickerUsername === ConversationData.username ? "#11141B" : "",
-        // zIndex : PickerUsername === ConversationData.username ? "10" : "auto"
+          PickedUsername === ConversationData.username ? "#11141B" : ""
       }}
     >
       <div className={style.ConversationHolder}>
         <img
           className={style.FriendPhoto}
           src={`${BACKEND_URL}` + ConversationData.avatar}
-          alt="Your-friend-photo"
+          alt="Your-friend-avatar"
         />
 
         <div className={style.NameAndLastMessage}>
@@ -82,9 +80,8 @@ const ChatConversation = ({
   );
 };
 
-const ContactSection = ({ PickerUsername, handleConversationSelect }) => {
-  const { auth } = useAuth();
-  const ChatList = useContext(ChatListContext);
+const ContactSection = ({handleConversationSelect }) => {
+  const {ChatList} = useContext(ChatListContext);
   const [search, setSearch] = useState("");
 
   return (
@@ -109,7 +106,6 @@ const ContactSection = ({ PickerUsername, handleConversationSelect }) => {
               <ChatConversation
                 key={index}
                 ConversationData={DataObj}
-                PickerUsername={PickerUsername}
                 onSelectConversation={handleConversationSelect} //
               />
             );

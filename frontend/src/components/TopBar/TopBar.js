@@ -18,8 +18,10 @@ import ListBlockedPopup from './ListBlockedPopup'
 import { SuccessToast } from '../ReactToastify/SuccessToast'
 import { ErrorToast } from '../ReactToastify/ErrorToast'
 import { InfoToast } from '../ReactToastify/InfoToast'
-
-
+import LanguageSelector from './LanguageSelector'
+import GameChallengeNotification from '../Notification/GameChallengeNotification'
+import GameSettingsPopUp from '../GameSettingsPopUp/GameSettingsPopUp'
+import { UserContext } from '../../context/UserContext'
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
 const TopBar = () => {
@@ -35,12 +37,15 @@ const TopBar = () => {
   const response1 = useFetch(`${BACKEND_URL}/user/stats/`)
   const navigate = useNavigate();
   const { hasNotification, clearNotification} = useContext(RealTimeContext);
-  const [notifications, setNotifications] = useState([]);
+  // const [notifications, setNotifications] = useState([]);
   const { auth }  = useAuth()
   const [modalOpen, setModalOpen] = useState(false);
   const [modalOpenBlocked, setModalOpenBlocked] = useState(false);
   const [selectedNotification, setSelectedNotification] = useState(null);
+  const {gameChallenge, handleAcceptGame, handleRejectGame, gameAccepted, joinGame, setGameAccepted, showGameSettings, setShowGameSettings} = useContext(RealTimeContext);
+  const { userData, userDataLoading, userDataError, updateUserFriends, notifications, setNotifications} = useContext(UserContext);
 
+  
   const handleNotificationClick = (notif) => {
     setSelectedNotification(notif);
     setModalOpen(true);
@@ -50,6 +55,21 @@ const TopBar = () => {
     setModalOpenBlocked(true);
   }
 
+  const handleMyProfilClick = () => {
+      navigate(`/user/${profilData.username}`)
+  }
+
+  const handleSettingClick = () => {
+      navigate(`/setting`)
+  }
+
+  useEffect(() => {
+    if (gameAccepted) {
+      setGameAccepted(false);
+      navigate('/invite-game', { replace:true });
+    }
+  }, [gameAccepted, navigate]);
+
   const handleClose = () => {
     setModalOpen(false);
     setNotif(false); 
@@ -58,16 +78,119 @@ const TopBar = () => {
     setModalOpenBlocked(false)
   }
 
-  const handleAccept = (id, type) => {
-      handleClose();
-      let url = `${BACKEND_URL}/user/friends-request/${id}/response/`;
-      let body = JSON.stringify({ 'status': 'accept' });
-  
-      if (type === 'Game Challenge') {
-          url = `${BACKEND_URL}/api/game/game-challenges/${id}/response`;
-          body = JSON.stringify({ 'status': 'accepted' });
+  const handleAccept = async (id, type) => {
+    handleClose(); 
+
+    let url = `${BACKEND_URL}/user/friends-request/${id}/response/`;
+    let body = JSON.stringify({ 'status': 'accept' });
+
+    try {
+        if (type === 'Game Challenge') {
+            url = `${BACKEND_URL}/api/game/game-challenges/${id}/response/`;
+            body = JSON.stringify({ 'status': 'accepted' });
+        } else if (type === 'Tournament') {
+
+            const response = await fetch(`${BACKEND_URL}/user/tournament/invitations/`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${auth.accessToken}`
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to fetch tournament details');
+            }
+
+            const data = await response.json();
+            const tournamentId = data.tournament.id;
+
+            url = `${BACKEND_URL}/user/tournament/invitations/${tournamentId}/response/`;
+            body = JSON.stringify({ 'status': 'accept' });
+        }
+
+
+        const patchResponse = await fetch(url, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${auth.accessToken}`
+            },
+            body: body
+        });
+
+        if (!patchResponse.ok) {
+            throw new Error('Network response was not ok');
+        }
+
+        const patchData = await patchResponse.json();
+        console.log(`${type} accepted:`, patchData);
+        SuccessToast(`${type} accepted`);
+
+        if (type === '/    FRIEND REQUEST    /') {
+          const friendsResponse = await fetch(`${BACKEND_URL}/user/friends/list/`, {
+            method: 'GET',
+                headers: {
+                  'Content-Type': 'application/json',
+                  'Authorization': `Bearer ${auth.accessToken}`
+                }
+              });
+              
+              if (!friendsResponse.ok) {
+                throw new Error('Network response was not ok');
+              }
+              
+              const updatedFriendsData = await friendsResponse.json();
+              console.log(updatedFriendsData)
+            updateUserFriends(updatedFriendsData);
+        }
+
+    } catch (error) {
+        console.error(`Error accepting ${type.toLowerCase()}:`, error);
+        ErrorToast(`Error accepting ${type.toLowerCase()}`);
+    }
+};
+
+
+const handleReject = async (id, type) => {
+    handleClose();
+    let url = `${BACKEND_URL}/user/friends-request/${id}/response/`;
+    let body = JSON.stringify({ 'status': 'reject' });
+
+    if (type === 'Game Challenge') {
+        url = `${BACKEND_URL}/api/game/game-challenges/${id}/response/`;
+        body = JSON.stringify({ 'status': 'rejected' });
+    }
+    else if (type === 'Tournament') {
+      try {
+
+          const response =  await fetch(`${BACKEND_URL}/user/tournament/invitations/`, {
+              method: 'GET',
+              headers: {
+                  'Content-Type': 'application/json',
+                  'Authorization': `Bearer ${auth.accessToken}`
+              }
+          });
+
+          if (!response.ok) {
+              throw new Error('Failed to fetch tournament details');
+          }
+
+          const data = await response.json();
+          const tournamentId = data.tournament;
+          console.log(data)
+
+          url = `${BACKEND_URL}/user/tournament/invitations/${tournamentId}`;
+          body = JSON.stringify({ 'status': 'reject' });
+
+      } catch (error) {
+          console.error('Error fetching tournament details:', error);
+          ErrorToast('Error fetching tournament details');
+          return;
       }
-      fetch(url, {
+  }
+
+    fetch(url, {
         method: 'PATCH',
         headers: {
             'Content-Type': 'application/json',
@@ -82,76 +205,34 @@ const TopBar = () => {
         return response.json();
     })
     .then(data => {
-        console.log('Friend request accepted:', data);
-        SuccessToast('Friend request accepted');
-        // alert('Friend request accepted');
+        console.log('Game challenge rejected:', data);
+        SuccessToast('Game challenge rejected');
     })
     .catch(error => {
-        console.error('Error accepting friend request:', error);
-        ErrorToast('Error accepting friend request');
-        // alert('Error accepting friend request');
+        console.error('Error rejecting game challenge:', error);
+        ErrorToast('Error rejecting game challenge');
     });
-  };
-
-  const handleReject = (id, type) => {
-    handleClose();
-    let url = `${BACKEND_URL}/user/friends-request/${id}/response/`;
-    let body = JSON.stringify({ 'status': 'reject' });
-
-    if (type === 'Game Challenge') {
-        url = `${BACKEND_URL}/api/game/game-challenges/${id}/response/`;
-        body = JSON.stringify({ 'status': 'rejected' });
-    }
-
-    fetch(url, {
-      method: 'PATCH',
-      headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${auth.accessToken}`
-      },
-      body: body
-      })
-      .then(response => {
-          if (!response.ok) {
-              throw new Error('Network response was not ok');
-          }
-          return response.json();
-      })
-      .then(data => {
-          console.log('Friend request rejected:', data);
-          SuccessToast('Friend request rejected');
-          // alert('Friend request rejected');
-      })
-      .catch(error => {
-          console.error('Error rejecting friend request:', error);
-          ErrorToast('Error rejecting friend request');
-          // alert('Error rejecting friend request');
-      });
+    // Send a Response to the oppenent
+  //   fetch(`${BACKEND_URL}/api/game/game-response/${id}/`, {
+  //     method: 'POST',
+  //     headers: {
+  //         'Content-Type': 'application/json',
+  //         'Authorization': `Bearer ${auth.accessToken}`
+  //     },
+  //     body: body
+  // });
   };
 
   const handleIconClick = async () => {
     setNotif(!showNotif);
-
-    if (!showNotif) {
-      try {
-        const response = await fetch(`${BACKEND_URL}/user/notifications/`, {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${auth.accessToken}`
-          }
-        });
-        if (response.ok) {
-          const data = await response.json();
-          setNotifications(data);
-          clearNotification(); 
-        } else {
-          console.error('Failed to fetch notifications');
-        }
-      } catch (error) {
-        console.error('Error fetching notifications:', error);
+    clearNotification(); 
+    await fetch(`${BACKEND_URL}/user/notifications/`, {
+      method: 'POST',
+      headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${auth.accessToken}`
       }
-    }
+    });
   };
 
   useEffect(() => {
@@ -192,7 +273,7 @@ const TopBar = () => {
     setDropdownActive(true);
   };
   const handleItemClick = (result) => {
-    console.log("good")
+  
     navigate(`/user/${result.username}`, {
       state: { userData: result },
     });
@@ -225,8 +306,22 @@ const TopBar = () => {
     setNotif(!showNotif);
     clearNotification();
   };
+  const handleExitGameSettings = () => {
+    setShowGameSettings(false);
+  }
   return (
     <div className='topbar-container'>
+      {gameChallenge && (
+            <GameChallengeNotification 
+                notif={gameChallenge}
+                message={`${gameChallenge.message}`}
+                onAccept={handleAcceptGame}
+                onReject={handleRejectGame}
+            />
+      )}
+      {/* {showGameSettings && (
+        <GameSettingsPopUp onExit={handleExitGameSettings}/>
+      )} */}
       <div className='topbar-search'>
         <Icon name='search' className='topbar-search-icon'/>
         <input placeholder='Search' value={query}  type='text' onChange={handleChange}/>
@@ -245,11 +340,12 @@ const TopBar = () => {
         </div>
       </div>
       <div className='topbar-profile'>
+        <LanguageSelector />
         <div ref={dropdownRef} className="icon-container"  onClick={handleIconClick}>
           <Icon  name='notification' className={showNotif ? 'topbar-notification-icon active-icon' : 'topbar-notification-icon' }/>
           {hasNotification && <span className="notification-badge"></span>}
           <div  className={showNotif ? "dropDwon active" : "dropDwon"}>
-              {notifications.length > 0 ?
+              {notifications && notifications.length > 0 ?
                   notifications.map((notif) => (
                     <NotificationItem key={notif.id} notif={notif} onClick={() => handleNotificationClick(notif)}  />
                   )) : (
@@ -265,14 +361,14 @@ const TopBar = () => {
         </div>
         <div className='profile-pic-container'  onClick={handleProfilClick}>
           <div className='profile-pic'>
-            <img src={`${BACKEND_URL}${profilData.avatar}`}/>
+            <img src={`${BACKEND_URL}${userData.avatar}`}/>
           </div>
-          <span>{profilData.username}</span>
+          <span>{userData.username}</span>
           <div  className={isProfilActive ? "dropDwonProfil profilActive" : "dropDwonProfil"}>
             <div className='dropList'>
-              <p className='list'>View My Profil</p>
+              <p className='list' onClick={handleMyProfilClick}>View My Profil</p>
               <p className='list' onClick={handleListBlockedClick}>List Blocked</p>
-              <p className='list'>Setting</p>
+              <p className='list' onClick={handleSettingClick}>Setting</p>
               <p className='list'>Log Out</p>
             </div>
           </div>

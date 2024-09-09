@@ -68,7 +68,9 @@
 .tournament-subscribers-avatars {
     width: 130px;
     height: 40px;
-    /* border: 1px solid rebeccapurple; */
+    display: flex;
+    justify-content: center; /* Center the images horizontally */
+    align-items: center; /* Center the images vertically */
     position: relative;
 }
 
@@ -76,29 +78,31 @@
     height: 40px;
     width: 40px;
     object-fit: cover;
-    position: absolute;
+    margin-left: -10px; 
+    border-radius: 50%; 
 }
-.image1 {
-    top: 0;
-    bottom: 0;
-    z-index: 1;
+.tournament-subscribers-avatars img:first-child {
+    margin-left: 0; 
 }
-
-.image2 {
-    left: 30px;
-    z-index: 2;
-}
-
-.image3 {
-    left: 60px;
-    z-index: 3;
-}
-
-.image4 {
-    left: 90px;
+/* .image1 {
+    left: 0;
     z-index: 4;
 }
 
+.image2 {
+    left: 20px;
+    z-index: 3;
+}
+
+.image3 {
+    left: 40px;
+    z-index: 2;
+}
+
+.image4 {
+    left: 60px;
+    z-index: 1;
+} */
 .tournament-subscribers {
     display: flex;
     flex-direction: column;

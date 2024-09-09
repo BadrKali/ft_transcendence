@@ -4,13 +4,14 @@ import useFetch from '../../../hooks/useFetch'
 import './achievments.css'
 import AchievmentsData from '../../../assets/AchievmentsData'
 import AchievmentsItem from './AchievmentsItem'
+import { useTranslation } from 'react-i18next'
 
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
 function Achievments({userId}) {
   const [achievements, setAchievements] = useState(AchievmentsData.map(achiev => ({ ...achiev, unlocked: "false" })));
-
+  const { t } = useTranslation();
   const { data: userAchievements, isLoading, error } = useFetch(`${BACKEND_URL}/api/game/achievements/player/${userId}`);
  
   useEffect(() => {
@@ -26,7 +27,7 @@ function Achievments({userId}) {
   return (
     <div className='achievmentsContainer'>
         <div className='achievmentsHeader'>
-            <h2>Achievements</h2>
+          <h2>{t('Achievements')}</h2>
         </div>
         <div className='achievmentsCard'>
             {achievements.map((achiev) => (

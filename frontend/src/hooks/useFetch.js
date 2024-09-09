@@ -24,11 +24,17 @@ const useFetch = (endpoint) => {
                     }
                 });
                 if (response.status === 403) {
+                    console.log(response)
                     setError('You are blocked from viewing this content.');
                     setData(null);
-                }else{
+                }else if(response.status === 404){
+                    setError('User not found');
+                    setData(null);
+                }
+                else{
                     const data = await response.json()
                     setData(data)
+                    
                 }
             }
             catch(e) {

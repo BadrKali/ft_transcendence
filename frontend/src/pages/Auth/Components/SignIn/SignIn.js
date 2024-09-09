@@ -6,10 +6,13 @@ import AuthContext from '../../../../context/Auth/AuthProvider'
 import axios from '../../../../api/axios'
 import { useLocation, useNavigate } from 'react-router-dom';
 import useAuth from '../../../../hooks/useAuth'
+import { fetchData } from '../../../Setting/components/TwoFaModal/TwoFaModal'
 
 
 const SIGNIN_URL = "/auth/token/"
 const CALLBACK_URL = process.env.REACT_APP_CALLBACK_URL;
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
+
 
 const SignIn = (props) => {
     const [isHidden, setIsHidden] = useState('hide_pass')
@@ -44,12 +47,25 @@ const SignIn = (props) => {
                 withCredentials: true
             });
             const accessToken = response?.data?.access;
-            setAuth({username:signInValues.username, accessToken: accessToken})
-            navigate('/');
+            props.setAuth({username:signInValues.username, accessToken: accessToken})
+            try {
+                const userData = await fetchData(`${BACKEND_URL}/user/stats/`, accessToken);
+                if(userData.is_2fa_enabled) {
+                    console.log('2FA enabled ya kho');
+                    props.setIsTwoFa(true)
+
+                } else {
+                    navigate('/');
+                }
+            }
+            catch (error) {
+                console.error('Error fetching user data:', error);
+            }
+            // navigate('/');
         } catch(err) {
             console.log(err)
         } finally {
-            console.log("yay")
+            // console.log("yay")
         }   
     }
     function handleInputChange(e) {

@@ -82,6 +82,7 @@
 .historyAchievments-container{
     height: 50%;
     display: flex;
+    
 }
 
 .history-container{
@@ -113,4 +114,57 @@
     width: 25%;
     animation: slideInLeftFriends 1s ease-out;
 }
+.friends-container-media{
+  /* border: solid; */
+  display: none;
+}
 
+@media screen and (max-width: 950px) {
+
+  .dashboard {
+    flex-direction: column; 
+
+  }
+  .profilHistoryAcgievmeants-container{
+    height: 100%;
+    width: 100%;
+
+  }
+  .profil-container{
+    width: 100%;
+    height: 30%;
+
+ 
+
+  }
+  .lineChart-container{
+    display: none;
+  }
+
+  .historyAchievments-container{
+ 
+    display: flex;
+    flex-direction: column;
+    height: 70%;
+
+  }
+
+  .history-container{
+    width: 100%;
+    height: 70%;
+  }
+
+  .achievments-container{
+   display: none;
+  }
+  .friends-container{
+    display: none;
+    height: 35%;
+    width: 100%;
+    /* display: none; */
+  }
+  .friends-container-media{
+    height: 30%;
+    display: block;
+  }
+}

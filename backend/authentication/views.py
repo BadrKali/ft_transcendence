@@ -18,14 +18,12 @@ from game.models import  Achievement,UserAchievement
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
 from user_management.models import Notification
+import pyotp
+import qrcode
 # Create your views here.
-
+ 
 token_url = 'https://api.intra.42.fr/oauth/token'
 user_info_url = 'https://api.intra.42.fr/v2/me'
-
-
-
-
 
 class UserView(APIView):
     pass
@@ -33,7 +31,6 @@ class UserView(APIView):
     #     user = get_object_or_404(User, pk=user_id)
     #     serializer = CurrentUserSerializer(user)
     #     return(Response(serializer.data))
-
 
 class CurrentUserView(APIView):
     def patch(self, request):
@@ -135,7 +132,9 @@ class CallbackView(APIView):
     permission_classes = [AllowAny]
     def post(self, request, *args, **kwargs):
         code = request.data.get('code')
+        print(f"code: {code}")
         if not code:
+            print("you touched my tralala")
             return Response({"error": "No code provided"}, status=400)
         data = {
             'grant_type'  : 'authorization_code',
@@ -159,8 +158,12 @@ class CallbackView(APIView):
         api_42_id = user_info['id']
         username = user_info['login']
         email = user_info.get('email', '')
-        avatarList = [0, 1, 2, 4]
-        user, created = User.objects.get_or_create(api_42_id=api_42_id, defaults={'username': f"{username}{api_42_id}", 'avatar' : f'avatars/{random.choice(avatarList)}.png','email': email})
+        avatar = user_info['image']['link']
+        # avatarList = [0, 1, 2, 4]
+        user, created = User.objects.get_or_create(api_42_id=api_42_id, defaults={'username': f"{username}{api_42_id}", 'avatar' : avatar,'email': email})
+        if created:
+            user.set_avatar_from_url(avatar)
+            user.save()
         # khasni nzid wa7ed check ila ken l user already exist 
         refresh = RefreshToken.for_user(user)
         access_token = str(refresh.access_token)
@@ -177,3 +180,36 @@ class CallbackView(APIView):
         )
         return response
 
+ 
+class Enable2FA(APIView):
+
+    def get(self, request):
+        request.user.generate_otp_secret()
+        otp_uri = request.user.get_otp_uri()
+        file_name = f'{request.user.username}_2fa.png'
+        file_path = f'media/2fa/{file_name}'
+        qrcode.make(otp_uri).save(file_path)
+        return Response({"otp_uri": file_path}, status=status.HTTP_200_OK)
+    
+    def post(self, request):
+        user = request.user
+        otp = request.data.get('otp')
+        if not otp:
+            return Response({"error": "OTP is required"}, status=status.HTTP_400_BAD_REQUEST)
+        if pyotp.TOTP(user.otp_secret).verify(otp):
+            user.is_2fa_verified = True
+            user.is_2fa_enabled = True
+            user.save()
+            return Response({"message": "2FA has been verified"}, status=status.HTTP_200_OK)
+        return Response({"error": "Invalid OTP"}, status=status.HTTP_400_BAD_REQUEST)
+    
+
+class Disable2FA(APIView):
+    def delete(self, request):
+        user = request.user
+        user.otp_secret = None
+        user.is_2fa_enabled = False
+        user.is_2fa_verified = False
+        user.save()
+        return Response({"message": "2FA has been disabled"}, status=status.HTTP_200_OK)
+    

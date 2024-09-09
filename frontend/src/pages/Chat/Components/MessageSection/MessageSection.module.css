@@ -111,6 +111,7 @@
     overflow: auto;
 }
 /*****************************************/
+
 .ChatInputHolder{
     position: relative;
     display: flex;
@@ -136,9 +137,7 @@
     width: 95%;
 }
 
-.ImportButton{
 
-}
 
 .ImportOptions{
     position: absolute;
@@ -293,7 +292,6 @@
 }
 
 .MsgIncom{
-
     animation: sliding linear;
     animation-timeline: View();
     animation-range: entry -1000%  30%;

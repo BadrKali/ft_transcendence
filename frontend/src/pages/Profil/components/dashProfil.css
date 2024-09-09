@@ -65,6 +65,7 @@
     display: flex;
     align-items: center;
    justify-content: space-between;
+
     /* border: solid 1px white; */
 
    margin-right: 70px;
@@ -115,4 +116,12 @@
     border-radius: 20px;
     background-color: var(--active-color);
     transition: width 1s ease-in-out;
+}
+
+
+.BlockedMessage{
+
+    font-size: 20px;
+    margin-right: 10px;
+
 }

@@ -2,6 +2,8 @@ from channels.generic.websocket import AsyncWebsocketConsumer
 import json
 from django.db.models import Q
 from channels.db import database_sync_to_async
+from django.shortcuts import get_object_or_404
+from authentication.models import User
 
 class NotificationConsumer(AsyncWebsocketConsumer):
     async def connect(self):
@@ -36,8 +38,9 @@ class NotificationConsumer(AsyncWebsocketConsumer):
 
     @database_sync_to_async
     def set_user_status(self, is_online):
-        self.user.is_online = is_online
-        self.user.save()
+        user = get_object_or_404(User, id=self.user.id)
+        user.is_online = is_online
+        user.save()
 
     async def broadcast_status_update(self, online):
         friends_ids = await self.get_user_friends()
@@ -53,17 +56,6 @@ class NotificationConsumer(AsyncWebsocketConsumer):
                 }
             )
 
-    async def status_update(self, event):
-        user_id = event['user_id']
-        status = event['status']
-        await self.send(text_data=json.dumps({
-            'type': 'status_update',
-            'user_id': user_id,
-            'status': status
-        }))
-
-        
-
     @database_sync_to_async
     def get_user_friends(self):
         from .models import Friendship
@@ -74,6 +66,22 @@ class NotificationConsumer(AsyncWebsocketConsumer):
         ]
         return list(friends_ids)
 
+    async def status_update(self, event):
+        user_id = event['user_id']
+        status = event['status']
+        await self.send(text_data=json.dumps({
+            'type': 'status_update',
+            'user_id': user_id,
+            'status': status
+        }))
+    async def join_game(self, event):
+        print("hello from join Game")
+        message = event['message']
+        await self.send(text_data=json.dumps({
+            'type' : 'join_game',
+            'message': message
+        }))
+        
     async def notification_message(self, event):
         message = event['message']
         await self.send(text_data=json.dumps({
@@ -81,12 +89,14 @@ class NotificationConsumer(AsyncWebsocketConsumer):
             'message': message
         }))
 
-
-
-
-
-
-
+    async def notification_match(self, event):
+        message = event['message']
+        sender_id = event['sender']
+        await self.send(text_data=json.dumps({
+            'type' : 'match_notification',
+            'message': message,
+            'sender_id': sender_id
+        }))
 
 class EchoConsumer(AsyncWebsocketConsumer):
     async def connect(self):

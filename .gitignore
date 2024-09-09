@@ -1,6 +1,6 @@
 /env
 .DS_Store
-
+.env.database
 
 # Python bytecode files
 __pycache__/
@@ -17,6 +17,7 @@ __pycache__/
 *.sqlite3
 
 # Virtual environment
+evn/
 venv/
 myenv/
 env_test/
@@ -41,4 +42,4 @@ staticfiles/
 node_modules/
 
 # Media files
-media/
+

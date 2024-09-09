@@ -2,6 +2,7 @@ import React from 'react'
 import './searchItem.css'
 
 function SearchItem({result}) {
+  // ALSO
   return (
     <div className='SearchItem-container'> 
         <div className="search-image">

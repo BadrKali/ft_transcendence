@@ -1,11 +1,50 @@
-import React from 'react'
 import './leaderBoard.css'
 import FirstThreeItem from './components/FirstThreeItem'
 import LeaderBoardData from '../../assets/LeaderBoardData'
 import RestItem from './components/RestItem'
+import React, { useEffect, useState } from 'react';
+import useAuth from '../../hooks/useAuth'
 
 const LeaderBoard = () => {
-  const [first, second, third, ...rest] = LeaderBoardData;
+  const [leaderboardData, setLeaderboardData] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const {auth} = useAuth()
+
+  useEffect(() => {
+    const fetchLeaderboardData = async () => {
+      try {
+        const response = await fetch('http://localhost:8000/user/leaderboard', {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${auth.accessToken}`,
+          },
+        });
+  
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+  
+        const data = await response.json();
+        setLeaderboardData(data);
+      } catch (error) {
+        setError('Failed to fetch leaderboard data');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+  
+    fetchLeaderboardData();
+  }, []);
+
+  console.log(leaderboardData)
+
+
+  if (isLoading) return <div>Loading...</div>;
+  if (error) return <div>Error: {error}</div>;
+
+  const [first, second, third, ...rest] = leaderboardData;
+
 
   return (
     <div className='leaderBoard-Container'>

@@ -3,13 +3,13 @@ import './friendItem.css'
 import Lottie from 'lottie-react';
 import online from '../../Chat/ChatAssets/online.json'
 import offline from '../../Chat/ChatAssets/offline.json'
+import { useTranslation } from 'react-i18next';
 
 function FriendsItem({list, friendsStatus}) {
   const [isonline, setOnline] = useState(false);
+  const { t } = useTranslation();
 
-  useEffect(() => {
-    console.log(list.username + "   ", list.is_online )
-  }, [])
+
   useEffect(() => {
     if (typeof friendsStatus === 'object' && friendsStatus !== null) {
       const friendStatus = friendsStatus[list.id];
@@ -51,7 +51,7 @@ function FriendsItem({list, friendsStatus}) {
                 <p>{list.username}</p>
             </div>
             <div className='FriendRank'>
-                <p  style={{color: '#8D93AC'}}>Rank : Gold</p>
+                <p  style={{color: '#8D93AC'}}>{t('Rank')} : Gold</p>
             </div>
        </div>
     </div>

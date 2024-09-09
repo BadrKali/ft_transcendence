@@ -27,10 +27,12 @@ def RetreiveContacts(request):
     ChatList = [{ **contact,
                   "unreadMessages": message.UnreadMessageBeetwen(request.user.id, contact.get("id")),
                   "lastMessage": message.getLastMessage(request.user.id, contact.get("id")).content,
+                  "created_at" : message.getLastMessage(request.user.id, contact.get("id")).created_at,
                   "lastTime": format_date(message.getLastMessage(request.user.id, contact.get("id")).created_at),
                   "status": message.GetUserStatus(contact.get("id"))
                 } for contact in ContactSerializer.data 
                 ]
+    ChatList = sorted(ChatList, key=lambda x: x['created_at'], reverse=True)
     return Response(ChatList, status=status.HTTP_200_OK)
 # I may should Sort conversation using created att when Displaying it on frontend! 
 

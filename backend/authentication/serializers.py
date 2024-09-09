@@ -20,7 +20,7 @@ class CurrentUserSettingsSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ['username', 'avatar', 'email', 'old_password', 'new_password', 'avatar_type']
+        fields = ['id', 'username', 'avatar', 'email', 'old_password', 'new_password', 'avatar_type']
         extra_kwargs = {
             'username': {'required': False},
             'email': {'required': False},
@@ -71,7 +71,6 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         if avatar_type:
             validated_data['avatar'] = f'avatars/{avatar_type}.png'
         user = User.objects.create(**validated_data)
-        # player = Player.objects.create(user=user)
         user.set_password(validated_data['password'])
         user.save()
         return user

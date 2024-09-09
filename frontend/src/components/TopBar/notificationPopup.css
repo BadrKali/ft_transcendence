@@ -32,6 +32,23 @@
   margin-bottom: 40px;
 }
 
+.typeNotif{
+  color: #FFFFFF; 
+  height: 60px;
+  margin-bottom: 20px;
+}
+
+.TounoumentTitle{
+  color: #FFFFFF; 
+  height: 60px;
+  margin-bottom: 20px;
+}
+
+.popup-item{
+  width: 150px;
+  height: 60px;
+}
+
 .modal .NotifMessage {
   font-size: 16px; 
   line-height: 1.5;

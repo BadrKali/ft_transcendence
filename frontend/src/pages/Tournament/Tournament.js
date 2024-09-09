@@ -27,12 +27,6 @@ const Tournament = () => {
           <Icon name='bracket' className='tournament-icon'/>
           <span>Bracket</span>
         </div>
-        <div className={`tournament-menu-item ${tournamentMenuItem === 'logs' ? 'active-tournament-menu' : ''}`} onClick={() => {
-          setTournamentMenuItem('logs')
-        }}>
-          <Icon name='history' className='tournament-icon'/>
-          <span>Logs</span>
-        </div>
       </div>
       <div className='tournament-menu-content'>
         {tournamentMenuItem === 'overview' && <TournamentInfo/>}
