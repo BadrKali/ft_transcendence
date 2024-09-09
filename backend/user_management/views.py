@@ -18,7 +18,7 @@ from channels.layers import get_channel_layer
 from django.http import HttpResponseForbidden
 from .models import Tournament, TournamentInvitation, TournamentParticipants, Friendship, Player, FriendInvitation, BlockedUsers, Notification, XPHistory
 from .serializers import TournamentSerializer, TournamentCreateSerializer , TournamentInvitationSerializer, TournamentParticipantsSerializer, FriendInvitation, NotificationSerializer,  PlayerSerializer, FriendshipSerializer
-
+from django.db.models import Case, When, Value, IntegerField
 
 class FriendRequestManagementView(APIView):
     
@@ -400,3 +400,21 @@ class XPHistoryView(APIView):
             'xp': [entry.xp for entry in xp_history]
         }
         return Response(data)
+
+
+
+
+class LeaderboardView(APIView):
+    def get(self, request):
+        players = Player.objects.annotate(
+            rank_order=Case(
+                When(rank='GOLD', then=Value(1)),
+                When(rank='SILVER', then=Value(2)),
+                When(rank='BRONZE', then=Value(3)),
+                default=Value(4),
+                output_field=IntegerField(),
+            )
+        ).order_by('rank_order', '-xp')
+        
+        serializer = PlayerSerializer(players, many=True)
+        return Response(serializer.data)
