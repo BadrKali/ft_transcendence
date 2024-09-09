@@ -38,7 +38,7 @@ SECRET_KEY = 'django-insecure-*vhv@l8+%lbvd^ag(ste@uc^ww0yim&%j1!km-ixvp$k%fnxh&
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['.vercel.app']
 
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": (
@@ -120,6 +120,7 @@ DATABASES = {
         'PORT'    : os.getenv('POSTGRES_PORT'),
     }
 }
+
 # DATABASES = {
 #     'default': {
 #         'ENGINE': 'django.db.backends.sqlite3',
@@ -187,11 +188,19 @@ CORS_ALLOW_CREDENTIALS = True
 #         "BACKEND": "channels.layers.InMemoryChannelLayer",
 #     }
 # }
+
+
+REDIS_URL = f"rediss://:{os.getenv('REDIS_PASSWORD')}@{os.getenv('REDIS_ADDRESS')}:6379/0"
+
+
 CHANNEL_LAYERS = {
-    'default': {
-        'BACKEND': 'channels_redis.core.RedisChannelLayer',
-        'CONFIG': {
-            'hosts': [('redis', 6379)],
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [{
+                "address": REDIS_URL,
+                "ssl_cert_reqs": "required",  # Ensure SSL certificate is verified
+            }],
         },
     },
 }
