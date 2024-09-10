@@ -273,11 +273,10 @@ class GameConsumer(AsyncWebsocketConsumer):
     async def disconnect(self, close_code):
         player_str = await self.get_player_str()
         self.game_state.update_game_running(False)
-        winner , loser = await self.game_state.get_winner_loser()
         is_game_over = await self.game_state.get_game_over()
-        if is_game_over:
+        if is_game_over or self.room.is_waiting:
             print("Game is already over, handling disconnect accordingly")
-            await self.leave_room("game_over")
+            await self.leave_room("game_canceled")
             return
         elif self.game_state.remove_player(player_str):
             currentWinner = await self.game_state.get_player_username(self.player)
