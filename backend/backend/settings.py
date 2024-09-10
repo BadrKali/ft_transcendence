@@ -38,7 +38,7 @@ SECRET_KEY = 'django-insecure-*vhv@l8+%lbvd^ag(ste@uc^ww0yim&%j1!km-ixvp$k%fnxh&
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['.vercel.app']
+ALLOWED_HOSTS = ['*']
 
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": (
@@ -177,8 +177,8 @@ AUTH_USER_MODEL = 'authentication.User'
 CORS_ALLOW_ALL_ORIGINS = True
 
 CORS_ALLOWED_ORIGINS = [
-    "https://fttranscendencebackend.vercel.app",
-    "https://fttranscendencebackend.vercel.app",
+    "http://frontend:3000",
+    "http://localhost:3000",
 ]
 
 CORS_ALLOW_CREDENTIALS = True
