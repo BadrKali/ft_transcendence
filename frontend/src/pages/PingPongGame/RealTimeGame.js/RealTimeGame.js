@@ -51,7 +51,6 @@ const RealTimeGame = ({ mode }) => {
     const [sendWaiting, setSendWaiting] = useState(false);
     const [gameOver, setGameOver] = useState();
 
-
     useEffect(() => {
         switch (mode) {
             case "invite":

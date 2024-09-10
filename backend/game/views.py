@@ -7,8 +7,8 @@ from rest_framework import status
 from rest_framework.views import APIView
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
-from .models import GameHistory, Achievement, UserAchievement, GameSettings, GameRoom, GameChallenge, InviteGameRoom
-from .serializers import GameHistorySerializer, AchievementSerializer, UserAchievementSerializer, GameSettingsSerializer, GameRoomSerializer, InviteGameRoomSerializer
+from .models import GameHistory, Achievement, UserAchievement, GameSettings, GameRoom, GameChallenge, InviteGameRoom, TournamentGameRoom
+from .serializers import GameHistorySerializer, AchievementSerializer, UserAchievementSerializer, GameSettingsSerializer, GameRoomSerializer, InviteGameRoomSerializer, TournamentGameRoomSerializer
 from user_management.models import Player, Notification
 from authentication .models import User
 from django.shortcuts import get_object_or_404
@@ -223,3 +223,14 @@ class InviteGameRoomView(APIView):
             return Response(serializer.data, status=status.HTTP_200_OK)
         except InviteGameRoom.DoesNotExist:
             return Response({"error": "Game room not found"}, status=status.HTTP_404_NOT_FOUND)
+
+class TournamentGameRoomView(APIView):
+    def get(self, request, room_id):
+        try:
+            room = TournamentGameRoom.objects.get(id=room_id)
+            print(f"{room.player1}")
+            print(f"{room.player2}")
+            serializer = TournamentGameRoomSerializer(room)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except TournamentGameRoom.DoesNotExist:
+            return Response({"error": "Game room not found"}, status=status.HTTP_404_NOT_FOUND) 

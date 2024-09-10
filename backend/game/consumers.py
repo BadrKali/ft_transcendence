@@ -316,6 +316,8 @@ class GameConsumer(AsyncWebsocketConsumer):
             await self.handle_random_action()
         elif action == "invite":
             await self.handle_invite_action()
+        elif action == "tournament":
+            await self.handle_tournament_action()
         elif action == "player_movement":
             if self.game_state: 
                 username = data.get('user')
@@ -380,7 +382,6 @@ class GameConsumer(AsyncWebsocketConsumer):
             if invite_game_room:
                 self.room = invite_game_room
                 await self.handle_reconnection(player_str, invite_game_room)
-                self.room = invite_game_room
                 return
             invite_game_room = await sync_to_async(
                 lambda: InviteGameRoom.objects.filter(
@@ -404,6 +405,37 @@ class GameConsumer(AsyncWebsocketConsumer):
         except Exception as e:
             print(f"{e}")
 
+    async def handle_tournament_action(self):
+        from .models import TournamentGameRoom
+        try:
+            player_str = await self.get_player_str()
+            tournament_game_room = await self.check_for_tournament_reconnection(player_str)
+            if tournament_game_room:
+                self.room = tournament_game_room
+                await self.handle_reconnection(player_str, tournament_game_room)
+                return
+            tournament_game_room = await sync_to_async(
+                lambda: TournamentGameRoom.objects.filter(
+                    Q(player1=self.player) | Q(player2=self.player)
+                ).first()
+            )()
+            if tournament_game_room:
+                self.room = tournament_game_room
+                self.room_name = f"game_room_{tournament_game_room.id}"
+                self.room_id = tournament_game_room.id
+                self.room_group_name = self.room_name
+                await self.channel_layer.group_add(self.room_group_name, self.channel_name)
+                await sync_to_async(tournament_game_room.set_player_connected)(self.player)
+                await sync_to_async(tournament_game_room.check_and_update_status)()
+                self.game_state = game_state_manager.get_or_create_game_state(self.room_id)
+                if not tournament_game_room.is_waiting:
+                    await self.game_state.add_player("", tournament_game_room)
+                    await self.notify_players(tournament_game_room)
+            else:
+                print("TournamentGameRoom not found")
+        except Exception as e:
+            print(f"{e}")
+
     async def handle_random_action(self):
         from .models import GameRoom
         player_str = await self.get_player_str()
@@ -419,7 +451,28 @@ class GameConsumer(AsyncWebsocketConsumer):
             await self.notify_players(room)
         else:
             await self.notify_waiting_player(room)
-
+    
+    async def check_for_tournament_reconnection(self, player_str):
+        from .models import TournamentGameRoom
+        try :
+            room = await sync_to_async(
+                lambda: TournamentGameRoom.objects.filter(
+                    Q(player1=self.player) | Q(player2=self.player)
+                ).first()
+            )()
+            if room:
+                self.game_state = game_state_manager.get_or_create_game_state(self.room_id)
+                if not self.game_state.get_self_player_status(player_str):
+                    self.room_name = f"game_room_{room.id}"
+                    self.room_id = room.id
+                    self.room_group_name = self.room_name
+                    await self.channel_layer.group_add(self.room_group_name, self.channel_name)
+                else:
+                    return None
+            return room if room else None
+        except TournamentGameRoom.DoesNotExist:
+            return None
+        
     async def check_for_invite_reconnection(self, player_str):
         from .models import InviteGameRoom
         try :
