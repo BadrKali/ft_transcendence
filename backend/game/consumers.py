@@ -136,7 +136,10 @@ class GameState:
         print(f"{username} status is {status}")
         player = self.state['players'][username]
         player['status'] = status
-    
+
+    async def get_self_player_status(self, username):
+        return self.state['players'][username]["status"]
+
     async def get_players_status(self):
         players = self.state['players']
         player1 = list(players.values())[0]
@@ -259,6 +262,7 @@ class GameConsumer(AsyncWebsocketConsumer):
             self.room_group_name = None
             self.game_state = None
             self.room = None
+            self.room_id = None
             await self.accept()
             asyncio.sleep(3)
             await self.send(text_data=json.dumps({
@@ -322,7 +326,7 @@ class GameConsumer(AsyncWebsocketConsumer):
             asyncio.create_task(self.start_game_loop(self.room))
         elif action == "im_waiting":
             room = self.get_game_room()
-            await self.waiting_for_reconnection(room) 
+            await self.waiting_for_reconnection(room)
 
     async def waiting_for_reconnection(self, room):
         timeout = 10
@@ -371,12 +375,20 @@ class GameConsumer(AsyncWebsocketConsumer):
     async def handle_invite_action(self):
         from .models import InviteGameRoom
         try:
+            player_str = await self.get_player_str()
+            invite_game_room = await self.check_for_invite_reconnection(player_str)
+            if invite_game_room:
+                self.room = invite_game_room
+                await self.handle_reconnection(player_str, invite_game_room)
+                self.room = invite_game_room
+                return
             invite_game_room = await sync_to_async(
                 lambda: InviteGameRoom.objects.filter(
                     Q(player1=self.player) | Q(player2=self.player)
                 ).first()
             )()
             if invite_game_room:
+                self.room = invite_game_room
                 self.room_name = f"game_room_{invite_game_room.id}"
                 self.room_id = invite_game_room.id
                 self.room_group_name = self.room_name
@@ -387,7 +399,6 @@ class GameConsumer(AsyncWebsocketConsumer):
                 if not invite_game_room.is_waiting:
                     await self.game_state.add_player("", invite_game_room)
                     await self.notify_players(invite_game_room)
-                    asyncio.create_task(self.start_game_loop(invite_game_room))
             else:
                 print("InviteGameRoom not found")
         except Exception as e:
@@ -396,7 +407,7 @@ class GameConsumer(AsyncWebsocketConsumer):
     async def handle_random_action(self):
         from .models import GameRoom
         player_str = await self.get_player_str()
-        room = await self.check_for_reconnection(player_str)
+        room = await self.check_for_random_reconnection(player_str)
         if room:
             self.room = room
             await self.handle_reconnection(player_str, room)
@@ -409,7 +420,29 @@ class GameConsumer(AsyncWebsocketConsumer):
         else:
             await self.notify_waiting_player(room)
 
-    async def check_for_reconnection(self, player_str):
+    async def check_for_invite_reconnection(self, player_str):
+        from .models import InviteGameRoom
+        try :
+            room = await sync_to_async(
+                lambda: InviteGameRoom.objects.filter(
+                    Q(player1=self.player) | Q(player2=self.player)
+                ).first()
+            )()
+            if room:
+                self.game_state = game_state_manager.get_or_create_game_state(self.room_id)
+                if not self.game_state.get_self_player_status(player_str):
+                    print("HELLO FROM CHECK INVITE RECNNECTION")
+                    self.room_name = f"game_room_{room.id}"
+                    self.room_id = room.id
+                    self.room_group_name = self.room_name
+                    await self.channel_layer.group_add(self.room_group_name, self.channel_name)
+                else:
+                    return None
+            return room if room else None
+        except InviteGameRoom.DoesNotExist:
+            return None
+
+    async def check_for_random_reconnection(self, player_str):
         from .models import GameRoom
         try :
             room = await sync_to_async(
