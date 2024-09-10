@@ -16,7 +16,7 @@ const PlayerSelection = ({ onPlayerSelect, onCancel }) => {
   const ws = useRef(null);
 
   useEffect(() => {
-    ws.current = new WebSocket(`${WS_BACKEND_URL}/ws/notifications/?token=${auth.accessToken}`);
+    ws.current = new WebSocket(`${WS_BACKEND_URL}/wss/notifications/?token=${auth.accessToken}`);
     ws.current.onopen = () => {
       console.log('WebSocket connection established');
     };

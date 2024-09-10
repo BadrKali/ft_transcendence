@@ -6,7 +6,7 @@ const WS_BACKEND_URL = process.env.REACT_APP_WS_BACKEND_URL;
 
 const AchievementsPopup = () => {
   useEffect(() => {
-      const socket = new WebSocket(`${WS_BACKEND_URL}/ws/test/`);
+      const socket = new WebSocket(`${WS_BACKEND_URL}/wss/test/`);
 
       socket.onopen = function(event) {
           console.log('WebSocket connection opened');
