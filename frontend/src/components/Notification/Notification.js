@@ -12,7 +12,7 @@ const Notification = () => {
 
     useEffect(() => {
 const WS_BACKEND_URL = process.env.REACT_APP_WS_BACKEND_URL;
-        const ws = new WebSocket(`${WS_BACKEND_URL}/wss/notifications/?token=${auth.accessToken}`);
+        const ws = new WebSocket(`${WS_BACKEND_URL}/ws/notifications/?token=${auth.accessToken}`);
 
         ws.onopen = () => {
             console.log("WebSocket connected.");

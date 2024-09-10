@@ -62,7 +62,7 @@ export const RealTimeProvider = ({ children }) => {
         if (!auth.accessToken) {
             return;
         }
-        const ws = new WebSocket(`${WS_BACKEND_URL}/wss/notifications/?token=${auth.accessToken}`);
+        const ws = new WebSocket(`${WS_BACKEND_URL}/ws/notifications/?token=${auth.accessToken}`);
 
         ws.onopen = async () => {
             console.log("Client Connected to the server");

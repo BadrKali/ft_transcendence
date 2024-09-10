@@ -42,8 +42,8 @@ export const SocketClientProvider = ({children}) =>{
   useEffect(() => {
     if (!auth.accessToken)
         return;
-    const clientSocket = new WebSocket(`${WS_BACKEND_URL}/wss/chat/?token=${auth.accessToken}`);
-    const forBotSocket = new WebSocket(`${WS_BACKEND_URL}/wss/chatbot/?token=${auth.accessToken}`)
+    const clientSocket = new WebSocket(`${WS_BACKEND_URL}/ws/chat/?token=${auth.accessToken}`);
+    const forBotSocket = new WebSocket(`${WS_BACKEND_URL}/ws/chatbot/?token=${auth.accessToken}`)
     
     clientSocket.onopen = () => {
         setsocket(clientSocket);

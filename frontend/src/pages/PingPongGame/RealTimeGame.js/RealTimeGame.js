@@ -89,7 +89,7 @@ const RealTimeGame = ({ mode }) => {
         if (socket) {
             socket.close();
         }
-        const ws = new WebSocket(`${WS_BACKEND_URL}/wss/game/?token=${auth.accessToken}`);
+        const ws = new WebSocket(`${WS_BACKEND_URL}/ws/game/?token=${auth.accessToken}`);
         ws.onopen = () => ws.send(JSON.stringify({ action: mode}));
         ws.onmessage = handleWebSocketMessage;
         ws.onclose = () => console.log("WebSocket connection closed");
