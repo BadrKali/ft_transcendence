@@ -216,8 +216,6 @@ const RealTimeGame = ({ mode }) => {
         canvas.width = gameState.canvas.width;
         canvas.height = gameState.canvas.height;
         const { ball, net } = gameState;
-        // const user1 = gameState.players[player1?.username];
-        // const user2 = gameState.players[player2?.username];
         const players = Object.values(gameState.players);
         if (players.length >= 2) {
             setScore1(players[0].score || 0);

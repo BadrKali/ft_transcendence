@@ -124,6 +124,13 @@ class GameState:
         player = self.state['players'][username]
         player['status'] = True
         print(f"Current players: {list(self.state['players'].keys())}")
+    
+    async def get_game_players_status(self):
+        players = self.state['players']
+        player_statuses = {}
+        for username, player in players.items():
+            player_statuses[username] = player['status']
+        return player_statuses
 
     async def update_player_status(self, username, status):
         print(f"{username} status is {status}")
@@ -287,12 +294,16 @@ class GameConsumer(AsyncWebsocketConsumer):
             await self.leave_room("game_canceled")
         else:
             await self.game_state.update_player_status(player_str, False)
-            await self.channel_layer.group_send(
-                self.room_group_name, {
-                    'type': 'send_message',
-                    'message': { 'action': 'opponent_disconnected' },
-                }
-            )
+            if await self.check_game_over():
+                await self.leave_room("game_canceled")
+                return
+            else:
+                await self.channel_layer.group_send(
+                    self.room_group_name, {
+                        'type': 'send_message',
+                        'message': { 'action': 'opponent_disconnected' },
+                    }
+                )
 
     async def receive(self, text_data):
         data = json.loads(text_data)
@@ -302,7 +313,7 @@ class GameConsumer(AsyncWebsocketConsumer):
         elif action == "invite":
             await self.handle_invite_action()
         elif action == "player_movement":
-            if self.game_state:
+            if self.game_state: 
                 username = data.get('user')
                 direction = data.get('direction')
                 self.game_state.player_mouvement(username, direction)
@@ -330,6 +341,12 @@ class GameConsumer(AsyncWebsocketConsumer):
             'action': 'you_won',
             'winner': winner
         }))
+
+    async def check_game_over(self):
+        player_statuses = await self.game_state.get_game_players_status()
+        if all(status == False for status in player_statuses.values()):
+            return True
+        return False
 
     @database_sync_to_async
     def delete_room(self):
