@@ -177,8 +177,8 @@ AUTH_USER_MODEL = 'authentication.User'
 CORS_ALLOW_ALL_ORIGINS = True
 
 CORS_ALLOWED_ORIGINS = [
-    "http://frontend:3000",
-    "http://localhost:3000",
+    "https://fttranscendencebackend.vercel.app",
+    "https://fttranscendencebackend.vercel.app",
 ]
 
 CORS_ALLOW_CREDENTIALS = True

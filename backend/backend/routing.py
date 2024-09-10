@@ -1,6 +1,6 @@
 from game.consumers import GameConsumer
-from user_management.consumers import NotificationConsumer
-from chat.consumers import ChatConsumer, ChatBotConsumer
+from user_management .consumers import NotificationConsumer
+from chat .consumers import ChatConsumer, ChatBotConsumer
 
 from django.urls import path
 
