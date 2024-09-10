@@ -3,22 +3,24 @@ import './GameChallengeNotification.css';
 import challenge from  "../../assets/Icon/challangefriend.svg"
 import accept from  "../../assets/Icon/accept.png"
 import reject from  "../../assets/Icon/reject.png"
-const GameChallengeNotification = ({notif, message, onAccept, onReject}) => {
 
+const GameChallengeNotification = ({notif, message, onAccept, onReject}) => {
     const [timeLeft, setTimeLeft] = useState(10);
 
     useEffect(() => {
-        if (timeLeft === 0) {
-            onReject(notif.sender_id);
-            return;
-        }
-
         const intervalId = setInterval(() => {
-            setTimeLeft(prev => prev - 1);
+            setTimeLeft(prevTime => {
+                if (prevTime <= 1) {
+                    clearInterval(intervalId);
+                    onReject(notif.sender_id);
+                    return 0;
+                }
+                return prevTime - 1;
+            });
         }, 1000);
 
         return () => clearInterval(intervalId);
-    }, [timeLeft, onReject, notif.sender_id]);
+    }, [onReject, notif.sender_id]);
 
     return (
         <div className="game-challenge-notification">
