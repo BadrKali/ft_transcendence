@@ -308,8 +308,7 @@ class GameConsumer(AsyncWebsocketConsumer):
                 self.game_state.player_mouvement(username, direction)
                 await self.send_player_movement_update()
         elif action == "got_it":
-            room = self.get_game_room()
-            asyncio.create_task(self.start_game_loop(room))
+            asyncio.create_task(self.start_game_loop(self.room))
         elif action == "im_waiting":
             room = self.get_game_room()
             await self.waiting_for_reconnection(room) 
@@ -319,7 +318,6 @@ class GameConsumer(AsyncWebsocketConsumer):
         interval = 1 
         total_time_waited = 0
         winner = await self.game_state.get_player_username(self.player)
-        loser = None
         while total_time_waited < timeout:
             if await self.game_state.get_players_status():
                 print("Player has reconnected.")
@@ -384,12 +382,11 @@ class GameConsumer(AsyncWebsocketConsumer):
         room = await self.check_for_reconnection(player_str)
         if room:
             self.room = room
-            await self.game_state.reconnect_player(player_str, room)
             await self.handle_reconnection(player_str, room)
             return
         room = await self.find_or_create_room(player_str)
+        self.room = room
         if not room.is_waiting:
-            self.room = room
             await self.game_state.add_player(player_str, room)
             await self.notify_players(room)
         else:
@@ -489,6 +486,9 @@ class GameConsumer(AsyncWebsocketConsumer):
 
     @sync_to_async
     def update_xp(self, winner, loser, room):
+        from user_management.models import Player
+        if not room:
+            return
         try:
             player1 = self.game_state.get_player_username(room.player1)
             if player1 == winner:

@@ -86,9 +86,6 @@ const RealTimeGame = ({ mode }) => {
     }, [currentUser, player1, player2])
 
     const initializeWebSocket = () => {
-        if (socket) {
-            socket.close();
-        }
         const ws = new WebSocket(`${WS_BACKEND_URL}/ws/game/?token=${auth.accessToken}`);
         ws.onopen = () => ws.send(JSON.stringify({ action: mode}));
         ws.onmessage = handleWebSocketMessage;
@@ -219,10 +216,13 @@ const RealTimeGame = ({ mode }) => {
         canvas.width = gameState.canvas.width;
         canvas.height = gameState.canvas.height;
         const { ball, net } = gameState;
-        const user1 = gameState.players[player1?.username];
-        const user2 = gameState.players[player2?.username];
-        setScore1(user1?.score || 0);
-        setScore2(user2?.score || 0);
+        // const user1 = gameState.players[player1?.username];
+        // const user2 = gameState.players[player2?.username];
+        const players = Object.values(gameState.players);
+        if (players.length >= 2) {
+            setScore1(players[0].score || 0);
+            setScore2(players[1].score || 0);
+        }
 
         const drawRect = (x, y, w, h, color) => {
             ctx.fillStyle = color;
@@ -264,15 +264,10 @@ const RealTimeGame = ({ mode }) => {
             ctx.fillRect(0, 0, canvas.width, canvas.height);
             drawNet();
 
-            if (user1) {
-                ctx.fillStyle = user1.color;
-                drawRoundedRect(user1.x, user1.y, user1.width, user1.height, 9);
-            }
-
-            if (user2) {
-                ctx.fillStyle = user2.color;
-                drawRoundedRect(user2.x, user2.y, user2.width, user2.height, 9);
-            }
+            Object.values(gameState.players).forEach(player => {
+                ctx.fillStyle = player.color;
+                drawRoundedRect(player.x, player.y, player.width, player.height, 9);
+            });
 
             drawArc(ball.x, ball.y, ball.radius, ball.color);
         };
@@ -288,7 +283,6 @@ const RealTimeGame = ({ mode }) => {
             lastUpdateTime.current = timestamp;
             animationFrameId.current = requestAnimationFrame(gameLoop);
         };
-
         animationFrameId.current = requestAnimationFrame(gameLoop);
     };
 
@@ -349,7 +343,6 @@ const RealTimeGame = ({ mode }) => {
         if (auth.accessToken) {
             initializeWebSocket();
         }
-
     }, [auth.accessToken]);
 
     useEffect(() => {
