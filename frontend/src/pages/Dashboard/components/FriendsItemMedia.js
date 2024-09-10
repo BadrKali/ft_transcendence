@@ -4,6 +4,10 @@ import Lottie from 'lottie-react';
 import online from '../../Chat/ChatAssets/online.json'
 import offline from '../../Chat/ChatAssets/offline.json'
 
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
+
+
+
 function FriendsItemMedia({list, friendsStatus}) {
   const [isonline, setOnline] = useState(false);
 
@@ -39,7 +43,7 @@ function FriendsItemMedia({list, friendsStatus}) {
   return (
     <div className='listFriendCardMedia'>
        <div className='firendImageMedia'>
-          <img src={`http://127.0.0.1:8000${list.avatar}`}
+          <img src={`${BACKEND_URL}${list.avatar}`}
           style={{ filter: isonline ? 'none' : 'grayscale(100%)' }}/>
            <div className='FriendStatusMedia'>
               {isonline ? <div className="statusOnlineMedia"> <Lottie animationData={online} /></div> : 

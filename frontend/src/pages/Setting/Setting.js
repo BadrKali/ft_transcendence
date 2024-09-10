@@ -13,11 +13,11 @@ import { UserContext } from '../../context/UserContext';
 import TwoFaModal from './components/TwoFaModal/TwoFaModal';
 import {fetchData} from './components/TwoFaModal/TwoFaModal'
 
-const SETTING_ENDPOINT = "http://127.0.0.1:8000/auth/user/me/"
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
+const SETTING_ENDPOINT = `${BACKEND_URL}/auth/user/me/`
 
 const fetchQrCodeUrl = async (token) => {
-  const response = await fetch('http://localhost:8000/auth/enable2fa/', {
+  const response = await fetch(`${BACKEND_URL}/auth/enable2fa/`, {
     method: 'GET',
     headers: {
       authorization: `Bearer ${token}`
@@ -37,6 +37,8 @@ const Setting = () => {
   const [showTwoFaModal, setShowTwoFaModal] = useState(false);
   const [qrCodeUrl, setQrCodeUrl] = useState(null);
 
+  const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
+
   const toggleTwoFaModal = async () => {
     const data = await fetchQrCodeUrl(auth.accessToken);
     console.log(data);
@@ -49,7 +51,7 @@ const Setting = () => {
   }
 
   const disableTwoFa = async () => {
-    const response = await fetch('http://localhost:8000/auth/disable2fa/', {
+    const response = await fetch(`${BACKEND_URL}/auth/disable2fa/`, {
       method: 'DELETE',
       headers: {
         authorization: `Bearer ${auth.accessToken}`

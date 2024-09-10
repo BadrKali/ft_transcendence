@@ -4,6 +4,8 @@ import './dashProfil.css'
 import { useTranslation } from 'react-i18next';
 import { avatars } from '../../../assets/assets'
 
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
+
 function DashProfil({profilData}) {
   const [progress, setProgress] = useState('0%');
   const { t, i18n } = useTranslation();
@@ -25,7 +27,7 @@ function DashProfil({profilData}) {
             <div className="userInfo">
                 <div className='userContainer'>
                     <div className="userImage" >
-                        <img src={`http://127.0.0.1:8000${profilData.avatar}`} alt={`${profilData.username} avatar`} />
+                        <img src={`${BACKEND_URL}${profilData.avatar}`} alt={`${profilData.username} avatar`} />
                     </div>
                     <div className="userProgress">
                         <div className="progresInfo">

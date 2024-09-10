@@ -28,7 +28,7 @@ function NotificationItem({notif, onClick }) {
   return (
       <div className="notifCard" onClick={() => onClick(notif)}>
         <div className="notifImage">
-            <img src={`http://127.0.0.1:8000${profilData.avatar}`} alt="profil_pic" />
+            <img src={`${BACKEND_URL}${profilData.avatar}`} alt="profil_pic" />
         </div>
         <div className="notifInfo">
             <p>{profilData.username}<span>{notif.message}</span></p>
