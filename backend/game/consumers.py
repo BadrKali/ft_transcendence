@@ -8,7 +8,6 @@ from django.db.models import Q
 import time
 
 class GameState:
-    # WINNING_SCORE = 2
     def __init__(self):
         self.state = {
             'canvas': {
@@ -35,8 +34,15 @@ class GameState:
             'game_over': False,
             'game_running': True,
             'keep_running': True,
+            'game_started': False,
         }
 
+    async def get_game_started(self):
+        return self.state['game_started']
+
+    async def update_game_started(self, status):
+        self.state['game_started'] = status
+    
     def get_keep_running(self):
         return self.state['keep_running']
 
@@ -274,22 +280,24 @@ class GameConsumer(AsyncWebsocketConsumer):
         player_str = await self.get_player_str()
         self.game_state.update_game_running(False)
         is_game_over = await self.game_state.get_game_over()
-        if is_game_over or self.room.is_waiting:
-            print("Game is already over, handling disconnect accordingly")
+        is_game_started = await self.game_state.get_game_started()
+
+        if is_game_over or not is_game_started:
+            print("Game is already over or hasn't started, handling disconnect accordingly")
             await self.leave_room("game_canceled")
             return
         elif self.game_state.remove_player(player_str):
-            currentWinner = await self.game_state.get_player_username(self.player)
-            disconnectedPlayer = loser
-            await self.update_xp(self.player, disconnectedPlayer, self.room) 
-            await self.save_game_history(currentWinner, disconnectedPlayer, self.room)
+            current_player_username = await self.game_state.get_player_username(self.player)
+            opponent_username = next(username for username in self.game_state.state['players'].keys() if username != current_player_username)
+            await self.update_xp(self.player, current_player_username, self.room) 
+            await self.save_game_history(opponent_username, current_player_username, self.room)
             await self.channel_layer.group_send(
                 self.room_group_name,
                 {
                     'type': 'send_message',
                     'message': {
                         'action': 'game_canceled',
-                        'winner': currentWinner,
+                        'winner': opponent_username,
                         'game_state': self.game_state.get_state(),
                     }
                 }
@@ -448,6 +456,7 @@ class GameConsumer(AsyncWebsocketConsumer):
         if not room.is_waiting:
             await self.game_state.add_player(player_str, room)
             await self.notify_players(room)
+            await self.game_state.update_game_started(True)
         else:
             await self.notify_waiting_player(room)
     
@@ -471,7 +480,7 @@ class GameConsumer(AsyncWebsocketConsumer):
             return room if room else None
         except TournamentGameRoom.DoesNotExist:
             return None
-        
+
     async def check_for_invite_reconnection(self, player_str):
         from .models import InviteGameRoom
         try :
