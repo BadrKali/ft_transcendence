@@ -38,6 +38,19 @@ SECRET_KEY = 'django-insecure-*vhv@l8+%lbvd^ag(ste@uc^ww0yim&%j1!km-ixvp$k%fnxh&
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False #hadi bedelnaha kant true
 
+#I ADD THIS 
+
+#==============================================================================
+# Static files (CSS, JavaScript, Images)
+STATIC_URL = '/static/'
+
+# Directory where static files will be collected in production
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+# Static files storage for production with compression and cache control
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+#==============================================================================
+
 ALLOWED_HOSTS = ['*']
 
 REST_FRAMEWORK = {
