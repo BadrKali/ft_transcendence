@@ -196,24 +196,24 @@ CORS_ALLOWED_ORIGINS = [
 
 CORS_ALLOW_CREDENTIALS = True
 
-# CHANNEL_LAYERS = {
-#     "default": {
-#         "BACKEND": "channels.layers.InMemoryChannelLayer",
-#     }
-# }
-
-
-REDIS_URL = f"rediss://:{os.getenv('REDIS_PASSWORD')}@{os.getenv('REDIS_ADDRESS')}:6379/0"
-
-
 CHANNEL_LAYERS = {
     "default": {
-        "BACKEND": "channels_redis.core.RedisChannelLayer",
-        "CONFIG": {
-            "hosts": [{
-                "address": REDIS_URL,
-                "ssl_cert_reqs": "required",  # Ensure SSL certificate is verified
-            }],
-        },
-    },
+        "BACKEND": "channels.layers.InMemoryChannelLayer",
+    }
 }
+
+
+# REDIS_URL = f"rediss://:{os.getenv('REDIS_PASSWORD')}@{os.getenv('REDIS_ADDRESS')}:6379/0"
+
+
+# CHANNEL_LAYERS = {
+#     "default": {
+#         "BACKEND": "channels_redis.core.RedisChannelLayer",
+#         "CONFIG": {
+#             "hosts": [{
+#                 "address": REDIS_URL,
+#                 "ssl_cert_reqs": "required",  # Ensure SSL certificate is verified
+#             }],
+#         },
+#     },
+# }
