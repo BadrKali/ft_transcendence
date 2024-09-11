@@ -1,6 +1,7 @@
 import React from 'react'
 import { useState, useEffect, useRef, useContext } from 'react'
 import './TopBar.css'
+import { useDebounce } from "@uidotdev/usehooks";
 import Icon from '../../assets/Icon/icons'
 import { avatars } from '../../assets/assets'
 import NotificationItem from './NotificationItem'
@@ -33,7 +34,6 @@ const TopBar = () => {
   const [query, setQuery] = useState('');
   const [results, setResults] = useState([]);
   const [profilData, setProfilData] = useState([]);
-  const [queryEndpoint, setQueryEndpoint] = useState(`${BACKEND_URL}/user/search/?q=${query}`)
   const response1 = useFetch(`${BACKEND_URL}/user/stats/`)
   const navigate = useNavigate();
   const { hasNotification, clearNotification} = useContext(RealTimeContext);
@@ -44,8 +44,11 @@ const TopBar = () => {
   const [selectedNotification, setSelectedNotification] = useState(null);
   const {gameChallenge, handleAcceptGame, handleRejectGame, gameAccepted, joinGame, setGameAccepted, showGameSettings, setShowGameSettings} = useContext(RealTimeContext);
   const { userData, userDataLoading, userDataError, updateUserFriends, notifications, setNotifications} = useContext(UserContext);
+  const debouncedQuery = useDebounce(query, 300);
+  const [queryEndpoint, setQueryEndpoint] = useState(`${BACKEND_URL}/user/search/?q=${query}`)
 
   
+
   const handleNotificationClick = (notif) => {
     setSelectedNotification(notif);
     setModalOpen(true);
@@ -261,17 +264,31 @@ const handleReject = async (id, type) => {
   }, [query])
 
 
-  const response = useFetch(queryEndpoint)
   useEffect(() => {
-    if (response.data) {
-      setResults(Array.isArray(response.data) ? response.data : []);
+    if (debouncedQuery) {
+      fetchResults(debouncedQuery);
     }
-  }, [response.data]);
-  
+  }, [debouncedQuery]);
+
+  const fetchResults = async () => {
+
+      const response = await fetch((queryEndpoint), {
+      method: 'GET',
+      headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${auth.accessToken}`
+      }
+      })
+      const data = await response.json();
+      console.log(data)
+      setResults(Array.isArray(data) ? data : []);
+  };
+
   const handleChange = (e) => {
     setQuery(e.target.value);
     setDropdownActive(true);
   };
+
   const handleItemClick = (result) => {
   
     navigate(`/user/${result.username}`, {

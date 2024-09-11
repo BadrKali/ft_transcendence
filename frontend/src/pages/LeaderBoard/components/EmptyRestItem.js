@@ -1,12 +1,14 @@
 import React from 'react'
 import './restItem.css'
+import { avatars } from '../../../assets/assets';
 
-function RestItem({players, index}) {
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
+
+
+function EmptyRestItem({ index}) {
     const ifOdd = index % 2 ? true : false;
+  const unknownAvatar = avatars[4].img;
 
-    let winPer = Math.floor((players.games_won / players.games_played) * 100);
-    if (players.games_played === 0)
-        winPer = 0
     console.log(index)
     return (
         <div className={ifOdd ? 'listPlayerContainer' : 'listPlayerContainer Odd'}   style={{ animationDelay: `${index * 0.1}s` }} >
@@ -16,24 +18,24 @@ function RestItem({players, index}) {
             <div className='listPlayerInfo'>
                 <div className='PlayerImageName'>
                     <div className='playerImage'>
-                        <img src={`http://127.0.0.1:8000${players.avatar}`}/>
+                        <img src={unknownAvatar}/>
                     </div>
                     <div className='PlayerName'>
-                        <p>{players.username}</p>
+                        <p>uknown player</p>
                     </div>
                 </div>
                 
                 <div className='PlayerTotal'>
-                    <p>{players.games_played}</p>
+                    <p>0</p>
                 </div>
                 <div className='PlayerWin'>
-                    <p>{players.games_won}%</p>
+                    <p>0%</p>
                 </div>
                 <div className='PlayerLoss'>
-                    <p>{winPer}%</p>
+                    <p>0%</p>
                 </div>
                 <div className='PlayerRank'>
-                    <p>{players.rank}</p>
+                    <p>none</p>
                 </div>
     
             </div>
@@ -41,4 +43,4 @@ function RestItem({players, index}) {
     )
 }
 
-export default RestItem
+export default EmptyRestItem

@@ -78,26 +78,6 @@ function TournamentBracket() {
  
   return (
     <div className='bracket-container'>
-        {/* <div className="first-eight-players">
-            <div className="player-items">
-                {EightPlayer.map((players) => (
-                  <TournamentsItem key={players.id} players={players}/>
-                ))}
-            </div>
-            <div className="eight-lines">
-                 {four_lines.map((_, index) => (
-                    <div className="two-lines" key={index}>
-                      <div className="first-line"></div>
-                    </div>
-                  ))}
-            </div>
-            <div className="last-line">
-                {four_lines.map((_, index) => (
-                    <div className="t-lines" key={index}>
-                    </div>
-                  ))}
-            </div>
-        </div> */}
         <div className="second-four-player">
             <div className="player-items">
                   {matchesToDisplayTwo.map((players) => (

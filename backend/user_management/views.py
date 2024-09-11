@@ -267,7 +267,7 @@ class SearchAPIView(APIView):
                 username__startswith=query,
                 is_staff=False,  
                 is_superuser=False 
-            ).exclude(id=current_user.id)
+            ).exclude(id=current_user.id)[:10]
             serializer = CurrentUserSerializer(results, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response({"results": []}, status=status.HTTP_200_OK)

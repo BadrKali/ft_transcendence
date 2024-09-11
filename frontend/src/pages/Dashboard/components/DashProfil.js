@@ -52,7 +52,7 @@ function DashProfil({profilData}) {
                         </div>
                         <div className="progresBar">
                             <div className='emptyBar'>
-                                <p>67%</p> {/* Consider if this needs translation or dynamic calculation */}
+                                <p>67%</p> 
                                 <div className='filledBar' style={{ width: progress }}></div>
                             </div>
                         </div>
