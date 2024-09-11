@@ -407,6 +407,7 @@ class GameConsumer(AsyncWebsocketConsumer):
                 if not invite_game_room.is_waiting:
                     await self.game_state.add_player("", invite_game_room)
                     await self.notify_players(invite_game_room)
+                    await self.game_state.update_game_started(True)
             else:
                 print("InviteGameRoom not found")
         except Exception as e:
@@ -438,6 +439,7 @@ class GameConsumer(AsyncWebsocketConsumer):
                 if not tournament_game_room.is_waiting:
                     await self.game_state.add_player("", tournament_game_room)
                     await self.notify_players(tournament_game_room)
+                    await self.game_state.update_game_started(True)
             else:
                 print("TournamentGameRoom not found")
         except Exception as e:
