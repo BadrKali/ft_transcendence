@@ -114,6 +114,7 @@ color: #FFFFFF;
     display: flex;
     align-items: center;
     justify-content: center;
+
 }
 
 
@@ -156,6 +157,7 @@ color: #FFFFFF;
 .tournament-top-player-avatar img {
     width: 100px;
     height: 100px;
+    border-radius: 15px;
 }
 
 .tournament-top-player-stat-container {
@@ -188,7 +190,9 @@ color: #FFFFFF;
     display: flex;
     flex-direction: column;
     gap: 5px;
-    width: 130px;
+    /* width: 130px;
+    height: 130px; */
+    width: 30%;
     height: 130px;
 }
 
@@ -202,7 +206,53 @@ color: #FFFFFF;
     height: 200px;
 }
 
+.disapledButton{
+    width: 100%;
+}
 .leaveTournomantButton{
+    display: flex;
+    justify-content: flex-end;
+    align-items: flex-end;
 
+    margin-top: 200px;
+    height: 200px;
  
+}
+
+.TournamentTwoButton{
+    gap: 20px;
+}
+@media screen and (max-width: 950px){
+    .tournament-desc-rules{
+       display: flex;
+       flex-direction: row;
+    padding-bottom: 20px;
+       width: 100%;
+    }
+    .tournament-desc-rules-top{
+        background: rgba(22, 22, 37, 0.05);
+        border: 1px solid #2C3143;
+        box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25), 0px 4px 100px rgba(0, 0, 0, 0.25);
+        padding: 5px;
+
+    }
+    .tournament-desc{
+        display: flex;
+        flex-direction: column;
+    }
+    .tournament-top-player{
+        width: 100%;
+    }
+    .tournament-top-player-stats{
+        width: 100%;
+  
+    }
+    .JoinedTournomanentButoon{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    
+        margin-top: 100px;
+        height: 200px;
+    }
 }

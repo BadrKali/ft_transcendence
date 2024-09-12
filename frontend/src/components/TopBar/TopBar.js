@@ -108,7 +108,7 @@ const TopBar = () => {
             const data = await response.json();
             const tournamentId = data.tournament.id;
 
-            url = `${BACKEND_URL}/user/tournament/invitations/${tournamentId}/response/`;
+            url = `${BACKEND_URL}/user/tournament/invitations/${tournamentId}`;
             body = JSON.stringify({ 'status': 'accept' });
         }
 

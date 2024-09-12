@@ -13,7 +13,7 @@ import MainButton from '../../../../components/MainButton/MainButton';
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
 
-const CreatTournamentPopUp = ({ isOpen, onClose})=> {
+const CreatTournamentPopUp = ({ isOpen, onClose, setJoinedTournament})=> {
     const { auth }  = useAuth()
     const [selectedPlayers, setSelectedPlayers] = useState([]);
     const [selectedMap, setSelectedMap] = useState('');
@@ -85,8 +85,8 @@ const CreatTournamentPopUp = ({ isOpen, onClose})=> {
                 body: JSON.stringify(postData)
             });
             if (response.ok) {
-                console.log("sent suc")
                 onClose(); 
+                setJoinedTournament(true);
             } else {
                 const errorData = await response.json();
                 console.log('Error creating tournament: ' );

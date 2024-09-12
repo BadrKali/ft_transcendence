@@ -11,9 +11,10 @@ import MainButton from '../../../../components/MainButton/MainButton'
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
 
-function JoinedTournament({TournamentData}) {
+function JoinedTournament({TournamentData, isLoadingData}) {
     const [joinedOwner, setjoinedOwner] = useState(true);
     const [profilData, setProfilData] = useState([]);
+
     const date = new Date(TournamentData.tournament_date);
     const {data ,isLoading, error} = useFetch(`${BACKEND_URL}/user/stats/${TournamentData.tournament_creator}`)
 
@@ -34,7 +35,11 @@ function JoinedTournament({TournamentData}) {
         }
       }, [data]);
       
-    console.log(TournamentData)
+   if (isLoadingData || !TournamentData){
+    return(
+        <p>isLoading</p>
+    )
+   }
 
   return (
     <div className="joined-tournament">
@@ -71,13 +76,13 @@ function JoinedTournament({TournamentData}) {
             </div>
             <div className='tournament-subscribers'>
                 <div className='tournament-subscribers-avatars'>
-                {TournamentData.tournament_participants.map((player, index) => (
+                {TournamentData.tournament_participants && TournamentData.tournament_participants.map((player, index) => (
                     <img key={index} className={`image${index + 1}`} src={`${BACKEND_URL}${player.avatar}`} alt={`Player ${index + 1}`} />
                
                 ))}
                 </div>
                 <span className='tournament-subscribers-counter'>
-                    {TournamentData.tournament_participants.length}/4 Joined
+                    {TournamentData.tournament_participants && TournamentData.tournament_participants.length}/4 Joined
                 </span>
             </div>
         </div>
@@ -154,13 +159,13 @@ function JoinedTournament({TournamentData}) {
         </div>
         <div className='JoinedTournomanentButoon'>
             {joinedOwner ? (
-                <div> 
+                <div className='TournamentTwoButton'> 
 
-                    <div
+                    <div className='disapledButton'
                         style={{
                             display: 'inline-block',
-                            pointerEvents: TournamentData.tournament_participants.length < 4 ? 'none' : 'auto',
-                            opacity: TournamentData.tournament_participants.length < 4 ? 0.5 : 1
+                            pointerEvents: TournamentData.tournament_participants && TournamentData.tournament_participants.length < 4 ? 'none' : 'auto',
+                            opacity: TournamentData.tournament_participants && TournamentData.tournament_participants.length < 4 ? 0.5 : 1
                         }}
                     >
                         <MainButton type="submit" content="Start"/>

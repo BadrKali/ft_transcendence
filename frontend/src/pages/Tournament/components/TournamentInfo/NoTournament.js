@@ -8,7 +8,7 @@ import popularTournaments from '../../../../assets/tournament';
 import PopularTournaments from './PopularTournaments';
 import sadFace from '../../../../assets/sadFace.json'
 
-function NoTournament() {
+function NoTournament({setJoinedTournament}) {
     const [modalCreat, setModalCreat] = useState(false);
     const tounemrntExist = true
 
@@ -41,12 +41,13 @@ function NoTournament() {
             </div>
         </div>
         <div className='CreatYourTournament'>
+            
             <div className='StartedTournamentButton'>
 
                 <MainButton type="submit" functionHandler={handleCreatTournament} content="Creat Tounament"/>
                 {/* <button onClick={handleCreatTournament}>Creat Tournament</button> */}
                 </div>
-                <CreatTournamentPopUp isOpen={modalCreat} onClose={handleClosePopup}/>
+                <CreatTournamentPopUp isOpen={modalCreat} onClose={handleClosePopup} setJoinedTournament={setJoinedTournament}/>
         </div>
     </div>
   )

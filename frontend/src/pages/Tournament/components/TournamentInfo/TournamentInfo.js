@@ -38,9 +38,9 @@ const TournamentInfo = () => {
   return (
     <div className='overView-container'>
         {joinedTournament ? (
-          <JoinedTournament TournamentData={data}/>
+          <JoinedTournament TournamentData={data} isLoadingData={isLoading}/>
         ) : (
-          <NoTournament />
+          <NoTournament setJoinedTournament={setJoinedTournament}/>
         )}
     </div>
   )
