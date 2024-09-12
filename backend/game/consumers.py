@@ -37,6 +37,7 @@ class GameState:
             'game_started': False,
             'match_data': False,
         }
+        self.player_canvas_sizes = {}
 
     async def get_match_data(self):
         return self.state['match_data']
@@ -173,16 +174,17 @@ class GameState:
         from .models import GameSettings
         return await sync_to_async(lambda: GameSettings.objects.filter(user=player).first())()
 
-    def player_mouvement(self, user, direction):
-        print(f"Current players: {list(self.state['players'].keys())}")
+    def player_mouvement(self, user, direction, canvas_size):
         if user in self.state['players']:
             player = self.state['players'][user]
+            self.player_canvas_sizes[user] = canvas_size
+            move_amount = 20 * (canvas_size['height'] / self.state['canvas']['height'])
             if direction == "up":
                 if player['y'] > 0:
-                    player['y'] -= 20
+                    player['y'] -= move_amount
             else:
                 if player['y'] < self.state['canvas']['height'] - player['height']:
-                    player['y'] += 20
+                    player['y'] += move_amount
             print(f"{user}'s new y position: {player['y']}")
         else:
             print(f"Error: User {user} not found in players.")
@@ -200,17 +202,6 @@ class GameState:
         self.state['ball']['y'] = self.state['canvas']['height'] / 2
         self.state['ball']['velocityX'] = -self.state['ball']['velocityX']
         self.state['ball']['speed'] = 7
-
-    def collision(self, b, p):
-        p_top = p['y']
-        p_bottom = p['y'] + p['height']
-        p_left = p['x']
-        p_right = p['x'] + p['width']
-        b_top = b['y'] - b['radius']
-        b_bottom = b['y'] + b['radius']
-        b_left = b['x'] - b['radius']
-        b_right = b['x'] + b['radius']
-        return p_left < b_right and p_top < b_bottom and p_right > b_left and p_bottom > b_top
 
     def update_ball_position(self):
         ball = self.state['ball']
@@ -241,6 +232,17 @@ class GameState:
             ball['velocityX'] = direction * ball['speed'] * math.cos(angle_rad)
             ball['velocityY'] = ball['speed'] * math.sin(angle_rad)
             ball['speed'] += 0.1
+
+    def collision(self, b, p):
+        p_top = p['y']
+        p_bottom = p['y'] + p['height']
+        p_left = p['x']
+        p_right = p['x'] + p['width']
+        b_top = b['y'] - b['radius']
+        b_bottom = b['y'] + b['radius']
+        b_left = b['x'] - b['radius']
+        b_right = b['x'] + b['radius']
+        return p_left < b_right and p_top < b_bottom and p_right > b_left and p_bottom > b_top
 
     def get_state(self):
         return self.state
@@ -336,7 +338,8 @@ class GameConsumer(AsyncWebsocketConsumer):
             if self.game_state: 
                 username = data.get('user')
                 direction = data.get('direction')
-                self.game_state.player_mouvement(username, direction)
+                canvas_size = data.get('canvasSize')
+                self.game_state.player_mouvement(username, direction, canvas_size)
                 await self.send_player_movement_update()
         elif action == "got_it":
             asyncio.create_task(self.start_game_loop(self.room))

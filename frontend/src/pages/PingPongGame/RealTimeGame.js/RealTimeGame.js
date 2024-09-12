@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, useCallback } from 'react';
 import useAuth from '../../../hooks/useAuth';
 import useFetch from '../../../hooks/useFetch';
 import Waiting from '../components/Waiting';
@@ -41,15 +41,16 @@ const RealTimeGame = ({ mode }) => {
     const [gameRunning, setGameRunning] = useState(true);
     const [showExitPopup, setShowExitPopup] = useState(false);
     const [showResult, setShowResult] = useState(false);
+    const [winner, setWinner] = useState("");
+    const [sendGotIt, setSendGotIt] = useState(false);
+    const [sendWaiting, setSendWaiting] = useState(false);
+    const [gameOver, setGameOver] = useState();
     const [backToLobby, setBackToLobby] = useState(false);
     const [pauseGame, setPauseGame] = useState(false);
     const [message, setMessage] = useState("");
     const [profileData, setProfileData] = useState(null);
     const [won, setWon] = useState(false);
-    const [winner, setWinner] = useState("");
-    const [sendGotIt, setSendGotIt] = useState(false);
-    const [sendWaiting, setSendWaiting] = useState(false);
-    const [gameOver, setGameOver] = useState();
+    const [canvasSize, setCanvasSize] = useState({ width: 1384, height: 696 });
 
     useEffect(() => {
         switch (mode) {
@@ -202,17 +203,45 @@ const RealTimeGame = ({ mode }) => {
             socket.close();
         }
     };
-
-    const initializeCanvas = () => {
-        const canvas = canvasRef.current;
     
-        const ctx = canvas?.getContext('2d');
-        if (!ctx || !canvas){ 
-            return;
+    const calculateCanvasSize = useCallback(() => {
+        const containerWidth = window.innerWidth * 0.8;
+        const containerHeight = window.innerHeight * 0.7;
+        const aspectRatio = 16 / 9;
+
+        let newWidth, newHeight;
+
+        if (containerWidth / containerHeight > aspectRatio) {
+            newHeight = containerHeight;
+            newWidth = newHeight * aspectRatio;
+        } else {
+            newWidth = containerWidth;
+            newHeight = newWidth / aspectRatio;
         }
-        
-        canvas.width = gameState.canvas.width;
-        canvas.height = gameState.canvas.height;
+
+        setCanvasSize({ width: Math.floor(newWidth), height: Math.floor(newHeight) });
+    }, []);
+
+    useEffect(() => {
+        calculateCanvasSize();
+        window.addEventListener('resize', calculateCanvasSize);
+        return () => window.removeEventListener('resize', calculateCanvasSize);
+    }, [calculateCanvasSize]);
+
+    const scaleFactor = useCallback(() => {
+        return {
+            x: canvasSize.width / gameState.canvas.width,
+            y: canvasSize.height / gameState.canvas.height
+        };
+    }, [canvasSize, gameState]);
+
+    const initializeCanvas = useCallback(() => {
+        const canvas = canvasRef.current;
+        const ctx = canvas?.getContext('2d');
+        if (!ctx || !canvas || !gameState) return;
+
+        canvas.width = canvasSize.width;
+        canvas.height = canvasSize.height;
         const { ball, net } = gameState;
         const players = Object.values(gameState.players);
         if (players.length >= 2) {
@@ -220,37 +249,35 @@ const RealTimeGame = ({ mode }) => {
             setScore2(players[1].score || 0);
         }
 
+        const scale = scaleFactor();
+
         const drawRect = (x, y, w, h, color) => {
             ctx.fillStyle = color;
-            ctx.fillRect(x, y, w, h);
+            ctx.fillRect(x * scale.x, y * scale.y, w * scale.x, h * scale.y);
         };
 
         const drawArc = (x, y, r, color) => {
             ctx.fillStyle = color;
             ctx.beginPath();
-            ctx.arc(x, y, r, 0, Math.PI * 2, true);
+            ctx.arc(x * scale.x, y * scale.y, r * Math.min(scale.x, scale.y), 0, Math.PI * 2, true);
             ctx.closePath();
             ctx.fill();
         };
 
         const drawRoundedRect = (x, y, width, height, radius) => {
             ctx.beginPath();
-            ctx.moveTo(x + radius, y);
-            ctx.lineTo(x + width - radius, y);
-            ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
-            ctx.lineTo(x + width, y + height - radius);
-            ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
-            ctx.lineTo(x + radius, y + height);
-            ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
-            ctx.lineTo(x, y + radius);
-            ctx.quadraticCurveTo(x, y, x + radius, y);
+            ctx.moveTo((x + radius) * scale.x, y * scale.y);
+            ctx.arcTo((x + width) * scale.x, y * scale.y, (x + width) * scale.x, (y + height) * scale.y, radius * Math.min(scale.x, scale.y));
+            ctx.arcTo((x + width) * scale.x, (y + height) * scale.y, x * scale.x, (y + height) * scale.y, radius * Math.min(scale.x, scale.y));
+            ctx.arcTo(x * scale.x, (y + height) * scale.y, x * scale.x, y * scale.y, radius * Math.min(scale.x, scale.y));
+            ctx.arcTo(x * scale.x, y * scale.y, (x + width) * scale.x, y * scale.y, radius * Math.min(scale.x, scale.y));
             ctx.closePath();
             ctx.fill();
         };
 
         const drawNet = () => {
-            for (let i = 0; i <= canvas.height; i+=15) {
-                drawRect(net.x, net.y + i, net.width, net.height, net.color);
+            for (let i = 0; i <= canvas.height; i += 15 * scale.y) {
+                drawRect(net.x, net.y + i / scale.y, net.width, net.height, net.color);
             }
         };
 
@@ -280,7 +307,18 @@ const RealTimeGame = ({ mode }) => {
             animationFrameId.current = requestAnimationFrame(gameLoop);
         };
         animationFrameId.current = requestAnimationFrame(gameLoop);
-    };
+    }, [gameState, canvasSize, scaleFactor, gameRunning]);
+
+    useEffect(() => {
+        if (gameState) {
+            initializeCanvas();
+        }
+        return () => {
+            if (animationFrameId.current) {
+                cancelAnimationFrame(animationFrameId.current);
+            }
+        };
+    }, [gameState, initializeCanvas]);
 
     const handleKeyDown = (evt) => {
         let direction = null;
@@ -298,16 +336,17 @@ const RealTimeGame = ({ mode }) => {
         }
 
         if (direction) {
-            sendPlayerMovement(currentUser?.username, direction);
+            sendPlayerMovement(currentUser?.username, direction, canvasSize);
         }
     };
 
-    const sendPlayerMovement = (username, direction) => {
+    const sendPlayerMovement = (username, direction, size) => {
         if (socket && username) {
             socket.send(JSON.stringify({
                 action: 'player_movement',
                 user: username,
                 direction: direction,
+                canvasSize: size
             }));
         }
     };
@@ -411,7 +450,6 @@ const RealTimeGame = ({ mode }) => {
             )}
             {startGame && room && player1 && player2 && (
                 <>
-                    <h1>{message}</h1>
                     <ScoreBoard
                         user1Score={score1}
                         user2Score={score2}
