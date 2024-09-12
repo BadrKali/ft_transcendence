@@ -35,7 +35,14 @@ class GameState:
             'game_running': True,
             'keep_running': True,
             'game_started': False,
+            'match_data': False,
         }
+
+    async def get_match_data(self):
+        return self.state['match_data']
+
+    async def update_match_data(self, status):
+        self.state['match_data'] = status
 
     async def get_game_started(self):
         return self.state['game_started']
@@ -567,6 +574,11 @@ class GameConsumer(AsyncWebsocketConsumer):
             if self.game_state.check_winning_condition():
                 winner , loser = await self.game_state.get_winner_loser()
                 await self.game_state.update_game_over(True)
+                match_data = await self.game_state.get_match_data()
+                if not match_data:
+                    await self.update_xp(winner, loser, self.room)
+                    await self.save_game_history(winner, loser, self.room)
+                    await self.game_state.update_match_data(True)
                 await self.channel_layer.group_send(
                     self.room_group_name,
                     {
@@ -579,8 +591,6 @@ class GameConsumer(AsyncWebsocketConsumer):
                         }
                     }
                 )
-                await self.update_xp(winner, loser, self.room)
-                await self.save_game_history(winner, loser, self.room)
                 break
             await self.channel_layer.group_send(
                 self.room_group_name,
