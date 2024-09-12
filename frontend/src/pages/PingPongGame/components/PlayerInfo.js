@@ -5,7 +5,7 @@ import avatar2 from '../asstes/avatar2.png';
 import vs from '../asstes/VS.png';
 
 const PlayerInfo = ({ player1, player2, onStartGame}) => {
-    const [timer, setTimer] = useState(0);
+    const [timer, setTimer] = useState(5);
     const [isGameStarting, setIsGameStarting] = useState(false);
 
     useEffect(() => {

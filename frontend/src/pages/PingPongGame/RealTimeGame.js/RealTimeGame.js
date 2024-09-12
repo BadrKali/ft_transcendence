@@ -100,7 +100,6 @@ const RealTimeGame = ({ mode }) => {
         switch (data.action) {
             case 'start_game':
                 startNewGame(data);
-                setSendGotIt(true);
                 break;
             case 'connected':
                 setRoomId(data.room_id);
@@ -379,6 +378,7 @@ const RealTimeGame = ({ mode }) => {
     }, [gameState]);
 
     const handleStartGame = () => {
+        setSendGotIt(true);
         setStartGame(true);
     }
 
