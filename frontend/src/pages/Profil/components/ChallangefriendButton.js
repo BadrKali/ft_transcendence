@@ -12,10 +12,10 @@ const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const ChallangefriendButton = () => {
     const {auth} = useAuth()
     const navigate = useNavigate()
+    const {isBlockedMe, isBlockingHim, profilData} = useContext(ProfileContext);
     const { t } = useTranslation();
     console.log({profilData})
     const isDisabled = isBlockingHim || isBlockedMe;
-    const {isBlockedMe, isBlockingHim, profilData} = useContext(ProfileContext);
 
     const handleChallenge = async () => {
         const notification = {

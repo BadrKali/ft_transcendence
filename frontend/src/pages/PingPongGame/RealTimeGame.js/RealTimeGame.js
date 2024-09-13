@@ -433,6 +433,12 @@ const RealTimeGame = ({ mode }) => {
             }
         };
     }, [socket]);
+
+    const handleInvitationRejected = () => {
+        socket.close();
+        navigate('/game', { replace:true});
+    }
+
     return (
         <div className="pingponggame-container random-game" style={{ backgroundImage: `url(${background})` }}>
             {room && player1 && player2 && !isReconnected && (
@@ -447,7 +453,7 @@ const RealTimeGame = ({ mode }) => {
                 <MatchResult winner={winner} onBack={handleBackToLobby}/>
             )}
             {showWaiting && (
-                <Waiting player={currentUser}/>
+                <Waiting player={currentUser} onNoPlayerFound={handleInvitationRejected}/>
             )}
             {startGame && room && player1 && player2 && (
                 <>

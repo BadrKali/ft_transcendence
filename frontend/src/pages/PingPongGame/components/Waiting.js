@@ -9,13 +9,14 @@ import avatar3 from '../asstes/avatar4.png';
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
 
-const Waiting = ({player}) => {
+const Waiting = ({player, onNoPlayerFound}) => {
     const [timer, setTimer] = useState(10);
     const [noPlayerFound, setNoPlayerFound] = useState(false);
 
     useEffect(() => {
         if (timer === 0) {
             setNoPlayerFound(true);
+            onNoPlayerFound();
             return;
         }
 
