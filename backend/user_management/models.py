@@ -6,6 +6,8 @@ from django.core.exceptions import ValidationError
 from django.shortcuts import get_object_or_404
 import random
 from  .achievement_service import AchievementService
+from channels.layers import get_channel_layer
+from asgiref.sync import async_to_sync
 
 
 def user_avatar_upload_path(instance, filename):
@@ -154,6 +156,63 @@ class BlockedUsers(models.Model):
         return f"{self.blocker} blocked {self.blocked}"
 
 
+#this to organize who is gonna play aginst who
+#the nullable field jus temp 
+class TournamentParticipants(models.Model):
+    tournament = models.ForeignKey('Tournament', on_delete=models.CASCADE)  # Use a string reference here
+    player1 = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='player1', null=True, blank=True)
+    player2 = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='player2', null=True, blank=True)
+    matchPlayed = models.BooleanField(default=False)
+    matchStage = models.CharField(max_length=100, default="SEMI-FINALS")
+    winner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='winner', null=True, blank=True)
+    loosers = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='loosers', null=True, blank=True)
+
+    def assign_winner(self, winner, looser):
+        slef.loosers = looser
+        self.winner = winner
+        self.matchPlayed = True
+        #remove tghe looser player from the tournament
+        if self.player1 == winner:
+            self.player2.tournament_participants.remove(self.tournament)
+        else:
+            self.player1.tournament_participants.remove(self.tournament)
+        self.save()
+
+    def notify_players(self, tournament_creator):
+        Notification.objects.create (
+            recipient=self.player1,
+            sender=tournament_creator,
+            message='has challenged you to a game!'
+        )
+        channel_layer = get_channel_layer()
+        async_to_sync(channel_layer.group_send)(
+        f'notifications_{self.player1.id}',
+            {
+                'type': 'notification_match',
+                'message': f'{tournament_creator} has invited you to play a game.',
+                'sender': tournament_creator.id, 
+            }
+        )
+
+        Notification.objects.create (
+            recipient=self.player2,
+            sender=tournament_creator,
+            message='has challenged you to a game!'
+        )
+        channel_layer = get_channel_layer()
+        async_to_sync(channel_layer.group_send)(
+        f'notifications_{self.player2.id}',
+            {
+                'type': 'notification_match',
+                'message': f'{tournament_creator} has invited you to play a game.',
+                'sender': tournament_creator.id, 
+            }
+        )
+
+    def __str__(self):  
+        return f"{self.player1} vs {self.player2} in {self.tournament}"
+
+
 class Tournament(models.Model):
     tournament_creator = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     tournament_name = models.CharField(max_length=100)
@@ -183,7 +242,6 @@ class Tournament(models.Model):
         for i in range(0, len(participants), 2):
             TournamentParticipants.objects.create(tournament=self, player1=participants[i], player2=participants[i+1])
             TournamentGameRoom.objects.create(player1=participants[i].player, player2=participants[i+1].player)
-        # print('al;dk;aksd;aksd;aksd;kas;dka;sdkalsd;askd;askd;asdk;k;askdas;dkl;adkas;kd;asdk;askd;askda;skd;askld')
 
 
     def assign_tournament_stage(self):
@@ -193,6 +251,12 @@ class Tournament(models.Model):
             self.tournament_stage = 'FINALS'
         else:
             self.tournament_stage = 'GROUP-STAGE'
+    
+    def start_tournament(self):
+        tournamentParticipants = TournamentParticipants.objects.filter(tournament=self)
+        for participant in tournamentParticipants:
+            participant.notify_players(self.tournament_creator)
+
 
     def save(self, *args, **kwargs):
         self.assign_tournament_prize()
@@ -209,21 +273,6 @@ class TournamentInvitation(models.Model):
 
     def __str__(self):
         return f"{self.player} invited to {self.tournament}"
-
-#this to organize who is gonna play aginst who
-#the nullable field jus temp 
-class TournamentParticipants(models.Model):
-    tournament = models.ForeignKey(Tournament, on_delete=models.CASCADE)
-    player1 = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='player1', null=True, blank=True)
-    player2 = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='player2', null=True, blank=True)
-    matchPlayed = models.BooleanField(default=False)
-    matchStage = models.CharField(max_length=100, default="SEMI-FINALS")
-    winner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='winner', null=True, blank=True)
-
-
-    def __str__(self):
-        return f"{self.player1} vs {self.player2} in {self.tournament}"
-    
 
 
     

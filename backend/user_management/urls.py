@@ -16,6 +16,7 @@ urlpatterns = [
     path('notifications/', NotificationListView.as_view(), name='notifications_list'),
     path('missed-notifications/', MissedNotificationsAPIView.as_view(), name='notifications_list'),
     path('tournament/', TournamentsManagementView.as_view(), name='tournament_management'),
+    path('tournament/start/', StartTournamentView.as_view(), name='tournament_start'),
     path('tournament/<str:stage>', TournamentByStageView.as_view(), name='tournament_management'),
     path('tournament/invitations/', TournamentInvitationView.as_view(), name='tournament_management'),
     path('tournament/invitations/<int:tournament_id>', TournamentInvitationView.as_view(), name='tournament_invitation_handler'),

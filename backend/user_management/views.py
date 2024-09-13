@@ -373,6 +373,48 @@ class TournamentInvitationView(APIView):
             return Response({'message': 'Invitation rejected.'}, status=status.HTTP_200_OK)
         
 
+
+class StartTournamentView(APIView):
+    def post(self, request):
+        current_user = request.user
+        tournament = Tournament.objects.filter(tournament_creator=request.user).first()
+        tournament.start_tournament()
+        tournamentParticipants = TournamentParticipants.objects.filter(tournament=tournament)
+        # for participant in tournamentParticipants:
+            #send a notification to all participants
+            # Notification.objects.create(
+            #     recipient=participant.player1,
+            #     sender=current_user,
+            #     message='Tournament has started'
+            # )
+            # Notification.objects.create(
+            #     recipient=participant.player2,
+            #     sender=current_user,
+            #     message='Tournament has started'
+            # )
+
+        
+        return(Response({'message': 'Tournament started successfully'}, status=status.HTTP_200_OK))
+
+
+
+
+            # Notification.objects.create (
+            #     recipient=player_receiver,
+            #     sender=player_sender,
+            #     message='has challenged you to a game!'
+            # )
+            # channel_layer = get_channel_layer()
+            # async_to_sync(channel_layer.group_send)(
+            #     f'notifications_{player_receiver.id}',
+            #     {
+            #         'type': 'notification_match',
+            #         'message': f'{player_sender.username} has invited you to play a game.',
+            #         'sender': player_sender.id, 
+            #     }
+            # )
+
+
 class TournamentByStageView(APIView):
     def get(self, request, stage):
         stage_participants = TournamentParticipants.objects.filter(matchStage=stage)
