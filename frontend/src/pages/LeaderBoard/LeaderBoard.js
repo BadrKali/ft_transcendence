@@ -10,6 +10,9 @@ import useAuth from '../../hooks/useAuth'
 import EmptyRestItem from './components/EmptyRestItem';
 import loadingAnimation from '../../components/OauthTwo/loading-animation.json'
 
+
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
+
 const LeaderBoard = () => {
   const [leaderboardData, setLeaderboardData] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -24,7 +27,7 @@ const LeaderBoard = () => {
   useEffect(() => {
     const fetchLeaderboardData = async () => {
       try {
-        const response = await fetch('http://localhost:8000/user/leaderboard', {
+        const response = await fetch(`${BACKEND_URL}/user/leaderboard`, {
           method: 'GET',
           headers: {
             'Authorization': `Bearer ${auth.accessToken}`,

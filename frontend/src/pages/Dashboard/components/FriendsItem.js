@@ -5,6 +5,8 @@ import online from '../../Chat/ChatAssets/online.json'
 import offline from '../../Chat/ChatAssets/offline.json'
 import { useTranslation } from 'react-i18next';
 
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
+
 function FriendsItem({list, friendsStatus}) {
   const [isonline, setOnline] = useState(false);
   const { t } = useTranslation();
@@ -39,7 +41,7 @@ function FriendsItem({list, friendsStatus}) {
   return (
     <div className='listFriendCard'>
        <div className='firendImage'>
-          <img src={`http://127.0.0.1:8000${list.avatar}`}
+          <img src={`${BACKEND_URL}${list.avatar}`}
           style={{ filter: isonline ? 'none' : 'grayscale(100%)' }}/>
            <div className='FriendStatus'>
               {isonline ? <div className="statusOnline"> <Lottie animationData={online} /></div> : 

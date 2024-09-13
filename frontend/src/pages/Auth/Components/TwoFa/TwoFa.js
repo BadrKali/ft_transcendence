@@ -4,12 +4,12 @@ import MainButton from '../../../../components/MainButton/MainButton'
 import useAuth from '../../../../hooks/useAuth';
 
 
-
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
 const veryfyOtp = async (otpCode, token) => {
     try {
         console.log(token)
-        const response = await fetch('http://localhost:8000/auth/enable2fa/', {
+        const response = await fetch(`${BACKEND_URL}/auth/enable2fa/`, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',

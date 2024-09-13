@@ -29,7 +29,7 @@ const TwoFaModal = ({handleClose, qrUrl}) => {
   const {auth} = useAuth();
   const inputRefs = useRef([]);
   const { userData , updateUserData } = useContext(UserContext);
-  console.log('qrUrl: ', `http://localhost:8000/${qrUrl}`);
+  console.log('qrUrl: ', `${BACKEND_URL}/${qrUrl}`);
 
   useEffect(() => {
     inputRefs.current[0].focus();
@@ -39,7 +39,7 @@ const TwoFaModal = ({handleClose, qrUrl}) => {
     setVerificationStatus('loading');
     try {
       console.log('otpCode: ', otpCode);
-      const response = await fetch('http://localhost:8000/auth/enable2fa/', {
+      const response = await fetch(`${BACKEND_URL}/auth/enable2fa/`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -91,7 +91,7 @@ const TwoFaModal = ({handleClose, qrUrl}) => {
   const renderVerificationStatus = () => {
     if (verificationStatus === 'idle') {
       return  <div className="qrcodeContainer">
-                  <img src={`http://localhost:8000/${qrUrl}`} alt="QR Code for 2FA setup" />
+                  <img src={`${BACKEND_URL}/${qrUrl}`} alt="QR Code for 2FA setup" />
               </div> ;
     }
 

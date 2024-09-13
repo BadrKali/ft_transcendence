@@ -3,6 +3,8 @@ import useFetch from "../../../hooks/useFetch";
 import { useEffect, useState } from "react";
 import winnerImg from "../asstes/winner.png";
 import sad from "../asstes/sad.png";
+
+
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
 const MatchResult = ({ winner, onBack }) => {
@@ -24,7 +26,7 @@ const MatchResult = ({ winner, onBack }) => {
             {profileData && profileData.avatar && profileData.username && (
                 <>
                 <img 
-                    src={`http://127.0.0.1:8000${profileData.avatar}`} 
+                    src={`${BACKEND_URL}${profileData.avatar}`} 
                     alt="User Avatar" 
                     className={`user-avatar ${profileData.username === winner ? 'winner' : 'loser'}`} 
                 />

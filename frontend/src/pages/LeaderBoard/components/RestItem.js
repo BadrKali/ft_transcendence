@@ -1,6 +1,8 @@
 import React from 'react'
 import './restItem.css'
 
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
+
 function RestItem({players, index}) {
     const ifOdd = index % 2 ? true : false;
 
@@ -16,7 +18,7 @@ function RestItem({players, index}) {
             <div className='listPlayerInfo'>
                 <div className='PlayerImageName'>
                     <div className='playerImage'>
-                        <img src={`http://127.0.0.1:8000${players.avatar}`}/>
+                        <img src={`${BACKEND_URL}${players.avatar}`}/>
                     </div>
                     <div className='PlayerName'>
                         <p>{players.username}</p>

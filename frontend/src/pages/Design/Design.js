@@ -8,6 +8,8 @@ import failed from './failed.json';
 import useAuth from '../../hooks/useAuth';
 import {QRCodeSVG} from 'qrcode.react';
 
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
+
 const Design = () => {
   const [otp, setOtp] = useState(['', '', '', '', '', '']);
   const [verificationStatus, setVerificationStatus] = useState('idle');
@@ -22,7 +24,7 @@ const Design = () => {
     setVerificationStatus('loading');
     try {
       console.log('otpCode: ', otpCode);
-      const response = await fetch('http://localhost:8000/auth/enable2fa/',{
+      const response = await fetch(`${BACKEND_URL}/auth/enable2fa/`,{
         method: 'POST',
         headers:{
           'Content-Type': 'application/json',
