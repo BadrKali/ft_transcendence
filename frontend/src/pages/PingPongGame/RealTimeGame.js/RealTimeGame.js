@@ -51,7 +51,7 @@ const RealTimeGame = ({ mode }) => {
     const [profileData, setProfileData] = useState(null);
     const [won, setWon] = useState(false);
     const [canvasSize, setCanvasSize] = useState({ width: 1384, height: 696 });
-
+    const [isReconnected, setIsReconnected] = useState(false);
     useEffect(() => {
         switch (mode) {
             case "invite":
@@ -139,6 +139,7 @@ const RealTimeGame = ({ mode }) => {
                 setStartGame(true);
                 setGameRunning(true);
                 setSendGotIt(true);
+                setIsReconnected(true);
                 break;
             case "you_won":
                 showOpponentDisconnected(false);
@@ -434,7 +435,7 @@ const RealTimeGame = ({ mode }) => {
     }, [socket]);
     return (
         <div className="pingponggame-container random-game" style={{ backgroundImage: `url(${background})` }}>
-            {room && player1 && player2 && (
+            {room && player1 && player2 && !isReconnected && (
                 <div className="player-info-container">
                     <PlayerInfo player1={player1} player2={player2} onStartGame={handleStartGame} socket={socket}/>
                 </div>
