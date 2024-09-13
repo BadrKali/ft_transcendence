@@ -298,7 +298,7 @@ class GameConsumer(AsyncWebsocketConsumer):
         elif self.game_state.remove_player(player_str):
             current_player_username = await self.game_state.get_player_username(self.player)
             opponent_username = next(username for username in self.game_state.state['players'].keys() if username != current_player_username)
-            await self.update_xp(self.player, current_player_username, self.room) 
+            await self.update_xp(self.player, current_player_username, self.room)
             await self.save_game_history(opponent_username, current_player_username, self.room)
             await self.channel_layer.group_send(
                 self.room_group_name,

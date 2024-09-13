@@ -39,7 +39,11 @@
     margin: 20px;
     animation: slideInFromTop 0.9s ease-out;
 }
-
+.player-avatar {
+    width: 255px;
+    height: 255px;
+    border-radius: 10px;
+}
 /* Add animation to player information container */
 .player-info-container .player-container .players-informations {
     display: flex;

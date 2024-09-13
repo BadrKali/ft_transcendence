@@ -5,15 +5,18 @@ import rectangle from '../asstes/rec2.png';
 import avatar1 from '../asstes/avatar1.png';
 import avatar2 from '../asstes/avatar2.png';
 import avatar3 from '../asstes/avatar4.png';
-// import vs from '../asstes/VS.png';
 
-const Waiting = ({player}) => {
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
+
+
+const Waiting = ({player, onNoPlayerFound}) => {
     const [timer, setTimer] = useState(10);
     const [noPlayerFound, setNoPlayerFound] = useState(false);
 
     useEffect(() => {
         if (timer === 0) {
             setNoPlayerFound(true);
+            onNoPlayerFound();
             return;
         }
 
@@ -31,7 +34,7 @@ const Waiting = ({player}) => {
                     {player ? (
                     <div className='player-container'>
                             <div className="player-img-container">
-                                <img src={avatar1} alt="PlayerAvatar"/>
+                                <img src={`${BACKEND_URL}${player.avatar}`} alt="PlayerAvatar" className="player-avatar"/>
                                 <h1 className='player-username'>{player.username}</h1>
                             </div>
                             <div className="players-informations">
