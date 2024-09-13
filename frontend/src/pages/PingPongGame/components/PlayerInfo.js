@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import './playerInfo.css';
-import avatar1 from '../asstes/avatar1.png';
-import avatar2 from '../asstes/avatar2.png';
 import vs from '../asstes/VS.png';
+
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
 const PlayerInfo = ({ player1, player2, onStartGame}) => {
     const [timer, setTimer] = useState(2);
@@ -31,7 +31,7 @@ const PlayerInfo = ({ player1, player2, onStartGame}) => {
                     <img src={vs} alt="" className='vs-image'/>
                     <div className='player-container'>
                         <div className="player-img-container">
-                            <img src={avatar1} alt="PlayerAvatar"/>
+                            <img src={`${BACKEND_URL}${player1.avatar}`} alt="PlayerAvatar" className='player-avatar'/>
                             <h1 className='player-username'>{player1.username}</h1>
                         </div>
                         <div className="players-informations">
@@ -70,7 +70,7 @@ const PlayerInfo = ({ player1, player2, onStartGame}) => {
                             </div>
                         </div>
                         <div className="player-img-container">
-                            <img src={avatar2} alt="PlayerAvatar"/>
+                            <img src={`${BACKEND_URL}${player2.avatar}`} alt="PlayerAvatar" className='player-avatar'/>
                             <h1 className='player-username'>{player2.username}</h1>
                         </div>
                     </div>
@@ -79,7 +79,6 @@ const PlayerInfo = ({ player1, player2, onStartGame}) => {
                     </div>
                 </>
             )}
-            {/* {isGameStarting && <h1>The game is starting!</h1>} */}
         </div>
     );
 }
