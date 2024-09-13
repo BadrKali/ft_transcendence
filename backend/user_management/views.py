@@ -196,7 +196,7 @@ class BlockUnblockView(APIView):
         else:
             blocked_users = BlockedUsers.objects.filter(blocker=blocker).select_related('blocked')
             blocked_list = [{'id': user.blocked.id, 'username': user.blocked.username} for user in blocked_users]
-            return Response({'blocked_users': blocked_list}, status=status.HTTP_200_OK)
+            return Response( blocked_list, status=status.HTTP_200_OK)
 
         
 class CurrentFriendsListView(generics.ListAPIView):

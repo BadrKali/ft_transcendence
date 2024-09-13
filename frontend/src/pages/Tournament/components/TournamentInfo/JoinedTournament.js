@@ -1,5 +1,5 @@
 import React from 'react'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useContext } from 'react'
 import useFetch from '../../../../hooks/useFetch'
 import Icon from '../../../../assets/Icon/icons'
 import { avatars } from '../../../../assets/assets'
@@ -7,17 +7,23 @@ import './joinedTournament.css'
 import { CircularProgressbar, buildStyles } from 'react-circular-progressbar';
 import 'react-circular-progressbar/dist/styles.css';
 import MainButton from '../../../../components/MainButton/MainButton'
+import { UserContext } from '../../../../context/UserContext'
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
 
-function JoinedTournament({TournamentData, isLoadingData}) {
-    const [joinedOwner, setjoinedOwner] = useState(true);
+function JoinedTournament({TournamentData}) {
+    const [joinedOwner, setjoinedOwner] = useState(false);
     const [profilData, setProfilData] = useState([]);
+    const {userData} = useContext(UserContext)
 
     const date = new Date(TournamentData.tournament_date);
     const {data ,isLoading, error} = useFetch(`${BACKEND_URL}/user/stats/${TournamentData.tournament_creator}`)
 
+    useEffect(() => {
+        if (userData.user_id === TournamentData.tournament_creator)
+            setjoinedOwner(true)
+    },[userData]);
 
     const formattedDate = date.toLocaleDateString('en-GB', {
         day: '2-digit',
@@ -35,11 +41,7 @@ function JoinedTournament({TournamentData, isLoadingData}) {
         }
       }, [data]);
       
-   if (isLoadingData || !TournamentData){
-    return(
-        <p>isLoading</p>
-    )
-   }
+
 
   return (
     <div className="joined-tournament">

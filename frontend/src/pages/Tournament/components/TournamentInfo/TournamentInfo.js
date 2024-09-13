@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useContext } from 'react'
 import { useState } from 'react'
 import useFetch from '../../../../hooks/useFetch'
 import './TournamentInfo.css'
@@ -10,24 +10,26 @@ import JoinedTournament from './JoinedTournament'
 import NoTournament from './NoTournament'
 import Lottie from 'lottie-react'
 import loadingAnimation from '../../../../components/OauthTwo/loading-animation.json'
+import { UserContext } from '../../../../context/UserContext'
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
 
 const TournamentInfo = () => {
   const [joinedTournament, setJoinedTournament] = useState(false);
-  const {data ,isLoading, error} = useFetch(`${BACKEND_URL}/user/tournament/`)
+  // const {data ,isLoading, error} = useFetch(`${BACKEND_URL}/user/tournament/`)
+  const {TounamentData, TounamenrLoading} = useContext(UserContext)
 
 
   useEffect (() => {
-    if (data && Object.keys(data).length > 0)
+    if (TounamentData && Object.keys(TounamentData).length > 0)
         setJoinedTournament(true)
     else
         setJoinedTournament(false)
 
-  },[data])
+  },[TounamentData])
 
-  if (isLoading || !data){
+  if (TounamenrLoading || !TounamentData){
     return (
       <div className='oauth-loading'>
         <Lottie animationData={loadingAnimation} style={{ width: 400, height: 400 }} />; 
@@ -38,7 +40,7 @@ const TournamentInfo = () => {
   return (
     <div className='overView-container'>
         {joinedTournament ? (
-          <JoinedTournament TournamentData={data} isLoadingData={isLoading}/>
+          <JoinedTournament TournamentData={TounamentData} />
         ) : (
           <NoTournament setJoinedTournament={setJoinedTournament}/>
         )}

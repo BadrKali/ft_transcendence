@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { useEffect} from 'react';
 import useAuth from '../../../../hooks/useAuth';
 import useFetch from '../../../../hooks/useFetch';
@@ -8,12 +8,13 @@ import History from '../../../../assets/MatchHistoryData';
 import Icon from '../../../../assets/Icon/icons';
 import PlayerSelectedItem from './PlayerSelectedItem';
 import MainButton from '../../../../components/MainButton/MainButton';
+import { UserContext } from '../../../../context/UserContext';
 
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
 
-const CreatTournamentPopUp = ({ isOpen, onClose, setJoinedTournament})=> {
+const CreatTournamentPopUp = ({ isOpen, onClose})=> {
     const { auth }  = useAuth()
     const [selectedPlayers, setSelectedPlayers] = useState([]);
     const [selectedMap, setSelectedMap] = useState('');
@@ -23,6 +24,7 @@ const CreatTournamentPopUp = ({ isOpen, onClose, setJoinedTournament})=> {
     const [MapError, setMapError] = useState(false);
     const [NameError, setNameError] = useState(false);
     const [PlayersError, setPlayersError] = useState(false);
+    const {updatetounament} = useContext(UserContext)
 
     useEffect(() => {
         if (data) {
@@ -86,7 +88,19 @@ const CreatTournamentPopUp = ({ isOpen, onClose, setJoinedTournament})=> {
             });
             if (response.ok) {
                 onClose(); 
-                setJoinedTournament(true);
+                const TournamentResponse = await fetch(`${BACKEND_URL}/user/tournament/`, {
+                method: 'GET',
+                    headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${auth.accessToken}`
+                    }
+                });
+                
+                if (!TournamentResponse.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                const updatedTournamentData = await TournamentResponse.json();
+                updatetounament(updatedTournamentData);
             } else {
                 const errorData = await response.json();
                 console.log('Error creating tournament: ' );
