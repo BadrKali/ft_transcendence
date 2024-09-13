@@ -206,7 +206,7 @@ const BotIcon = () => {
               <MainChat/>
             <ChatInput/>
           </div>
-          <Lottie  animationData={botBody} className={botStyle.botbody} onClick={handleDisplayConv}/>
+          <Lottie  animationData={botBody} className={botStyle.botbody} onDoubleClick={handleDisplayConv}/>
     </div>
     </Rnd>
   )

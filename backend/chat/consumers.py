@@ -19,7 +19,6 @@ from django.shortcuts import get_object_or_404
 from dotenv import load_dotenv
 import os
 
-
 load_dotenv()
 API_KEY= os.getenv('api_key')
 
@@ -287,7 +286,6 @@ class ChatConsumer(AsyncWebsocketConsumer):
                         }
                         )
                     if already_have_conv :
-                        print('Now We will Send you last Message because we already talked ! => ', already_have_conv)
                         await (self.channel_layer.group_send)(
                             f'room_{self.receiver_id}',{
                                 'type': 'last.message',
@@ -334,7 +332,6 @@ class ChatConsumer(AsyncWebsocketConsumer):
         created_at = created_at.replace(microsecond=0)
         requiredMsg = message.objects.filter(content=self.msgcontent, created_at__second=created_at.second)
         requiredMsg.update(seen=True)
-        # print(requiredMsg)
 
 
     async def msgs_areReaded(self, event):

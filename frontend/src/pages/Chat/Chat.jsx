@@ -66,12 +66,16 @@ const alreadyHaveConversation = (id) =>{
 }
 
 const sortConversations = () =>{
-  setChatList(prevChatList => {
-    const sortedChatList = [...prevChatList].sort((a, b) => {
-      return a.created_at.localeCompare(b.created_at);
+  // console.log(`${CurrentUser.username} : I\'ll try to sORT coNVERSATIONS NOW !`);
+  // console.log(ChatList);
+  if (ChatList.length > 1){
+    setChatList(prevChatList => {
+      const sortedChatList = [...prevChatList].sort((a, b) => {
+        return b.created_at.localeCompare(a.created_at);
+      });
+      return sortedChatList;
     });
-    return sortedChatList;
-  });
+  }
 }
 
 const updateLastMessage = (data, result) =>{
@@ -88,12 +92,10 @@ const updateLastMessage = (data, result) =>{
       }
     });
   });
-  sortConversations();
 }
   if (clientSocket) {
     clientSocket.onmessage = (event) => {
-      const data = JSON.parse(event.data);
-      console.log('data.type is : ' + data.type)
+    const data = JSON.parse(event.data);
     const notif = new Audio(receivedmsgsound);
 
     if (data.type === 'receive_typing'){
@@ -109,6 +111,7 @@ const updateLastMessage = (data, result) =>{
     }
 
     if (data.type === 'newchat.message'){
+      console.log('data.type is : ' + data.type)
       // You are receiver you got notif sound! not your self too talk with your self .
       if (data.message.receiver_id === CurrentUser?.user_id && data.message.sender_id !== CurrentUser?.user_id){ 
           notif.play().then(() => {}).catch((error) => {
@@ -140,6 +143,7 @@ const updateLastMessage = (data, result) =>{
           // console.log('Will Go and Update the unread messages with :=> ' + data.message.sender_id) // no Partner no conversation Selected
           updateUnreadMsgs(data.message)
       }
+      sortConversations();
     }
       
     if (data.type === "last.message"){
@@ -212,7 +216,7 @@ const updateLastMessage = (data, result) =>{
         }
         const data = await response.json();
         setChatList(data);
-        console.log('I refetcheeeed did you get last update or not ??')
+        // console.log('I refetcheeeed did you get last update or not ??')
       } catch (error) {
         console.error(error.message);
       }
