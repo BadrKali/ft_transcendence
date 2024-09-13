@@ -453,10 +453,9 @@ const RealTimeGame = ({ mode }) => {
                     <ScoreBoard
                         user1Score={score1}
                         user2Score={score2}
-                        user1Name={player1.username}
-                        user2Name={player2.username}
-                        user1Avatar={avatar1}
-                        user2Avatar={avatar2}
+                        user1={player1}
+                        user1Avatar={`${BACKEND_URL}${player1.avatar}`}
+                        user2={player2}
                     />
                     <div className="game-container">
                         <canvas className='canvas-container' ref={canvasRef}></canvas>

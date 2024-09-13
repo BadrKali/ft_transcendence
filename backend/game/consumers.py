@@ -335,12 +335,11 @@ class GameConsumer(AsyncWebsocketConsumer):
         elif action == "tournament":
             await self.handle_tournament_action()
         elif action == "player_movement":
-            if self.game_state: 
+            if self.game_state:
                 username = data.get('user')
                 direction = data.get('direction')
                 canvas_size = data.get('canvasSize')
                 self.game_state.player_mouvement(username, direction, canvas_size)
-                await self.send_player_movement_update()
         elif action == "got_it":
             asyncio.create_task(self.start_game_loop(self.room))
         elif action == "im_waiting":
@@ -378,19 +377,7 @@ class GameConsumer(AsyncWebsocketConsumer):
 
     def send_winner_message(self, event): 
         self.send(text_data=json.dumps(event['message']))
-
-    async def send_player_movement_update(self):
-        await self.channel_layer.group_send(
-            self.room_group_name,
-            {
-                'type': 'send_message',
-                'message': {
-                    'action': 'update_player_movement',
-                    'game_state': self.game_state.get_state(),
-                }
-            }
-        )
-
+    
     async def handle_invite_action(self):
         from .models import InviteGameRoom
         try:
@@ -608,7 +595,6 @@ class GameConsumer(AsyncWebsocketConsumer):
             elapsed_time = time.time() - start_time
             sleep_duration = max(0, frame_duration - elapsed_time)
             await asyncio.sleep(sleep_duration)
-        print("Loop Stopped")
 
     @sync_to_async
     def update_xp(self, winner, loser, room):
