@@ -16,7 +16,7 @@ function ListBlockedItem({user}) {
   const {data ,isLoading, error} = useFetch(`${BACKEND_URL}/user/stats/${user.id}`)
   const [profilData, setProfilData] = useState([]);
   const { auth }  = useAuth()
-  const {updateListBlocked} = useContext(UserContext)
+  const {updateBlockedList} = useContext(UserContext)
 
 
     useEffect(() => {
@@ -38,7 +38,20 @@ function ListBlockedItem({user}) {
 
             if (response.ok) {
                 SuccessToast(`User has been unblocked successfully.`);
-        
+                const BlockedResponse = await fetch(`${BACKEND_URL}/user/block-unblock/`, {
+                    method: 'GET',
+                        headers: {
+                          'Content-Type': 'application/json',
+                          'Authorization': `Bearer ${auth.accessToken}`
+                        }
+                      });
+                      
+                      if (!BlockedResponse.ok) {
+                        throw new Error('Network response was not ok');
+                      }
+                      
+                      const newBlockedList = await BlockedResponse.json();
+                      updateBlockedList(newBlockedList);
             } else {
                 const data = await response.json();
                 ErrorToast(data.error || 'An error occurred.');

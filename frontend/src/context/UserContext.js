@@ -15,6 +15,11 @@ export const UserProvider = ({ children }) => {
     const [matchHistory, setMatchHistory] = useState(null);
     const [matchHistoryLoading, setMatchHistoryLoading] = useState(true);
     const [notifications, setNotifications] = useState(null);
+    const [TounamentData, setTounamentData] = useState(null);
+    const [TounamenrLoading, setTournamentLoading] = useState(true);
+    const [blockedUsers, setBlockedUsers] = useState([]);
+
+
 
 
 
@@ -23,6 +28,8 @@ export const UserProvider = ({ children }) => {
     const { data: userFriendsFetch, isLoading: friendsLoading, isError: userFriendsError } = useFetch(`${BACKEND_URL}/user/friends/list/`);
     const { data: matchHistoryFetch, isLoading: matchHistoryLoadingFetch, isError: matchHistoryError } = useFetch(`${BACKEND_URL}/api/game/game-history/`);
     const { data: NotificationFetch, isLoading: NotificationLoadingFetch, isError: NotificationError } = useFetch(`${BACKEND_URL}/user/notifications/`);
+    const {data : TounamentFetch ,isLoading: TournamentisLoading, error : TournamentError} = useFetch(`${BACKEND_URL}/user/tournament/`)
+    const {data : blockedUsersFetch ,isLoading: blockedUsersisLoading, error : blockedUsersError} = useFetch(`${BACKEND_URL}/user/block-unblock/`)
   
     useEffect(() => {
         if (userDataFetch) {
@@ -32,7 +39,19 @@ export const UserProvider = ({ children }) => {
     }, [userDataFetch]);
 
 
+    useEffect(() => {
+        if (TounamentFetch) {
+            setTounamentData(TounamentFetch);
+            setTournamentLoading(false)
+        }
+    }, [TounamentFetch]);
 
+    useEffect(() => {
+        if (blockedUsersFetch) {
+            setBlockedUsers(blockedUsersFetch);
+        }
+
+    }, [blockedUsersFetch]);
 
     useEffect(() => {
         if (NotificationFetch) {
@@ -80,6 +99,14 @@ export const UserProvider = ({ children }) => {
         setUserFriends(newFriends);
     };
 
+    const updatetounament = (newTournament) => {
+        setTounamentData(newTournament);
+    };
+
+    const updateBlockedList = (newBlockedList) => {
+        setBlockedUsers(newBlockedList);
+    };
+
 
     const updateUserNotification = (newNotifcation) => {
         setNotifications(newNotifcation);
@@ -108,13 +135,17 @@ export const UserProvider = ({ children }) => {
             matchHistoryLoading,
             matchHistoryError,
             notifications,
-            
+            TounamentData,
+            TounamenrLoading,
+            blockedUsers,
             updateUserData, 
             updateUserAchievements,
             updateUserFriends,
             updateMatchHistory,
             updateUserNotification,
             setNotifications,
+            updatetounament,
+            updateBlockedList,
             
         }}>
             {children}
