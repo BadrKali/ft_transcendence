@@ -1,10 +1,10 @@
 import React from 'react'
 import './tournamentPlayersItem.css'
-import { avatars } from '../../../../assets/assets';
+import { avatarsUnkown } from '../../../../assets/assets';
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
 function TournamentPlayersItem({players}) {
-  const unknownAvatar = avatars[4].img;
+  const unknownAvatar = avatarsUnkown.img;
 
   return (
     <div className='TournamentPlayersItem'>

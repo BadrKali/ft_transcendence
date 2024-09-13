@@ -1,11 +1,11 @@
 import React from 'react'
 import './TournamentsItem.css'
-import { avatars } from '../../../../assets/assets';
+import { avatarsUnkown } from '../../../../assets/assets';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
 function TournamentsItem({players}) {
-  const unknownAvatar = avatars[4].img;
+  const unknownAvatar = avatarsUnkown.img;
 
   return (
     <div className="tournamentsItem-match-container">

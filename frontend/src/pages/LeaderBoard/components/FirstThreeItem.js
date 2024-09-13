@@ -1,13 +1,13 @@
 import React from 'react'
 import './firstThreeItem.css'
 import Icon from '../../../assets/Icon/icons'
-import { avatars } from '../../../assets/assets'
+import { avatarsUnkown } from '../../../assets/assets'
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
 
 function FirstThreeItem({player, iconName}) {
-  const unknownAvatar = avatars[4].img;
+  const unknownAvatar = avatarsUnkown.img;
 
   return (
     <div className='firstThree-Container'>

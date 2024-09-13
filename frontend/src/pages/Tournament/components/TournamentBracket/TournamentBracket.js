@@ -10,7 +10,7 @@ import useAuth from '../../../../hooks/useAuth'
 import TournamentPlayersItem from './TournamentPlayersItem'
 import { CircularProgressbar, buildStyles } from 'react-circular-progressbar';
 import 'react-circular-progressbar/dist/styles.css';
-import { avatars } from '../../../../assets/assets'
+import { avatarsUnkown } from '../../../../assets/assets'
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
@@ -22,7 +22,7 @@ function TournamentBracket() {
   const {data: matches ,isLoading, error} = useFetch(`${BACKEND_URL}/user/tournament/SEMI-FINALS`)
   const [FourPlayer, setFourPlayer] = useState([]);
   const [TwoPlayer, setTwoPlayer] = useState([]);
-  const unknownAvatar = avatars[4].img;
+  const unknownAvatar = avatarsUnkown.img;
 
   const defaultTwoMatches = [
     { id: 1, player1: {}, player2: {} },
