@@ -9,6 +9,7 @@ urlpatterns = [
     path('<int:blocked_id>/block-unblock/', BlockUnblockView.as_view(), name='block_unblock_user'),
     path('block-unblock/', BlockUnblockView.as_view(), name='block_unblock_user_list'),
     path('stats/', PlayerView.as_view(), name='player_view'),
+    path('globalstats/', GlobalStatsView.as_view(), name='global_stats'),
     path('stats/<int:player_id>', OtherPlayerView.as_view(), name='player_view'),
     path('stats/username/<str:username>', OtherPlayerView.as_view(), name='player_view'),
     path('search/', SearchAPIView.as_view(), name='search-api'),

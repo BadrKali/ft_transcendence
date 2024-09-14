@@ -19,6 +19,9 @@ from django.http import HttpResponseForbidden
 from .models import Tournament, TournamentInvitation, TournamentParticipants, Friendship, Player, FriendInvitation, BlockedUsers, Notification, XPHistory
 from .serializers import TournamentSerializer, TournamentCreateSerializer , TournamentInvitationSerializer, TournamentParticipantsSerializer, FriendInvitation, NotificationSerializer,  PlayerSerializer, FriendshipSerializer
 from django.db.models import Case, When, Value, IntegerField
+from game.serializers import GameHistorySerializer, UserAchievementSerializer
+from game.models import GameHistory, UserAchievement
+from django.db import models
 
 class FriendRequestManagementView(APIView):
     
@@ -465,3 +468,32 @@ class LeaderboardView(APIView):
         serializer = PlayerSerializer(players, many=True)
         
         return Response(serializer.data)
+
+
+
+class GlobalStatsView(APIView):
+    def get(self, request):
+
+        player = get_object_or_404(Player, user=request.user)
+        notifications = Notification.objects.filter(recipient=request.user).order_by('-timestamp')
+        #youness checki chnahiya dik models.Q
+        game_history = GameHistory.objects.filter(models.Q(winner_user_id=request.user.id) | models.Q(loser_user_id=request.user.id))
+        friendships = Friendship.objects.filter(Q(player=request.user, blocked=False) | Q(friend=request.user, blocked=False))
+        friends = [friendship.friend if friendship.player == request.user else friendship.player for friendship in friendships]
+        achievements = UserAchievement.objects.filter(user=request.user)
+        tournament = Tournament.objects.filter(tournament_participants=request.user).first()
+        
+        blocked_users = BlockedUsers.objects.filter(blocker=request.user).select_related('blocked')
+        blocked_list = [{'id': user.blocked.id, 'username': user.blocked.username} for user in blocked_users]
+
+        data = {
+            'player_stats' : PlayerSerializer(player).data,
+            'friends': CurrentUserSerializer(friends, many=True).data,
+            'notifications': NotificationSerializer(notifications, many=True).data,
+            'game_history': GameHistorySerializer(game_history, many=True).data,
+            'achievements': UserAchievementSerializer(achievements, many=True).data,
+            'tournament': TournamentSerializer(tournament).data,
+            'blocked_users': blocked_list
+
+        }
+        return(Response(data, status=status.HTTP_200_OK))

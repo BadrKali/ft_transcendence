@@ -15,7 +15,11 @@ class FriendshipSerializer(serializers.ModelSerializer):
 
     def get_friend(self, obj):
         return PlayerSerializer(obj.friend).data
-    
+
+
+
+
+
 
 class PlayerSerializer(serializers.ModelSerializer):
     username = serializers.CharField(source='user.username')
@@ -50,17 +54,23 @@ class FriendInvitationsSerializer(serializers.ModelSerializer):
     
 
 class NotificationSerializer(serializers.ModelSerializer):
+    sender_username = serializers.CharField(source='sender.username')
+    sender_avatar = serializers.CharField(source='sender.avatar')
+
     class Meta:
         model = Notification
         fields = [
             'id', 
-            'sender', 
+            'sender_id',
+            'sender_username',
+            'sender_avatar',
             'message', 
             'title', 
             'description', 
             'timestamp', 
             'is_read'
         ]
+
 
 
 class TournamentSerializer(serializers.ModelSerializer):
@@ -126,3 +136,6 @@ class TournamentParticipantsSerializer(serializers.ModelSerializer):
     class Meta:
         model = TournamentParticipants
         fields = '__all__'
+
+
+
