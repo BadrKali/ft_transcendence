@@ -55,7 +55,7 @@ class FriendInvitationsSerializer(serializers.ModelSerializer):
 
 class NotificationSerializer(serializers.ModelSerializer):
     sender_username = serializers.CharField(source='sender.username')
-    sender_avatar = serializers.CharField(source='sender.avatar')
+    sender_avatar = serializers.CharField(source='sender.avatar.url')
 
     class Meta:
         model = Notification
