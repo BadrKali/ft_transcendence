@@ -33,11 +33,8 @@ const TopBar = () => {
   const [isDropdownActive, setDropdownActive] = useState(false);
   const [query, setQuery] = useState('');
   const [results, setResults] = useState([]);
-  const [profilData, setProfilData] = useState([]);
-  const response1 = useFetch(`${BACKEND_URL}/user/stats/`)
   const navigate = useNavigate();
   const { hasNotification, clearNotification} = useContext(RealTimeContext);
-  // const [notifications, setNotifications] = useState([]);
   const { auth }  = useAuth()
   const [modalOpen, setModalOpen] = useState(false);
   const [modalOpenBlocked, setModalOpenBlocked] = useState(false);
@@ -59,7 +56,7 @@ const TopBar = () => {
   }
 
   const handleMyProfilClick = () => {
-      navigate(`/user/${profilData.username}`)
+      navigate(`/user/${userData.username}`)
   }
 
   const handleSettingClick = () => {
@@ -237,12 +234,6 @@ const handleReject = async (id, type) => {
       }
     });
   };
-
-  useEffect(() => {
-    if (response1.data) {
-      setProfilData(response1.data);
-    }
-  }, [response1.data]);
 
   const handleClickOutside = (event) => {
     if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {

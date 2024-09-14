@@ -49,7 +49,7 @@ export const ProfileProvider = ({ children, userId }) => {
                     setProfileData(data);
                     setIsBlockedMe(data.is_blocked);
                     setIsBlocking(data.is_blocking);
-                    console.log("hh", data)
+                    console.log( data)
 
                 } else {
                     console.error('Error fetching profile data:', response.statusText);

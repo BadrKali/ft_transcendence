@@ -28,11 +28,11 @@ const GeneralNotificationComponent = ({ notif, typeNotif, profilData, onAccept, 
       </div>
       <div className='buttunsAR'>
         {/* <button className='buttonA Accept' onClick={() => onAccept(notif.sender, typeNotif)}>Accept</button> */}
-        <MainButton type="button" functionHandler={() => onAccept(notif.sender, typeNotif)} content="Accept"/>
+        <MainButton type="button" functionHandler={() => onAccept(notif.sender_id, typeNotif)} content="Accept"/>
 
         {/* <button  className='buttonA Reject' onClick={() => onReject(notif.sender, typeNotif)}>Reject</button> */}
         {/* <MainButton type="button" onClick={() => onReject(notif.sender, typeNotif)} content="Reject"/> */}
-        <SecondButton type="button" functionHandler={() => onReject(notif.sender, typeNotif)} content="Reject"/>
+        <SecondButton type="button" functionHandler={() => onReject(notif.sender_id, typeNotif)} content="Reject"/>
       </div>
     </>
 );
@@ -104,8 +104,8 @@ const TournamentPopupComponent = ({ notif, typeNotif, profilData, onAccept, onRe
             </div>
       </div>
       <div className='buttunsAR'>
-        <MainButton type="button" functionHandler={() => onAccept(notif.sender, typeNotif)} content="Accept"/>
-        <SecondButton type="button" functionHandler={() => onReject(notif.sender, typeNotif)} content="Reject"/>
+        <MainButton type="button" functionHandler={() => onAccept(notif.sender_id, typeNotif)} content="Accept"/>
+        <SecondButton type="button" functionHandler={() => onReject(notif.sender_id, typeNotif)} content="Reject"/>
       </div>
     </>
   );
@@ -127,9 +127,9 @@ const AchievementComponent = ({notif}) => (
 
 const NotificationPopup = ({ isOpen, onClose, notif, onAccept, onReject })=> {
   const [typeNotif, setTypeNotif] = useState('');
-  const {data ,isLoading, error} = useFetch(`${BACKEND_URL}/user/stats/${notif.sender}`)
+  const {data ,isLoading, error} = useFetch(`${BACKEND_URL}/user/stats/${notif.sender_id}`)
   const [profilData, setProfilData] = useState([]);
-  
+  console.log(notif)
   useEffect(() => {
     if (data) {
     setProfilData(data);

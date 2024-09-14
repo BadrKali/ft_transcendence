@@ -14,24 +14,13 @@ function formatTimeAgo(dateString) {
 
 
 function NotificationItem({notif, onClick }) {
-  const [profilData, setProfilData] = useState([]);
-  const {data ,isLoading, error} = useFetch(`${BACKEND_URL}/user/stats/${notif.sender}`)
-
-
-  useEffect(() => {
-    if (data) {
-      setProfilData(data);
-    }
-  }, [data]);
-
-  // ALSO
   return (
       <div className="notifCard" onClick={() => onClick(notif)}>
         <div className="notifImage">
-            <img src={`${BACKEND_URL}${profilData.avatar}`} alt="profil_pic" />
+            <img src={`${BACKEND_URL}${notif.sender_avatar}`} alt="profil_pic" />
         </div>
         <div className="notifInfo">
-            <p>{profilData.username}<span>{notif.message}</span></p>
+            <p>{notif.sender_username}<span>{notif.message}</span></p>
             <span className='notifTime'>{formatTimeAgo(notif.timestamp)}</span>
         </div>
       </div>
