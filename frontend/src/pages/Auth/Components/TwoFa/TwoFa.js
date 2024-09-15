@@ -38,6 +38,17 @@ const TwoFa = (props) => {
     const [verificationStatus, setVerificationStatus] = useState('idle');
     const navigate = useNavigate()
 
+    const handleContinueClick = () => {
+      if(verificationStatus === 'success') {
+        
+        navigate('/')
+      }
+      else {
+        console.log('OTP verification failed');
+        //here i have to implement a toad notifiction to show the user that the otp verification failed
+      }
+    }
+
     useEffect(() => {
         inputRefs.current[0].focus();
       }, []);
@@ -57,7 +68,7 @@ const TwoFa = (props) => {
                 console.log('2FA enabled successfully');
                 setVerificationStatus('success');
                 console.log('2FA successful, navigate to home page')
-                navigate('/')
+                // navigate('/')
             }
           }
 
@@ -91,7 +102,7 @@ const TwoFa = (props) => {
             })}
         </div>
         <div className='AuthTwoFaAction'>
-            <button className='AuthTwoFaButton' onClick={props.handleTwoFaSuccess}>Continue</button>
+            <button className='AuthTwoFaButton' onClick={handleContinueClick}>Continue</button>
             <button className="AuthTwoFaBackButton">&larr; Back to login</button>
 
         </div>

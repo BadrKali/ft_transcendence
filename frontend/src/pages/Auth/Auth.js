@@ -13,6 +13,7 @@ const Auth = () => {
   const [TwoFaUser, setTwoFaUser] = useState(null)
   const {setAuth} = useAuth()
   const navigate = useNavigate();
+  const [response, setResponse] = useState({})
 
   const handleTwoFaSuccess = () => {
     navigate('/')
