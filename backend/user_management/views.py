@@ -170,7 +170,7 @@ class BlockUnblockView(APIView):
     def post(self, request, blocked_id):
         blocker = request.user
         blocked = get_object_or_404(User, id=blocked_id)
-        if BlockedUsers.objects.filter(Q(blocker=blocker, blocked=blocked)).exists():
+        if BlockedUsers.objects.filter(Q(blocker=blocker, blocked=blocked) | Q(blocker=blocked, blocked=blocker)).exists():
             return Response({'error': 'User is already blocked.'}, status=status.HTTP_400_BAD_REQUEST)
         blocking = BlockedUsers(blocker=blocker, blocked=blocked)
         blocking.save()
