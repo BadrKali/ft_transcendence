@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react'
 import './TwoFa.css'
 import MainButton from '../../../../components/MainButton/MainButton'
 import useAuth from '../../../../hooks/useAuth';
+import { useNavigate } from 'react-router-dom';
 
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
@@ -35,6 +36,7 @@ const TwoFa = (props) => {
     const inputRefs = useRef([]);
     const {auth} = useAuth();
     const [verificationStatus, setVerificationStatus] = useState('idle');
+    const navigate = useNavigate()
 
     useEffect(() => {
         inputRefs.current[0].focus();
@@ -54,6 +56,8 @@ const TwoFa = (props) => {
             if(status) {
                 console.log('2FA enabled successfully');
                 setVerificationStatus('success');
+                console.log('2FA successful, navigate to home page')
+                navigate('/')
             }
           }
 
@@ -68,7 +72,7 @@ const TwoFa = (props) => {
   return (
     <div className='AuthTwoFaConatiner'>
         <div className='AuthTwoFaHeader'>
-            <h1>Welcome back ! Belkala153 </h1>
+            <h1>Welcome back ! {props.username} </h1>
             <p>entre 6-digit code from your two factor authentication APP.</p>
         </div>
         <div className='AuthOtpCard'>

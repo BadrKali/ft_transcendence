@@ -53,6 +53,7 @@ const SignIn = (props) => {
                 if(userData.is_2fa_enabled) {
                     console.log('2FA enabled ya kho');
                     props.setIsTwoFa(true)
+                    props.setTwoFaUser(userData.username)
 
                 } else {
                     navigate('/');

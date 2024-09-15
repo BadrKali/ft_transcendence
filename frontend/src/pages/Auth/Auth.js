@@ -10,6 +10,7 @@ import {useNavigate } from 'react-router-dom';
 const Auth = () => {
   const [isLogin, setIsLogin] = useState(true)
   const [isTwoFa, setIsTwoFa] = useState(false)
+  const [TwoFaUser, setTwoFaUser] = useState(null)
   const {setAuth} = useAuth()
   const navigate = useNavigate();
 
@@ -33,10 +34,12 @@ const Auth = () => {
               setIsLogin={setIsLogin} 
               setIsTwoFa={setIsTwoFa}
               setAuth={setAuth}
+              setTwoFaUser={setTwoFaUser}
             />
           }
           {isTwoFa && 
-            <TwoFa 
+            <TwoFa
+              username={TwoFaUser}
               setAuth={setAuth}
               onSuccess={handleTwoFaSuccess}
             />
