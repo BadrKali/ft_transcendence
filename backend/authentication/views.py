@@ -213,3 +213,16 @@ class Disable2FA(APIView):
         user.save()
         return Response({"message": "2FA has been disabled"}, status=status.HTTP_200_OK)
     
+
+
+class LogoutView(APIView):
+    def post(self, request):
+        try:
+            refresh_token = request.COOKIES.get('refresh')
+            if not refresh_token:
+                return Response({"error": "Refresh token not found in cookies"}, status=status.HTTP_400_BAD_REQUEST)
+            token = RefreshToken(refresh_token)
+            token.blacklist()
+            return Response({"message": "Successfully logged out"}, status=status.HTTP_205_RESET_CONTENT)
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
