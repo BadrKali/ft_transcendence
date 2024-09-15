@@ -42,7 +42,7 @@ export const UserProvider = ({ children }) => {
             setTournamentLoading(false);
 
             setBlockedUsers(blocked_users);
-
+            console.log(globalStatsFetch)
         }
     }, [globalStatsFetch]);
 

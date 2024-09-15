@@ -20,9 +20,10 @@ const TournamentInfo = () => {
   // const {data ,isLoading, error} = useFetch(`${BACKEND_URL}/user/tournament/`)
   const {TounamentData, TounamenrLoading} = useContext(UserContext)
 
+  console.log(TounamentData)
 
   useEffect (() => {
-    if (TounamentData && Object.keys(TounamentData).length > 0)
+    if (TounamentData.tournament_creator)
         setJoinedTournament(true)
     else
         setJoinedTournament(false)

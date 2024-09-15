@@ -40,7 +40,7 @@ const TopBar = () => {
   const [modalOpenBlocked, setModalOpenBlocked] = useState(false);
   const [selectedNotification, setSelectedNotification] = useState(null);
   const {gameChallenge, handleAcceptGame, handleRejectGame, gameAccepted, joinGame, setGameAccepted, showGameSettings, setShowGameSettings} = useContext(RealTimeContext);
-  const { userData, userDataLoading, userDataError, updateUserFriends, notifications, setNotifications} = useContext(UserContext);
+  const { userData, userDataLoading, userDataError, updateUserFriends, notifications, setNotifications, updatetounament} = useContext(UserContext);
   const debouncedQuery = useDebounce(query, 300);
   const [queryEndpoint, setQueryEndpoint] = useState(`${BACKEND_URL}/user/search/?q=${query}`)
 
@@ -141,8 +141,24 @@ const TopBar = () => {
               }
               
               const updatedFriendsData = await friendsResponse.json();
-              console.log(updatedFriendsData)
+
             updateUserFriends(updatedFriendsData);
+        }else if (type === 'Tournament'){
+          const TournamentResponse = await fetch(`${BACKEND_URL}/user/tournament/`, {
+            method: 'GET',
+                headers: {
+                  'Content-Type': 'application/json',
+                  'Authorization': `Bearer ${auth.accessToken}`
+                }
+              });
+              
+              if (!TournamentResponse.ok) {
+                throw new Error('Network response was not ok');
+              }
+              
+              const updatedTournament = await TournamentResponse.json();
+      
+              updatetounament(updatedTournament);
         }
 
     } catch (error) {
