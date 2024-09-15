@@ -14,20 +14,18 @@
     height: 100%;
     width: 100%;
     display: flex;
+
 }
 
-.first-eight-players{
-
-    height: 100%;
-    width: 30%;
-    display: flex;
-}
 
 .second-four-player{
 
     height: 100%;
     width: 30%;
     display: flex;
+
+    min-width: 300px;
+
 }
 
 .second-four-player .player-items{
@@ -143,8 +141,8 @@
 
 .final-game-players{
     height: 100%;
-    width: 25%;
-
+    width: 30%;
+    min-width: 300px;
     display: flex;
 }
 
@@ -204,10 +202,12 @@
 
 .winner-tounament{
     height: 100%;
-    width: 10%;
+    width: 20%;
+    z-index: 2;
     display: flex;
     align-items: center;
     position: relative;
+  
 
 }
 
@@ -227,10 +227,11 @@
     align-items: center;
     border:solid 2px #2C3143;
     border-radius: 10px;
-    width: 25%;
+    width: 30%;
     height: 100%;
     padding: 10px;
     animation: slideInLeftFriends 1s ease-out;
+    min-width: 400px;
 
 }
 
