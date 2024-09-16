@@ -134,6 +134,7 @@ const TwoFaModal = ({handleClose, qrUrl}) => {
                   onChange={e => handleChange(e.target, index)}
                   onKeyDown={e => handleBackspace(e, index)}
                   ref={input => inputRefs.current[index] = input}
+                  style={verificationStatus === 'success' ? {outline: '2px solid green'} : {}}
                 />
               );
             })}
