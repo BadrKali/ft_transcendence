@@ -7,24 +7,23 @@ import { ErrorToast } from '../ReactToastify/ErrorToast';
 import { SuccessToast } from '../ReactToastify/SuccessToast';
 import { InfoToast } from '../ReactToastify/InfoToast';
 import { UserContext } from '../../context/UserContext';
-
-
+import { ProfileContext } from '../../context/ProfilContext';
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
 
 function ListBlockedItem({user}) {
-  const {data ,isLoading, error} = useFetch(`${BACKEND_URL}/user/stats/${user.id}`)
-  const [profilData, setProfilData] = useState([]);
-  const { auth }  = useAuth()
-  const {updateBlockedList} = useContext(UserContext)
-
+    const {data ,isLoading, error} = useFetch(`${BACKEND_URL}/user/stats/${user.id}`)
+    const [profilData, setProfilData] = useState([]);
+    const { auth }  = useAuth()
+    const {updateBlockedList} = useContext(UserContext)
+    const {setIsBlocked, profilisBlocked, setIsBlocking, isBlockingHim} = useContext(ProfileContext)
 
     useEffect(() => {
         if (data) {
         setProfilData(data);
         }
     }, [data]);
-
+    console.log(profilisBlocked)
     const handleUnblock = async () => {
         const url = `${BACKEND_URL}/user/${user.id}/block-unblock/`;
         try {
@@ -37,6 +36,8 @@ function ListBlockedItem({user}) {
             });
 
             if (response.ok) {
+                setIsBlocked(!profilisBlocked)
+                setIsBlocking(!isBlockingHim);
                 SuccessToast(`User has been unblocked successfully.`);
                 const BlockedResponse = await fetch(`${BACKEND_URL}/user/block-unblock/`, {
                     method: 'GET',

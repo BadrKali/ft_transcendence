@@ -24,6 +24,7 @@ import { BlockPopUpProvider } from "./pages/Chat/usehooks/ChatContext";
 import { CurrentUserProvider } from "./pages/Chat/usehooks/ChatContext";
 import Invite from './pages/PingPongGame/Invite/Invite';
 import { UserProvider } from "./context/UserContext";
+import { ProfileProvider } from "./context/ProfilContext";
 
 
 const routes = [
@@ -46,7 +47,9 @@ const routes = [
                   <UserProvider>
                     <RealTimeProvider>
                       <SocketClientProvider>
+                          <ProfileProvider >
                               <AppLayout />
+                          </ProfileProvider>
                       </SocketClientProvider>
                     </RealTimeProvider>
                   </UserProvider>,
@@ -61,7 +64,10 @@ const routes = [
               { path: "tournament", element: <Tournament /> },
               { path: "leaderboard", element: <LeaderBoard /> },
               { path: "setting", element: <Setting /> },
-              { path: "/user/:nameOfUser", element: <Profil /> },
+              { path: "/user/:nameOfUser", element:
+                                            
+                                                <Profil /> 
+                                            },
             ],
           },
         ],

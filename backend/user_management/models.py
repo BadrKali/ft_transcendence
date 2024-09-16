@@ -49,6 +49,15 @@ class Player(models.Model):
     def __str__(self) -> str:
         return self.user.username
 
+
+    def get_rank_progress(self):
+        if self.rank == self.PLAYER_RANK_BRONZE:
+            return (self.xp / self.RANK_XP_THRESHOLDS[self.PLAYER_RANK_BRONZE]) * 100
+        elif self.rank == self.PLAYER_RANK_SILVER:
+            return (self.xp / self.RANK_XP_THRESHOLDS[self.PLAYER_RANK_SILVER]) * 100
+        elif self.rank == self.PLAYER_RANK_GOLD:
+            return (self.xp / self.RANK_XP_THRESHOLDS[self.PLAYER_RANK_GOLD]) * 100
+
     def update_xp(self, won: bool):
         print(f"Before: {self.xp}")
         if won:

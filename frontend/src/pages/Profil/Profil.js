@@ -58,7 +58,7 @@ const Profil = () => {
 
   return (
 
-    <ProfileProvider key={profilData.user_id} >
+    // <ProfileProvider key={profilData.user_id} >
         <div className='dashboard-contianer'>
           <div className='profil-icons'>
               {!isOwnProfile && (
@@ -91,7 +91,7 @@ const Profil = () => {
           </div>
 
         </div>
-    </ProfileProvider>
+    // </ProfileProvider>
 
   )
 }

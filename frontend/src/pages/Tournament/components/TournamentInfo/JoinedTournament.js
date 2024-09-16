@@ -16,6 +16,8 @@ function JoinedTournament({TournamentData}) {
     const [joinedOwner, setjoinedOwner] = useState(false);
     const [profilData, setProfilData] = useState([]);
     const {userData} = useContext(UserContext)
+    const [progress, setProgress] = useState(0);
+
 
     const date = new Date(TournamentData.tournament_date);
     const {data ,isLoading, error} = useFetch(`${BACKEND_URL}/user/stats/${TournamentData.tournament_creator}`)
@@ -42,7 +44,13 @@ function JoinedTournament({TournamentData}) {
       }, [data]);
       
 
-
+      useEffect(() => {
+        setTimeout(() => {
+          setProgress(profilData.rank_progress);
+        }, 500); 
+      }, []);
+    console.log(profilData.rank_progress)
+    console.log(progress)
   return (
     <div className="joined-tournament">
        <h1 className='tournament-title'>{TournamentData.tournament_name}</h1>

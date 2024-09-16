@@ -385,7 +385,7 @@ const handleReject = async (id, type) => {
         </div>
         <div className='profile-pic-container'  onClick={handleProfilClick}>
           <div className='profile-pic'>
-            <img src={`${BACKEND_URL}${userData.avatar}`}/>
+            <img src={`${BACKEND_URL}${userData.avatar}`} alt="profil Picture"/>
           </div>
           <span>{userData.username}</span>
           <div  className={isProfilActive ? "dropDwonProfil profilActive" : "dropDwonProfil"}>

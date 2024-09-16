@@ -14,7 +14,7 @@ function DashProfil({profilData}) {
 
   useEffect(() => {
       setTimeout(() => {
-        setProgress('67%');
+        setProgress(profilData.rank_progress);
       }, 500); 
     }, []);
 
@@ -54,7 +54,7 @@ function DashProfil({profilData}) {
                         </div>
                         <div className="progresBar">
                             <div className='emptyBar'>
-                                <p>67%</p> 
+                                <p>{profilData.rank_progress}%</p> 
                                 <div className='filledBar' style={{ width: progress }}></div>
                             </div>
                         </div>
