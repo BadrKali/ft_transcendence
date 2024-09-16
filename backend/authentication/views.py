@@ -94,15 +94,24 @@ class CustomTokenObtainPairView(TokenObtainPairView):
     def post(self, request, *args, **kwargs):
         response = super().post(request, *args, **kwargs)
         if response.status_code == status.HTTP_200_OK:
-            refreshToken = response.data['refresh']
-            response.set_cookie(
-                key = 'refresh',
-                value = refreshToken,
-                httponly = True,
-                #more options to add when nedded 
-            )
-            del response.data["refresh"]
-        return response
+            user = get_object_or_404(User, username=request.data['username'])
+            response.data['username'] = request.data['username']
+            if(user.is_2fa_enabled):
+                response.data['2fa_required'] = True
+                del response.data["refresh"]
+                return response
+            else:
+                refreshToken = response.data['refresh']
+                response.set_cookie(
+                    key = 'refresh',
+                    value = refreshToken,
+                    httponly = True,
+                    #more options to add when nedded 
+                )
+                del response.data["refresh"]
+            return response
+        else:
+            return response
 
 class CustomTokenRefreshView(TokenRefreshView):
     def post(self, request, *args, **kwargs):
@@ -194,15 +203,34 @@ class Enable2FA(APIView):
     def post(self, request):
         user = request.user
         otp = request.data.get('otp')
+        
         if not otp:
             return Response({"error": "OTP is required"}, status=status.HTTP_400_BAD_REQUEST)
+        
         if pyotp.TOTP(user.otp_secret).verify(otp):
             user.is_2fa_verified = True
             user.is_2fa_enabled = True
             user.save()
-            return Response({"message": "2FA has been verified"}, status=status.HTTP_200_OK)
+            refresh = RefreshToken.for_user(user)
+            access_token = str(refresh.access_token)
+            refresh_token = str(refresh)
+            username = user.username
+            response_data = {
+                'access': access_token,
+                'username': username,
+                "message": "2FA has been verified"
+            }
+            response = Response(response_data, status=status.HTTP_200_OK)
+            response.set_cookie(
+                key='refresh',
+                value=refresh_token,
+                httponly=True,  
+                secure=True,    
+                samesite='None' 
+            )
+            return response
         return Response({"error": "Invalid OTP"}, status=status.HTTP_400_BAD_REQUEST)
-    
+
 
 class Disable2FA(APIView):
     def delete(self, request):

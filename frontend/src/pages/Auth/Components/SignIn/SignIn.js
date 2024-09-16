@@ -48,21 +48,28 @@ const SignIn = (props) => {
             });
             const accessToken = response?.data?.access;
             props.setAuth({username:signInValues.username, accessToken: accessToken})
-            try {
-                const userData = await fetchData(`${BACKEND_URL}/user/stats/`, accessToken);
-                if(userData.is_2fa_enabled) {
-                    console.log('2FA enabled ya kho');
-                    props.setIsTwoFa(true)
-                    props.setTwoFaUser(userData.username)
-
-                } else {
-                    navigate('/');
-                }
+            if(response.data['2fa_required'] === true) {
+                console.log('2FA enabled ya kho');
+                props.setIsTwoFa(true)
+                props.setTwoFaUser(response.data.username)
             }
-            catch (error) {
-                console.error('Error fetching user data:', error);
+            else {
+                navigate('/');
             }
-            // navigate('/');
+            // try {
+            //     const userData = await fetchData(`${BACKEND_URL}/user/stats/`, accessToken);
+            //     if(userData.is_2fa_enabled) {
+            //         console.log('2FA enabled ya kho');
+            //         props.setIsTwoFa(true)
+            //         props.setTwoFaUser(userData.username)
+            //     } else {
+            //         setAuth({username:signInValues.username, accessToken: accessToken})
+            //         navigate('/');
+            //     }
+            // }
+            // catch (error) {
+            //     console.error('Error fetching user data:', error);
+            // }
         } catch(err) {
             console.log(err)
         } finally {
