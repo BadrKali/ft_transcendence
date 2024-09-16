@@ -1,7 +1,9 @@
 import React, {createContext, useState, useEffect} from "react";
 import useFetch from "../../../hooks/useFetch.js";
 import useAuth from "../../../hooks/useAuth.js";
-// import {auth}
+import { SuccessToast } from "../../../components/ReactToastify/SuccessToast.js";
+import { ErrorToast } from "../../../components/ReactToastify/ErrorToast.js";
+
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const WS_BACKEND_URL = process.env.REACT_APP_WS_BACKEND_URL;
@@ -47,29 +49,29 @@ export const SocketClientProvider = ({children}) =>{
     
     clientSocket.onopen = () => {
         setsocket(clientSocket);
-        console.log(" WebSocket instanciated : onopen => Clunca ")
+        SuccessToast(" Clunca WebSocket instanciated")
     };
 
     clientSocket.onclose = () => {
-      console.log('WebSocket closed : onclose Clunca');
+      ErrorToast('Clunca WebSocket closed (onclose)');
     };
 
     clientSocket.onerror = (error)=>{
-      console.log('WebSocket error : Clunca socket : ', error);
+      ErrorToast('Clunca WebSocket error (onerror)');
     }
 
     // ****************************************************************************************
     forBotSocket.onopen = () => {
         setbotSocket(forBotSocket);
-        console.log(" WebSocket instanciated : onopen => ChatBot ")
+        SuccessToast(" ChatBot WebSocket instanciated (onopen)")
     };
 
     forBotSocket.onclose = () => {
-      console.log('WebSocket closed : onclose ChatBot');
+      ErrorToast('ChatBot WebSocket closed (onclose)');
     };
 
     forBotSocket.onerror = (error)=>{
-      console.log('WebSocket error : ChatBot socket : ', error);
+      ErrorToast('ChatBot WebSocket error');
     }
     forBotSocket.onmessage = (event) =>{
       const eventdata = JSON.parse(event.data);

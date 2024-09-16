@@ -13,14 +13,14 @@
     display: grid;
     gap: 10px;
     grid-template-columns: 1fr;
-    grid-template-rows: repeat(5, 1fr);
+    grid-template-rows: repeat(3, 1fr);
     align-self: center;
     align-items:center;
     justify-items: center;
     justify-content: space-between;
-    border-radius: 6px;
+    border-radius: 20px;
     background-color:#1C1E27;
-    height : 65%;
+    height : 50%;
     animation-name: SLideToRight;
     animation-duration: 1s;
     animation-timing-function: ease-in;
@@ -50,8 +50,24 @@
     justify-content: center;
     border: 2px solid #2C3143;
     align-self: center;
-
 }
+
+.InviteToGameBackInactif{
+    background-color:#1C1E27;
+    width : 60px;
+    height: 60px;
+    border-radius: 18px;
+    box-shadow: 0 4px 2px -2px rgb(0, 0, 0);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid #2C3143;
+    align-self: center;
+    opacity: 0.5;
+    pointer-events: none;
+    cursor: not-allowed; 
+}
+
 
 .BlockBack{
     background-color:#1C1E27;
@@ -66,7 +82,7 @@
     align-self: center;
 }
 
-.PhoneBack{
+.BlockBackInactif{
     background-color:#1C1E27;
     width : 60px;
     height: 60px;
@@ -77,22 +93,11 @@
     justify-content: center;
     border: 2px solid #2C3143;
     align-self: center;
-
+    opacity: 0.5;
+    pointer-events: none;
+    cursor: not-allowed; 
 }
 
-.VideoCallBack{
-    background-color:#1C1E27;
-    width : 60px;
-    height: 60px;
-    border-radius: 18px;
-    box-shadow: 0 4px 2px -2px rgb(0, 0, 0);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border: 2px solid #2C3143;
-    align-self: center;
-
-}
 
 .visiteProfil{
     width: 35px;
@@ -111,12 +116,6 @@
     height:35px;
 }
 
-.VideoCall{
-    align-self: center;
-    color: #8D93AC;
-    opacity: 0.8;
-}
-
 .Phone{
     color: #8D93AC;
     opacity: 0.8;
@@ -126,11 +125,11 @@
     .UserParams{
         order: -1;
         justify-self: center; 
-        width: 65%;
+        width: 55%;
         height: 95%;
         grid-column: 2/ 3;
         /* grid-column: 1/ 2; */
-        grid-template-columns: repeat(5, 1fr); 
+        grid-template-columns: repeat(3, 1fr); 
         grid-template-rows: 1fr;
     }
 }

@@ -18,6 +18,9 @@ import openai
 from django.shortcuts import get_object_or_404
 from dotenv import load_dotenv
 import os
+from django.test import RequestFactory
+from .views import RetreiveContacts
+ 
 
 load_dotenv()
 API_KEY= os.getenv('api_key')
@@ -104,15 +107,38 @@ class ChatConsumer(AsyncWebsocketConsumer):
         await (self.channel_layer.group_add)(
             self.room_group_name,
             self.channel_name
-        ) 
+        )
+
+        await self.broadcast_status_update(True)
         await self.accept()
 
     async def disconnect(self, __quitcode__):
+        await self.broadcast_status_update(False)
         await (self.channel_layer.group_discard(
                 self.room_group_name,
                 self.channel_name
         )
         )
+
+    async def broadcast_status_update(self, online):
+        status = True if online else False
+        online_contacted_users = await self.retreive_contacted_users()    
+
+
+    async def status_update(self, event):
+        await (self.send( text_data=json.dumps(event) ))
+
+    @database_sync_to_async
+    def retreive_contacted_users(self):
+        factory = RequestFactory()
+        user = User.objects.get(id=self.sender_id)
+        request = factory.get('/chat/GetContactSection/')
+        request.user = user
+        response = RetreiveContacts(request)
+        response.render()
+        contacted_users = json.loads(response.content.decode('utf-8'))
+        online_contacted_users = [user for user in contacted_users if user.get('status') == True]
+        return online_contacted_users
 
     async def receive(self, text_data=None):
         self.extracted_msg = json.loads(text_data)

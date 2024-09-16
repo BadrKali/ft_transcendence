@@ -15,7 +15,6 @@ export const conversationMsgContext = createContext();
 export const ChatListContext = createContext();
 export const PickedConvContext = createContext();
 export const conversationSetterContext = createContext();
-export const SendMessageEventContext = createContext();
 export const chatPartnerContext = createContext();
 // status : false | true ,sender_id : null | value
 export const TypingContext = createContext();
@@ -36,7 +35,6 @@ const Chat = () => {
   const { auth } = useAuth();
   const { stateValue: clientSocket } = useContext(clientSocketContext);
   const CurrentUser = useContext(CurrentUserContext);
-  const [sendMessage, setSendMessage] = useState(0);
   const [ChatPartner, setChatPartner] = useState(null);
   const [requestRefetch, setrequestRefetch] = useState(false);
   const{blockpopUp, setblockpopUp} = useContext(blockPopUpContext)
@@ -66,8 +64,6 @@ const alreadyHaveConversation = (id) =>{
 }
 
 const sortConversations = () =>{
-  // console.log(`${CurrentUser.username} : I\'ll try to sORT coNVERSATIONS NOW !`);
-  // console.log(ChatList);
   if (ChatList.length > 1){
     setChatList(prevChatList => {
       const sortedChatList = [...prevChatList].sort((a, b) => {
@@ -97,11 +93,15 @@ const updateLastMessage = (data, result) =>{
     clientSocket.onmessage = (event) => {
     const data = JSON.parse(event.data);
     const notif = new Audio(receivedmsgsound);
+    
+
 
     if (data.type === 'receive_typing'){
+      if (ChatPartner && ChatPartner.id === data.message.sender_id){
       setTypingData({status: true,
         sender_id : data.message.sender_id
       })
+    }
     }
 
     if (data.type === 'deactivate_typing_event'){
@@ -110,8 +110,14 @@ const updateLastMessage = (data, result) =>{
       })
     }
 
+    if (data.type === 'status_update'){
+      console.log(`Here is event received : ${data.type}`);
+      console.log(data.message);
+      console.log('--------------------------------------');
+    }
+
     if (data.type === 'newchat.message'){
-      console.log('data.type is : ' + data.type)
+      
       // You are receiver you got notif sound! not your self too talk with your self .
       if (data.message.receiver_id === CurrentUser?.user_id && data.message.sender_id !== CurrentUser?.user_id){ 
           notif.play().then(() => {}).catch((error) => {
@@ -157,8 +163,6 @@ const updateLastMessage = (data, result) =>{
     }
 
     if (data.type === "msgs.areReaded"){
-        console.log(` You readed all msg With `, data.message.all_readed_From)
-
         setChatList(prevChatList => {
           return prevChatList.map((contact) => {
             if (contact.username === data.message.all_readed_From) {
@@ -281,9 +285,7 @@ const updateLastMessage = (data, result) =>{
               <chatPartnerContext.Provider value={{ChatPartner, setChatPartner}}>
                 <TypingContext.Provider value={{status : typingData.status, setTypingData}}>
                   <ContactSection handleConversationSelect={handleConversationSelect} />
-                  <SendMessageEventContext.Provider value ={{sendMessage, setSendMessage}}>
                     <MessageSection />
-                      </SendMessageEventContext.Provider>
                     {PickedUsername ? <UserParams /> : null}
                     </TypingContext.Provider>
                 </chatPartnerContext.Provider>

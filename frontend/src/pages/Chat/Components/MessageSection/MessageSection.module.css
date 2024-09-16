@@ -297,7 +297,6 @@
     animation-range: entry -1000%  30%;
     margin-top: 1rem;
     margin-bottom: 1rem;
-
     align-self: flex-start;
     display: grid;
     grid-template-columns: 80px 1fr;
@@ -347,6 +346,18 @@
     display: flex;
     flex-direction: column;
     gap: 0.4rem;
+}
+
+.msgContentanimation{
+    display: flex;
+    flex-direction: column;
+}
+
+.typingholder{
+    width: 5rem;
+    height: 5rem;
+    justify-content: flex-end;
+    align-self: flex-end;
 }
 
 .incoming{

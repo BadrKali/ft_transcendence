@@ -1,4 +1,4 @@
-import React, { useState, useRef, useContext, useEffect, createContext, } from "react";
+import React, { useState, useRef, useContext, useEffect, } from "react";
 import styles from "./MessageSection.module.css";
 import EmptyChatAnimation from "../../ChatAssets/EmptyChatAnimation.json";
 import online from "../../ChatAssets/online.json";
@@ -13,14 +13,11 @@ import { ChatListContext } from "../../Chat.jsx";
 import { PickedConvContext } from "../../Chat.jsx";
 import { CurrentUserContext } from "../../usehooks/ChatContext.js";
 import { clientSocketContext } from "../../usehooks/ChatContext.js";
-import { SendMessageEventContext } from "../../Chat.jsx";
 import { chatPartnerContext } from "../../Chat.jsx";
 import notificationSound from "../../ChatAssets/notification.mp3";
 import BlockPopUps from "../BlockPopUps/BlockPopUps.jsx";
 import { TypingContext } from "../../Chat.jsx";
 import typinganimation from "../../ChatAssets/lastTyping.json"
-
-export const PickerClickContext = createContext();
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
@@ -51,13 +48,8 @@ function reformeDate(datestr) {
   return `${hours}:${minutes}`;
 }
 
-const SendMessage = ({ message, setMessage }) => {
-  const CurrentUser = useContext(CurrentUserContext);
-  const {ChatPartner} = useContext(chatPartnerContext);
-  const PickerClicksetter = useContext(PickerClickContext);
-  const {stateValue: clientSocket} = useContext(clientSocketContext);
-  const {setSendMessage} = useContext(SendMessageEventContext)
-  const {status, setTypingData} = useContext(TypingContext)
+/*ADD props to args Here*/
+const SendMessage = ({ message, setMessage ,CurrentUser, ChatPartner, clientSocket, handleSendMessage}) => {
   let typingTimeoutId = null; //Pay Attention to this fucking 0
 
   useEffect(() =>{
@@ -72,7 +64,6 @@ const SendMessage = ({ message, setMessage }) => {
           if (typingTimeoutId !== null) {                                                                             
             clearTimeout(typingTimeoutId);
           }
-
           typingTimeoutId = setTimeout(() => {
             clientSocket?.send(JSON.stringify({ type: "deactivate_typing_event", messageData: messageData }));
             }, 5000);
@@ -87,33 +78,15 @@ const SendMessage = ({ message, setMessage }) => {
   
 }, [message])
 
+  
 
-  const handleSendMessage = () => {
-    if (message.trim()) {
-      PickerClicksetter((prev) => (prev ? !prev : prev));
-      const messageData = {
-        sender_id: CurrentUser?.user_id,
-        receiver_id: ChatPartner?.id,
-        content: message,
-        seen: false,
-        created_at: new Date().toISOString()
-      };
 
-      clientSocket?.send(JSON.stringify({type: 'newchat.message', messageData: messageData}));
-      
-      const notif = new Audio(notificationSound);
-      notif.play();
-      setSendMessage(prev => prev + 1)   
-      setMessage("");
-    }
-    // *********************************************************
-  };
+
+
+
+
   return (
     <svg
-    onKeyDown={(e) => {
-      if (e.key === "Enter")
-          handleSendMessage();
-      }}
       onClick={handleSendMessage}
       width="30"
       height="30"
@@ -129,7 +102,7 @@ const SendMessage = ({ message, setMessage }) => {
     </svg>
   );
 };
-
+/***********************STOOOOOP */
 const Emojies = ({ SetPicker }) => {
   return (
     <Smiley
@@ -142,12 +115,13 @@ const Emojies = ({ SetPicker }) => {
   );
 };
 
-const InputField = ({ message, handleWritedMessage, inputRef }) => {
+const InputField = ({ message, handleWritedMessage, inputRef, handleSendMessage }) => {
   return (
     <input
       ref={inputRef}
       className={styles.inputMessage}
       onChange={(e) => handleWritedMessage(e)}
+      onKeyDown={(e) => handleSendMessage(e)}
       type="text"
       value={message}
       placeholder="write a message ... "
@@ -200,6 +174,9 @@ const ChatHeader = () => {
 };
 
 const ChatInput = () => {
+  const CurrentUser = useContext(CurrentUserContext);
+  const {ChatPartner} = useContext(chatPartnerContext);
+  const {stateValue: clientSocket} = useContext(clientSocketContext);
   const Pickerusername = useContext(PickedConvContext);
   const [PickerClick, SetPicker] = useState(false);
   const [ImportItemsClicked, setImportClicked] = useState(false);
@@ -228,14 +205,35 @@ const ChatInput = () => {
   };
 
   function handleImageSelect(e) {
-    console.log(e.target.files[0]);
+    // console.log(e.target.files[0]);
     setSelectedImage(() => e.target.files[0]);
   }
 
   function handleFileSelect(e) {
-    console.log(e.target.files[0]);
+    // console.log(e.target.files[0]);
     setSelectedFile(e.target.files[0]);
   }
+
+  const handleSendMessage = (event) => {
+    if (event.type === 'keydown' && event.key !== 'Enter')
+        return ;
+    if (message.trim()) {
+      SetPicker((prev) => (prev ? !prev : prev));//deactivate emojies palett when - sending msg !
+      const messageData = {
+        sender_id: CurrentUser?.user_id,
+        receiver_id: ChatPartner?.id,
+        content: message,
+        seen: false,
+        created_at: new Date().toISOString()
+      };
+
+      clientSocket?.send(JSON.stringify({type: 'newchat.message', messageData: messageData}));
+      
+      const notif = new Audio(notificationSound);
+      notif.play();
+      setMessage("");
+    }
+  };
 
   return (
     <div className={styles.ChatInputHolder}>
@@ -278,15 +276,10 @@ const ChatInput = () => {
 
           <div className={styles.inputMainDiv}>
             <ImportItem setImportClicked={setImportClicked} />
-            <InputField
-              inputRef={inputRef}
-              message={message}
-              handleWritedMessage={handleWritedMessage}
-            />
+            <InputField inputRef={inputRef} message={message} handleWritedMessage={handleWritedMessage} handleSendMessage ={handleSendMessage} />
             <Emojies SetPicker={SetPicker} />
-            <PickerClickContext.Provider value={SetPicker}>
-              <SendMessage message={message} setMessage={setMessage} />
-            </PickerClickContext.Provider>
+            <SendMessage message={message} setMessage={setMessage} CurrentUser={CurrentUser}
+                         ChatPartner={ChatPartner} clientSocket={clientSocket} handleSendMessage={handleSendMessage}/>
           </div>
 
           <div
@@ -350,8 +343,10 @@ const Typing =() => {
         />
       </div>
 
-      <div className={styles.msgContent}>
+      <div className={styles.msgContentanimation}>
+        <div className={styles.typingholder}>
           <Lottie animationData={typinganimation}/>
+        </div>
         <h1 className={styles.SendingTime}> now </h1>
       </div>
 
@@ -372,7 +367,7 @@ const ChatMainHolder = () => {
 
   useEffect(() => {
     scrollToBottom();
-  }, [conversationMsg]);
+  }, [conversationMsg, status]);
 
   return (
     <div className={styles.ChatMainHolder}>
