@@ -60,7 +60,7 @@ function MatchHistory({profil}) {
       <h2>{t('Match History')}</h2>
     </div>
     <div className="historyCard">
-      {history.length > 0 ? (
+      {history && history.length > 0 ? (
         history.map((historyItem) => (
           <div key={historyItem.id} onClick={() => handleItemClick(historyItem)}>
             <HistoryItem history={historyItem} />

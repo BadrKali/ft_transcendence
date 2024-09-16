@@ -497,3 +497,4 @@ class GlobalStatsView(APIView):
 
         }
         return(Response(data, status=status.HTTP_200_OK))
+

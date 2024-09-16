@@ -35,6 +35,11 @@ export const ProfileProvider = ({ children, userId }) => {
 
     useEffect(() => {
         const fetchProfileData = async () => {
+            if (!nameOfUser) {
+                console.warn("nameOfUser is undefined, skipping fetch.");
+                setIsProfileDataReady(true);
+                return;
+            }
             const url = `${BACKEND_URL}/user/stats/username/${nameOfUser}`;
             try {
                 const response = await fetch(url, {
