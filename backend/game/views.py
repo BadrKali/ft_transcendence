@@ -141,12 +141,9 @@ class SendChallengeView(APIView):
                     'sender': player_sender.id, 
                 }
             )
-
             return Response({'message': 'Challenge sent successfully.'}, status=status.HTTP_201_CREATED)
-
         except User.DoesNotExist:
             return Response({'error': 'Player not found.'}, status=status.HTTP_404_NOT_FOUND)
-
         except Player.DoesNotExist:
             return Response({'error': 'Player instance not found for the sender or receiver.'}, status=status.HTTP_404_NOT_FOUND)
 

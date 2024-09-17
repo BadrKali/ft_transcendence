@@ -14,6 +14,7 @@ const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 export const RealTimeContext = createContext({});
 
 export const RealTimeProvider = ({ children }) => {
+    const [tournamentMatchAccepted, setTournamentMatchAccepted] = useState(false);
     const [notifications, setNotifications] = useState([]);
     const [friendsStatus, setFriendsStatus] = useState({});
     const { auth } = useAuth();
@@ -23,7 +24,7 @@ export const RealTimeProvider = ({ children }) => {
     const [joinGame, setJoinGame] = useState(false);
     const [showGameSettings, setShowGameSettings] = useState(false);
     const {updateUserNotification} =  useContext(UserContext)
-
+    const [data, setData] = useState(null);
     const [shouldFetchNotifications, setShouldFetchNotifications] = useState(false);
 
 
@@ -93,8 +94,11 @@ export const RealTimeProvider = ({ children }) => {
 
         ws.onmessage = (message) => {
             const dataFromServer = JSON.parse(message.data);
+            setData(dataFromServer);
             console.log({dataFromServer});
             if (dataFromServer.type === 'match_notification') {
+                setGameChallenge(dataFromServer);
+            } else if (dataFromServer.type === 'tournament_notification') {
                 setGameChallenge(dataFromServer);
             } else if (dataFromServer.type === 'status_update') {
                 const { user_id, status } = dataFromServer;
@@ -127,7 +131,8 @@ export const RealTimeProvider = ({ children }) => {
 
     const handleAcceptGame = (id) => {
         setGameChallenge(null);
-        let url = `${BACKEND_URL}/api/game/game-challenges/${id}/response/`;
+        let url = data.type === "tournament_notification" ?`${BACKEND_URL}/api/game/game-challenges/${id}/response/` : 
+            `${BACKEND_URL}user/tournament/invitation/${id}/response`;
         let body = JSON.stringify({ 'status': 'accepted' });
         fetch(url, {
             method: 'PATCH',
@@ -161,7 +166,7 @@ export const RealTimeProvider = ({ children }) => {
     }
     const handleRejectGame = (id) => {
         setGameChallenge(null);
-        let url = `${BACKEND_URL}/api/game/game-challenges/${id}/response/`;
+        let url = data.type === "tournament_notification" ?`${BACKEND_URL}/api/game/game-challenges/${id}/response/` : `${BACKEND_URL}user/tournament/invitation/${id}/response`;
         let body = JSON.stringify({ 'status': 'rejected' });
         fetch(url, {
             method: 'PATCH',
@@ -188,6 +193,7 @@ export const RealTimeProvider = ({ children }) => {
     const handleExitGameSettings = () => {
         setShowGameSettings(false);
     }
+
 return (
         <RealTimeContext.Provider value={{ setNotifications, notifications, friendsStatus, hasNotification, setHasNotification, clearNotification, gameChallenge, handleAcceptGame, handleRejectGame, gameAccepted, joinGame, setGameAccepted, setJoinGame, showGameSettings, setShowGameSettings }}>
             {children}

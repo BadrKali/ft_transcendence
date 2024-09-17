@@ -75,7 +75,6 @@ class NotificationConsumer(AsyncWebsocketConsumer):
             'status': status
         }))
     async def join_game(self, event):
-        print("hello from join Game")
         message = event['message']
         await self.send(text_data=json.dumps({
             'type' : 'join_game',
@@ -89,6 +88,15 @@ class NotificationConsumer(AsyncWebsocketConsumer):
             'message': message
         }))
 
+    async def notification_tournament(self, event):
+        message = event['message']
+        sender_id = event['sender']
+        await self.send(text_data=json.dumps({
+            'type' : 'tournament_notification',
+            'message': message,
+            'sender_id': sender_id
+        }))
+    
     async def notification_match(self, event):
         message = event['message']
         sender_id = event['sender']

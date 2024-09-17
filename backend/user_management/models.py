@@ -177,7 +177,7 @@ class TournamentParticipants(models.Model):
     loosers = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='loosers', null=True, blank=True)
 
     def assign_winner(self, winner, looser):
-        slef.loosers = looser
+        self.loosers = looser
         self.winner = winner
         self.matchPlayed = True
         #remove tghe looser player from the tournament
@@ -197,7 +197,7 @@ class TournamentParticipants(models.Model):
         async_to_sync(channel_layer.group_send)(
         f'notifications_{self.player1.id}',
             {
-                'type': 'notification_match',
+                'type': 'notification_tournament',
                 'message': f'{tournament_creator} has invited you to play a game.',
                 'sender': tournament_creator.id, 
             }
@@ -212,7 +212,7 @@ class TournamentParticipants(models.Model):
         async_to_sync(channel_layer.group_send)(
         f'notifications_{self.player2.id}',
             {
-                'type': 'notification_match',
+                'type': 'notification_tournament',
                 'message': f'{tournament_creator} has invited you to play a game.',
                 'sender': tournament_creator.id, 
             }

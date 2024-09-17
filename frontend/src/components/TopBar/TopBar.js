@@ -39,7 +39,7 @@ const TopBar = () => {
   const [modalOpen, setModalOpen] = useState(false);
   const [modalOpenBlocked, setModalOpenBlocked] = useState(false);
   const [selectedNotification, setSelectedNotification] = useState(null);
-  const {gameChallenge, handleAcceptGame, handleRejectGame, gameAccepted, joinGame, setGameAccepted, showGameSettings, setShowGameSettings} = useContext(RealTimeContext);
+  const {gameChallenge, handleAcceptGame, handleRejectGame, gameAccepted, joinGame, setGameAccepted, showGameSettings, setShowGameSettings, tournamentMatchAccepted} = useContext(RealTimeContext);
   const { userData, userDataLoading, userDataError, updateUserFriends, notifications, setNotifications, updatetounament} = useContext(UserContext);
   const debouncedQuery = useDebounce(query, 300);
   const [queryEndpoint, setQueryEndpoint] = useState(`${BACKEND_URL}/user/search/?q=${query}`)
@@ -62,6 +62,12 @@ const TopBar = () => {
   const handleSettingClick = () => {
       navigate(`/setting`)
   }
+  useEffect(() => {
+    if (tournamentMatchAccepted) {
+      setGameAccepted(false);
+      navigate('/tournament-game', { replace:true });
+    }
+  }, [tournamentMatchAccepted, navigate]);
 
   useEffect(() => {
     if (gameAccepted) {
@@ -343,9 +349,6 @@ const handleReject = async (id, type) => {
                 onReject={handleRejectGame}
             />
       )}
-      {/* {showGameSettings && (
-        <GameSettingsPopUp onExit={handleExitGameSettings}/>
-      )} */}
       <div className='topbar-search'>
         <Icon name='search' className='topbar-search-icon'/>
         <input placeholder='Search' value={query}  type='text' onChange={handleChange}/>
