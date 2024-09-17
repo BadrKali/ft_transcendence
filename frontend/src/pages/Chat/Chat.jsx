@@ -10,7 +10,6 @@ import { blockPopUpContext } from "./usehooks/ChatContext.js";
 import receivedmsgsound from "./ChatAssets/receivemsgnotif.mp3"
 
 
-
 export const conversationMsgContext = createContext();
 export const ChatListContext = createContext();
 export const PickedConvContext = createContext();
@@ -74,6 +73,17 @@ const sortConversations = () =>{
   }
 }
 
+const update_status = (userdata) =>{
+  setChatList(prev => {
+    return prev.map(contact =>{
+      if (contact.id === userdata?.status_owner){
+        return {...contact, status : userdata?.status}
+      }else
+        return contact
+    })
+  })
+}
+
 const updateLastMessage = (data, result) =>{
   setChatList(prevChatList => {
     return prevChatList.map((contact) => {
@@ -94,8 +104,6 @@ const updateLastMessage = (data, result) =>{
     const data = JSON.parse(event.data);
     const notif = new Audio(receivedmsgsound);
     
-
-
     if (data.type === 'receive_typing'){
       if (ChatPartner && ChatPartner.id === data.message.sender_id){
       setTypingData({status: true,
@@ -111,9 +119,7 @@ const updateLastMessage = (data, result) =>{
     }
 
     if (data.type === 'status_update'){
-      console.log(`Here is event received : ${data.type}`);
-      console.log(data.message);
-      console.log('--------------------------------------');
+      update_status(data.message);
     }
 
     if (data.type === 'newchat.message'){
@@ -175,13 +181,11 @@ const updateLastMessage = (data, result) =>{
             }
           });
         });
-      }
+    }
 
     if (data.type === "Pick_existed_conv"){
-        // Here is the issue the Pickedusername change 
-        // but the chatlist is not yet setted because contact Section is not rendred !
           setPickerUsername(data.message.username)
-      }
+    }
     
     if (data.type === 'Blocke_Warning'){
       setblockpopUp(true)
@@ -220,7 +224,6 @@ const updateLastMessage = (data, result) =>{
         }
         const data = await response.json();
         setChatList(data);
-        // console.log('I refetcheeeed did you get last update or not ??')
       } catch (error) {
         console.error(error.message);
       }
@@ -230,8 +233,7 @@ const updateLastMessage = (data, result) =>{
     return () => {
       abortController.abort(); 
     };
-  }, [requestRefetch, auth.accessToken]); //PickedUsername -dependencies will change
-  // I fogot why I added PickedUsername ???
+  }, [requestRefetch, auth.accessToken]);
 
   const handleConversationSelect = (conversationId) => {
     setPickerUsername(conversationId);

@@ -122,9 +122,22 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
     async def broadcast_status_update(self, online):
         status = True if online else False
-        online_contacted_users = await self.retreive_contacted_users()    
+        online_contacted_users = await self.retreive_contacted_users()
+        # print('=-=-=-=-==-=-=-=-=-=--=-=-=-=-=-=-=-=-=-=-=-=-=-=-=')
+        [await self.status_acknowledgment(user.get('id'), status) for user in online_contacted_users]
+        # print('=-=-=-=-==-=-=-=-=-=--=-=-=-=-=-=-=-=-=-=-=-=-=-=-=')
 
-
+    async def status_acknowledgment(self, user_id, status):
+        await self.channel_layer.group_send(
+            f'room_{user_id}',{
+                'type'    : 'status_update',
+                'message' : {
+                    'status_owner' : self.sender_id,
+                    'status'       : status,
+                }
+            }
+        )
+    
     async def status_update(self, event):
         await (self.send( text_data=json.dumps(event) ))
 
@@ -237,14 +250,6 @@ class ChatConsumer(AsyncWebsocketConsumer):
                 'message': ContactData
             }
             )
-        # Dont' send start_first_conv event to msg receiver for first time!
-        # # I have no focus When I added this line payattention !
-        # await (self.channel_layer.group_send)( 
-        #     f'room_{self.MSGreceiver.id}',{ 
-        #         'type': 'start_Firstconv',
-        #         'message': ContactData
-        #     }
-        #     )
     
     async def start_Firstconv(self, event):
         await (self.send( text_data=json.dumps(event) ))
