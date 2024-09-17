@@ -79,11 +79,16 @@ export const SocketClientProvider = ({children}) =>{
     }
     // ****************************************************************************************
     return () => {
-      if (socket)
+      if (socket){
         socket.close();
-      
-      if (botSocket)
+        if (clientSocket)
+          clientSocket.close();
+      }
+      if (botSocket){
         botSocket.close();
+        if (forBotSocket)
+          forBotSocket.close();
+      }
     
     };
   }, [auth.accessToken]);
