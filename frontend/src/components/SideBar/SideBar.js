@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useContext} from 'react';
 import './SideBar.css';
 import { assets } from '../../assets/assets';
 import { Link, useLocation } from 'react-router-dom';
@@ -7,12 +7,14 @@ import useSidebarData from './SideBarData';
 import { useNavigate } from 'react-router-dom';
 import useAuth from '../../hooks/useAuth';
 import axios from 'axios';
+import { clientSocketContext } from '../../pages/Chat/usehooks/ChatContext';
 
 const SideBar = () => {
   const location = useLocation().pathname;
   const SideBarData = useSidebarData();
   const navigate = useNavigate();
   const {auth, setAuth} = useAuth();
+  const { stateValue: clientSocket, botSocket } = useContext(clientSocketContext);
 
   const handleLogout = async () => {
     try {
@@ -25,7 +27,12 @@ const SideBar = () => {
     } catch (error) {
       console.error('Error logging out:', error.response ? error.response.data : error.message);
     }
-    setAuth(null); 
+    
+    if (clientSocket)
+      clientSocket.close();
+    if (botSocket)
+      botSocket.close();
+    setAuth(null);
     navigate('/auth');
   };
   

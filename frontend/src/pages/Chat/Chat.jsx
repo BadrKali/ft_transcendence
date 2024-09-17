@@ -74,14 +74,16 @@ const sortConversations = () =>{
 }
 
 const update_status = (userdata) =>{
-  setChatList(prev => {
-    return prev.map(contact =>{
-      if (contact.id === userdata?.status_owner){
-        return {...contact, status : userdata?.status}
-      }else
-        return contact
+  if (ChatList && ChatList.length){
+    setChatList(prev => {
+      return prev.map(contact =>{
+        if (contact.id === userdata?.status_owner){
+          return {...contact, status : userdata?.status}
+        }else
+          return contact
+      })
     })
-  })
+  }
 }
 
 const updateLastMessage = (data, result) =>{

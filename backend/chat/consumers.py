@@ -123,9 +123,8 @@ class ChatConsumer(AsyncWebsocketConsumer):
     async def broadcast_status_update(self, online):
         status = True if online else False
         online_contacted_users = await self.retreive_contacted_users()
-        # print('=-=-=-=-==-=-=-=-=-=--=-=-=-=-=-=-=-=-=-=-=-=-=-=-=')
-        [await self.status_acknowledgment(user.get('id'), status) for user in online_contacted_users]
-        # print('=-=-=-=-==-=-=-=-=-=--=-=-=-=-=-=-=-=-=-=-=-=-=-=-=')
+        if len(online_contacted_users):
+            [await self.status_acknowledgment(user.get('id'), status) for user in online_contacted_users]
 
     async def status_acknowledgment(self, user_id, status):
         await self.channel_layer.group_send(
