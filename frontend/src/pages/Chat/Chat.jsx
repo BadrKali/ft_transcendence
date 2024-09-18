@@ -87,13 +87,14 @@ const update_status = (userdata) =>{
 }
 
 const updateLastMessage = (data, result) =>{
+
   setChatList(prevChatList => {
     return prevChatList.map((contact) => {
       if (contact.id === result[0]?.id) {
         return {        
             ...contact,
             lastTime : reformeDate(data.message.created_at),
-            lastMessage : data.message.content
+            lastMessage : CurrentUser?.user_id === data.message.sender_id ? `You: ${data.message.content}` : `${ChatList?.filter(user => user.id === data.message.sender_id)[0].username.substring(0, 5)}: ${data.message.content}`
         };
       } else {
         return contact;

@@ -3,7 +3,10 @@ from django.conf import settings
 from django.db.models import Q
 from authentication .models import User
 
-# Create your models here.
+# @ New Feat Add : 
+    #  msgtype Field default text, or ""
+    #  ImgPath Field ImageField null true blank true upload To chat_media
+
 class message(models.Model):
     sender_id = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='message_sender', on_delete=models.CASCADE)
     receiver_id = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='message_receiver', on_delete=models.CASCADE)

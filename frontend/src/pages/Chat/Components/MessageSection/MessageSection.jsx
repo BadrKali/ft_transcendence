@@ -4,7 +4,7 @@ import EmptyChatAnimation from "../../ChatAssets/EmptyChatAnimation.json";
 import online from "../../ChatAssets/online.json";
 import offline from "../../ChatAssets/offline.json";
 import NoPickedConv from "../../ChatAssets/NoConversationchoiced.json";
-import { Smiley, Image, Files, Gear } from "phosphor-react";
+import { Smiley, Image , Gear, XCircle } from "phosphor-react";
 import Lottie from "lottie-react";
 import data from "@emoji-mart/data";
 import Picker from "@emoji-mart/react";
@@ -18,6 +18,8 @@ import notificationSound from "../../ChatAssets/notification.mp3";
 import BlockPopUps from "../BlockPopUps/BlockPopUps.jsx";
 import { TypingContext } from "../../Chat.jsx";
 import typinganimation from "../../ChatAssets/lastTyping.json"
+import { ErrorToast } from "../../../../components/ReactToastify/ErrorToast.js";
+
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
@@ -77,13 +79,6 @@ const SendMessage = ({ message, setMessage ,CurrentUser, ChatPartner, clientSock
   }
   
 }, [message])
-
-  
-
-
-
-
-
 
   return (
     <svg
@@ -173,7 +168,7 @@ const ChatHeader = () => {
   );
 };
 
-const ChatInput = () => {
+const ChatInput = ({setSelectedImage}) => {
   const CurrentUser = useContext(CurrentUserContext);
   const {ChatPartner} = useContext(chatPartnerContext);
   const {stateValue: clientSocket} = useContext(clientSocketContext);
@@ -182,8 +177,6 @@ const ChatInput = () => {
   const [ImportItemsClicked, setImportClicked] = useState(false);
   const [message, setMessage] = useState("");
   const inputRef = useRef(null);
-  const [selectedImage, setSelectedImage] = useState(null);
-  const [selectedFile, setSelectedFile] = useState(null);
 
   function handleWritedMessage(e) {
     setMessage(e.target.value);
@@ -204,15 +197,23 @@ const ChatInput = () => {
     return -1;
   };
 
-  function handleImageSelect(e) {
-    // console.log(e.target.files[0]);
-    setSelectedImage(() => e.target.files[0]);
-  }
-
-  function handleFileSelect(e) {
-    // console.log(e.target.files[0]);
-    setSelectedFile(e.target.files[0]);
-  }
+  const handleImageSelect = (event) => {
+    try{
+      const file = event.target.files[0];
+      const reader = new FileReader();
+    
+      reader.onloadend = () => {
+        setSelectedImage(reader.result);
+      };
+      if (file) {
+        reader.readAsDataURL(file);
+      } else {
+        setSelectedImage(null);
+      }
+    } catch(e){
+      ErrorToast('can\'t Load Image');
+    }
+    };
 
   const handleSendMessage = (event) => {
     if (event.type === 'keydown' && event.key !== 'Enter')
@@ -240,8 +241,7 @@ const ChatInput = () => {
       {Pickerusername.length ? (
         <>
           <BlockPopUps/>
-          <div
-            className={styles.ImportOptions}
+          <div className={styles.ImportOptions}
             style={{ display: ImportItemsClicked ? "flex" : "none" }}
           >
             <div className={styles.ImageBack}>
@@ -255,21 +255,6 @@ const ChatInput = () => {
                 className="upload-input"
                 onChange={handleImageSelect}
                 accept="image/*"
-              />
-            </div>
-
-            <div className={styles.FilesBack}>
-              <label htmlFor="uploadFileBtn">
-                {" "}
-                <Files className={styles.ImportFiles} size={40} />{" "}
-              </label>
-              <input
-                type="file"
-                name="-FILE-"
-                id="uploadFileBtn"
-                className="upload-input"
-                onChange={handleFileSelect}
-                accept=".txt,.cpp,.c,.jsx,.py"
               />
             </div>
           </div>
@@ -354,7 +339,7 @@ const Typing =() => {
   )
 }
 
-const ChatMainHolder = () => {
+const ChatMainHolder = ({selectedImage, setSelectedImage}) => {
   const Pickedusername = useContext(PickedConvContext);
   const conversationMsg = useContext(conversationMsgContext);
   const messagesEndRef = useRef(null);
@@ -364,6 +349,9 @@ const ChatMainHolder = () => {
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
+  const handleCloseImg = () =>{
+    setSelectedImage(null);
+  }
 
   useEffect(() => {
     scrollToBottom();
@@ -372,7 +360,7 @@ const ChatMainHolder = () => {
   return (
     <div className={styles.ChatMainHolder}>
       {Pickedusername.length ? (
-       
+        <>
         <div className={styles.ConversationMessages}>
           {conversationMsg?.map((elem, index) => {
             return (
@@ -388,6 +376,18 @@ const ChatMainHolder = () => {
           <div ref={messagesEndRef} />
           { status ? <Typing/> : null }
         </div>
+        {
+          // Display Selected Img
+            selectedImage && (
+              <div className={styles.UserSelectedImgHolder}>
+                <img className={styles.UserSelectedImg} src={selectedImage} alt="Selected" />
+                <div className={styles.EraseSelectedImgHolder}>
+                  <XCircle size={40} className={styles.EraseSelectedImg} onClick={handleCloseImg} color="white" />
+                </div>
+
+              </div>
+        )}
+        </>
       ) : (
         <div className={styles.StartMessageHolder}>
           <div className={styles.NoPickedConvContainer}>
@@ -410,6 +410,8 @@ const MessageSection = () => {
   const {ChatList} = useContext(ChatListContext);
   const PickedUsername = useContext(PickedConvContext);
   const {setChatPartner} = useContext(chatPartnerContext)
+  const [selectedImage, setSelectedImage] = useState(null);
+
 
   useEffect(() => {
   
@@ -437,8 +439,8 @@ const MessageSection = () => {
       ) : (
         <div className={styles.MessageSectionFull}>
             <ChatHeader />
-            <ChatMainHolder />
-            <ChatInput />
+            <ChatMainHolder selectedImage={selectedImage} setSelectedImage={setSelectedImage}/>
+            <ChatInput setSelectedImage={setSelectedImage}/>
         </div>
       )}
     </>

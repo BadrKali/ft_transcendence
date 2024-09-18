@@ -8,7 +8,9 @@ class __user_serializer__(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ['id', 'avatar', 'username']
-
+# @ New Feat Add : 
+    # msgtype 
+    # ImgPath
 class __messageSerializer__(serializers.ModelSerializer):
     class Meta:
         model  = message

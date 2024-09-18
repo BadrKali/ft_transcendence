@@ -15,6 +15,14 @@ def format_date(date)-> str:
     minute = {True:date.minute , False: f'0{date.minute}'} [date.minute >= 10]
     return f'{date.hour}:{minute}'
 
+def forme_lastMessage(currentUser, Message):
+    return {True: f'You: {Message.content}', False: f'{Message.sender_id.username[:5]}: {Message.content}'} [Message.sender_id == currentUser]
+
+# @ New Feat Add : 
+    # lastMessage if type === Image
+    # last message will be # attachment image
+    # you shared photo 
+
 @api_view(['GET'])
 def RetreiveContacts(request):
     Mycontacts = message.objects.filter(Q(sender_id=request.user.id) | Q(receiver_id=request.user.id));
@@ -26,7 +34,7 @@ def RetreiveContacts(request):
     ContactSerializer = __user_serializer__(contacts, many=True)
     ChatList = [{ **contact,
                   "unreadMessages": message.UnreadMessageBeetwen(request.user.id, contact.get("id")),
-                  "lastMessage": message.getLastMessage(request.user.id, contact.get("id")).content,
+                  "lastMessage": forme_lastMessage(request.user ,message.getLastMessage(request.user.id, contact.get("id"))),
                   "created_at" : message.getLastMessage(request.user.id, contact.get("id")).created_at,
                   "lastTime": format_date(message.getLastMessage(request.user.id, contact.get("id")).created_at),
                   "status": message.GetUserStatus(contact.get("id"))
