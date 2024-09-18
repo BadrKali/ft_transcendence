@@ -77,18 +77,25 @@ class GameState:
                 return True
         return False
 
-    async def get_winner_loser(self):
+    def get_winner_loser(self):
         try:
             players = list(self.state['players'].values())
-            player1 = players[0]
-            player2 = players[1]
-            
+            if len(players) != 2:
+                return None, None
+            player1, player2 = players
+            if not isinstance(player1.get('score'), (int, float)) or not isinstance(player2.get('score'), (int, float)):
+                return None, None
             if player1['score'] > player2['score']:
-                return player1['username'], player2['username']
+                return player1.get('username'), player2.get('username')
+            elif player2['score'] > player1['score']:
+                return player2.get('username'), player1.get('username')
             else:
-                return player2['username'], player1['username']
-        except:
-            return;
+                return None, None
+        except KeyError as e:
+            pass
+        except Exception as e:
+            pass
+        return None, None 
 
     def winner_score(self, winner):
         return self.state['players'][winner]['score']
@@ -562,12 +569,11 @@ class GameConsumer(AsyncWebsocketConsumer):
             start_time = time.time()
             self.game_state.update_ball_position()
             if self.game_state.check_winning_condition():
-                winner , loser = await self.game_state.get_winner_loser()
+                winner , loser = self.game_state.get_winner_loser()
                 await self.game_state.update_game_over(True)
                 match_data = await self.game_state.get_match_data()
                 if not match_data:
-                    await self.update_xp(winner, loser, self.room)
-                    await self.save_game_history(winner, loser, self.room)
+                    await self.update_xp_and_save_history(winner, loser, self.room)
                     await self.game_state.update_match_data(True)
                 await self.channel_layer.group_send(
                     self.room_group_name,
@@ -596,6 +602,36 @@ class GameConsumer(AsyncWebsocketConsumer):
             sleep_duration = max(0, frame_duration - elapsed_time)
             await asyncio.sleep(sleep_duration)
 
+    @sync_to_async
+    def update_xp_and_save_history(self, winner, loser, room):
+        from user_management.models import Player
+        from .models import GameHistory
+        try:
+            player1 = self.game_state.get_player_username(room.player1)
+            player2 = self.game_state.get_player_username(room.player2)
+
+            if player1 == winner:
+                winner_user = room.player1
+                loser_user = room.player2
+            else:
+                winner_user = room.player2
+                loser_user = room.player1
+            winner_user.update_xp(True)
+            loser_user.update_xp(False)
+            GameHistory.objects.create(
+                winner_user=winner_user,
+                loser_user=loser_user,
+                winner_score=self.game_state.winner_score(str(winner)),
+                loser_score=self.game_state.loser_score(str(loser)),
+                game_type='pingpong',
+                match_type='single'
+            )
+            print(f"XP Updated and Game History Saved for winner: {winner}, loser: {loser}")
+        except Player.DoesNotExist:
+            print("Error: One of the players does not exist.")
+        except Exception as e:
+            print(f"Unexpected error updating XP and saving history: {str(e)}")
+    
     @sync_to_async
     def update_xp(self, winner, loser, room):
         from user_management.models import Player
