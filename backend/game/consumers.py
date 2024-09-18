@@ -185,7 +185,7 @@ class GameState:
         if user in self.state['players']:
             player = self.state['players'][user]
             self.player_canvas_sizes[user] = canvas_size
-            move_amount = 20 * (canvas_size['height'] / self.state['canvas']['height'])
+            move_amount = 30 * (canvas_size['height'] / self.state['canvas']['height'])
             if direction == "up":
                 if player['y'] > 0:
                     player['y'] -= move_amount
@@ -564,7 +564,7 @@ class GameConsumer(AsyncWebsocketConsumer):
         }))
 
     async def start_game_loop(self, room):
-        frame_duration = 1 / 50
+        frame_duration = 1 / 60
         while self.game_state.get_running():
             start_time = time.time()
             self.game_state.update_ball_position()

@@ -45,13 +45,9 @@ const RealTimeGame = ({ mode }) => {
     const [sendGotIt, setSendGotIt] = useState(false);
     const [sendWaiting, setSendWaiting] = useState(false);
     const [gameOver, setGameOver] = useState();
-    const [backToLobby, setBackToLobby] = useState(false);
-    const [pauseGame, setPauseGame] = useState(false);
-    const [message, setMessage] = useState("");
-    const [profileData, setProfileData] = useState(null);
-    const [won, setWon] = useState(false);
     const [canvasSize, setCanvasSize] = useState({ width: 1384, height: 696 });
     const [isReconnected, setIsReconnected] = useState(false);
+    const [previousPaddlePositions, setPreviousPaddlePositions] = useState({});
     useEffect(() => {
         switch (mode) {
             case "invite":
@@ -75,9 +71,6 @@ const RealTimeGame = ({ mode }) => {
     const { data: currentUser } = useFetch(`${BACKEND_URL}/user/stats`);
 
     useEffect(() => {
-        if (currentUser) {
-            setProfileData(currentUser);
-        }
         if (currentUser === player1) {
             setOpponent(player2);
         } else {
@@ -236,6 +229,7 @@ const RealTimeGame = ({ mode }) => {
         };
     }, [canvasSize, gameState]);
 
+    
     const initializeCanvas = useCallback(() => {
         const canvas = canvasRef.current;
         const ctx = canvas?.getContext('2d');
@@ -276,6 +270,21 @@ const RealTimeGame = ({ mode }) => {
             ctx.fill();
         };
 
+        const drawPaddles = () => {
+            Object.values(gameState.players).forEach(player => {
+                const prevY = previousPaddlePositions[player.username] || player.y;
+                const currentY = player.y;
+                const interpolatedY = prevY + (currentY - prevY) * 0.3;
+
+                ctx.fillStyle = player.color;
+                drawRoundedRect(player.x , interpolatedY, player.width , player.height ,9);
+                setPreviousPaddlePositions(prev => ({
+                    ...prev,
+                    [player.username]: interpolatedY
+                }));
+            });
+        };
+    
         const drawNet = () => {
             for (let i = 0; i <= canvas.height; i += 15 * scale.y) {
                 drawRect(net.x, net.y + i / scale.y, net.width, net.height, net.color);
@@ -287,12 +296,7 @@ const RealTimeGame = ({ mode }) => {
             ctx.fillStyle = 'rgba(22, 22, 37, 0.9)';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
             drawNet();
-
-            Object.values(gameState.players).forEach(player => {
-                ctx.fillStyle = player.color;
-                drawRoundedRect(player.x, player.y, player.width, player.height, 9);
-            });
-
+            drawPaddles();
             drawArc(ball.x, ball.y, ball.radius, ball.color);
         };
 
@@ -353,7 +357,6 @@ const RealTimeGame = ({ mode }) => {
     };
 
     const handleExitGame = () => {
-        setPauseGame(true);
         setShowExitPopup(true);
     };
 
@@ -363,8 +366,6 @@ const RealTimeGame = ({ mode }) => {
             setGameRunning(false);
             socket.close();
             navigate('/game', {replace:true})
-        } else {
-            setPauseGame(false);
         }
     };
 
