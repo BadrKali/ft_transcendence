@@ -55,15 +55,12 @@ const PlayerSelection = ({ onPlayerSelect, onCancel }) => {
         <h2>ONLINE FRIENDS</h2>
         <ul>
           {data && data.map(player => (
-            <li key={player.id}>
-              <img src={player.avatar} alt={player.username} className='player-image' />
+            <li key={player.id} className='player-item'>
               <div className='player-info'>
+                <img src={`${BACKEND_URL}${player.avatar}`} alt={player.username} className='player-image' />
                 <p className='player-name'>{player.username}</p>
-                <p className='player-rank'>Rank: {player.rank}</p>
               </div>
-              <button className='player-challenge' onClick={() => handleChallenge(player)}>
-                <img src={defit} alt="" />
-              </button>
+              <button className='player-challenge' onClick={() => handleChallenge(player)}>INVITE</button>
             </li>
           ))}
         </ul>

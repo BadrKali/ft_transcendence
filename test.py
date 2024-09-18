@@ -21,3 +21,15 @@ qrcode.make("otpauth://totp/PongyGame:test?secret=JBSWY3DPEHPK3PXP&issuer=PongyG
 
 # while True:
 #     print(pyotp.totp.TOTP(key).now())
+
+/* Rectangle 277 */
+
+box-sizing: border-box;
+
+position: absolute;
+width: 830px;
+height: 750px;
+
+background: rgba(22, 22, 37, 0.05);
+border: 1px solid #2C3143;
+box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25), 0px 4px 100px rgba(0, 0, 0, 0.25);

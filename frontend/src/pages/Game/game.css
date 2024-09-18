@@ -427,16 +427,17 @@
 }
 
 .player-selection {
-    max-width: 500px;
+    max-width: 830px;
     width: 100%;
-    max-height: 60vh;
-    background: #1C1E27;
+    max-height: 75vh;
+    background: #11141B;
     padding: 20px;
     border-radius: 8px;
     text-align: center;
     position: relative;
     overflow-y: auto;
     position: relative;
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25), 0px 4px 100px rgba(0, 0, 0, 0.25)
 }
 
 .player-selection::-webkit-scrollbar {
@@ -459,24 +460,22 @@
     justify-content: space-between;
     align-items: center;
     padding: 10px;
-    border-radius: 5px;
+    background-color: #1C1E27;
+    margin: 10px;
 }
 
 .player-selection li .player-info {
     margin-right: auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
 }
 
-.player-selection li p {
+.player-selection li .player-name {
     font-family: 'Rajdhani';
-    font-size: 18px;
-}
-.player-selection li .player-rank {
-    color : #737373;
-    margin-left: 5px;
-}
-
-.player-selection li:hover {
-
+    font-size: 24px;
+    font-weight: 500;
+    margin: 0 20px;
 }
 
 .player-selection li .player-image {
@@ -490,10 +489,11 @@
     background: none;
     cursor: pointer;
     border: none;
+    font-size: 24px;
+    color: #8D93AC;
 }
 
-.player-selection .cancle {
-    width: 200px;
+.player-selection .cancel {
     height: 40px;
     background-color: #F62943;
     color: #FFFFFF;
@@ -504,6 +504,8 @@
     bottom: 0;
     cursor: pointer;
     position: sticky;
-    width: calc(70% - 40px);
+    width: calc(20% - 40px);
     bottom: 0;
+    font-size: 24px;
+    margin: 10px;
 }

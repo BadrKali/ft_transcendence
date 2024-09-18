@@ -339,7 +339,6 @@ const RealTimeGame = ({ mode }) => {
             default:
                 break
         }
-
         if (direction) {
             sendPlayerMovement(currentUser?.username, direction, canvasSize);
         }
