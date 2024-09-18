@@ -29,16 +29,16 @@ import { ProfileProvider } from "./context/ProfilContext";
 
 const routes = [
   {
-    element: <Auth />,
-    path: "/auth",
-  },
-  {
     element: <OauthTwo />,
     path: "/42_api",
   },
   {
     element: <PersistLogin />,
     children: [
+      {
+        element: <Auth />,
+        path: "/auth",
+      },
       {
         element: <ProtectedRoutes />,
         children: [

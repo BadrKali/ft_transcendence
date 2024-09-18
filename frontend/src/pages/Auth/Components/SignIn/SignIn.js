@@ -7,6 +7,7 @@ import axios from '../../../../api/axios'
 import { useLocation, useNavigate } from 'react-router-dom';
 import useAuth from '../../../../hooks/useAuth'
 import { fetchData } from '../../../Setting/components/TwoFaModal/TwoFaModal'
+import useRefresh from '../../../../hooks/useRefresh'
 
 
 const SIGNIN_URL = "/auth/token/"
@@ -17,9 +18,28 @@ const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const SignIn = (props) => {
     const [isHidden, setIsHidden] = useState('hide_pass')
     const [errorMsg, setErrorMsg] = useState("")
-    const {setAuth} = useAuth()
+    const {auth, setAuth} = useAuth()
     const navigate = useNavigate();
     const location = useLocation()
+    // const refresh = useRefresh()
+    // const [isLoading, setIsLoading] = useState(true)
+
+    
+    // useEffect(() => {
+    //     const checkToken = async () => {
+    //       try {
+    //         await refresh()
+    //       } catch (e) {
+    //         console.log(e)
+    //       } finally {
+    //         setIsLoading(false)
+    //       }
+    //     }
+    //     if(!auth?.accessToken) {
+    //       checkToken()
+    //     }
+    //   }, [])
+
 
     const [signInValues, setSignInValues] = useState({
         username: "",
@@ -80,6 +100,12 @@ const SignIn = (props) => {
     function handleInputChange(e) {
         setSignInValues({ ...signInValues, [e.target.name]: e.target.value });
     }
+
+    // if (auth?.accessToken) {
+    //     console.log('i am here')
+    //     navigate('/')
+    //   }
+
   return (
     <div className='signin-container'>
         <div className='signin-header'>

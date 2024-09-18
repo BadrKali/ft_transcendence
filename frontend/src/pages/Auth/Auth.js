@@ -8,45 +8,25 @@ import useAuth from '../../hooks/useAuth'
 import { useNavigate } from 'react-router-dom'
 import useRefresh from '../../hooks/useRefresh'
 
-const Auth = () => {
+const Auth = (props) => {
   const [isLogin, setIsLogin] = useState(true)
   const [isTwoFa, setIsTwoFa] = useState(false)
   const [TwoFaUser, setTwoFaUser] = useState(null)
   const { auth, setAuth } = useAuth()
   const navigate = useNavigate()
-  const [isLoading, setIsLoading] = useState(true)
-  const refresh = useRefresh()
-
-  // useEffect(() => {
-  //   const checkToken = async () => {
-  //     try {
-  //       await refresh()
-  //     } catch (e) {
-  //       console.log(e)
-  //     } finally {
-  //       setIsLoading(false)
-  //     }
-  //   }
-  //   if(!auth?.accessToken) {
-  //     checkToken()
-  //   }
-  // }, [])
 
   const handleTwoFaSuccess = () => {
     navigate('/')
     console.log("2FA successful, navigate to home page")
   }
 
-  // useEffect(() => {
-  //   if (auth?.accessToken && !isLoading) {
-  //     navigate('/')
-  //   }
-  // }, [auth, isLoading, navigate])
+  useEffect(() => {
+    if (auth?.accessToken) {
+      navigate('/')
+    }
+  }, [])
 
-  // if (isLoading) {
-  //   return <div>Loading khawa dyali</div>
-  // }
-
+  console.log("Auth page")
   return (
     <div className='auth-container'>
       <div className='auth-left-section'>
@@ -74,9 +54,7 @@ const Auth = () => {
           }
         </div>
       </div>
-      <div className='auth-right-section'>
-        {/* <img src={assets.loginBackground} alt="Login Background" /> */}
-      </div>
+      <div className='auth-right-section'></div>
     </div>
   )
 }
