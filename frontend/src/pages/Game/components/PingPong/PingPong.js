@@ -8,7 +8,7 @@ import ToolsContainer from './ToolsContainer';
 import GameMode from './GameMode';
 import axios from 'axios';
 import useAuth from "../../../../hooks/useAuth.js";
-
+import Paddles from './Paddle.js';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
@@ -57,7 +57,6 @@ const PingPong = () => {
     }
     return (
         <div className="PingPong-container">
-            <h1>Customise Your Game</h1>
             <div className="game-cutomisation">
                 <Underground 
                     hell={hell}
@@ -67,6 +66,9 @@ const PingPong = () => {
                 />
             </div>
             <div className="tools-section">
+                <Paddles 
+                    onPaddleSelect={handlePaddleSelect} 
+                />
                 <ToolsContainer 
                     className="toolsContainer" 
                     onPaddleSelect={handlePaddleSelect} 

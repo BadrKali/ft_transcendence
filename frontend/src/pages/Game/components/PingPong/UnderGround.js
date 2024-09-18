@@ -27,7 +27,7 @@ const Underground = ({ hell, forest, graveyard, onBackgroundSelect }) => {
         >
           <div className="image-container">
             <img src={hell} alt="Hell" />
-            <div className="image-title">UnderGround Hell</div>
+            {/* <div className="image-title">UnderGround Hell</div> */}
           </div>
         </div>
         <div
@@ -36,7 +36,7 @@ const Underground = ({ hell, forest, graveyard, onBackgroundSelect }) => {
         >
           <div className="image-container">
             <img src={forest} alt="Forest" />
-            <div className="image-title">UnderGround Forest</div>
+            {/* <div className="image-title">UnderGround Forest</div> */}
           </div>
         </div>
         <div
@@ -45,7 +45,7 @@ const Underground = ({ hell, forest, graveyard, onBackgroundSelect }) => {
         >
           <div className="image-container">
             <img src={graveyard} alt="Graveyard" />
-            <div className="image-title">UnderGround Graveyard</div>
+            {/* <div className="image-title">UnderGround Graveyard</div> */}
           </div>
         </div>
       </div>

@@ -16,20 +16,7 @@ const Game = () => {
     <div className='game-container'>
         <div className='page-title'>
           <h1>Game Lobby</h1>
-          <div className="gameArea">
-            <div className={`ping-pong gameComponent ${selectedGame === 'ping-pong' ? 'selected' : ''}`}
-              onClick={() => handleSelectGame('ping-pong')}>
-                <img src={pingLogo} className='gameLogo' alt=''/>
-                <p className='gameTitle'>Ping Pong</p>
-            </div>
-            <div className={`XO gameComponent ${selectedGame === 'XO' ? 'selected' : ''}`}
-              onClick={() => handleSelectGame('XO')}>
-              <img src={XOLogo} className='gameLogo' alt=''/>
-              <p className='gameTitle'>XO Game</p>
-            </div>
-          </div>
-          {selectedGame === 'ping-pong' && <PingPong/>}
-          {selectedGame === 'XO' && <XO/>}
+          <PingPong/>
         </div>
     </div>
   )

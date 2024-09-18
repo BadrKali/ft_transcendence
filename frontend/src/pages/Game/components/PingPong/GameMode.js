@@ -46,7 +46,6 @@ const GameMode = ({ className, setSelectedMode }) => {
                             className="mode-image" 
                         />
                     </div>
-                    <h1 className="mode-title">{modes[selectedModeIndex].name}</h1>
                 </div>
                 <img 
                     src={rightArrow} 
@@ -55,6 +54,7 @@ const GameMode = ({ className, setSelectedMode }) => {
                     onClick={handleRightClick} 
                 />
             </div>
+                    <h1 className="mode-title">{modes[selectedModeIndex].name}</h1>
         </div>
     );
 };
