@@ -22,7 +22,7 @@ const GameSettingsPopUp = ({ onExit }) => {
     const {auth} = useAuth();
     const areasArray = [hell, forest, graveyard];
     const areasNames = ["hell", "forest", "graveyard"];
-    const paddleColors = ['#BC4F00', '#33FF57', '#3357FF', '#F3FF33', '#FF33F5'];
+    const paddleColors = ['#BC4F00', '#036145', '#8D0202', '#002194'];
     const [currentAreaIndex, setCurrentAreaIndex] = useState(0);
     const [currentColorIndex, setCurrentColorIndex] = useState(0);
     const [selectedOption, setSelectedOption] = useState(null);

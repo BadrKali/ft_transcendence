@@ -162,7 +162,7 @@ export const RealTimeProvider = ({ children }) => {
             },
             body: body
         })
-        setGameAccepted(true)
+        setShowGameSettings(true);
     }
     const handleRejectGame = (id) => {
         setGameChallenge(null);
@@ -189,10 +189,10 @@ export const RealTimeProvider = ({ children }) => {
         .catch(error => {
             console.error('Error rejecting game challenge:', error);
         });
-        setGameAccepted(true)
     }
     const handleExitGameSettings = () => {
         setShowGameSettings(false);
+        setGameAccepted(true)
     }
 
 return (

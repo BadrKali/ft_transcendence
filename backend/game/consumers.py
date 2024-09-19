@@ -88,8 +88,10 @@ class GameState:
             if not isinstance(player1.get('score'), (int, float)) or not isinstance(player2.get('score'), (int, float)):
                 return None, None
             if player1['score'] > player2['score']:
+                print(f"{player1['username']} won")
                 return player1.get('username'), player2.get('username')
             elif player2['score'] > player1['score']:
+                print(f"{player2['username']} won")
                 return player2.get('username'), player1.get('username')
             else:
                 return None, None
@@ -648,46 +650,46 @@ class GameConsumer(AsyncWebsocketConsumer):
         except Exception as e:
             print(f"Unexpected error updating XP and saving history: {str(e)}")
     
-    @sync_to_async
-    def update_xp(self, winner, loser, room):
-        from user_management.models import Player
-        if not room:
-            return
-        try:
-            player1 = self.game_state.get_player_username(room.player1)
-            if player1 == winner:
-                room.player1.update_xp(True)
-                room.player2.update_xp(False)
-            else:
-                room.player1.update_xp(False)
-                room.player2.update_xp(True)
-            print("XP Updated")
-        except Player.DoesNotExist:
-            print("Error: One of the players does not exist.")
+    # @sync_to_async
+    # def update_xp(self, winner, loser, room):
+    #     from user_management.models import Player
+    #     if not room:
+    #         return
+    #     try:
+    #         player1 = self.game_state.get_player_username(room.player1)
+    #         if player1 == winner:
+    #             room.player1.update_xp(True)
+    #             room.player2.update_xp(False)
+    #         else:
+    #             room.player1.update_xp(False)
+    #             room.player2.update_xp(True)
+    #         print("XP Updated")
+    #     except Player.DoesNotExist:
+    #         print("Error: One of the players does not exist.")
     
-    @sync_to_async
-    def save_game_history(self, winner, loser, room):
-        from .models import GameHistory
-        from user_management.models import Player
-        try:
-            player1 = self.game_state.get_player_username(room.player1)
-            if player1 == winner:
-                winner_user = room.player1
-                loser_user = room.player2
-            else :
-                winner_user = room.player2
-                loser_user = room.player1
-            GameHistory.objects.create(
-                winner_user=winner_user,
-                loser_user=loser_user,
-                winner_score= self.game_state.winner_score(str(winner)),
-                loser_score= self.game_state.loser_score(loser),
-                game_type= 'pingpong',
-                match_type= 'single'
-            )
-            print("Game History Saved")
-        except Player.DoesNotExist:
-            print("Error: One of the players does not exist.")
+    # @sync_to_async
+    # def save_game_history(self, winner, loser, room):
+    #     from .models import GameHistory
+    #     from user_management.models import Player
+    #     try:
+    #         player1 = self.game_state.get_player_username(room.player1)
+    #         if player1 == winner:
+    #             winner_user = room.player1
+    #             loser_user = room.player2
+    #         else :
+    #             winner_user = room.player2
+    #             loser_user = room.player1
+    #         GameHistory.objects.create(
+    #             winner_user=winner_user,
+    #             loser_user=loser_user,
+    #             winner_score= self.game_state.winner_score(str(winner)),
+    #             loser_score= self.game_state.loser_score(loser),
+    #             game_type= 'pingpong',
+    #             match_type= 'single'
+    #         )
+    #         print("Game History Saved")
+    #     except Player.DoesNotExist:
+    #         print("Error: One of the players does not exist.")
     
     @database_sync_to_async
     def get_player(self, user):
