@@ -310,20 +310,14 @@ const RealTimeGame = ({ mode }) => {
             render(interpolation);
 
             lastUpdateTime.current = timestamp;
-            animationFrameId.current = requestAnimationFrame(gameLoop);
         };
-        animationFrameId.current = requestAnimationFrame(gameLoop);
+        gameLoop()
     }, [gameState, canvasSize, scaleFactor, gameRunning]);
 
     useEffect(() => {
         if (gameState) {
             initializeCanvas();
         }
-        return () => {
-            if (animationFrameId.current) {
-                cancelAnimationFrame(animationFrameId.current);
-            }
-        };
     }, [gameState, initializeCanvas]);
 
     const handleKeyDown = (evt) => {

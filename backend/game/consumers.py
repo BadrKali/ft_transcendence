@@ -73,7 +73,7 @@ class GameState:
 
     def check_winning_condition(self):
         for player in self.state['players'].values():
-            if player['score'] >= 3:
+            if player['score'] >= 10:
                 self.state['game_over'] = True
                 self.state['winner'] = player['username']
                 return True
