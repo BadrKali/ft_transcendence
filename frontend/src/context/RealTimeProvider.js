@@ -131,8 +131,7 @@ export const RealTimeProvider = ({ children }) => {
 
     const handleAcceptGame = (id) => {
         setGameChallenge(null);
-        let url = data.type === "tournament_notification" ?`${BACKEND_URL}/api/game/game-challenges/${id}/response/` : 
-            `${BACKEND_URL}user/tournament/invitation/${id}/response`;
+        let url = data.type === "tournament_notification" ? `${BACKEND_URL}user/tournament/invitation/${id}/response` : `${BACKEND_URL}/api/game/game-challenges/${id}/response/`;
         let body = JSON.stringify({ 'status': 'accepted' });
         fetch(url, {
             method: 'PATCH',
@@ -163,10 +162,11 @@ export const RealTimeProvider = ({ children }) => {
             },
             body: body
         })
+        setGameAccepted(true)
     }
     const handleRejectGame = (id) => {
         setGameChallenge(null);
-        let url = data.type === "tournament_notification" ?`${BACKEND_URL}/api/game/game-challenges/${id}/response/` : `${BACKEND_URL}user/tournament/invitation/${id}/response`;
+        let url = data.type === "tournament_notification" ? `${BACKEND_URL}user/tournament/invitation/${id}/response` : `${BACKEND_URL}/api/game/game-challenges/${id}/response/`;
         let body = JSON.stringify({ 'status': 'rejected' });
         fetch(url, {
             method: 'PATCH',
@@ -189,6 +189,7 @@ export const RealTimeProvider = ({ children }) => {
         .catch(error => {
             console.error('Error rejecting game challenge:', error);
         });
+        setGameAccepted(true)
     }
     const handleExitGameSettings = () => {
         setShowGameSettings(false);
