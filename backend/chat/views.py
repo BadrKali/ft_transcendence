@@ -8,6 +8,8 @@ from django.conf import settings
 from authentication .models import User
 from authentication .serializers import CurrentUserSerializer
 from rest_framework import status
+from django.shortcuts import get_object_or_404
+
 
 # Create your views here.
 
@@ -42,20 +44,16 @@ def RetreiveContacts(request):
                 ]
     ChatList = sorted(ChatList, key=lambda x: x['created_at'], reverse=True)
     return Response(ChatList, status=status.HTTP_200_OK)
-# I may should Sort conversation using created att when Displaying it on frontend! 
-
-# username is the target 
-
 
 @api_view(['GET'])
 def getMessageswith (request, username):
     current_user = request.user
-    chat_partner = User.objects.get(username=username)
+    chat_partner = get_object_or_404(User, username=username)
+    
+    allRecords = message.objects.filter(
+        Q(sender_id=current_user, receiver_id=chat_partner) |
+        Q(sender_id=chat_partner, receiver_id=current_user)
+    ).order_by('created_at')
 
-    allRecords = message.objects.\
-        select_related('sender_id', 'receiver_id').\
-        filter((Q(sender_id__username=request.user.username) & Q(receiver_id__username=username)) |
-               (Q(sender_id__username=username) & Q(receiver_id__username=request.user.username))).order_by('created_at')
     serialiser = __messageSerializer__(allRecords, many=True)
     return Response(serialiser.data, status=status.HTTP_200_OK)
-
