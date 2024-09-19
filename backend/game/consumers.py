@@ -38,6 +38,8 @@ class GameState:
             'match_data': False,
         }
         self.player_canvas_sizes = {}
+        self.player_movement_states = {}
+        self.last_update_time = time.time()
 
     async def get_match_data(self):
         return self.state['match_data']
@@ -183,18 +185,30 @@ class GameState:
 
     def player_mouvement(self, user, direction, canvas_size):
         if user in self.state['players']:
-            player = self.state['players'][user]
             self.player_canvas_sizes[user] = canvas_size
-            move_amount = 30 * (canvas_size['height'] / self.state['canvas']['height'])
-            if direction == "up":
-                if player['y'] > 0:
-                    player['y'] -= move_amount
+            if direction == 'stop':
+                self.player_movement_states.pop(user, None)
             else:
-                if player['y'] < self.state['canvas']['height'] - player['height']:
-                    player['y'] += move_amount
-            print(f"{user}'s new y position: {player['y']}")
+                self.player_movement_states[user] = direction
         else:
             print(f"Error: User {user} not found in players.")
+
+    def update_player_positions(self):
+        current_time = time.time()
+        delta_time = current_time - self.last_update_time
+        self.last_update_time = current_time
+
+        for user, direction in self.player_movement_states.items():
+            if user in self.state['players']:
+                player = self.state['players'][user]
+                canvas_size = self.player_canvas_sizes.get(user, {'height': self.state['canvas']['height']})
+                
+                move_amount = 300 * (canvas_size['height'] / self.state['canvas']['height']) * delta_time
+
+                if direction == "up":
+                    player['y'] = max(0, player['y'] - move_amount)
+                elif direction == "down":
+                    player['y'] = min(self.state['canvas']['height'] - player['height'], player['y'] + move_amount)
 
     def remove_player(self, username):
         if username in self.state['players']:
@@ -256,7 +270,9 @@ class GameState:
 
     def to_json(self):
         return json.dumps(self.state)
-
+    def update_game_state(self):
+        self.update_player_positions()
+        self.update_ball_position()
 
 class GameStateManager:
     def __init__(self):
@@ -567,7 +583,7 @@ class GameConsumer(AsyncWebsocketConsumer):
         frame_duration = 1 / 60
         while self.game_state.get_running():
             start_time = time.time()
-            self.game_state.update_ball_position()
+            self.game_state.update_game_state()
             if self.game_state.check_winning_condition():
                 winner , loser = self.game_state.get_winner_loser()
                 await self.game_state.update_game_over(True)

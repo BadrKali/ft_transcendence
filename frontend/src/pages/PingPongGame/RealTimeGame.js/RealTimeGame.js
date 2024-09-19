@@ -48,6 +48,8 @@ const RealTimeGame = ({ mode }) => {
     const [canvasSize, setCanvasSize] = useState({ width: 1384, height: 696 });
     const [isReconnected, setIsReconnected] = useState(false);
     const [previousPaddlePositions, setPreviousPaddlePositions] = useState({});
+    const [keyState, setKeyState] = useState({ up: false, down: false });
+    const animationId = useRef(null);
     useEffect(() => {
         switch (mode) {
             case "invite":
@@ -274,8 +276,7 @@ const RealTimeGame = ({ mode }) => {
             Object.values(gameState.players).forEach(player => {
                 const prevY = previousPaddlePositions[player.username] || player.y;
                 const currentY = player.y;
-                const interpolatedY = prevY + (currentY - prevY) * 0.3;
-
+                const interpolatedY = prevY + (currentY - prevY) * 0.5;
                 ctx.fillStyle = player.color;
                 drawRoundedRect(player.x , interpolatedY, player.width , player.height ,9);
                 setPreviousPaddlePositions(prev => ({
@@ -327,20 +328,33 @@ const RealTimeGame = ({ mode }) => {
 
     const handleKeyDown = (evt) => {
         let direction = null;
-        switch(evt.key) {
-            case 'w':
-            case 'ArrowUp':
-                direction = 'up'
-                break
-            case 's':
-            case 'ArrowDown':
-                direction = 'down'
-                break
-            default:
-                break
+        if (keys === 'ws') {
+            if (evt.key === 'w') direction = 'up';
+            else if (evt.key === 's') direction = 'down';
+        } else {
+            if (evt.key === 'ArrowUp') direction = 'up';
+            else if (evt.key === 'ArrowDown') direction = 'down';
         }
+        
         if (direction) {
+            setKeyState(prev => ({ ...prev, [direction]: true }));
             sendPlayerMovement(currentUser?.username, direction, canvasSize);
+        }
+    };
+
+    const handleKeyUp = (evt) => {
+        let direction = null;
+        if (keys === 'ws') {
+            if (evt.key === 'w') direction = 'up';
+            else if (evt.key === 's') direction = 'down';
+        } else {
+            if (evt.key === 'ArrowUp') direction = 'up';
+            else if (evt.key === 'ArrowDown') direction = 'down';
+        }
+        
+        if (direction) {
+            setKeyState(prev => ({ ...prev, [direction]: false }));
+            sendPlayerMovement(currentUser?.username, 'stop', canvasSize);
         }
     };
 
@@ -354,6 +368,17 @@ const RealTimeGame = ({ mode }) => {
             }));
         }
     };
+
+    useEffect(() => {
+        window.addEventListener('keydown', handleKeyDown);
+        window.addEventListener('keyup', handleKeyUp);
+
+        return () => {
+            window.removeEventListener('keydown', handleKeyDown);
+            window.removeEventListener('keyup', handleKeyUp);
+        };
+    }, [currentUser, canvasSize, keys]);
+
 
     const handleExitGame = () => {
         setShowExitPopup(true);
@@ -388,12 +413,6 @@ const RealTimeGame = ({ mode }) => {
         }
     }, [room]);
 
-    useEffect(() => {
-        window.addEventListener('keydown', handleKeyDown);
-        return () => {
-            window.removeEventListener('keydown', handleKeyDown);
-        };
-    }, [keys, currentUser]);
 
     useEffect(() => {
         window.onpopstate = () => {

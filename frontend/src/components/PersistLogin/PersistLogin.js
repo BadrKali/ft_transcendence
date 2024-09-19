@@ -24,10 +24,10 @@ const PersistLogin = () => {
                 setIsLoading(false)
             }
         }
-        // !auth?.accessToken ?  checkToken() : setIsLoading(false);
-        if(!auth?.accessToken) {
-            checkToken()
-        }
+        !auth?.accessToken ?  checkToken() : setIsLoading(false);
+        // if(!auth?.accessToken) {
+        //     checkToken()
+        // }
     }, [])
     return (
         <>
