@@ -287,7 +287,7 @@ const RealTimeGame = ({ mode }) => {
         };
     
         const drawNet = () => {
-            for (let i = 0; i <= canvas.height; i += 15 * scale.y) {
+            for (let i = 0; i <= canvas.height; i++ * scale.y) {
                 drawRect(net.x, net.y + i / scale.y, net.width, net.height, net.color);
             }
         };

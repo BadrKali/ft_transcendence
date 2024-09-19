@@ -28,7 +28,7 @@ class GameState:
                 'y': 0,
                 'height': 10,
                 'width': 2,
-                'color': "#D9D9D9"
+                'color': "#2C3143"
             },
             'players': {},
             'game_over': False,
