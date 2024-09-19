@@ -47,7 +47,7 @@
     background-color: #1C1E27;
     margin-top: 35px;
     margin-left: 10px;
-    width: 90%;
+    width: 99%;
     padding: 20px;
     border-radius: 10px;
 }
@@ -453,21 +453,31 @@
 
 /* Responsive Adjustments */
 @media (max-width: 768px) {
+    .PingPong-container {
+        width: 90%;
+    }
+
     .PingPong-container .game-customisation {
         flex-direction: column;
     }
 
+    .underground-container {
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .areas-container .underground  {
+        width: 80%;
+    }
+
     .PingPong-container .tools-section {
         flex-direction: column;
-        gap: 30px;
+        gap: 1px;
     }
 
     .launchButtons-container {
         position: static;
         margin-top: 30px;
     }
-
-    /* .launchButtons-container .buttons {
-        width: 100%;
-    } */
 }

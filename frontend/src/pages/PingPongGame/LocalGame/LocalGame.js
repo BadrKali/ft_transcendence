@@ -35,7 +35,7 @@ const LocalGame = () => {
     }
     return (
         <div className="pingponggame-container" style={{ backgroundImage: `url(${background})` }}>
-            {paddle && keys && username && <LocalGameLogic paddleColor={paddle} keys={keys} username={username}/>}
+            <LocalGameLogic paddleColor={paddle} keys={keys} username={username}/>
         </div>
     );
 };

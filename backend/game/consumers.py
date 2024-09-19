@@ -384,7 +384,7 @@ class GameConsumer(AsyncWebsocketConsumer):
 
     def send_winner_message(self, event): 
         self.send(text_data=json.dumps(event['message']))
-    
+
     async def handle_invite_action(self):
         from .models import InviteGameRoom
         try:
