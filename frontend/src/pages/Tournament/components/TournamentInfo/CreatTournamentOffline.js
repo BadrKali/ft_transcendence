@@ -9,13 +9,10 @@ import Icon from '../../../../assets/Icon/icons';
 import PlayerSelectedItem from './PlayerSelectedItem';
 import MainButton from '../../../../components/MainButton/MainButton';
 import { UserContext } from '../../../../context/UserContext';
-import CreatTournamentOnline from './CreatTournamentOnline';
-import CreatTournamentOffline from './CreatTournamentOffline';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
-
-const CreatTournamentPopUp = ({ isOpen, onClose})=> {
+const CreatTournamentOffline= ({onClose}) => {
     const { auth }  = useAuth()
     const [selectedPlayers, setSelectedPlayers] = useState([]);
     const [selectedMap, setSelectedMap] = useState('');
@@ -26,8 +23,8 @@ const CreatTournamentPopUp = ({ isOpen, onClose})=> {
     const [NameError, setNameError] = useState(false);
     const [PlayersError, setPlayersError] = useState(false);
     const {updatetounament} = useContext(UserContext)
-    const [tournamentOnlineOffline, setTournamentOnlineOffline] = useState('online')
-
+    const [username, setUsername] = useState('');
+    const [players, setPlayers] = useState([]);
 
     useEffect(() => {
         if (data) {
@@ -45,6 +42,15 @@ const CreatTournamentPopUp = ({ isOpen, onClose})=> {
         setPlayersError(false)
     };
 
+    const handleAddPlayer = () => {
+        if (username.trim() !== '') {
+            const newPlayer = { username }; 
+            setPlayers((prevPlayers) => [...prevPlayers, newPlayer]);
+            setUsername(''); 
+            setPlayersError(false)
+
+        }
+    };
 
     const handleTitleChange = (event) => {
         setTournamentTitle(event.target.value);
@@ -58,7 +64,7 @@ const CreatTournamentPopUp = ({ isOpen, onClose})=> {
         const postData = {
             tournament_name: tournamentTitle,
             tournament_map: selectedMap,
-            invitedUsers: selectedPlayers.map(player => player.value),
+            invitedUsers: players.map(player => player.username),
         };
 
         if (!selectedMap){
@@ -73,12 +79,12 @@ const CreatTournamentPopUp = ({ isOpen, onClose})=> {
             setNameError(false)
         }
 
-        if (selectedPlayers.length === 0 || selectedPlayers.length > 3){
+        if (players.length === 0 || players.length > 3){
             setPlayersError(true)
         }else{
             setPlayersError(false)
         }
-
+        console.log(PlayersError)
         try {
             const response = await fetch(`${BACKEND_URL}/user/tournament/`, {
                 method: 'POST',
@@ -172,32 +178,9 @@ const CreatTournamentPopUp = ({ isOpen, onClose})=> {
         }),
     };
 
-    const [blockedUsers, setBlockedUsers] = useState([]);
 
-
-    if (!isOpen) {
-        return null;
-    }
-
-  return (
-    <div className="modal-creatTournament">
-      <div className="modal-creatTournamentPopup">
-        <button className="modal-close-button" onClick={onClose}>&times;</button>
-        <div className='TournamenrOnlineOffline'>
-            <div className={`TournamentOF ${tournamentOnlineOffline === 'online' ? 'activeTournamenrOf' : ''}`} onClick={() => {
-                setTournamentOnlineOffline('online')
-            }}> 
-                <p>Online</p>
-            </div>
-            <div  className={`TournamentOF ${tournamentOnlineOffline === 'offline' ? 'activeTournamenrOf' : ''}`} onClick={() => {
-                setTournamentOnlineOffline('offline')
-            }}>
-                <p>Offline</p>
-            </div>
-        </div>
-        {tournamentOnlineOffline === 'online' && <CreatTournamentOnline onClose={onClose}/>}
-        {tournamentOnlineOffline === 'offline' && <CreatTournamentOffline onClose={onClose}/>}
-        {/* <div className='sections-container'>
+    return (
+        <div className='sections-container'>
             <div className='Arena-container'>
                 <h4>Arena</h4>
                 <p>Select default arena theme</p>
@@ -236,20 +219,20 @@ const CreatTournamentPopUp = ({ isOpen, onClose})=> {
                 <h4>Select Players</h4>
                 <p>Select Players for your tournament</p>
                 <div className='playerselected'>
-                    {selectedPlayers.map((player) => (
+                    {players.map((player) => (
                             <PlayerSelectedItem key={player.id} player={player}/>
                         ))
                     }
                 </div>
-                 <Select
-                    isMulti
-                    options={playerOptions}
-                    value={selectedPlayers}
-                    onChange={handlePlayerSelection}
-                    className='playerSelect'
-                    styles={customStyles}
-                    placeholder="Select players..."
-                />
+                <div className='selectNameInput'>
+                            <input
+                                placeholder='username'
+                                type='text'
+                                value={username}
+                                onChange={(e) => setUsername(e.target.value)}
+                            />
+                            <p onClick={handleAddPlayer}>ADD</p>
+                </div>
             </div>
             <div className='tournamentButton-container'>
                     <div className='CreatTournamentButton'>
@@ -258,10 +241,8 @@ const CreatTournamentPopUp = ({ isOpen, onClose})=> {
             </div>
             {PlayersError && <p className="error-message">Player selected must be 4 in Total</p>}
 
-        </div> */}
-      </div>
-    </div>
-  );
-};
+        </div>
+    )
+}
 
-export default CreatTournamentPopUp;
+export default CreatTournamentOffline

@@ -26,6 +26,19 @@
     box-sizing: border-box;
   }
   
+  .TournamenrOnlineOffline{
+    display: flex;
+    gap: 20px;
+  }
+
+  .TournamentOF{
+    cursor: pointer;
+
+  }
+
+  .activeTournamenrOf{
+    border-bottom: #F62943 solid;
+  }
   .error-message {
     color: red;
     font-size: 0.9rem;
