@@ -20,6 +20,8 @@ from dotenv import load_dotenv
 import os
 from django.test import RequestFactory
 from .views import RetreiveContacts
+from django.forms.models import model_to_dict
+
  
 
 load_dotenv()
@@ -305,34 +307,34 @@ class ChatConsumer(AsyncWebsocketConsumer):
         receiverBlockedSender = await self.check_blockStatus(self.receiver_id, self.sender_id)
         if not senderBlockedreceiver and not receiverBlockedSender:
             already_have_conv = await self.already_have_record(self.sender_id, self.receiver_id)
-            await self.save_to_db();
+            saved_message = await self.save_to_db()
             try :
                 receiver_status = await self.get_user_status(self.receiver_id);
                 if receiver_status :
                     await (self.channel_layer.group_send)(
                         f'room_{self.receiver_id}',{
                             'type': 'newchat.message',
-                            'message': self.extracted_msg.get('messageData')
+                            'message' : saved_message
                         }
                         )
                     if already_have_conv :
                         await (self.channel_layer.group_send)(
                             f'room_{self.receiver_id}',{
                                 'type': 'last.message',
-                                'message': self.extracted_msg.get('messageData')
+                                'message' : saved_message
                             }
                             )
                 if (self.receiver_id != self.extracted_msg.get('messageData').get('sender_id')):
                     await (self.channel_layer.group_send)(
                     f"room_{self.extracted_msg.get('messageData').get('sender_id')}",{
                             'type': 'newchat.message',
-                            'message': self.extracted_msg.get('messageData')
+                            'message' : saved_message
                      }
                     )
                     await (self.channel_layer.group_send)(
                         f"room_{self.extracted_msg.get('messageData').get('sender_id')}",{
                               'type': 'last.message',
-                            'message': self.extracted_msg.get('messageData')
+                            'message' : saved_message
                         }
                     )
             except Exception as e:
@@ -357,10 +359,9 @@ class ChatConsumer(AsyncWebsocketConsumer):
     @database_sync_to_async
     def update_unique_msg_status(self):
         self.msgcontent = self.extracted_msg.get('messageData').get('content')
-        self.createdAt  = self.extracted_msg.get('messageData').get('created_at')
-        created_at = parse(self.createdAt)
-        created_at = created_at.replace(microsecond=0)
-        requiredMsg = message.objects.filter(content=self.msgcontent, created_at__second=created_at.second)
+        self.id = self.extracted_msg.get('messageData').get('id')
+        
+        requiredMsg = message.objects.filter(content=self.msgcontent, id=self.id)
         requiredMsg.update(seen=True)
 
 
@@ -379,10 +380,12 @@ class ChatConsumer(AsyncWebsocketConsumer):
         self.msgDetails = self.extracted_msg.get('messageData')
         Usersender = User.objects.get(id=self.msgDetails.get('sender_id'))
         UserReceiver = User.objects.get(id=self.msgDetails.get('receiver_id'))
-        message.objects.create(
+        saved_model = message.objects.create(
                            sender_id=Usersender,
                            receiver_id = UserReceiver,
                            content= self.msgDetails.get('content'),
                            seen = self.msgDetails.get('seen'),
-                           created_at=self.msgDetails.get('created_at')
                         )
+        model_dict = model_to_dict(saved_model)
+        model_dict['created_at'] = saved_model.created_at.strftime('%Y-%m-%d %H:%M:%S.%f%z')
+        return model_dict

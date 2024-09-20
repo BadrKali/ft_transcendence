@@ -15,7 +15,7 @@ from django.shortcuts import get_object_or_404
 
 def format_date(date)-> str:
     minute = {True:date.minute , False: f'0{date.minute}'} [date.minute >= 10]
-    return f'{date.hour}:{minute}'
+    return f'{date.hour+1}:{minute}'
 
 def forme_lastMessage(currentUser, Message):
     return {True: f'You: {Message.content}', False: f'{Message.sender_id.username[:5]}: {Message.content}'} [Message.sender_id == currentUser]

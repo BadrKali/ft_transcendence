@@ -144,7 +144,8 @@ const updateLastMessage = (data, result) =>{
                 // clientSocket.send Stored on Db as unread but being on a conv is should be setted as read !
                 clientSocket.send(JSON.stringify({type : 'Update_msgStatus', messageData : {
                   content : data.message.content,
-                  created_at : data.message.created_at
+                  created_at : data.message.created_at,
+                  id : data.message.id
                 }}))
               }
           setconversationMsgs(prevConversationMsgs => [...prevConversationMsgs, data.message]);

@@ -61,7 +61,6 @@ const SendMessage = ({ message, setMessage ,CurrentUser, ChatPartner, clientSock
     }
     if (message.length && message.length % 2 === 0){
         clientSocket?.send(JSON.stringify({type: "typing_event", messageData: messageData}))
-
       // ********* 4 seconds Logic********************************************************************************
           if (typingTimeoutId !== null) {                                                                             
             clearTimeout(typingTimeoutId);
@@ -70,7 +69,6 @@ const SendMessage = ({ message, setMessage ,CurrentUser, ChatPartner, clientSock
             clientSocket?.send(JSON.stringify({ type: "deactivate_typing_event", messageData: messageData }));
             }, 5000);
       // ***********************************************************************************************************
-      
     }
       if (message.length === 0){
       clientSocket?.send(JSON.stringify({type: "deactivate_typing_event", messageData: messageData}))
@@ -168,7 +166,7 @@ const ChatHeader = () => {
   );
 };
 
-const ChatInput = ({setSelectedImage}) => {
+const ChatInput = ({selectedImage, setSelectedImage}) => {
   const CurrentUser = useContext(CurrentUserContext);
   const {ChatPartner} = useContext(chatPartnerContext);
   const {stateValue: clientSocket} = useContext(clientSocketContext);
@@ -215,26 +213,25 @@ const ChatInput = ({setSelectedImage}) => {
     }
     };
 
-  const handleSendMessage = (event) => {
-    if (event.type === 'keydown' && event.key !== 'Enter')
-        return ;
-    if (message.trim()) {
-      SetPicker((prev) => (prev ? !prev : prev));//deactivate emojies palett when - sending msg !
-      const messageData = {
-        sender_id: CurrentUser?.user_id,
-        receiver_id: ChatPartner?.id,
-        content: message,
-        seen: false,
-        created_at: new Date().toISOString()
-      };
-
-      clientSocket?.send(JSON.stringify({type: 'newchat.message', messageData: messageData}));
-      
-      const notif = new Audio(notificationSound);
-      notif.play();
-      setMessage("");
-    }
-  };
+    const handleSendMessage = (event) => {
+      if (event.type === 'keydown' && event.key !== 'Enter')
+          return ;
+      if (message.trim()) {
+        SetPicker((prev) => (prev ? !prev : prev));//deactivate emojies palett when - sending msg !
+        const messageData = {
+          sender_id: CurrentUser?.user_id,
+          receiver_id: ChatPartner?.id,
+          content: message,
+          seen: false,
+        };
+  
+        clientSocket?.send(JSON.stringify({type: 'newchat.message', messageData: messageData}));
+        
+        const notif = new Audio(notificationSound);
+        notif.play();
+        setMessage("");
+      }
+    };
 
   return (
     <div className={styles.ChatInputHolder}>
@@ -440,7 +437,7 @@ const MessageSection = () => {
         <div className={styles.MessageSectionFull}>
             <ChatHeader />
             <ChatMainHolder selectedImage={selectedImage} setSelectedImage={setSelectedImage}/>
-            <ChatInput setSelectedImage={setSelectedImage}/>
+            <ChatInput selectedImage={selectedImage} setSelectedImage={setSelectedImage}/>
         </div>
       )}
     </>
