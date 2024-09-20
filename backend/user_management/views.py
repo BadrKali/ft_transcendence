@@ -17,7 +17,7 @@ from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
 from django.http import HttpResponseForbidden
 from .models import Tournament, TournamentInvitation, TournamentParticipants, Friendship, Player, FriendInvitation, BlockedUsers, Notification, XPHistory
-from .serializers import TournamentSerializer, TournamentCreateSerializer , TournamentInvitationSerializer, TournamentParticipantsSerializer, FriendInvitation, NotificationSerializer,  PlayerSerializer, FriendshipSerializer
+from .serializers import TournamentSerializer, TournamentCreateSerializer , TournamentInvitationSerializer, TournamentParticipantsSerializer, FriendInvitation, NotificationSerializer,  PlayerSerializer, FriendshipSerializer, LocalTournamentCreateSerializer
 from django.db.models import Case, When, Value, IntegerField
 from game.serializers import GameHistorySerializer, UserAchievementSerializer
 from game.models import GameHistory, UserAchievement
@@ -464,5 +464,27 @@ class GlobalStatsView(APIView):
 
         }
         return(Response(data, status=status.HTTP_200_OK))
+
+
+
+class LocalTournamentView(APIView):
+    def get(self, request):
+        tournament = LocalTournament.objects.filter(tournament_participants=request.user).first()
+        if tournament:
+            serializer = LocalTournamentSerializer(tournament)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        else:
+            return Response({}, status=status.HTTP_200_OK)
+
+
+    def post(self, request):
+        serializer = LocalTournamentCreateSerializer(data=request.data, context={'request': request})
+        
+        # return Response(serializ, status=status.HTTP_200_OK)
+        # if serializer.is_valid():
+        #     invited_users = serializer.validated_data.pop('invitedUsers', [])
+        #     tournament = LocalTournament.objects.create(tournament_creator=request.user, **serializer.validated_data)
+        #     return(Response({'message': 'Tournament created successfully'}, status=status.HTTP_201_CREATED))
+        # return(Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST))
 
 
