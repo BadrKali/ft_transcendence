@@ -82,7 +82,7 @@ export const UserProvider = ({ children }) => {
             ...newMatches,
         }));
     };
-
+    console.log(matchHistory)
     return (
         <UserContext.Provider value={{
             userData, 

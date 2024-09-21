@@ -44,7 +44,7 @@ class FriendRequestManagementView(APIView):
             else:
                 return Response({"message": "Friend request received."}, status=status.HTTP_200_OK)
         else:
-            return Response({"message": "Friend request does not exist."}, status=status.HTTP_404_NOT_FOUND)
+            return Response({"message": "Friend request does not exist."}, status=status.HTTP_200_OK)
     
     def post(self, request, receiver_id):
         player_sender = request.user

@@ -25,7 +25,7 @@ import { CurrentUserProvider } from "./pages/Chat/usehooks/ChatContext";
 import Invite from './pages/PingPongGame/Invite/Invite';
 import { UserProvider } from "./context/UserContext";
 import { ProfileProvider } from "./context/ProfilContext";
-
+import ProfileProviderWrapper from './context/ProfileProviderWrapper'
 
 const routes = [
   {
@@ -47,9 +47,9 @@ const routes = [
                   <UserProvider>
                     <RealTimeProvider>
                       <SocketClientProvider>
-                          <ProfileProvider >
+                          <ProfileProviderWrapper> 
                               <AppLayout />
-                          </ProfileProvider>
+                          </ProfileProviderWrapper>
                       </SocketClientProvider>
                     </RealTimeProvider>
                   </UserProvider>,

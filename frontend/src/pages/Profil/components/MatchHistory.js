@@ -54,6 +54,7 @@ function MatchHistory({profil}) {
         }
     
       };
+
   return (
     <div className="macthContainer">
     <div className="matchHeader">
@@ -61,7 +62,7 @@ function MatchHistory({profil}) {
     </div>
     <div className="historyCard">
       {history && history.length > 0 ? (
-        history.map((historyItem) => (
+        history.slice().reverse().map((historyItem) => (
           <div key={historyItem.id} onClick={() => handleItemClick(historyItem)}>
             <HistoryItem history={historyItem} />
           </div>

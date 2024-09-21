@@ -3,6 +3,13 @@ import { useState, useEffect } from 'react';
 import useFetch from '../../../hooks/useFetch';
 import './historyItem.css'
 import { useTranslation } from 'react-i18next';
+import { formatDistanceToNow, parseISO } from 'date-fns';
+
+
+function formatTimeAgo(dateString) {
+    const date = parseISO(dateString);
+    return formatDistanceToNow(date, { addSuffix: true });
+  }
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
@@ -18,7 +25,7 @@ function HistoryItem( {history} ) {
   
 
 
-    //  const winPer = Math.floor((playerData.games_won / playerData.games_played) * 100);
+
      const winPer = Math.floor((30 / 100) * 100);
   return (
     <div className={history.is_winner ? "card won" : "card loss"}>
@@ -39,13 +46,13 @@ function HistoryItem( {history} ) {
                     <p>{t('Win')}</p>
                     <p className='parg' style={{color: '#8D93AC'}}>{winPer}%</p>
                 </div>
-                <div className="Loss box">
-                    <p>{t('Game')}</p>
-                    <p className='parg' style={{color: '#8D93AC'}}>{history.game_type}</p>
-                </div>
                 <div className={history.is_winner ? "defeat box true" : "defeat box false"}>
                     <p>{t('DEFEAT')}</p>
                     <p className='parg clr'>{history.winner_score}:{history.loser_score}</p>
+                </div>
+                <div className="Loss box">
+                    {/* <p>{t('Played')}</p> */}
+                    <p className='parg' style={{color: '#8D93AC'}}>{formatTimeAgo(history.played_at)}</p>
                 </div>
             </div>
         </div>

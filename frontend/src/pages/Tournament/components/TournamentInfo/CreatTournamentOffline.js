@@ -22,7 +22,7 @@ const CreatTournamentOffline= ({onClose}) => {
     const [MapError, setMapError] = useState(false);
     const [NameError, setNameError] = useState(false);
     const [PlayersError, setPlayersError] = useState(false);
-    const {updatetounament} = useContext(UserContext)
+    const {updatetounament, userData} = useContext(UserContext)
     const [username, setUsername] = useState('');
     const [players, setPlayers] = useState([]);
 
@@ -84,7 +84,7 @@ const CreatTournamentOffline= ({onClose}) => {
         }else{
             setPlayersError(false)
         }
-        console.log(PlayersError)
+        console.log(postData)
         try {
             const response = await fetch(`${BACKEND_URL}/user/tournament/`, {
                 method: 'POST',
@@ -120,63 +120,10 @@ const CreatTournamentOffline= ({onClose}) => {
         } 
     };
 
-    const playerOptions = listFriend.map((player) => ({
-        value: player.id,
-        label: player.username,
-        image: player.avatar
-    }));
 
 
-    const customStyles = {
-        control: (provided, state) => ({
-            ...provided,
-            backgroundColor: '#1C1E27',
-            borderColor: state.isFocused ? '#555' : '#1C1E27',
-            color: '#FFF',
-            boxShadow: state.isFocused ? '0 0 0 1px #555' : 'none',
-            '&:hover': {
-                borderColor: '#555',
-            },
-        }),
-        menu: (provided) => ({
-            ...provided,
-            backgroundColor: '#1C1E27',
-            color: '#FFF',
-        }),
-        option: (provided, state) => ({
-            ...provided,
-            backgroundColor: state.isFocused ? '#555' : '#1C1E27',
-            color: '#FFF',
-            '&:hover': {
-                backgroundColor: '#555',
-            },
-        }),
-        multiValue: (provided) => ({
-            ...provided,
-            backgroundColor: '#333',
-            color: '#FFF',
-        }),
-        multiValueLabel: (provided) => ({
-            ...provided,
-            color: '#FFF',
-        }),
-        multiValueRemove: (provided) => ({
-            ...provided,
-            color: '#FFF',
-            '&:hover': {
-                backgroundColor: '#555',
-                color: '#FFF',
-            },
-        }),
-        placeholder: (provided) => ({
-            ...provided,
-            color: '#AAA',
-        }),
-        singleValue: (provided) => ({
-            ...provided,
-            color: '#FFF',
-        }),
-    };
+
+   
 
 
     return (
@@ -218,11 +165,21 @@ const CreatTournamentOffline= ({onClose}) => {
             <div className='selectPlayer-container '>
                 <h4>Select Players</h4>
                 <p>Select Players for your tournament</p>
-                <div className='playerselected'>
-                    {players.map((player) => (
-                            <PlayerSelectedItem key={player.id} player={player}/>
+                <div className='displayPlayers'>
+                    <div className='playerselectedOwner'>
+                        <div className='slectedPlayerItemOwner'>
+                            <div className='imagePlayerSelectedOwner'>
+                                <img src={`${BACKEND_URL}${userData.avatar}`}/>
+                            </div>
+                            <p>{userData.username}</p>
+                        </div>
+                    </div>
+                    <div className='playerselected'>
+                        {players.map((player, index) => (
+                            <PlayerSelectedItem key={index} player={player}/>
                         ))
                     }
+                    </div>
                 </div>
                 <div className='selectNameInput'>
                             <input
@@ -231,7 +188,7 @@ const CreatTournamentOffline= ({onClose}) => {
                                 value={username}
                                 onChange={(e) => setUsername(e.target.value)}
                             />
-                            <p onClick={handleAddPlayer}>ADD</p>
+                            <p className="AddClick"onClick={handleAddPlayer}>ADD</p>
                 </div>
             </div>
             <div className='tournamentButton-container'>

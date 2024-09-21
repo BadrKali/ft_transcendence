@@ -22,7 +22,6 @@ const LeaderBoard = () => {
 
   const defaultsecond = {user_id: 2, username: 'Uknown Player', rank: 'None'};
   const defaultthird = {user_id: 3, username: 'Uknown Player', rank: 'None'};
-  const defaultrest = new Array(20).fill(null);
 
   useEffect(() => {
     const fetchLeaderboardData = async () => {
@@ -50,7 +49,7 @@ const LeaderBoard = () => {
     fetchLeaderboardData();
   }, []);
 
-  console.log(leaderboardData)
+
 
 
   if (isLoading) return (
@@ -64,11 +63,8 @@ const LeaderBoard = () => {
 
   const secondPlayer = second ? second : defaultsecond;
   const thirdPlayer = third ? third : defaultthird;
-  const restPlayer = rest ? rest : defaultrest;
 
-  console.log(secondPlayer)
-  console.log(thirdPlayer)
-  console.log(defaultrest)
+
   return (
     <div className='leaderBoard-Container'>
       <div className='page-title'>
@@ -83,23 +79,18 @@ const LeaderBoard = () => {
             </div>
             <div className='leaderBoard-RestList'>
                 <div className='restList-Header'>
-                
                       <p>player</p>
                       <p>Matchs Played</p>
                       <p>Win</p>
                       <p>Loss</p>
                       <p>Rank</p>
-        
                 </div>
                 <div className='restList-Players'>
                 {rest.length > 0 ? (
                       rest.map((players, index) => (
-                        <RestItem key={players.id} players={players} index={index + 4}/>
+                        <RestItem key={index} players={players} index={index + 4}/>
                       ))
                     ) : (
-                      // defaultrest.map((_, index) => (
-                      //     <EmptyRestItem key={index} index={index + 4} />
-                      // ))
                       <div className='sadFaceAnimationGame'>
                         <div className='sadeFaceGame'><Lottie  animationData={sadFace} /> </div>
                         <h3>{t('No more players')}</h3>

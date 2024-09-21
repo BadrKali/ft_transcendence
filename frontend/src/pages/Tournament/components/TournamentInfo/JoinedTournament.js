@@ -1,5 +1,6 @@
 import React from 'react'
 import { useState, useEffect, useContext } from 'react'
+import useAuth from '../../../../hooks/useAuth'
 import useFetch from '../../../../hooks/useFetch'
 import Icon from '../../../../assets/Icon/icons'
 import { avatars } from '../../../../assets/assets'
@@ -13,9 +14,10 @@ const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
 
 function JoinedTournament({TournamentData}) {
+    const { auth }  = useAuth()
     const [joinedOwner, setjoinedOwner] = useState(false);
     const [profilData, setProfilData] = useState([]);
-    const {userData} = useContext(UserContext)
+    const {userData, updatetounament} = useContext(UserContext)
     const [progress, setProgress] = useState(0);
 
 
@@ -49,8 +51,70 @@ function JoinedTournament({TournamentData}) {
           setProgress(profilData.rank_progress);
         }, 500); 
       }, []);
-    console.log(profilData.rank_progress)
-    console.log(progress)
+  
+      const handleStartTournament = async () => {
+        try {
+            const response = await fetch(`${BACKEND_URL}/user/tournament/start/`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${auth.accessToken}`
+              },
+            });
+        
+            if (response.ok) {
+              const data = await response.json();
+              console.log('Tournament started successfully:', data);
+           
+            } else {
+              const errorData = await response.json();
+              console.error('Failed to start tournament:', errorData);
+              
+            }
+          } catch (error) {
+            console.error('Error starting tournament:', error);
+          
+          }
+      }
+
+      const handleDeleteTournament = async () => {
+        try {
+          const response = await fetch(`${BACKEND_URL}/user/tournament/`, {
+            method: 'DELETE',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${auth.accessToken}`
+
+            },
+          });
+      
+          if (response.ok) {
+            const data = await response.json();
+            const TournamentResponse = await fetch(`${BACKEND_URL}/user/tournament/`, {
+                method: 'GET',
+                    headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${auth.accessToken}`
+                    }
+                });
+                
+                if (!TournamentResponse.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                const updatedTournamentData = await TournamentResponse.json();
+                updatetounament(updatedTournamentData);
+            console.log('Tournament deleted successfully:', data);
+    
+          } else {
+            const errorData = await response.json();
+            console.error('Failed to delete tournament:', errorData);
+
+          }
+        } catch (error) {
+          console.error('Error deleting tournament:', error);
+   
+        }
+      };
   return (
     <div className="joined-tournament">
        <h1 className='tournament-title'>{TournamentData.tournament_name}</h1>
@@ -178,13 +242,13 @@ function JoinedTournament({TournamentData}) {
                             opacity: TournamentData.tournament_participants && TournamentData.tournament_participants.length < 4 ? 0.5 : 1
                         }}
                     >
-                        <MainButton type="submit" content="Start"/>
+                        <MainButton type="submit" functionHandler={handleStartTournament} content="Start"/>
                     </div>
-                    <MainButton type="submit" content="Cancle"/>
+                    <MainButton type="submit"  functionHandler={handleDeleteTournament} content="Cancel"/>
                 </div>
             ) : (
                 <div className='leaveTournomantButton'>
-                    <MainButton type="submit" content="Leave"/>
+                    <MainButton type="submit"  content="Leave"/>
                 </div>
             )}
         </div>

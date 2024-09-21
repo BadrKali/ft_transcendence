@@ -7,12 +7,19 @@ const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 function PlayerSelectedItem({player}) {
   const unknownAvatar = avatarsUnkown.img;
 
+  let name = 'username'
+  
+  if (player.username)
+    name = player.username
+  else
+    name = player.label
+
   return (
     <div className='slectedPlayerItem'>
         <div className='imagePlayerSelected'>
-            <img src={player.image ? `${BACKEND_URL}${player.image}` : unknownAvatar}/>
+            <img src={player.avatar ? `${BACKEND_URL}${player.avatar}` : unknownAvatar}/>
         </div>
-        <p>{player.username}</p>
+        <p>{name}</p>
     </div>
   )
 }

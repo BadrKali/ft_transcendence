@@ -54,7 +54,7 @@ export const ProfileProvider = ({ children, userId }) => {
                     setProfileData(data);
                     setIsBlockedMe(data.is_blocked);
                     setIsBlocking(data.is_blocking);
-                    console.log( data)
+                  
 
                 } else {
                     console.error('Error fetching profile data:', response.statusText);
@@ -84,6 +84,7 @@ export const ProfileProvider = ({ children, userId }) => {
                 if (response.ok) {
                     const data = await response.json();
                     setIsRequst(data.message)
+                    console.log(data)
            
                 } else {
                     console.error('Error fetching block status:', response.statusText);
@@ -157,9 +158,11 @@ export const ProfileProvider = ({ children, userId }) => {
     }, [profilData, auth.accessToken]);
   
     useEffect(() => {
+        console.log(profileDataLoading, profileBlockLoading,profileFriendLoading, HistoryLoading)
         if (!profileDataLoading && !profileBlockLoading && !profileFriendLoading && !HistoryLoading) {
             setIsProfileDataReady(true);
         }
+        console.log(isProfileDataReady, 'aajajajajaa')
     }, [profileDataLoading, profileBlockLoading, profileFriendLoading, HistoryLoading]);
 
     if (!isProfileDataReady) {

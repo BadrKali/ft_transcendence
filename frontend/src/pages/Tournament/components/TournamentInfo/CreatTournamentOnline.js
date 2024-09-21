@@ -23,7 +23,7 @@ const CreatTournamentOnline = ({onClose}) => {
     const [MapError, setMapError] = useState(false);
     const [NameError, setNameError] = useState(false);
     const [PlayersError, setPlayersError] = useState(false);
-    const {updatetounament} = useContext(UserContext)
+    const {updatetounament , userData} = useContext(UserContext)
     console.log(onClose)
     useEffect(() => {
         if (data) {
@@ -56,7 +56,7 @@ const CreatTournamentOnline = ({onClose}) => {
             tournament_map: selectedMap,
             invitedUsers: selectedPlayers.map(player => player.value),
         };
-
+        console.log(postData)
         if (!selectedMap){
             setMapError(true)
         }else{
@@ -112,8 +112,8 @@ const CreatTournamentOnline = ({onClose}) => {
 
     const playerOptions = listFriend.map((player) => ({
         value: player.id,
-        username: player.username,
-        image: player.avatar
+        label: player.username,
+        avatar: player.avatar
     }));
 
 
@@ -206,11 +206,21 @@ const CreatTournamentOnline = ({onClose}) => {
             <div className='selectPlayer-container '>
                 <h4>Select Players</h4>
                 <p>Select Players for your tournament</p>
-                <div className='playerselected'>
-                    {selectedPlayers.map((player) => (
-                            <PlayerSelectedItem key={player.id} player={player}/>
+                <div className='displayPlayers'>
+                    <div className='playerselectedOwner'>
+                        <div className='slectedPlayerItemOwner'>
+                            <div className='imagePlayerSelectedOwner'>
+                                <img src={`${BACKEND_URL}${userData.avatar}`}/>
+                            </div>
+                            <p>{userData.username}</p>
+                        </div>
+                    </div>
+                    <div className='playerselected'>
+                        {selectedPlayers.map((player) => (
+                            <PlayerSelectedItem key={player.value} player={player}/>
                         ))
                     }
+                    </div>
                 </div>
                  <Select
                     isMulti
