@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import './playerInfo.css';
 import vs from '../asstes/VS.png';
-
+import GameInfo from './GameInfo';
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
 const PlayerInfo = ({ player1, player2, onStartGame}) => {
-    const [timer, setTimer] = useState(2);
+    const [timer, setTimer] = useState(7);
     const [isGameStarting, setIsGameStarting] = useState(false);
 
     useEffect(() => {
@@ -28,7 +28,7 @@ const PlayerInfo = ({ player1, player2, onStartGame}) => {
         <div className="player-info-container">
             {!isGameStarting && (
                 <>
-                    <img src={vs} alt="" className='vs-image'/>
+                    <h1 className='vs-image'>{timer}</h1>
                     <div className='player-container'>
                         <div className="player-img-container">
                             <img src={`${BACKEND_URL}${player1.avatar}`} alt="PlayerAvatar" className='player-avatar'/>
@@ -74,9 +74,10 @@ const PlayerInfo = ({ player1, player2, onStartGame}) => {
                             <h1 className='player-username'>{player2.username}</h1>
                         </div>
                     </div>
-                    <div className="timer-container">
+                    {/* <div className="timer-container">
                         <h2>Starting in: {timer}s</h2>
-                    </div>
+                    </div> */}
+                <GameInfo/>
                 </>
             )}
         </div>

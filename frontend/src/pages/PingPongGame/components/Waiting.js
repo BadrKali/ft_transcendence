@@ -5,7 +5,7 @@ import rectangle from '../asstes/rec2.png';
 import avatar1 from '../asstes/avatar1.png';
 import avatar2 from '../asstes/avatar2.png';
 import avatar3 from '../asstes/avatar4.png';
-
+import GameInfo from "./GameInfo";
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
 
@@ -87,6 +87,7 @@ const Waiting = ({player, onNoPlayerFound}) => {
                 </>
             )}
             {noPlayerFound && <h1>NO PLAYER FOUND</h1>}
+            <GameInfo/>
         </div>
     );
 }

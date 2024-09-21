@@ -21,6 +21,8 @@
 .player-info-container .vs-image {
     margin: 30px;
     animation: slideInFromTop 0.5s ease-out;
+    font-size: 64px;
+    color: #2C3143;
 }
 
 /* Add animation to player container */
