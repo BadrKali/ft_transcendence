@@ -86,6 +86,9 @@ const update_status = (userdata) =>{
   }
 }
 
+const getContentOrPhoto = (message) =>{
+  return message.msgType === 'text' ? message.content : 'shared Photo'
+}
 const updateLastMessage = (data, result) =>{
 
   setChatList(prevChatList => {
@@ -94,7 +97,7 @@ const updateLastMessage = (data, result) =>{
         return {        
             ...contact,
             lastTime : reformeDate(data.message.created_at),
-            lastMessage : CurrentUser?.user_id === data.message.sender_id ? `You: ${data.message.content}` : `${ChatList?.filter(user => user.id === data.message.sender_id)[0].username.substring(0, 5)}: ${data.message.content}`
+            lastMessage : CurrentUser?.user_id === data.message.sender_id ? `You: ${getContentOrPhoto(data.message)}` : `${ChatList?.filter(user => user.id === data.message.sender_id)[0].username.substring(0, 5)}: ${getContentOrPhoto(data.message)}`
         };
       } else {
         return contact;
@@ -106,6 +109,10 @@ const updateLastMessage = (data, result) =>{
     clientSocket.onmessage = (event) => {
     const data = JSON.parse(event.data);
     const notif = new Audio(receivedmsgsound);
+
+    console.log('=====Event Received=====')
+    console.log(data.message)
+    console.log('========================')
     
     if (data.type === 'receive_typing'){
       if (ChatPartner && ChatPartner.id === data.message.sender_id){

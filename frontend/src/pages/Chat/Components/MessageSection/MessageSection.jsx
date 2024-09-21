@@ -236,10 +236,11 @@ const ChatInput = ({selectedImage, setSelectedImage}) => {
           messageData.ImgPath=selectedImage
           setSelectedImage(null)
         }
-
-        clientSocket?.send(JSON.stringify({type: 'newchat.message', messageData: messageData}));
-        const notif = new Audio(notificationSound);
-        notif.play();
+        if (!(message.trim() && selectedImage)){
+            clientSocket?.send(JSON.stringify({type: 'newchat.message', messageData: messageData}));
+            const notif = new Audio(notificationSound);
+            notif.play();
+        }
       }
     };
 
@@ -290,6 +291,11 @@ const ChatInput = ({selectedImage, setSelectedImage}) => {
   );
 };
 
+
+// =====Event Received=====
+// Chat.jsx:111 {id: 14, sender_id: 1, receiver_id: 2, msgType: 'image', content: null, …}ImgPath: "/media/chat_images/read.webm_5525.jpeg"content: nullcreated_at: "2024-09-21T17:01:12.151319Z"id: 14msgType: "image"receiver_id: 2seen: falsesender_id: 1[[Prototype]]: Object
+// Chat.jsx:112 ========================
+
 const MessageDisplayer = ({ message, IsIncoming }) => {
   const CurrentUser = useContext(CurrentUserContext);
   const {ChatPartner} = useContext(chatPartnerContext);
@@ -310,8 +316,9 @@ const MessageDisplayer = ({ message, IsIncoming }) => {
 
       <div className={styles.msgContent}>
         <div className={IsIncoming ? styles.incoming : styles.outgoing}>
-          {" "}
-          {message.content}{" "}
+          {
+            message.msgType === 'text' ? message.content : <img style={{borderRadius : '18px'}} src={`${BACKEND_URL}${message.ImgPath}`} alt="messagePhoto" /> 
+          }
         </div>
         <h1 className={IsIncoming ? styles.SendingTime : styles.SendingTimeout}>
           {reformeDate(message.created_at)}

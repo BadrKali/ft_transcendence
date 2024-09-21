@@ -22,9 +22,8 @@ from django.test import RequestFactory
 from .views import RetreiveContacts
 import base64
 from django.core.files.base import ContentFile
-import uuid
-
-
+from faker import Faker
+import random
 
 
 load_dotenv()
@@ -311,9 +310,6 @@ class ChatConsumer(AsyncWebsocketConsumer):
         if not senderBlockedreceiver and not receiverBlockedSender:
             already_have_conv = await self.already_have_record(self.sender_id, self.receiver_id)
             saved_message = await self.save_to_db()
-            print('*******************SERIALISED DATA****************')
-            print(saved_message)
-            print('**************************************************')
             try :
                 receiver_status = await self.get_user_status(self.receiver_id);
                 if receiver_status :
@@ -364,10 +360,8 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
     @database_sync_to_async
     def update_unique_msg_status(self):
-        self.msgcontent = self.extracted_msg.get('messageData').get('content')
-        self.id = self.extracted_msg.get('messageData').get('id')
-        
-        requiredMsg = message.objects.filter(content=self.msgcontent, id=self.id)
+        msgId = self.extracted_msg.get('messageData').get('id')
+        requiredMsg = message.objects.filter(id=msgId)
         requiredMsg.update(seen=True)
 
 
@@ -375,7 +369,6 @@ class ChatConsumer(AsyncWebsocketConsumer):
         await (self.send( text_data=json.dumps(event) ))
         
     async def newchat_message(self, event):
-        # print(event);
         await (self.send(text_data=json.dumps(event) ))
         
     async def last_message(self, event):
@@ -391,7 +384,6 @@ class ChatConsumer(AsyncWebsocketConsumer):
         UserReceiver = User.objects.get(id=self.msgDetails.get('receiver_id'))
         
         if msgType == 'text':
-            print('*****************This is in text case*****************')
             saved_model = message.objects.create(
                            sender_id=Usersender,
                            receiver_id = UserReceiver,
@@ -399,10 +391,11 @@ class ChatConsumer(AsyncWebsocketConsumer):
                            seen = self.msgDetails.get('seen'),
                         )
         elif msgType == 'image':
-            print('*****************This is in image case *****************')
+            fake = Faker()
             format, imgstr = self.msgDetails.get('ImgPath').split(';base64,')
             ext = format.split('/')[-1] 
-            data = ContentFile(base64.b64decode(imgstr), name=str(uuid.uuid4()) + '.' + ext)
+            filename = fake.file_name() + '_' + str(random.randint(1, 10000)) + '.' + ext
+            data = ContentFile(base64.b64decode(imgstr), name=filename)
             saved_model = message.objects.create(
                            sender_id=Usersender,
                            receiver_id = UserReceiver,
@@ -411,4 +404,4 @@ class ChatConsumer(AsyncWebsocketConsumer):
                            ImgPath=data,
                         )
         serialiser = __messageSerializer__(saved_model)
-        return serialiser.data 
+        return serialiser.data
