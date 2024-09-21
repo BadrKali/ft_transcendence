@@ -411,4 +411,4 @@ class ChatConsumer(AsyncWebsocketConsumer):
                            ImgPath=data,
                         )
         serialiser = __messageSerializer__(saved_model)
-        return serialiser.data
+        return serialiser.data 
