@@ -20,9 +20,12 @@ from dotenv import load_dotenv
 import os
 from django.test import RequestFactory
 from .views import RetreiveContacts
-from django.forms.models import model_to_dict
+import base64
+from django.core.files.base import ContentFile
+import uuid
 
- 
+
+
 
 load_dotenv()
 API_KEY= os.getenv('api_key')
@@ -308,6 +311,9 @@ class ChatConsumer(AsyncWebsocketConsumer):
         if not senderBlockedreceiver and not receiverBlockedSender:
             already_have_conv = await self.already_have_record(self.sender_id, self.receiver_id)
             saved_message = await self.save_to_db()
+            print('*******************SERIALISED DATA****************')
+            print(saved_message)
+            print('**************************************************')
             try :
                 receiver_status = await self.get_user_status(self.receiver_id);
                 if receiver_status :
@@ -369,6 +375,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
         await (self.send( text_data=json.dumps(event) ))
         
     async def newchat_message(self, event):
+        # print(event);
         await (self.send(text_data=json.dumps(event) ))
         
     async def last_message(self, event):
@@ -378,14 +385,30 @@ class ChatConsumer(AsyncWebsocketConsumer):
     @database_sync_to_async
     def save_to_db(self):
         self.msgDetails = self.extracted_msg.get('messageData')
+        msgType = self.msgDetails.get('msgType')
+
         Usersender = User.objects.get(id=self.msgDetails.get('sender_id'))
         UserReceiver = User.objects.get(id=self.msgDetails.get('receiver_id'))
-        saved_model = message.objects.create(
+        
+        if msgType == 'text':
+            print('*****************This is in text case*****************')
+            saved_model = message.objects.create(
                            sender_id=Usersender,
                            receiver_id = UserReceiver,
                            content= self.msgDetails.get('content'),
                            seen = self.msgDetails.get('seen'),
                         )
-        model_dict = model_to_dict(saved_model)
-        model_dict['created_at'] = saved_model.created_at.strftime('%Y-%m-%d %H:%M:%S.%f%z')
-        return model_dict
+        elif msgType == 'image':
+            print('*****************This is in image case *****************')
+            format, imgstr = self.msgDetails.get('ImgPath').split(';base64,')
+            ext = format.split('/')[-1] 
+            data = ContentFile(base64.b64decode(imgstr), name=str(uuid.uuid4()) + '.' + ext)
+            saved_model = message.objects.create(
+                           sender_id=Usersender,
+                           receiver_id = UserReceiver,
+                           seen = self.msgDetails.get('seen'),
+                           msgType= self.msgDetails.get('msgType'),
+                           ImgPath=data,
+                        )
+        serialiser = __messageSerializer__(saved_model)
+        return serialiser.data

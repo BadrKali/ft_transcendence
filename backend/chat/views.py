@@ -18,7 +18,10 @@ def format_date(date)-> str:
     return f'{date.hour+1}:{minute}'
 
 def forme_lastMessage(currentUser, Message):
-    return {True: f'You: {Message.content}', False: f'{Message.sender_id.username[:5]}: {Message.content}'} [Message.sender_id == currentUser]
+    if (Message.msgType == 'text'):
+        return {True: f'You: {Message.content}', False: f'{Message.sender_id.username[:5]}: {Message.content}'} [Message.sender_id == currentUser]
+    else:
+        return {True: f'You: shared Photo', False: f'{Message.sender_id.username[:5]}: shared Photo'} [Message.sender_id == currentUser]
 
 # @ New Feat Add : 
     # lastMessage if type === Image

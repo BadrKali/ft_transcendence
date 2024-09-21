@@ -216,20 +216,30 @@ const ChatInput = ({selectedImage, setSelectedImage}) => {
     const handleSendMessage = (event) => {
       if (event.type === 'keydown' && event.key !== 'Enter')
           return ;
-      if (message.trim()) {
+      if (message.trim() || selectedImage) {
+
         SetPicker((prev) => (prev ? !prev : prev));//deactivate emojies palett when - sending msg !
         const messageData = {
           sender_id: CurrentUser?.user_id,
           receiver_id: ChatPartner?.id,
-          content: message,
           seen: false,
         };
-  
+        // try to send message only
+        if (message.trim() && !selectedImage){
+          messageData.msgType = 'text';
+          messageData.content = message;
+          setMessage("");
+        }
+        // try to send image
+        else if (!message.trim() && selectedImage){
+          messageData.msgType = 'image';
+          messageData.ImgPath=selectedImage
+          setSelectedImage(null)
+        }
+
         clientSocket?.send(JSON.stringify({type: 'newchat.message', messageData: messageData}));
-        
         const notif = new Audio(notificationSound);
         notif.play();
-        setMessage("");
       }
     };
 
@@ -247,7 +257,7 @@ const ChatInput = ({selectedImage, setSelectedImage}) => {
               </label>
               <input
                 type="file"
-                name="-photo-"
+                name="chat-photo"
                 id="uploadImagebtn"
                 className="upload-input"
                 onChange={handleImageSelect}
