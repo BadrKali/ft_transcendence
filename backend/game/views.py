@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from django.db import models
+from django.db.models import Q
 from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -7,8 +8,8 @@ from rest_framework import status
 from rest_framework.views import APIView
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
-from .models import GameHistory, Achievement, UserAchievement, GameSettings, GameRoom, GameChallenge, InviteGameRoom, TournamentGameRoom
-from .serializers import GameHistorySerializer, AchievementSerializer, UserAchievementSerializer, GameSettingsSerializer, GameRoomSerializer, InviteGameRoomSerializer, TournamentGameRoomSerializer
+from .models import *
+from .serializers import *
 from user_management.models import Player, Notification
 from authentication .models import User
 from django.shortcuts import get_object_or_404
@@ -126,7 +127,6 @@ class SendChallengeView(APIView):
                 )
             except Exception as e:
                 print(f"Error creating InviteGameRoom: {e}")
-            print("DEBUG_______________--------++++++++++++")
             Notification.objects.create (
                 recipient=player_receiver,
                 sender=player_sender,
@@ -230,4 +230,25 @@ class TournamentGameRoomView(APIView):
             serializer = TournamentGameRoomSerializer(room)
             return Response(serializer.data, status=status.HTTP_200_OK)
         except TournamentGameRoom.DoesNotExist:
-            return Response({"error": "Game room not found"}, status=status.HTTP_404_NOT_FOUND) 
+            return Response({"error": "Game room not found"}, status=status.HTTP_404_NOT_FOUND)
+
+class CheckInviteReconnection(APIView):
+    def get(self, request):
+        try:
+            player = get_object_or_404(Player, user=request.user)
+            room = InviteGameRoom.objects.filter(
+                Q(player1=player) | Q(player2=player)
+            ).first()
+
+            if room:
+                return Response({
+                    'exists': True,
+                    'room_id': room.id,
+                    'player1': room.player1.user.username,
+                    'player2': room.player2.user.username if room.player2 else None,
+                    'is_waiting': room.is_waiting,
+                }, status=status.HTTP_200_OK)
+            else:
+                return Response({ 'exists': False }, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({ 'error': str(e) }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

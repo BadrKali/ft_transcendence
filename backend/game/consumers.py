@@ -320,7 +320,9 @@ class GameConsumer(AsyncWebsocketConsumer):
             
         if self.game_mode == "tournament":
             return
-        if is_game_over or not is_game_started:
+        if is_game_over:
+            await self.leave_room("game_over")
+        if not is_game_started:
             print("Game is already over or hasn't started, handling disconnect accordingly")
             await self.leave_room("game_canceled")
             return
@@ -330,8 +332,7 @@ class GameConsumer(AsyncWebsocketConsumer):
             await self.update_xp(self.player, current_player_username, self.room)
             await self.save_game_history(opponent_username, current_player_username, self.room)
             await self.channel_layer.group_send(
-                self.room_group_name,
-                {
+                self.room_group_name,{
                     'type': 'send_message',
                     'message': {
                         'action': 'game_canceled',
@@ -347,8 +348,6 @@ class GameConsumer(AsyncWebsocketConsumer):
                 await self.leave_room("game_canceled")
                 return
             else:
-                if self.game_mode == "invite":
-                    await self.send_invite_reconnection(player_str, "GO BACK TO THE GAME")
                 await self.channel_layer.group_send(
                     self.room_group_name, {
                         'type': 'send_message',
@@ -356,17 +355,6 @@ class GameConsumer(AsyncWebsocketConsumer):
                     }
                 )
 
-    async def send_invite_reconnection(self, player_str, message):
-        channel_layer = get_channel_layer()
-        user_id = await self.get_user_id(player_str)
-        await self.channel_layer.group_send(
-            f'notifications_{user_id}',
-            {
-                "type": "invite_reconnection",
-                "message": message
-            }
-        )
-    
     @database_sync_to_async
     def get_user_id(self, player_str):
         from user_management.models import Player
@@ -382,6 +370,9 @@ class GameConsumer(AsyncWebsocketConsumer):
         elif action == "invite":
             self.game_mode = action
             await self.handle_invite_action()
+        elif action == "invite-game-reconnection":
+            self.game_mode = "invite"
+            await self.handle_invite_reconnection()
         elif action == "tournament":
             self.game_mode = action
             await self.handle_tournament_action()
@@ -397,8 +388,22 @@ class GameConsumer(AsyncWebsocketConsumer):
             room = self.get_game_room()
             await self.waiting_for_reconnection(room)
 
+    async def handle_invite_reconnection(self):
+        player_str = await self.get_player_str()
+        invite_game_room = await self.check_for_invite_reconnection(player_str)
+        if invite_game_room:
+            self.room = invite_game_room
+            self.room_name = f"game_room_{invite_game_room.id}"
+            self.room_id = invite_game_room.id
+            self.room_group_name = self.room_name
+            await self.channel_layer.group_add(self.room_group_name, self.channel_name)
+            self.game_state = game_state_manager.get_or_create_game_state(self.room_id)
+            await self.game_state.reconnect_player(player_str, invite_game_room)
+            await self.notify_reconnection(player_str, invite_game_room)
+            await self.send_reconnection_info(invite_game_room)
+
     async def waiting_for_reconnection(self, room):
-        timeout = 10
+        timeout = 20
         interval = 1 
         total_time_waited = 0
         winner = await self.game_state.get_player_username(self.player)
@@ -432,12 +437,6 @@ class GameConsumer(AsyncWebsocketConsumer):
     async def handle_invite_action(self):
         from .models import InviteGameRoom
         try:
-            player_str = await self.get_player_str()
-            invite_game_room = await self.check_for_invite_reconnection(player_str)
-            if invite_game_room:
-                self.room = invite_game_room
-                await self.handle_reconnection(player_str, invite_game_room)
-                return
             invite_game_room = await sync_to_async(
                 lambda: InviteGameRoom.objects.filter(
                     Q(player1=self.player) | Q(player2=self.player)
@@ -540,15 +539,9 @@ class GameConsumer(AsyncWebsocketConsumer):
                 ).first()
             )()
             if room:
-                self.game_state = game_state_manager.get_or_create_game_state(self.room_id)
-                if not self.game_state.get_self_player_status(player_str):
-                    print("HELLO FROM CHECK INVITE RECNNECTION")
-                    self.room_name = f"game_room_{room.id}"
-                    self.room_id = room.id
-                    self.room_group_name = self.room_name
-                    await self.channel_layer.group_add(self.room_group_name, self.channel_name)
-                else:
-                    return None
+                self.room_name = f"game_room_{room.id}"
+                self.room_id = room.id
+                self.room_group_name = self.room_name
             return room if room else None
         except InviteGameRoom.DoesNotExist:
             return None
@@ -608,6 +601,7 @@ class GameConsumer(AsyncWebsocketConsumer):
         }))
 
     async def start_game_loop(self, room):
+        # print("HELLO FROM START")
         frame_duration = 1 / 60
         while self.game_state.get_running():
             start_time = time.time()
@@ -675,48 +669,7 @@ class GameConsumer(AsyncWebsocketConsumer):
             print("Error: One of the players does not exist.")
         except Exception as e:
             print(f"Unexpected error updating XP and saving history: {str(e)}")
-    
-    # @sync_to_async
-    # def update_xp(self, winner, loser, room):
-    #     from user_management.models import Player
-    #     if not room:
-    #         return
-    #     try:
-    #         player1 = self.game_state.get_player_username(room.player1)
-    #         if player1 == winner:
-    #             room.player1.update_xp(True)
-    #             room.player2.update_xp(False)
-    #         else:
-    #             room.player1.update_xp(False)
-    #             room.player2.update_xp(True)
-    #         print("XP Updated")
-    #     except Player.DoesNotExist:
-    #         print("Error: One of the players does not exist.")
-    
-    # @sync_to_async
-    # def save_game_history(self, winner, loser, room):
-    #     from .models import GameHistory
-    #     from user_management.models import Player
-    #     try:
-    #         player1 = self.game_state.get_player_username(room.player1)
-    #         if player1 == winner:
-    #             winner_user = room.player1
-    #             loser_user = room.player2
-    #         else :
-    #             winner_user = room.player2
-    #             loser_user = room.player1
-    #         GameHistory.objects.create(
-    #             winner_user=winner_user,
-    #             loser_user=loser_user,
-    #             winner_score= self.game_state.winner_score(str(winner)),
-    #             loser_score= self.game_state.loser_score(loser),
-    #             game_type= 'pingpong',
-    #             match_type= 'single'
-    #         )
-    #         print("Game History Saved")
-    #     except Player.DoesNotExist:
-    #         print("Error: One of the players does not exist.")
-    
+
     @database_sync_to_async
     def get_player(self, user):
         from user_management.models import Player

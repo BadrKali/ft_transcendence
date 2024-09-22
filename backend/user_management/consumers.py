@@ -90,7 +90,6 @@ class NotificationConsumer(AsyncWebsocketConsumer):
         }))
 
     async def notification_tournament(self, event):
-        print("HELLO BABY FROM NOTIFICATION TOURNAMENT")
         message = event['message']
         sender_id = event['sender']
         await self.send(text_data=json.dumps({
@@ -100,10 +99,15 @@ class NotificationConsumer(AsyncWebsocketConsumer):
         }))
 
     async def invite_reconnection(self, event):
+        print("HELLO BABY FROM NOTIFICATION INVITE RECONNECTION")
         message = event['message']
+        sender = event['sender']
+        receiver = event['receiver']
         await self.send(text_data=json.dumps({
             'type': 'invite_reconnection',
-            'message': message
+            'message': message,
+            'sender': sender,
+            'receiver': receiver
         }))
 
     async def notification_match(self, event):

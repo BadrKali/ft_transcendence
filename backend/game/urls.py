@@ -1,6 +1,6 @@
 # urls.py
 from django.urls import path
-from .views import PlayerGameHistoryView, AchievementListView, SpecificUserAchievementListView, TriggerAchievementView, GameSettingsView, GameRoomView, CurrentUserAchievementListView, SendChallengeView, GameChallengeResponse, GameInvitationResponse, InviteGameRoomView, CurrentUserGameHistoryView, TournamentGameRoomView
+from .views import *
 
 urlpatterns = [
     path('game-history/', CurrentUserGameHistoryView.as_view(), name='player-game-history'),
@@ -16,4 +16,5 @@ urlpatterns = [
     path('game-response/<int:invited>/', GameInvitationResponse.as_view(), name="game-response"),
     path('invite-game-room/<int:room_id>', InviteGameRoomView.as_view(), name='invite-game-room'),
     path('tournament-room/<int:room_id>', TournamentGameRoomView.as_view(), name='tournament-room'),
+    path('check-invite-room', CheckInviteReconnection.as_view(), name="check-invite-room"),
 ]
