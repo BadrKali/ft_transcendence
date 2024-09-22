@@ -98,7 +98,14 @@ class NotificationConsumer(AsyncWebsocketConsumer):
             'message': message,
             'sender_id': sender_id
         }))
-    
+
+    async def invite_reconnection(self, event):
+        message = event['message']
+        await self.send(text_data=json.dumps({
+            'type': 'invite_reconnection',
+            'message': message
+        }))
+
     async def notification_match(self, event):
         message = event['message']
         sender_id = event['sender']

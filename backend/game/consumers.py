@@ -6,7 +6,8 @@ import asyncio
 import math
 from django.db.models import Q
 import time
-
+from channels.layers import get_channel_layer
+from asgiref.sync import async_to_sync
 class GameState:
     def __init__(self):
         self.state = {
@@ -346,12 +347,31 @@ class GameConsumer(AsyncWebsocketConsumer):
                 await self.leave_room("game_canceled")
                 return
             else:
+                if self.game_mode == "invite":
+                    await self.send_invite_reconnection(player_str, "GO BACK TO THE GAME")
                 await self.channel_layer.group_send(
                     self.room_group_name, {
                         'type': 'send_message',
                         'message': { 'action': 'opponent_disconnected' },
                     }
                 )
+
+    async def send_invite_reconnection(self, player_str, message):
+        channel_layer = get_channel_layer()
+        user_id = await self.get_user_id(player_str)
+        await self.channel_layer.group_send(
+            f'notifications_{user_id}',
+            {
+                "type": "invite_reconnection",
+                "message": message
+            }
+        )
+    
+    @database_sync_to_async
+    def get_user_id(self, player_str):
+        from user_management.models import Player
+        player = Player.objects.get(user__username=player_str)
+        return player.user.id
 
     async def receive(self, text_data):
         data = json.loads(text_data)

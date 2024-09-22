@@ -97,6 +97,8 @@ export const RealTimeProvider = ({ children }) => {
             } else if (dataFromServer.type === 'tournament_notification') {
                 setTournamentType(true);
                 setGameChallenge(dataFromServer);
+            } else if (dataFromServer.type === "invite_reconnection") {
+                alert("hello");
             } else if (dataFromServer.type === 'status_update') {
                 const { user_id, status } = dataFromServer;
                 setFriendsStatus(prevStatus => ({
@@ -154,9 +156,9 @@ export const RealTimeProvider = ({ children }) => {
         .catch(error => {
             console.error('Error accepting game challenge:', error);
         });
-        if (tournamentType)
-            setTournamentMatchAccepted(true);
-        // setShowGameSettings(true);
+        // if (tournamentType)
+        //     setTournamentMatchAccepted(true);
+        setShowGameSettings(true);
     }
 
     const handleRejectGame = (id) => {
