@@ -6,8 +6,11 @@ import Timeout from '../components/TimeOut';
 import avatar from "../asstes/avatar3.png";
 import pongy from "../asstes/pongy.png";
 import exit from "../asstes/right-arrow.png";
+import { useTranslation } from 'react-i18next'
+
 
 const GameLogic = ({paddleColor, keys, username}) => {
+    const { t } = useTranslation();
     const navigate = useNavigate();
     const canvasRef = useRef(null);
     const userRef = useRef({
@@ -259,10 +262,10 @@ const GameLogic = ({paddleColor, keys, username}) => {
                 {showExitPopup && (
                     <div className="exit-popup">
                         <div className="exit-popup-content">
-                            <h2>BACK TO LOBBY ?</h2>
+                            <h2>{t('BACK TO LOBBY ?')}</h2>
                             <div className="exit-popup-buttons">
-                                <button onClick={() => confirmExitGame(true)}>Yes</button>
-                                <button onClick={() => confirmExitGame(false)}>Cancel</button>
+                                <button onClick={() => confirmExitGame(true)}>{t('Yes')}</button>
+                                <button onClick={() => confirmExitGame(false)}>{t('Cancel')}</button>
                             </div>
                         </div>
                     </div>

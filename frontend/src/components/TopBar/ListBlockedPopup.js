@@ -25,7 +25,7 @@ const ListBlockedPopup = ({ isOpen, onClose})=> {
         <div className="modal-listBlocked">
         <div className="modal-blocked">
             <button className="modalCloseButton" onClick={onClose}>&times;</button>
-            <h2>List Blocked</h2>
+            <h2>{t('List Blocked')}</h2>
             <div className='listBlocked'>
                 {blockedUsers && blockedUsers.length > 0 ? (
                     blockedUsers.map((user) => (

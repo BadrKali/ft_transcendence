@@ -14,6 +14,8 @@ import exit from "../asstes/right-arrow.png";
 import MatchResult from '../components/MatchResult';
 import "../stylesheet/game-style.css";
 import WaitForReconnection from '../components/WaitForReconnection';
+import { useTranslation } from 'react-i18next'
+
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const WS_BACKEND_URL = process.env.REACT_APP_WS_BACKEND_URL;
 
@@ -21,6 +23,7 @@ const RealTimeGame = ({ mode }) => {
     const lastUpdateTime = useRef(0);
     const animationFrameId = useRef(null);
     const canvasRef = useRef(null);
+    const { t } = useTranslation();
     const navigate = useNavigate();
     const { auth } = useAuth();
     const [opponentDisconnected, showOpponentDisconnected] = useState(false);
@@ -487,10 +490,10 @@ const RealTimeGame = ({ mode }) => {
             {showExitPopup && (
                 <div className="exit-popup">
                     <div className="exit-popup-content">
-                        <h2>BACK TO LOBBY ?</h2>
+                        <h2>{t('BACK TO LOBBY ?')}</h2>
                         <div className="exit-popup-buttons">
-                            <button onClick={() => confirmExitGame(true)}>Yes</button>
-                            <button onClick={() => confirmExitGame(false)}>Cancel</button>
+                            <button onClick={() => confirmExitGame(true)}>{t('Yes')}</button>
+                            <button onClick={() => confirmExitGame(false)}>{t('Cancel')}</button>
                         </div>
                     </div>
                 </div>

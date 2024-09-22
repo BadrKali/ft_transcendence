@@ -8,6 +8,8 @@ import { SuccessToast } from '../ReactToastify/SuccessToast';
 import { InfoToast } from '../ReactToastify/InfoToast';
 import { UserContext } from '../../context/UserContext';
 import { ProfileContext } from '../../context/ProfilContext';
+import { useTranslation } from 'react-i18next'
+
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
 
@@ -15,6 +17,7 @@ function ListBlockedItem({user}) {
     const {data ,isLoading, error} = useFetch(`${BACKEND_URL}/user/stats/${user.id}`)
     const [profilData, setProfilData] = useState([]);
     const { auth }  = useAuth()
+    const { t } = useTranslation();
     const {updateBlockedList} = useContext(UserContext)
     const {setIsBlocked, profilisBlocked, setIsBlocking, isBlockingHim} = useContext(ProfileContext)
 
@@ -23,7 +26,7 @@ function ListBlockedItem({user}) {
         setProfilData(data);
         }
     }, [data]);
-    console.log(profilisBlocked)
+ 
     const handleUnblock = async () => {
         const url = `${BACKEND_URL}/user/${user.id}/block-unblock/`;
         try {
@@ -74,7 +77,7 @@ function ListBlockedItem({user}) {
                 </div>
             </div>
             <div className='unblockUserButton' onClick={handleUnblock}>
-                <button>Unblock</button>
+                <button>{t('Unblock')}</button>
             </div>
         </div>
     )

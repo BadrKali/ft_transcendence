@@ -9,6 +9,8 @@ import { CircularProgressbar, buildStyles } from 'react-circular-progressbar';
 import 'react-circular-progressbar/dist/styles.css';
 import MainButton from '../../../../components/MainButton/MainButton'
 import { UserContext } from '../../../../context/UserContext'
+import { useTranslation } from 'react-i18next'
+
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
@@ -19,6 +21,8 @@ function JoinedTournament({TournamentData}) {
     const [profilData, setProfilData] = useState([]);
     const {userData, updatetounament} = useContext(UserContext)
     const [progress, setProgress] = useState(0);
+    const { t } = useTranslation();
+
 
 
     const date = new Date(TournamentData.tournament_date);
@@ -124,27 +128,27 @@ function JoinedTournament({TournamentData}) {
                 <Icon name='chump_cup' className="tournament-info-icon"/>
                 <div className='tournament-info-item-txt'>
                     <p>{TournamentData.tournament_prize}</p>
-                    <span>Total Prize Pool</span>
+                    <span>{t('Total Prize Pool')}</span>
                 </div>
             </div>
             <div className='tournament-info-item'>
                 <Icon name='calendar' className="tournament-info-icon"/>
                 <div className='tournament-info-item-txt'>
                     <p>{`${formattedDate} ${formattedTime}`}</p>
-                    <span>Tournament Start</span>
+                    <span>{t('Tournament Start')}</span>
                 </div>
             </div>
             <div className='tournament-info-item'>
                 <Icon name='game_mode' className="tournament-info-icon"/>
                 <div className='tournament-info-item-txt'>
-                    <p>Game Mode</p>
+                    <p>{t('Game Mode')}</p>
                     <span>1 v 1 li mat khser</span>
                 </div>
             </div>
             <div className='tournament-info-item'>
                 <Icon name='location' className="tournament-info-icon"/>
                 <div className='tournament-info-item-txt'>
-                    <p>Map</p>
+                    <p>{t('Map')}</p>
                     <span>{TournamentData.tournament_map}</span>
                 </div>
             </div>
@@ -163,11 +167,11 @@ function JoinedTournament({TournamentData}) {
         <div className='tournament-desc'>
             <div className='tournament-desc-rules'>
                 <div className='tournament-desc-rules-top'>
-                    <h1>Attention Pongers</h1>
+                    <h1>{t('Attention Pongers')}</h1>
                     <p>simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled</p>
                 </div>
                 <div className='tournament-desc-rules-top'>
-                    <h1>How Does It work ?</h1>
+                    <h1>{t('How Does It work ?')}</h1>
                     <p>simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled</p>
                 </div>
             </div>
@@ -177,7 +181,7 @@ function JoinedTournament({TournamentData}) {
                         <img src={avatars[0].img}/>
                         <div className='nameRank'>
                             <span>{profilData.username}</span>
-                            <span>Rank : {profilData.rank}</span>
+                            <span>Rank{t('FRIENDS')} : {profilData.rank}</span>
                         </div>
                     </div>
                     <div className='tournament-top-player-stats'>

@@ -9,6 +9,8 @@ import Icon from '../../../../assets/Icon/icons';
 import PlayerSelectedItem from './PlayerSelectedItem';
 import MainButton from '../../../../components/MainButton/MainButton';
 import { UserContext } from '../../../../context/UserContext';
+import { useTranslation } from 'react-i18next'
+
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
@@ -25,6 +27,8 @@ const CreatTournamentOffline= ({onClose}) => {
     const {updatetounament, userData} = useContext(UserContext)
     const [username, setUsername] = useState('');
     const [players, setPlayers] = useState([]);
+    const { t } = useTranslation();
+
 
     useEffect(() => {
         if (data) {
@@ -129,8 +133,8 @@ const CreatTournamentOffline= ({onClose}) => {
     return (
         <div className='sections-container'>
             <div className='Arena-container'>
-                <h4>Arena</h4>
-                <p>Select default arena theme</p>
+                <h4>{t('Arena')}</h4>
+                <p>{t('Select default arena theme')}</p>
                 <div className='maps-tournomant'>
                     <div
                         className={`undergroundHell mapBox ${selectedMap === 'undergroundHell' ? 'selected' : ''}`}
@@ -145,11 +149,11 @@ const CreatTournamentOffline= ({onClose}) => {
                         onClick={() => handleMapSelection('undergroundGraveyard')}
                         ></div>
                 </div>
-                {MapError && <p className="error-message">No map selected</p>}
+                {MapError && <p className="error-message">No map selected{t('FRIENDS')}</p>}
             </div>
             <div className='selectTitle-container'>
-                <h4>Tournament Title</h4>
-                <p>Type your tournament title</p>
+                <h4>{t('Tournament Title')}</h4>
+                <p>{t('Type your tournament title')}</p>
                 <div className='selectNameInput'>
                             <input
                                 placeholder='tournament title'
@@ -159,12 +163,12 @@ const CreatTournamentOffline= ({onClose}) => {
                             />
                             <Icon name='inputTournamant' className='inputTournamant-icon' />
                 </div>
-                {NameError && <p className="error-message">You need to choice a Title </p>}
+                {NameError && <p className="error-message"> {t('You need to choice a Title')}</p>}
 
             </div>
             <div className='selectPlayer-container '>
-                <h4>Select Players</h4>
-                <p>Select Players for your tournament</p>
+                <h4>{t('Select Players')}</h4>
+                <p>{t('Select Players for your tournament')}</p>
                 <div className='displayPlayers'>
                     <div className='playerselectedOwner'>
                         <div className='slectedPlayerItemOwner'>
@@ -188,7 +192,7 @@ const CreatTournamentOffline= ({onClose}) => {
                                 value={username}
                                 onChange={(e) => setUsername(e.target.value)}
                             />
-                            <p className="AddClick"onClick={handleAddPlayer}>ADD</p>
+                            <p className="AddClick"onClick={handleAddPlayer}>ADD{t('FRIENDS')}</p>
                 </div>
             </div>
             <div className='tournamentButton-container'>
@@ -196,7 +200,7 @@ const CreatTournamentOffline= ({onClose}) => {
                         <MainButton type="submit" functionHandler={handleCreateTournament} content="Creat" />
                     </div>
             </div>
-            {PlayersError && <p className="error-message">Player selected must be 4 in Total</p>}
+            {PlayersError && <p className="error-message">{t('Player selected must be 4 in Total')}</p>}
 
         </div>
     )

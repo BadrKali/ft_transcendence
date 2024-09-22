@@ -20,7 +20,7 @@ const DashBoard = () => {
 
   const {userData} = useContext(UserContext)
  
-   console.log(userData);
+
   return (
     <div className='dashboard-contianer'>
        <div className='page-title'>

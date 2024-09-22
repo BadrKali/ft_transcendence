@@ -1,13 +1,17 @@
 import React from 'react'
 import './restItem.css'
 import { avatars } from '../../../assets/assets';
+import { useTranslation } from 'react-i18next'
+
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
 
 function EmptyRestItem({ index}) {
     const ifOdd = index % 2 ? true : false;
-  const unknownAvatar = avatars[4].img;
+    const unknownAvatar = avatars[4].img;
+    const { t } = useTranslation();
+
 
     console.log(index)
     return (
@@ -21,7 +25,7 @@ function EmptyRestItem({ index}) {
                         <img src={unknownAvatar}/>
                     </div>
                     <div className='PlayerName'>
-                        <p>uknown player</p>
+                        <p>{t('uknown player')}</p>
                     </div>
                 </div>
                 

@@ -23,11 +23,14 @@ import LanguageSelector from './LanguageSelector'
 import GameChallengeNotification from '../Notification/GameChallengeNotification'
 import GameSettingsPopUp from '../GameSettingsPopUp/GameSettingsPopUp'
 import { UserContext } from '../../context/UserContext'
+import { useTranslation } from 'react-i18next'
+
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
 const TopBar = () => {
   const [showNotif, setNotif] = useState(false)
   const dropdownRef = useRef(null);
+  const { t } = useTranslation();
   const dropdownSearchRef = useRef(null);
   const [isProfilActive, setProfilActive] = useState(false)
   const [isDropdownActive, setDropdownActive] = useState(false);
@@ -399,10 +402,10 @@ const handleReject = async (id, type) => {
           <span>{userData.username}</span>
           <div  className={isProfilActive ? "dropDwonProfil profilActive" : "dropDwonProfil"}>
             <div className='dropList'>
-              <p className='list' onClick={handleMyProfilClick}>View My Profil</p>
-              <p className='list' onClick={handleListBlockedClick}>List Blocked</p>
-              <p className='list' onClick={handleSettingClick}>Setting</p>
-              <p className='list'>Log Out</p>
+              <p className='list' onClick={handleMyProfilClick}>{t('View My Profil')}</p>
+              <p className='list' onClick={handleListBlockedClick}>{t('List Blocked')}</p>
+              <p className='list' onClick={handleSettingClick}>{t('Setting')}</p>
+              <p className='list'>{t('Log Out')}</p>
             </div>
           </div>
             <ListBlockedPopup isOpen={modalOpenBlocked} onClose={handleCloseBlocked} />

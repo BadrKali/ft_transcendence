@@ -68,7 +68,7 @@ const LeaderBoard = () => {
   return (
     <div className='leaderBoard-Container'>
       <div className='page-title'>
-        <h1>LeaderBoard</h1>
+        <h1>{t('LeaderBoard')}</h1>
       </div>
       <div className='leaderBoard-List-Container'>
         <div className='leaderBoard-List'>
@@ -79,11 +79,11 @@ const LeaderBoard = () => {
             </div>
             <div className='leaderBoard-RestList'>
                 <div className='restList-Header'>
-                      <p>player</p>
-                      <p>Matchs Played</p>
-                      <p>Win</p>
-                      <p>Loss</p>
-                      <p>Rank</p>
+                      <p>{t('player')}</p>
+                      <p>{t('Matchs Played')}</p>
+                      <p>{t('Win')}</p>
+                      <p>{t('Loss')}</p>
+                      <p>{t('Rank')}</p>
                 </div>
                 <div className='restList-Players'>
                 {rest.length > 0 ? (

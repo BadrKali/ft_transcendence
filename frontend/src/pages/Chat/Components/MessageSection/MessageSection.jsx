@@ -19,6 +19,8 @@ import BlockPopUps from "../BlockPopUps/BlockPopUps.jsx";
 import { TypingContext } from "../../Chat.jsx";
 import typinganimation from "../../ChatAssets/lastTyping.json"
 import { ErrorToast } from "../../../../components/ReactToastify/ErrorToast.js";
+import { useTranslation } from 'react-i18next'
+
 
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
@@ -425,6 +427,8 @@ const MessageSection = () => {
   const PickedUsername = useContext(PickedConvContext);
   const {setChatPartner} = useContext(chatPartnerContext)
   const [selectedImage, setSelectedImage] = useState(null);
+  const { t } = useTranslation();
+
 
 
   useEffect(() => {
@@ -444,9 +448,9 @@ const MessageSection = () => {
             </div>
             <blockquote className={styles.ChatQuote}>
               {" "}
-              Unleash the power of connection! <br />
-              Start chatting and discover what{" "}
-              <span className={styles.Clunca}>Clunca </span> has to offer you .{" "}
+              {t("Unleash the power of connection!")} <br />
+              {t("Start chatting and discover what")}{" "}
+              <span className={styles.Clunca}>Clunca </span> {t("has to offer you.")}{" "}
             </blockquote>
           </div>
         </div>

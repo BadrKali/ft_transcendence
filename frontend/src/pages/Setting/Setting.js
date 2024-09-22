@@ -12,6 +12,8 @@ import MainButton from '../../components/MainButton/MainButton';
 import { UserContext } from '../../context/UserContext';
 import TwoFaModal from './components/TwoFaModal/TwoFaModal';
 import {fetchData} from './components/TwoFaModal/TwoFaModal'
+import { useTranslation } from 'react-i18next'
+
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const SETTING_ENDPOINT = `${BACKEND_URL}/auth/user/me/`
@@ -36,6 +38,8 @@ const Setting = () => {
   const { userData , updateUserData } = useContext(UserContext);
   const [showTwoFaModal, setShowTwoFaModal] = useState(false);
   const [qrCodeUrl, setQrCodeUrl] = useState(null);
+  const { t } = useTranslation();
+
 
   const toggleTwoFaModal = async () => {
     const data = await fetchQrCodeUrl(auth.accessToken);
@@ -116,11 +120,11 @@ const Setting = () => {
   return (
     <>
       <div className={Style.SettingContainer}>
-        <h1>Settings</h1>
+        <h1>{t('Settings')}</h1>
         <div className={Style.AvatarContainer}>
           <div className={Style.SettingInfo}>
-            <h3>Profile Picture</h3>
-            <p>Update your information about you and details here</p>
+            <h3>{t('Profile Picture')}</h3>
+            <p>{t('Update your information about you and details here')}</p>
           </div>
           <div className={Style.Avatars}>
             <AvatarSelect setActiveAvatar={setActiveAvatar} setAvatarFile={setAvatarFile} activeAvatar={activeAvatar} avatarFile={avatarFile}/>
@@ -131,8 +135,8 @@ const Setting = () => {
           </div>
           <div className={Style.SettingSection}>
             <div className={Style.SettingInfo}>
-              <h3>Personal Information</h3>
-              <p>Update your information about you and details here</p>
+              <h3>{t('Personal Information')}</h3>
+              <p>{t('Update your information about you and details here')}</p>
             </div>
             <div className={Style.InputSection}>
               <SettingInput label="User Name" name='username' placeholder='Perdoxii_noyat' type='text' onChange={handleInputChange} />
@@ -142,8 +146,8 @@ const Setting = () => {
           <div className={Style.SettingSep}></div>
           <div className={Style.SettingSection}>
             <div className={Style.SettingInfo}>
-              <h3>Security</h3>
-              <p>Update your information about you and details here</p>
+              <h3>{t('Security')}</h3>
+              <p>{t('Update your information about you and details here')}</p>
             </div>
             <div className={Style.InputSection}>
               <SettingInput label='Current Password' name="old_password" placeholder='********************' type='password' onChange={handleInputChange}/>
@@ -154,18 +158,18 @@ const Setting = () => {
           <div className={Style.TwoFactorContainer}>
             <div className={Style.SettingInfo}>
             <h3>
-            Two-factor Authenticator App{' '}
+            {t('Two-factor Authenticator App')}{' '}
             {userData.is_2fa_enabled ? (
-              <span style={{ backgroundColor: 'green', color: 'white', padding: '2px 6px', borderRadius: '4px', fontSize: '13px'}}>Enabled</span>) 
+              <span style={{ backgroundColor: 'green', color: 'white', padding: '2px 6px', borderRadius: '4px', fontSize: '13px'}}>{t('Enabled')}</span>) 
               : 
-              (<span style={{ backgroundColor: 'red', color: 'white', padding: '2px 6px', borderRadius: '4px', fontSize: '13px' }}>Disabled</span>)
+              (<span style={{ backgroundColor: 'red', color: 'white', padding: '2px 6px', borderRadius: '4px', fontSize: '13px' }}>{t('Disabled')}</span>)
             }
             </h3>
-              <p>Use an Authenticator App as your two-factor authentication (2FA). When you sign in you'll be asked to use the security code provided by your Authenticator.</p>
+              <p>{t("Use an Authenticator App as your two-factor authentication (2FA). When you sign in you'll be asked to use the security code provided by your Authenticator.")}</p>
             </div>
-            {!userData.is_2fa_enabled ? (<button type="button" onClick={toggleTwoFaModal} className={Style.twoFaButton}>Enable</button> ) 
+            {!userData.is_2fa_enabled ? (<button type="button" onClick={toggleTwoFaModal} className={Style.twoFaButton}>{t('Enable')}</button> ) 
             : 
-            (<button type="button" onClick={disableTwoFa} className={Style.twoFaButton}>Disable</button> )}
+            (<button type="button" onClick={disableTwoFa} className={Style.twoFaButton}>{t('Disable')}</button> )}
             {showTwoFaModal && <TwoFaModal handleClose={closeTwoFaModal} qrUrl={qrCodeUrl}/>}
           </div>
           <MainButton type="submit" onClick={handleFormSubmit} content="Update"/>

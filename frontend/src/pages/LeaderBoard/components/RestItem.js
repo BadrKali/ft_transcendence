@@ -9,7 +9,7 @@ function RestItem({players, index}) {
     let winPer = Math.floor((players.games_won / players.games_played) * 100);
     if (players.games_played === 0)
         winPer = 0
-    console.log(index)
+
     return (
         <div className={ifOdd ? 'listPlayerContainer' : 'listPlayerContainer Odd'}   style={{ animationDelay: `${index * 0.1}s` }} >
             <div className='number'>

@@ -7,10 +7,14 @@ import MainButton from '../../../../components/MainButton/MainButton';
 import popularTournaments from '../../../../assets/tournament';
 import PopularTournaments from './PopularTournaments';
 import sadFace from '../../../../assets/sadFace.json'
+import { useTranslation } from 'react-i18next'
+
 
 function NoTournament({setJoinedTournament}) {
     const [modalCreat, setModalCreat] = useState(false);
     const tounemrntExist = true
+    const { t } = useTranslation();
+
 
       
 
@@ -25,7 +29,7 @@ function NoTournament({setJoinedTournament}) {
     <div className="no-tournament">
         <div className="tournament-page">
             {tounemrntExist &&
-            <h2>Popular Tournaments</h2>
+            <h2>{t('Popular Tournaments')}</h2>
             }
             <div className="examples-section">
                 {tounemrntExist ? 
@@ -35,7 +39,7 @@ function NoTournament({setJoinedTournament}) {
                 : (
                     <div className='sadFaceAnimation'>
                          <div className='sadFace'><Lottie animationData={sadFace} /> </div>
-                        <h2>No tournaments available at the moment</h2>
+                        <h2>{t('No tournaments available at the moment')}</h2>
                     </div>
                 )}
             </div>
