@@ -372,10 +372,11 @@ class TournamentInvitationView(APIView):
         elif action == 'reject':
             invitation.delete()
             return Response({'message': 'Invitation rejected.'}, status=status.HTTP_200_OK)
-        
+
 class TournamentInvitationResponse(APIView):
-    def patch(self, request):
+    def patch(self, request, tournament_id):
         print("TOURNAMENT INVITATION HANDLER")
+        return(Response({'message': 'Tournament started successfully'}, status=status.HTTP_200_OK))
 
 class StartTournamentView(APIView):
     def post(self, request):
@@ -412,10 +413,6 @@ class XPHistoryView(APIView):
             'xp': [entry.xp for entry in xp_history]
         }
         return Response(data)
-
-
-
-
 
 class LeaderboardView(APIView):
     def get(self, request):
@@ -461,7 +458,6 @@ class GlobalStatsView(APIView):
             'achievements': UserAchievementSerializer(achievements, many=True).data,
             'tournament': TournamentSerializer(tournament).data,
             'blocked_users': blocked_list
-
         }
         return(Response(data, status=status.HTTP_200_OK))
 

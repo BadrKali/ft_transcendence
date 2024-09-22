@@ -5,7 +5,7 @@ import accept from  "../../assets/Icon/accept.png"
 import reject from  "../../assets/Icon/reject.png"
 
 const GameChallengeNotification = ({notif, message, onAccept, onReject}) => {
-    const [timeLeft, setTimeLeft] = useState(10);
+    const [timeLeft, setTimeLeft] = useState(20);
 
     useEffect(() => {
         const intervalId = setInterval(() => {

@@ -26,7 +26,7 @@ import Invite from './pages/PingPongGame/Invite/Invite';
 import { UserProvider } from "./context/UserContext";
 import { ProfileProvider } from "./context/ProfilContext";
 import ProfileProviderWrapper from './context/ProfileProviderWrapper'
-
+import TournamentGame from "./pages/PingPongGame/TournamentGame.js/TournamentGame";
 const routes = [
   {
     element: <OauthTwo />,
@@ -74,11 +74,11 @@ const routes = [
       },
     ],
   },
-  // { path: "design", element: <Design /> },
   {path: 'bot-game', element: <Bot />},
   {path: 'local-game', element: <LocalGame />},
   {path: 'random-game', element: <Random/>},
   {path: 'invite-game', element: <Invite/>},
+  {path: 'tournament-game', element: <TournamentGame/>},
 ];
 
 const router = createBrowserRouter(routes);

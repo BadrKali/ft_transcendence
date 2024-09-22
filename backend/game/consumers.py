@@ -303,6 +303,7 @@ class GameConsumer(AsyncWebsocketConsumer):
             self.game_state = None
             self.room = None
             self.room_id = None
+            self.game_mode = None
             await self.accept()
             asyncio.sleep(3)
             await self.send(text_data=json.dumps({
@@ -315,7 +316,9 @@ class GameConsumer(AsyncWebsocketConsumer):
         self.game_state.update_game_running(False)
         is_game_over = await self.game_state.get_game_over()
         is_game_started = await self.game_state.get_game_started()
-
+            
+        if self.game_mode == "tournament":
+            return
         if is_game_over or not is_game_started:
             print("Game is already over or hasn't started, handling disconnect accordingly")
             await self.leave_room("game_canceled")
@@ -354,10 +357,13 @@ class GameConsumer(AsyncWebsocketConsumer):
         data = json.loads(text_data)
         action = data.get('action')
         if action == "random":
+            self.game_mode = action
             await self.handle_random_action()
         elif action == "invite":
+            self.game_mode = action
             await self.handle_invite_action()
         elif action == "tournament":
+            self.game_mode = action
             await self.handle_tournament_action()
         elif action == "player_movement":
             if self.game_state:

@@ -39,12 +39,17 @@ const TopBar = () => {
   const [modalOpen, setModalOpen] = useState(false);
   const [modalOpenBlocked, setModalOpenBlocked] = useState(false);
   const [selectedNotification, setSelectedNotification] = useState(null);
-  const {gameChallenge, handleAcceptGame, handleRejectGame, gameAccepted, joinGame, setGameAccepted, showGameSettings, setShowGameSettings, tournamentMatchAccepted} = useContext(RealTimeContext);
+  const { gameChallenge, 
+    handleAcceptGame, 
+    handleRejectGame, 
+    gameAccepted,
+    setGameAccepted, 
+    setShowGameSettings, 
+    tournamentMatchAccepted, 
+    setTournamentMatchAccepted } = useContext(RealTimeContext);
   const { userData, userDataLoading, userDataError, updateUserFriends, notifications, setNotifications, updatetounament} = useContext(UserContext);
   const debouncedQuery = useDebounce(query, 300);
   const [queryEndpoint, setQueryEndpoint] = useState(`${BACKEND_URL}/user/search/?q=${query}`)
-
-  
 
   const handleNotificationClick = (notif) => {
     setSelectedNotification(notif);
@@ -62,9 +67,10 @@ const TopBar = () => {
   const handleSettingClick = () => {
       navigate(`/setting`)
   }
+
   useEffect(() => {
     if (tournamentMatchAccepted) {
-      setGameAccepted(false);
+      setTournamentMatchAccepted(false);
       navigate('/tournament-game', { replace:true });
     }
   }, [tournamentMatchAccepted, navigate]);

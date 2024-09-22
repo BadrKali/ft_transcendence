@@ -1,10 +1,7 @@
 import React, { createContext, useEffect, useContext, useState } from 'react';
 import useAuth from '../hooks/useAuth';
 import ToastContainer from '../components/ReactToastify/ToastContainer';
-import GameChallengeNotification from '../components/Notification/GameChallengeNotification';
 import { SuccessToast } from '../components/ReactToastify/SuccessToast'
-import { ErrorToast } from '../components/ReactToastify/ErrorToast'
-import {InfoToast} from '../components/ReactToastify/InfoToast';
 import GameSettingsPopUp from '../components/GameSettingsPopUp/GameSettingsPopUp';
 import { UserContext } from './UserContext';
 
@@ -26,7 +23,7 @@ export const RealTimeProvider = ({ children }) => {
     const {updateUserNotification} =  useContext(UserContext)
     const [data, setData] = useState(null);
     const [shouldFetchNotifications, setShouldFetchNotifications] = useState(false);
-
+    const [tournamentType, setTournamentType] = useState(false);
 
     useEffect(() => {
         if (shouldFetchNotifications) {
@@ -81,7 +78,6 @@ export const RealTimeProvider = ({ children }) => {
                     const data = await response.json();
                     if (data.hasNotification) {
                         setHasNotification(true);  
-                        // setNotifications(data.notifications);  
                         console.log(data)
                     }
                 } else {
@@ -99,6 +95,7 @@ export const RealTimeProvider = ({ children }) => {
             if (dataFromServer.type === 'match_notification') {
                 setGameChallenge(dataFromServer);
             } else if (dataFromServer.type === 'tournament_notification') {
+                setTournamentType(true);
                 setGameChallenge(dataFromServer);
             } else if (dataFromServer.type === 'status_update') {
                 const { user_id, status } = dataFromServer;
@@ -109,11 +106,11 @@ export const RealTimeProvider = ({ children }) => {
             } else if (dataFromServer.type === 'notification') {
                     setHasNotification(true);
                     setShouldFetchNotifications(true);
-            
-            } else if (dataFromServer.type === 'join_game') {
-                console.log("Joining Game From RealTimeProvider");
-                setJoinGame(true);
             }
+            // } else if (dataFromServer.type === 'join_game') {
+            //     console.log("Joining Game From RealTimeProvider");
+            //     setJoinGame(true);
+            // }
         };
 
         ws.onclose = () => {
@@ -127,11 +124,14 @@ export const RealTimeProvider = ({ children }) => {
         return () => {
             ws.close();
         };
+
     }, [auth.accessToken]);
 
     const handleAcceptGame = (id) => {
         setGameChallenge(null);
-        let url = data.type === "tournament_notification" ? `${BACKEND_URL}user/tournament/invitation/${id}/response` : `${BACKEND_URL}/api/game/game-challenges/${id}/response/`;
+        let url = tournamentType 
+        ? `${BACKEND_URL}/user/tournament/invitation/${id}/responce` 
+        : `${BACKEND_URL}/api/game/game-challenges/${id}/response/`;
         let body = JSON.stringify({ 'status': 'accepted' });
         fetch(url, {
             method: 'PATCH',
@@ -154,19 +154,16 @@ export const RealTimeProvider = ({ children }) => {
         .catch(error => {
             console.error('Error accepting game challenge:', error);
         });
-        fetch(`${BACKEND_URL}/api/game/game-response/${id}/`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${auth.accessToken}`
-            },
-            body: body
-        })
-        setShowGameSettings(true);
+        if (tournamentType)
+            setTournamentMatchAccepted(true);
+        // setShowGameSettings(true);
     }
+
     const handleRejectGame = (id) => {
         setGameChallenge(null);
-        let url = data.type === "tournament_notification" ? `${BACKEND_URL}user/tournament/invitation/${id}/response` : `${BACKEND_URL}/api/game/game-challenges/${id}/response/`;
+        let url = tournamentType 
+        ? `${BACKEND_URL}/user/tournament/invitation/${id}/response` 
+        : `${BACKEND_URL}/api/game/game-challenges/${id}/response/`;
         let body = JSON.stringify({ 'status': 'rejected' });
         fetch(url, {
             method: 'PATCH',
@@ -190,17 +187,36 @@ export const RealTimeProvider = ({ children }) => {
             console.error('Error rejecting game challenge:', error);
         });
     }
+
     const handleExitGameSettings = () => {
         setShowGameSettings(false);
-        setGameAccepted(true)
+        tournamentType ? setTournamentMatchAccepted(true) : setGameAccepted(true);
     }
 
 return (
-        <RealTimeContext.Provider value={{ setNotifications, notifications, friendsStatus, hasNotification, setHasNotification, clearNotification, gameChallenge, handleAcceptGame, handleRejectGame, gameAccepted, joinGame, setGameAccepted, setJoinGame, showGameSettings, setShowGameSettings }}>
+        <RealTimeContext.Provider value={{ setNotifications, 
+            notifications, 
+            friendsStatus, 
+            hasNotification, 
+            setHasNotification, 
+            clearNotification, 
+            gameChallenge, 
+            handleAcceptGame,
+            handleRejectGame, 
+            gameAccepted, 
+            joinGame, 
+            setGameAccepted, 
+            setJoinGame,
+            showGameSettings, 
+            setShowGameSettings, 
+            tournamentMatchAccepted, 
+            setTournamentMatchAccepted
+            }}>
             {children}
             <ToastContainer />
             {showGameSettings && (
-                <GameSettingsPopUp onExit={handleExitGameSettings}/>
+                <GameSettingsPopUp 
+                    onExit={handleExitGameSettings}/>
             )}
         </RealTimeContext.Provider>
     );
