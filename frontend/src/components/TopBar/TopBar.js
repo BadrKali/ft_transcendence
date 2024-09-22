@@ -360,7 +360,7 @@ const handleReject = async (id, type) => {
       )}
       <div className='topbar-search'>
         <Icon name='search' className='topbar-search-icon'/>
-        <input placeholder='Search' value={query}  type='text' onChange={handleChange}/>
+        <input placeholder={t('Search')}  value={query}  type='text' onChange={handleChange}/>
         <div 
         ref={dropdownSearchRef} 
         className={isDropdownActive && results.length > 0 ? "search-dropDwon searchActiv" : "search-dropDwon"}

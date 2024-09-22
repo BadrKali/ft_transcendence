@@ -8,6 +8,8 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import useAuth from '../../../../hooks/useAuth'
 import { fetchData } from '../../../Setting/components/TwoFaModal/TwoFaModal'
 import useRefresh from '../../../../hooks/useRefresh'
+import { useTranslation } from 'react-i18next'
+
 
 
 const SIGNIN_URL = "/auth/token/"
@@ -21,6 +23,8 @@ const SignIn = (props) => {
     const {auth, setAuth} = useAuth()
     const navigate = useNavigate();
     const location = useLocation()
+    const { t } = useTranslation();
+
     // const refresh = useRefresh()
     // const [isLoading, setIsLoading] = useState(true)
 
@@ -109,19 +113,19 @@ const SignIn = (props) => {
   return (
     <div className='signin-container'>
         <div className='signin-header'>
-            <h1>Sign In</h1>
-            <p>Welcome back! Sign in to access your account and dive into the world of gaming excitement.</p>
+            <h1>{t('Sign In')}</h1>
+            <p>{t('Welcome back! Sign in to access your account and dive into the world of gaming excitement.')}</p>
         </div>
         <form onSubmit={handleSignInSubmit} >
             <div className='signin-input-section'>
                 <div className='signin-input'>
                     <Icon name='at' className='signin-icon'/>
-                    <input name='username' placeholder='Email' type='text' onChange={handleInputChange}/>
+                    <input name='username' placeholder={t('Email')}  type='text' onChange={handleInputChange}/>
                 </div>
                 <div className='signin-password'>
                     <div className='signin-input'>
                         <Icon name='lock' className='signin-icon'/>
-                        <input name='password' placeholder='Password' type={isHidden === 'hide_pass' ? 'password' : 'text'} onChange={handleInputChange}/>
+                        <input name='password' placeholder={t('Password')} type={isHidden === 'hide_pass' ? 'password' : 'text'} onChange={handleInputChange}/>
                     </div>
                     <div className='show_pass' onClick={() => {
                         if(isHidden === 'hide_pass')
@@ -134,26 +138,26 @@ const SignIn = (props) => {
                 </div>
             </div>
             <div className='signin-submit-section'>
-                <button>Sign In</button>
+                <button>{t('Sign In')}</button>
             </div>
         </form>
 
         <div className='signin-sep'>
             <div className='signin-sep-s'></div>
-            <div>Or</div>
+            <div>{t('Or')}</div>
             <div className='signin-sep-s'></div>
         </div>
         <div className='school_auth' onClick={handle42Click}>
             <img src={assets.SchoolIcon}/>
-            <p>Sign In With 42</p>
+            <p>{t('Sign In With 42')}</p>
         </div>
         <div className='school_auth' onClick={handle42Click}>
             <img src={assets.google}/>
-            <p>Sign In With Google</p>
+            <p>{t('Sign In With Google')}</p>
         </div>
         
         <div className='signin-text-bottom'>
-            <p>Don’t have an account ? <span onClick={handleSignUpClick}>Sign Up here</span></p>
+            <p>{t('Don’t have an account ?')} <span onClick={handleSignUpClick}>Sign Up here</span></p>
         </div>
     </div>
   )

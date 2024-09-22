@@ -5,17 +5,19 @@ import pongy from "../../Game-assets/pongy.png";
 import random from "../../Game-assets/random.png";
 import leftArrow from "../../Game-assets/leftFlesh.png";
 import rightArrow from "../../Game-assets/rightFlesh.png";
+import { useTranslation } from 'react-i18next'
+
 
 const GameMode = ({ className, setSelectedMode }) => {
+    const { t } = useTranslation();
     const modes = [
-        { name: "Invite", img: invite },
-        { name: "Local", img: local },
-        { name: "Pongy!", img: pongy },
-        { name: "Random", img: random},
+        { name: t("Invite"), img: invite },
+        { name: t("Local"), img: local },
+        { name: t("Pongy!"), img: pongy },
+        { name: t("Random"), img: random },
     ];
 
     const [selectedModeIndex, setSelectedModeIndex] = useState(0);
-
     const handleLeftClick = () => {
         const newIndex = (selectedModeIndex === 0 ? modes.length - 1 : selectedModeIndex - 1);
         setSelectedModeIndex(newIndex);
@@ -30,7 +32,7 @@ const GameMode = ({ className, setSelectedMode }) => {
 
     return (
         <div className={`${className} gameModeContainer`}>
-            <h1 className="title">Game Mode</h1>
+            <h1 className="title">{t('Game Mode')}</h1>
             <div className="mode-selector">
                 <img 
                     src={leftArrow} 

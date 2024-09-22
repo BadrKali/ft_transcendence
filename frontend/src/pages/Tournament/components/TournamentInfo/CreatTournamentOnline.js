@@ -197,7 +197,7 @@ const CreatTournamentOnline = ({onClose}) => {
                 <p>{t('Type your tournament title')}</p>
                 <div className='selectNameInput'>
                             <input
-                                placeholder='tournament title'
+                                placeholder={t('tournament title')} 
                                 type='text'
                                 value={tournamentTitle}
                                 onChange={handleTitleChange}
@@ -233,7 +233,7 @@ const CreatTournamentOnline = ({onClose}) => {
                     onChange={handlePlayerSelection}
                     className='playerSelect'
                     styles={customStyles}
-                    placeholder="Select players..."
+                    placeholder={t('Select players...')}
                 />
             </div>
             <div className='tournamentButton-container'>

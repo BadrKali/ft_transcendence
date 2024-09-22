@@ -156,7 +156,7 @@ const CreatTournamentOffline= ({onClose}) => {
                 <p>{t('Type your tournament title')}</p>
                 <div className='selectNameInput'>
                             <input
-                                placeholder='tournament title'
+                                placeholder={t('tournament title')} 
                                 type='text'
                                 value={tournamentTitle}
                                 onChange={handleTitleChange}
@@ -187,7 +187,7 @@ const CreatTournamentOffline= ({onClose}) => {
                 </div>
                 <div className='selectNameInput'>
                             <input
-                                placeholder='username'
+                                placeholder={t('username')}
                                 type='text'
                                 value={username}
                                 onChange={(e) => setUsername(e.target.value)}

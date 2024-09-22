@@ -8,12 +8,15 @@ import { useNavigate } from 'react-router-dom';
 import useAuth from '../../hooks/useAuth';
 import axios from 'axios';
 import { clientSocketContext } from '../../pages/Chat/usehooks/ChatContext';
+import { useTranslation } from 'react-i18next'
+
 
 const SideBar = () => {
   const location = useLocation().pathname;
   const SideBarData = useSidebarData();
   const navigate = useNavigate();
   const {auth, setAuth} = useAuth();
+  const { t } = useTranslation();
   const { stateValue: clientSocket, botSocket } = useContext(clientSocketContext);
 
   const handleLogout = async () => {
@@ -59,7 +62,7 @@ const SideBar = () => {
             </div>
             <div className='logout-link' onClick={handleLogout}>
               <Icon name='logout' className='navbar-toggle-icon' />
-              <span>Logout</span>
+              <span>{t('Logout')}</span>
             </div>
           </li>
         </ul>

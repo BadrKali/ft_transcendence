@@ -139,8 +139,8 @@ const Setting = () => {
               <p>{t('Update your information about you and details here')}</p>
             </div>
             <div className={Style.InputSection}>
-              <SettingInput label="User Name" name='username' placeholder='Perdoxii_noyat' type='text' onChange={handleInputChange} />
-              <SettingInput label="Email" name='email' placeholder='perdoxi@admin.com' type='email' onChange={handleInputChange}/>
+              <SettingInput label={t('User Name')} name='username' placeholder='Perdoxii_noyat' type='text' onChange={handleInputChange} />
+              <SettingInput label={t('Email')} name='email' placeholder='perdoxi@admin.com' type='email' onChange={handleInputChange}/>
             </div>
           </div>
           <div className={Style.SettingSep}></div>
@@ -150,8 +150,8 @@ const Setting = () => {
               <p>{t('Update your information about you and details here')}</p>
             </div>
             <div className={Style.InputSection}>
-              <SettingInput label='Current Password' name="old_password" placeholder='********************' type='password' onChange={handleInputChange}/>
-              <SettingInput label='New Password' name="new_password" placeholder='********************' type='password' onChange={handleInputChange}/>
+              <SettingInput label={t('Current Password')}  name="old_password" placeholder='********************' type='password' onChange={handleInputChange}/>
+              <SettingInput label={t('New Password')} name="new_password" placeholder='********************' type='password' onChange={handleInputChange}/>
             </div>
           </div>
           <div className={Style.SettingSep}></div>
