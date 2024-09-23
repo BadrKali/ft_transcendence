@@ -42,6 +42,8 @@ import {ReactComponent as AddFriend} from './addFriend.svg'
 import {ReactComponent as Achiev1} from './Achiev.svg'
 import {ReactComponent as inputTournamant} from './inputTournamant.svg'
 import {ReactComponent as English} from './English.svg'
+import {ReactComponent as Francais} from './flagFr.svg'
+import {ReactComponent as Espanol} from './flagEs.svg'
 import { ReactComponent as TwoFaIcon } from './2faIcon.svg'
 import { ReactComponent as cancelCircle } from './cancelCircle.svg'
 
@@ -91,9 +93,11 @@ const icons = {
     BlockFriend : BlockFriend,
     Achiev1 : Achiev1,
     inputTournamant : inputTournamant,
-    English : English,
     TwoFaIcon: TwoFaIcon,
-    cancelCircle: cancelCircle
+    cancelCircle: cancelCircle,
+    EN : English,
+    FR : Francais,
+    ES : Espanol,
 
     // school_icon: school_icon
 }

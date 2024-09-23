@@ -88,9 +88,8 @@ const CreatTournamentOffline= ({onClose}) => {
         }else{
             setPlayersError(false)
         }
-        console.log(postData)
         try {
-            const response = await fetch(`${BACKEND_URL}/user/tournament/`, {
+            const response = await fetch(`${BACKEND_URL}/user/local-tournament/`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

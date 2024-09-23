@@ -17,11 +17,9 @@ const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
 const TournamentInfo = () => {
   const [joinedTournament, setJoinedTournament] = useState(false);
-  // const {data ,isLoading, error} = useFetch(`${BACKEND_URL}/user/tournament/`)
   const {TounamentData, TounamenrLoading} = useContext(UserContext)
 
-  console.log(TounamentData)
-
+  
   useEffect (() => {
     if (TounamentData.tournament_creator)
         setJoinedTournament(true)
