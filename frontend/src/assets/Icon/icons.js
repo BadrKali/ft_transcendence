@@ -95,18 +95,16 @@ const icons = {
     inputTournamant : inputTournamant,
     TwoFaIcon: TwoFaIcon,
     cancelCircle: cancelCircle,
-    EN : English,
-    FR : Francais,
-    ES : Espanol,
+    // EN : English,
+    // FR : Francais,
+    // ES : Espanol,
 
     // school_icon: school_icon
 }
 
-
-
-const Icon = ({ name, className}) => {
+const Icon = ({name, className}) => {
     const SvgIcon = icons[name];
-    return <SvgIcon className={className}/>;
+    return (<SvgIcon className={className}/>);
 };
 
 export default Icon;

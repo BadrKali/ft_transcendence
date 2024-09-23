@@ -252,3 +252,15 @@ class CheckInviteReconnection(APIView):
                 return Response({ 'exists': False }, status=status.HTTP_200_OK)
         except Exception as e:
             return Response({ 'error': str(e) }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+class LocalPlayerCreateView(APIView):
+    def post(self, request, format=None):
+        username = request.data.get('username')
+
+        if not username:
+            return Response({'error': 'Username is required'}, status=status.HTTP_400_BAD_REQUEST)
+
+        player = LocalPlayer.objects.create(username=username)
+        serializer = LocalPlayerSerializer(player)
+        print(f"{serializer}")
+        return Response(serializer.data, status=status.HTTP_201_CREATED)

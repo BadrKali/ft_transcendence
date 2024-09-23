@@ -17,4 +17,5 @@ urlpatterns = [
     path('invite-game-room/<int:room_id>', InviteGameRoomView.as_view(), name='invite-game-room'),
     path('tournament-room/<int:room_id>', TournamentGameRoomView.as_view(), name='tournament-room'),
     path('check-invite-room', CheckInviteReconnection.as_view(), name="check-invite-room"),
+    path('create-local-player/', LocalPlayerCreateView.as_view(), name='create-local-player'),
 ]

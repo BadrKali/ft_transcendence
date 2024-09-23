@@ -5,7 +5,7 @@ import PlayerSelection from "./PlayerSelection";
 import Loading from "../../../PingPongGame/components/Loading";
 import useAuth from "../../../../hooks/useAuth";
 import axios from "axios";
-
+import CreatLocalPlayer from "./CreateLocalPlayer";
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
 const LaunchButtons = ({ selectedMode, selectedBackground, selectedKeys, className, onLaunch }) => {
@@ -14,6 +14,10 @@ const LaunchButtons = ({ selectedMode, selectedBackground, selectedKeys, classNa
     const [isLoading, setIsLoading] = useState(false);
     const navigate = useNavigate();
     const { auth } = useAuth();
+    const [localPlayerUsername, setLocalPlayerUsername] = useState("");
+    const [localPlayerAvatar, setLocalPlayerAvatar] = useState(null);
+    const [showCreateLocalPlayer, setShowCreateLocalPlayer] = useState(false);
+    const [localPlayer, setLocalPlayer] = useState(null);
 
     const checkInviteRoom = async () => {
         setIsLoading(true);
@@ -53,7 +57,8 @@ const LaunchButtons = ({ selectedMode, selectedBackground, selectedKeys, classNa
             } else if (selectedMode === 'Pongy!') {
                 navigate("/bot-game");
             } else if (selectedMode === 'Local') {
-                navigate("/local-game");
+                setShowCreateLocalPlayer(true);
+                // navigate("/local-game");
             } else if (selectedMode === 'Random') {
                 navigate("/random-game");
             }
@@ -71,7 +76,33 @@ const LaunchButtons = ({ selectedMode, selectedBackground, selectedKeys, classNa
     // if (isLoading) {
     //     return <Loading />;
     // }
+    const handleCreateLocalPlayer = async (username, avatar) => {
+        try {
+            const response = await axios.post(`${BACKEND_URL}/api/game/create-local-player/`, 
+                { username: username },
+                {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${auth.accessToken}`
+                    }
+                }
+            );
+    
+            if (response.status === 201) {
+                console.log("Local player created successfully:", response.data);
+                setLocalPlayer(response.data);
+                setShowCreateLocalPlayer(false);
+                // navigate("/local-game");
+            }
+        } catch (error) {
+            console.error("Error creating local player:", error);
+            alert("Failed to create player. Please try again.");
+        }
+    };
 
+    const handleCloseModal = () => {
+        setShowCreateLocalPlayer(false);
+    }
     return (
         <div className={className}>
             <div>
@@ -81,6 +112,14 @@ const LaunchButtons = ({ selectedMode, selectedBackground, selectedKeys, classNa
                 )}
                 {showPlayerSelection && (
                     <PlayerSelection onPlayerSelect={handlePlayerSelect} onCancel={() => setShowPlayerSelection(false)} />
+                )}
+                {showCreateLocalPlayer && (
+                    <CreatLocalPlayer 
+                        handleCreateLocalPlayer={handleCreateLocalPlayer} 
+                        setLocalPlayerUsername={setLocalPlayerUsername}
+                        setLocalPlayerAvatar={setLocalPlayerAvatar}
+                        handleCloseModal={handleCloseModal}
+                    />
                 )}
             </div>
         </div>

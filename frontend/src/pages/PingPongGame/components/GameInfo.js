@@ -2,7 +2,6 @@ import React from 'react';
 import "./gameInfo.css"
 import { useTranslation } from 'react-i18next'
 
-
 const GameInfo = () => {
     const { t } = useTranslation();
 

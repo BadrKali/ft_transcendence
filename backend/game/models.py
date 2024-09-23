@@ -190,7 +190,21 @@ class TournamentGameRoom(models.Model):
             print("player2 connected")
         self.save()
     
-def check_and_update_status(self):
+    def check_and_update_status(self):
         if self.player1_connected and self.player2_connected:
             self.is_waiting = False
             self.save()
+
+class LocalPlayer(models.Model):
+    username = models.CharField(max_length=100)
+    avatar = models.ImageField(null=True)
+
+    def __str__(self):
+        return self.username
+
+class LocalGameRoom(models.Model):
+    player1 = models.ForeignKey(LocalPlayer, related_name='local_game_room_player1', on_delete=models.CASCADE, null=True, blank=True)
+    player2 = models.ForeignKey(LocalPlayer, related_name='local_game_room_player2', on_delete=models.CASCADE, null=True, blank=True)
+    crateated_at = models.DateTimeField(auto_now_add=True)
+    def __str__(self):
+        return "__Local_Game_Room"
