@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from .models import Player, Friendship, FriendInvitation, Notification
 from authentication.serializers import CurrentUserSerializer
-from .models import Tournament, TournamentInvitation, TournamentParticipants
+from .models import Tournament, TournamentInvitation, TournamentParticipants, LocalTournamentUser, LocalTournament
 
 class FriendshipSerializer(serializers.ModelSerializer):
     friend = serializers.SerializerMethodField()
@@ -138,5 +138,40 @@ class TournamentParticipantsSerializer(serializers.ModelSerializer):
         model = TournamentParticipants
         fields = '__all__'
 
+
+class LocalTournamentUserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = LocalTournamentUser
+        fields = '__all__'
+
+
+class LocalTournamentSerializer(serializers.ModelSerializer):
+    tournament_participants = LocalTournamentUserSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = LocalTournament
+        fields = '__all__'
+
+class LocalTournamentCreatSerializer(serializers.ModelSerializer):
+    invitedUsers = serializers.ListField(child=serializers.CharField())
+
+    class Meta:
+        model = LocalTournament
+        fields = ['tournament_name','tournament_map' ,'invitedUsers']
+
+    def validate(self, data):
+        #the invited users are just names of the user that not created yet 
+        currentUser = self.context['request'].user
+        if len(data['invitedUsers']) != 3:
+            raise serializers.ValidationError({"invitedUsers": "The number of invited players must be 3"})
+        # if LocalTournament.objects.filter(local_tournament_users=currentUser).exists():
+        #     raise serializers.ValidationError({"invitedUsers": "You are already present in a local tournament"})
+        if len(data['invitedUsers']) != len(set(data['invitedUsers'])):
+            raise serializers.ValidationError({"invitedUsers": "Duplicate user IDs detected in the invited players list"})
+        for user in data['invitedUsers']:
+            if user == currentUser.username:
+                raise serializers.ValidationError({"invitedUsers": "You cannot invite yourself to the local tournament"})
+
+        return data
 
 

@@ -24,6 +24,7 @@ urlpatterns = [
     path('tournament/invitation/<int:tournament_id>/responce', TournamentInvitationResponse.as_view(), name="tournament_invitation_response"),
     path('xp-history/', XPHistoryView.as_view(), name='xp-history'),
     path('leaderboard/', LeaderboardView.as_view(), name='leaderboard'),
+    path('local-tournament/', LocalTournamentView.as_view(), name='local_tournament'),
     # path('friends/create/<int:friend_id>/', CreateFriendshipView.as_view(), name='create_friendship'),
     # path('friends/delete/<int:player_id>/<int:friend_id>/', DeleteFriendshipView.as_view(), name='delete_friendship'),
     # path('friends/list/<int:player_id>/', FriendsListView.as_view(), name='friends_list'),

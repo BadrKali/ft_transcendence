@@ -286,3 +286,24 @@ class TournamentInvitation(models.Model):
 
     
 
+
+
+class LocalTournamentUser(models.Model):
+    tournament = models.ForeignKey('LocalTournament', related_name='participants', on_delete=models.CASCADE)  # Added related_name here
+    username = models.CharField(max_length=100)
+    avatar = models.ImageField(upload_to=user_avatar_upload_path)
+
+    def __str__(self):
+        return self.username
+
+
+class LocalTournament(models.Model):
+    tournament_creator = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    tournament_name = models.CharField(max_length=100)
+    tournament_map = models.CharField(max_length=100)
+    created_at = models.DateTimeField(auto_now_add=True)
+    tournament_status = models.BooleanField(default=False)
+    tournament_stage = models.CharField(max_length=100, default="semi-finals")
+
+    def __str__(self):
+        return self.tournament_name
