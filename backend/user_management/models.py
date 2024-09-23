@@ -289,7 +289,7 @@ class TournamentInvitation(models.Model):
 
 
 class LocalTournamentUser(models.Model):
-    tournament = models.ForeignKey('LocalTournament', related_name='participants', on_delete=models.CASCADE)  # Added related_name here
+    tournament = models.ForeignKey('LocalTournament', related_name='participants', on_delete=models.CASCADE)
     username = models.CharField(max_length=100)
     avatar = models.ImageField(upload_to=user_avatar_upload_path)
 
@@ -307,3 +307,24 @@ class LocalTournament(models.Model):
 
     def __str__(self):
         return self.tournament_name
+
+    def assign_opponent(self):
+        from game.models import TournamentGameRoom
+        participants = list(self.participants.all())
+        random.shuffle(participants)
+        for i in range(0, len(participants), 2):
+            LocalTournamanetParticipants.objects.create(tournament=self, player1=participants[i], player2=participants[i+1])
+            # TournamentGameRoom.objects.create(player1=participants[i], player2=participants[i+1])
+
+
+class LocalTournamanetParticipants(models.Model):
+    tournament = models.ForeignKey(LocalTournament, on_delete=models.CASCADE)
+    player1 = models.ForeignKey(LocalTournamentUser, on_delete=models.CASCADE, related_name='local_player1')
+    player2 = models.ForeignKey(LocalTournamentUser, on_delete=models.CASCADE, related_name='local_player2')
+    matchPlayed = models.BooleanField(default=False)
+    matchStage = models.CharField(max_length=100, default="SEMI-FINALS")
+    winner = models.ForeignKey(LocalTournamentUser, on_delete=models.CASCADE, related_name='local_winner', null=True, blank=True)
+    loosers = models.ForeignKey(LocalTournamentUser, on_delete=models.CASCADE, related_name='local_loosers' , null=True, blank=True)
+
+    def __str__(self):
+        return f"{self.player1} vs {self.player2} in {self.tournament}"

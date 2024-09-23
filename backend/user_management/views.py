@@ -16,7 +16,7 @@ from django.db.models import Q
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
 from django.http import HttpResponseForbidden
-from .models import Tournament, TournamentInvitation, TournamentParticipants, Friendship, Player, FriendInvitation, BlockedUsers, Notification, XPHistory, LocalTournament, LocalTournamentUser
+from .models import Tournament, TournamentInvitation, TournamentParticipants, Friendship, Player, FriendInvitation, BlockedUsers, Notification, XPHistory, LocalTournament, LocalTournamentUser, LocalTournamanetParticipants
 from .serializers import TournamentSerializer, TournamentCreateSerializer , TournamentInvitationSerializer, TournamentParticipantsSerializer, FriendInvitation, NotificationSerializer,  PlayerSerializer, FriendshipSerializer, LocalTournamentSerializer, LocalTournamentCreatSerializer,LocalTournamentUserSerializer
 from django.db.models import Case, When, Value, IntegerField
 from game.serializers import GameHistorySerializer, UserAchievementSerializer
@@ -467,12 +467,9 @@ class GlobalStatsView(APIView):
 class LocalTournamentView(APIView):
     def get(self, request):
         tournament = LocalTournament.objects.filter(tournament_creator=request.user).first()
-        tournament_participants = LocalTournamentUser.objects.filter(tournament=tournament)
-        #i want to return all the tournament infor with the list of participants 
         if tournament:
             serializer = LocalTournamentSerializer(tournament)
-            participants = LocalTournamentUserSerializer(tournament_participants, many=True)
-            return Response({'tournament': serializer.data, 'participants': participants.data}, status=status.HTTP_200_OK)
+            return Response(serializer.data, status=status.HTTP_200_OK)
         else:
             return Response({'message': 'No tournament found'}, status=status.HTTP_404_NOT_FOUND)
 
@@ -487,6 +484,8 @@ class LocalTournamentView(APIView):
             currentUserLocal = LocalTournamentUser.objects.create(tournament=tournament, username=user.username)
             for participant in invited_users:
                 LocalTournamentUser.objects.create(tournament=tournament, username=participant)
+            tournament.assign_opponent()
+            
             return Response({'message': 'Tournament created successfully'}, status=status.HTTP_201_CREATED)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

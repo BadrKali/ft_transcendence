@@ -142,15 +142,17 @@ class TournamentParticipantsSerializer(serializers.ModelSerializer):
 class LocalTournamentUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = LocalTournamentUser
-        fields = '__all__'
+        fields = ['id', 'username', 'avatar']
 
 
 class LocalTournamentSerializer(serializers.ModelSerializer):
-    tournament_participants = LocalTournamentUserSerializer(many=True, read_only=True)
+    tournament_participants = LocalTournamentUserSerializer(source='participants', many=True, read_only=True)
 
     class Meta:
         model = LocalTournament
-        fields = '__all__'
+        fields = ['id', 'tournament_creator', 'tournament_name', 'tournament_map', 
+                  'created_at', 'tournament_status', 'tournament_stage', 'tournament_participants']
+
 
 class LocalTournamentCreatSerializer(serializers.ModelSerializer):
     invitedUsers = serializers.ListField(child=serializers.CharField())

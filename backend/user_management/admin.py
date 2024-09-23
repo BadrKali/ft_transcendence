@@ -16,4 +16,5 @@ admin.site.register(models.TournamentParticipants)
 admin.site.register(models.XPHistory)
 admin.site.register(models.LocalTournament)
 admin.site.register(models.LocalTournamentUser)
+admin.site.register(models.LocalTournamanetParticipants)
 
