@@ -16,7 +16,7 @@ from django.db.models import Q
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
 from django.http import HttpResponseForbidden
-from .models import Tournament, TournamentInvitation, TournamentParticipants, Friendship, Player, FriendInvitation, BlockedUsers, Notification, XPHistory, LocalTournament, LocalTournamentUser, LocalTournamanetParticipants
+from .models import *
 from .serializers import *
 from django.db.models import Case, When, Value, IntegerField
 from game.serializers import GameHistorySerializer, UserAchievementSerializer
@@ -386,6 +386,7 @@ class StartTournamentView(APIView):
         return(Response({'message': 'Tournament started successfully'}, status=status.HTTP_200_OK))
 
 
+
 class TournamentByStageView(APIView):
     def get(self, request, stage):
         stage_participants = TournamentParticipants.objects.filter(matchStage=stage)
@@ -475,16 +476,19 @@ class LocalTournamentView(APIView):
 
 
 
+
     def post(self, request):
         serializer = LocalTournamentCreatSerializer(data=request.data, context={'request': request})
         user = request.user
         if serializer.is_valid():
             invited_users = serializer.validated_data.pop('invitedUsers', [])
             tournament = LocalTournament.objects.create(tournament_creator=request.user, **serializer.validated_data)
-            currentUserLocal = LocalTournamentUser.objects.create(tournament=tournament, username=user.username)
+            currentUserLocal = LocalPlayer.objects.create(username=user.username)
+            participants_list = [currentUserLocal]
             for participant in invited_users:
-                LocalTournamentUser.objects.create(tournament=tournament, username=participant)
-            tournament.assign_opponent()
+                participant = LocalPlayer.objects.create(username=participant)
+                participants_list.append(participant)
+            tournament.assign_opponent(participants_list)
 
             return Response({'message': 'Tournament created successfully'}, status=status.HTTP_201_CREATED)
         else:
