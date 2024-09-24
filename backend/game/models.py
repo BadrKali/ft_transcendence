@@ -197,7 +197,9 @@ class TournamentGameRoom(models.Model):
 
 class LocalPlayer(models.Model):
     username = models.CharField(max_length=100)
-    avatar = models.ImageField(null=True)
+    avatar = models.ImageField(null=True, blank=True)
+    paddle_color = models.CharField(max_length=7, null=True, blank=True)
+    keys = models.JSONField(null=True, blank=True)
 
     def __str__(self):
         return self.username
@@ -205,6 +207,7 @@ class LocalPlayer(models.Model):
 class LocalGameRoom(models.Model):
     player1 = models.ForeignKey(LocalPlayer, related_name='local_game_room_player1', on_delete=models.CASCADE, null=True, blank=True)
     player2 = models.ForeignKey(LocalPlayer, related_name='local_game_room_player2', on_delete=models.CASCADE, null=True, blank=True)
+    arena = models.CharField(max_length=100)
     crateated_at = models.DateTimeField(auto_now_add=True)
     def __str__(self):
         return "__Local_Game_Room"

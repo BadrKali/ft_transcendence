@@ -60,7 +60,7 @@ class TournamentGameRoomSerializer(serializers.ModelSerializer):
 class LocalPlayerSerializer(serializers.ModelSerializer):
     class Meta:
         model = LocalPlayer
-        fields = ['id', 'username', 'avatar']
+        fields = '__all__'
 
 class LocalGameRoomSerializer(serializers.ModelSerializer):
     player1 = LocalPlayerSerializer(read_only=True)
@@ -68,6 +68,6 @@ class LocalGameRoomSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = LocalGameRoom
-        fields = ['id', 'player1', 'player2', 'crateated_at']
+        fields = '__all__'
 
  

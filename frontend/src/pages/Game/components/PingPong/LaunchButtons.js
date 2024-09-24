@@ -4,11 +4,12 @@ import ErrorModal from "./ErrorModal";
 import PlayerSelection from "./PlayerSelection";
 import Loading from "../../../PingPongGame/components/Loading";
 import useAuth from "../../../../hooks/useAuth";
+import useFetch from "../../../../hooks/useFetch";
 import axios from "axios";
 import CreatLocalPlayer from "./CreateLocalPlayer";
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
-const LaunchButtons = ({ selectedMode, selectedBackground, selectedKeys, className, onLaunch }) => {
+const LaunchButtons = ({ selectedMode, selectedBackground, selectedKeys, selectedPaddle ,className, onLaunch }) => {
     const [showModal, setShowModal] = useState(false);
     const [showPlayerSelection, setShowPlayerSelection] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
@@ -18,7 +19,19 @@ const LaunchButtons = ({ selectedMode, selectedBackground, selectedKeys, classNa
     const [localPlayerAvatar, setLocalPlayerAvatar] = useState(null);
     const [showCreateLocalPlayer, setShowCreateLocalPlayer] = useState(false);
     const [localPlayer, setLocalPlayer] = useState(null);
+    const [selfLocalPlayer, setSelfLocalPlayer] = useState(0);
+    const [opponentLocalPlayer, setOpponentLocalPlayer] = useState(0);
+    const { data: currentUser } = useFetch(`${BACKEND_URL}/user/stats`);
+    const [opponentKeys, setOpponentKeys] = useState("");
 
+    const handleOpponentKeys = () => {
+        if (selectedKeys === "up-down") {
+            setOpponentKeys("ws");
+        } else {
+            setOpponentKeys("up-down");
+        }
+
+    }
     const checkInviteRoom = async () => {
         setIsLoading(true);
         try {
@@ -73,13 +86,14 @@ const LaunchButtons = ({ selectedMode, selectedBackground, selectedKeys, classNa
         setShowPlayerSelection(false);
     };
 
-    // if (isLoading) {
-    //     return <Loading />;
-    // }
-    const handleCreateLocalPlayer = async (username, avatar) => {
+    const handleCreateLocalPlayer = async (username, avatar, paddle) => {
         try {
-            const response = await axios.post(`${BACKEND_URL}/api/game/create-local-player/`, 
-                { username: username },
+            const opponentResponse = await axios.post(`${BACKEND_URL}/api/game/create-local-player/`, 
+                { 
+                    username: username,
+                    paddle: paddle,
+                    keys: opponentKeys,
+                },
                 {
                     headers: {
                         'Content-Type': 'application/json',
@@ -87,22 +101,42 @@ const LaunchButtons = ({ selectedMode, selectedBackground, selectedKeys, classNa
                     }
                 }
             );
-    
-            if (response.status === 201) {
-                console.log("Local player created successfully:", response.data);
-                setLocalPlayer(response.data);
-                setShowCreateLocalPlayer(false);
-                // navigate("/local-game");
-            }
+            const opponentUserId = opponentResponse.data.id
+            const currentUserResponse = await axios.post(`${BACKEND_URL}/api/game/create-local-player/`, 
+                { 
+                    username: currentUser.username,
+                    paddle: selectedPaddle,
+                    keys: selectedKeys,
+                },
+                {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${auth.accessToken}`
+                    }
+                }
+            );
+            const cuurrentUserId = currentUserResponse.data.id
+            const gameRoomResponse = await axios.post(`${BACKEND_URL}/api/game/create-local-game-room/`, { 
+                player1: cuurrentUserId,
+                player2: opponentUserId,
+                arena: selectedBackground,
+            }, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${auth.accessToken}`
+                }
+            });
+            setShowCreateLocalPlayer(false);
+            alert("Game room created successfully!");
         } catch (error) {
-            console.error("Error creating local player:", error);
-            alert("Failed to create player. Please try again.");
+            console.error("Error creating local players:", error);
+            alert("Failed to create players. Please try again.");
         }
     };
-
     const handleCloseModal = () => {
         setShowCreateLocalPlayer(false);
     }
+
     return (
         <div className={className}>
             <div>

@@ -97,12 +97,11 @@ const GameSettingsPopUp = ({ onExit }) => {
                             <img src={downKey} alt="" className='key' />
                         </div>
                 </div>
-                <h2>{t('PADDLE')}</h2>
-                <div className="paddle-colors-container">
-                    <img src={leftPaddleArrow} alt="Left" onClick={handlePaddleLeftClick} />
-                    <div className="paddle-color-preview" style={{ backgroundColor: paddleColors[currentColorIndex] }} />
-                    <img src={rightPaddleArrow} alt="Right" onClick={handlePaddleRightClick} />
-                </div>
+            </div>
+            <div className="paddle-colors-container">
+                <img src={leftPaddleArrow} alt="Left" onClick={handlePaddleLeftClick} />
+                <div className="paddle-color-preview" style={{ backgroundColor: paddleColors[currentColorIndex] }} />
+                <img src={rightPaddleArrow} alt="Right" onClick={handlePaddleRightClick} />
             </div>
             <button onClick={handleSubmit} className="cancel-button">{t('Submit')}</button>
         </div>

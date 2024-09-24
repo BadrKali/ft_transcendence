@@ -18,6 +18,9 @@
     width: 40%;
     max-width: 400px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 .modal-title {
@@ -33,6 +36,7 @@
     justify-content: center;
     align-items: center;
     margin-bottom: 24px;
+    width: 100%;
 }
 
 .avatar-button {
@@ -64,10 +68,12 @@
     color: white;
     font-size: 16px;
     margin-bottom: 12px;
+    text-align: center;
 }
 
 .username-input::placeholder {
     color: #a0aec0;
+    text-align: center;
 }
 
 .error-message {
@@ -75,10 +81,10 @@
     font-size: 14px;
     margin-top: 4px;
     margin-bottom: 12px;
+    text-align: center;
 }
 
 .submit-button {
-    text-align: center;
     width: 40%;
     background-color: #F62943;
     color: white;
@@ -89,8 +95,33 @@
     font-weight: bold;
     cursor: pointer;
     transition: background-color 0.3s;
+    display: block;
+    margin: 0 auto;
 }
 
 .submit-button:hover {
     background-color: #F62940;
+}
+
+/* New styles for paddle color selection */
+.paddle-colors-container1 {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 24px;
+    width: 100%;
+}
+
+.paddle-color-preview1 {
+    width: 200px;
+    height: 21px;
+    border-radius: 10.5px;
+    margin: 0 16px;
+}
+
+h2 {
+    color: white;
+    font-size: 18px;
+    text-align: center;
+    margin-bottom: 12px;
 }

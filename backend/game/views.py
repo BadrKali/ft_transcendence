@@ -256,11 +256,41 @@ class CheckInviteReconnection(APIView):
 class LocalPlayerCreateView(APIView):
     def post(self, request, format=None):
         username = request.data.get('username')
+        paddle = request.data.get('paddle')
+        keys = request.data.get('keys')
 
         if not username:
             return Response({'error': 'Username is required'}, status=status.HTTP_400_BAD_REQUEST)
 
-        player = LocalPlayer.objects.create(username=username)
+        player = LocalPlayer.objects.create(
+            username=username,
+            paddle_color=paddle,
+            keys=keys
+        )
         serializer = LocalPlayerSerializer(player)
-        print(f"{serializer}")
+        print(f"Created player: {serializer.data}")
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+class LocalGameRoomCreateView(APIView):
+    def post(self, request, format=None):
+        player1_id = request.data.get('player1')
+        player2_id = request.data.get('player2')
+        arena = request.data.get('arena')
+
+        if not all([player1_id, player2_id, arena]):
+            return Response({'error': 'player1, player2, and arena are required'}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            player1 = LocalPlayer.objects.get(id=player1_id)
+            player2 = LocalPlayer.objects.get(id=player2_id)
+        except LocalPlayer.DoesNotExist:
+            return Response({'error': 'One or both players do not exist'}, status=status.HTTP_404_NOT_FOUND)
+
+        game_room = LocalGameRoom.objects.create(
+            player1=player1,
+            player2=player2,
+            arena=arena
+        )
+        
+        serializer = LocalGameRoomSerializer(game_room)
         return Response(serializer.data, status=status.HTTP_201_CREATED)

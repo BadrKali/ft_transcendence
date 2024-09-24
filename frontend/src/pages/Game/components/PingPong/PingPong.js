@@ -82,6 +82,7 @@ const PingPong = () => {
                     selectedMode={selectedMode} 
                     selectedBackground={selectedBackground} 
                     selectedKeys={selectedKeys} 
+                    selectedPaddle={selectedPaddle}
                     className="launchButtons-container"
                     onLaunch={handleLaunchGame}
                 />
