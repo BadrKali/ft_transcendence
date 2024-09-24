@@ -55,6 +55,7 @@ const RealTimeGame = ({ mode }) => {
     useEffect(() => {
         switch (mode) {
             case "invite":
+            case "invite-game-reconnection":
                 setEndPoint("invite-game-room");
                 break;
             case "random":
@@ -84,7 +85,13 @@ const RealTimeGame = ({ mode }) => {
 
     const initializeWebSocket = () => {
         const ws = new WebSocket(`${WS_BACKEND_URL}/ws/game/?token=${auth.accessToken}`);
-        ws.onopen = () => ws.send(JSON.stringify({ action: mode}));
+        ws.onopen = () => {
+            if (mode === "invite-game-reconnection") {
+                ws.send(JSON.stringify({ action: "invite-game-reconnection" }));
+            } else {
+                ws.send(JSON.stringify({ action: mode }));
+            }
+        };
         ws.onmessage = handleWebSocketMessage;
         ws.onclose = () => console.log("WebSocket connection closed");
         ws.onerror = (error) => console.error("WebSocket connection error:", error);

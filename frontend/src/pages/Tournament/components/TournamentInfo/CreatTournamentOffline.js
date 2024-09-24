@@ -88,9 +88,8 @@ const CreatTournamentOffline= ({onClose}) => {
         }else{
             setPlayersError(false)
         }
-        console.log(postData)
         try {
-            const response = await fetch(`${BACKEND_URL}/user/tournament/`, {
+            const response = await fetch(`${BACKEND_URL}/user/local-tournament/`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -156,7 +155,7 @@ const CreatTournamentOffline= ({onClose}) => {
                 <p>{t('Type your tournament title')}</p>
                 <div className='selectNameInput'>
                             <input
-                                placeholder='tournament title'
+                                placeholder={t('tournament title')} 
                                 type='text'
                                 value={tournamentTitle}
                                 onChange={handleTitleChange}
@@ -187,7 +186,7 @@ const CreatTournamentOffline= ({onClose}) => {
                 </div>
                 <div className='selectNameInput'>
                             <input
-                                placeholder='username'
+                                placeholder={t('username')}
                                 type='text'
                                 value={username}
                                 onChange={(e) => setUsername(e.target.value)}

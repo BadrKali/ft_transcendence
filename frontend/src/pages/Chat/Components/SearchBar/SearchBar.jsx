@@ -1,5 +1,7 @@
 import React, {useState} from 'react'
 import style from './SearchBar.module.css'
+import { useTranslation } from 'react-i18next'
+
 
 const SearchIcon = () => {
     return (<svg className={style.SearchIcon} width="17" height="20"
@@ -15,7 +17,7 @@ const SearchIcon = () => {
 }
 
 const SearchBar = ({search, setSearch}) => {
-
+    const { t } = useTranslation();
     function handleSearch(e){
         setSearch(e.target.value);
     }
@@ -24,7 +26,7 @@ const SearchBar = ({search, setSearch}) => {
         <div className={style.GlobalSearchHolder}>
         <SearchIcon />
         <input className={style.inputField} onChange={(e) => handleSearch(e)}
-        type="text" value={search} placeholder='Search ... '/>
+        type="text" value={search} placeholder={t('Search ... ')}/>
         </div>
 
   )

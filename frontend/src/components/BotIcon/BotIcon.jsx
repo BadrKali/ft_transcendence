@@ -8,12 +8,15 @@ import AuthContext from '../../context/Auth/AuthProvider'
 import { UserContext } from '../../context/UserContext'
 import { clientSocketContext } from '../../pages/Chat/usehooks/ChatContext'
 import { Rnd } from 'react-rnd';
+import { useTranslation } from 'react-i18next'
+
 
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
 
 const BotHeader = () =>{
+  const { t } = useTranslation();
 
   return (
     <div className={botStyle.ChatHeaderHolder}>
@@ -29,7 +32,7 @@ const BotHeader = () =>{
                   <Lottie animationData={online} />
                 </div>
                 <div className={botStyle.Status}>
-                  {"Online"}
+                  {t("Online")}
                 </div>
               </div>
             
@@ -119,6 +122,8 @@ const MainChat = () =>{
 }
 
 const InputField = ({ message, handleWritedMessage, inputRef }) => {
+  const { t } = useTranslation();
+
   return (
     <input
       ref={inputRef}
@@ -126,7 +131,7 @@ const InputField = ({ message, handleWritedMessage, inputRef }) => {
       onChange={(e) => handleWritedMessage(e)}
       type="text"
       value={message}
-      placeholder="write a message ... "
+      placeholder={t('write a message ...')} 
     />
   );
 };

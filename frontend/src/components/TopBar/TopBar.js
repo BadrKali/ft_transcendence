@@ -30,6 +30,7 @@ const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const TopBar = () => {
   const [showNotif, setNotif] = useState(false)
   const dropdownRef = useRef(null);
+  const dropdownProfilRef = useRef(null);
   const { t } = useTranslation();
   const dropdownSearchRef = useRef(null);
   const [isProfilActive, setProfilActive] = useState(false)
@@ -341,6 +342,22 @@ const handleReject = async (id, type) => {
     };
   }, []);
 
+  const handleClickOutsideProfil = (event) => {
+    if (dropdownProfilRef.current && !dropdownProfilRef.current.contains(event.target)) {
+      setProfilActive(false);
+    setQuery('');
+
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener('mousedown', handleClickOutsideProfil);
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutsideProfil);
+    };
+  }, []);
+
   const handleNotifClick = () => {
     setNotif(!showNotif);
     clearNotification();
@@ -360,7 +377,7 @@ const handleReject = async (id, type) => {
       )}
       <div className='topbar-search'>
         <Icon name='search' className='topbar-search-icon'/>
-        <input placeholder='Search' value={query}  type='text' onChange={handleChange}/>
+        <input placeholder={t('Search')}  value={query}  type='text' onChange={handleChange}/>
         <div 
         ref={dropdownSearchRef} 
         className={isDropdownActive && results.length > 0 ? "search-dropDwon searchActiv" : "search-dropDwon"}
@@ -376,7 +393,7 @@ const handleReject = async (id, type) => {
         </div>
       </div>
       <div className='topbar-profile'>
-        <LanguageSelector />
+        {/* <LanguageSelector /> */}
         <div ref={dropdownRef} className="icon-container"  onClick={handleIconClick}>
           <Icon  name='notification' className={showNotif ? 'topbar-notification-icon active-icon' : 'topbar-notification-icon' }/>
           {hasNotification && <span className="notification-badge"></span>}
@@ -395,12 +412,12 @@ const handleReject = async (id, type) => {
             <NotificationPopup isOpen={modalOpen} onClose={handleClose} notif={selectedNotification} onAccept={handleAccept} onReject={handleReject} />
           )}
         </div>
-        <div className='profile-pic-container'  onClick={handleProfilClick}>
+        <div className={isProfilActive ? 'profile-pic-container profile-pic-container-active' : 'profile-pic-container '} onClick={handleProfilClick}>
           <div className='profile-pic'>
             <img src={`${BACKEND_URL}${userData.avatar}`} alt="profil Picture"/>
           </div>
           <span>{userData.username}</span>
-          <div  className={isProfilActive ? "dropDwonProfil profilActive" : "dropDwonProfil"}>
+          <div ref={dropdownProfilRef} className={isProfilActive ? "dropDwonProfil profilActive" : "dropDwonProfil"}>
             <div className='dropList'>
               <p className='list' onClick={handleMyProfilClick}>{t('View My Profil')}</p>
               <p className='list' onClick={handleListBlockedClick}>{t('List Blocked')}</p>

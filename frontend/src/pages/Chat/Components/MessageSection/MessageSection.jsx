@@ -111,6 +111,8 @@ const Emojies = ({ SetPicker }) => {
 };
 
 const InputField = ({ message, handleWritedMessage, inputRef, handleSendMessage }) => {
+  const { t } = useTranslation();
+
   return (
     <input
       ref={inputRef}
@@ -119,13 +121,15 @@ const InputField = ({ message, handleWritedMessage, inputRef, handleSendMessage 
       onKeyDown={(e) => handleSendMessage(e)}
       type="text"
       value={message}
-      placeholder="write a message ... "
+      placeholder={t('write a message ...')} 
+
     />
   );
 };
 
 const ChatHeader = () => {
   const {ChatPartner: ChatPartnerData} = useContext(chatPartnerContext);
+  const { t } = useTranslation();
 
   function handleParamsClick() {
     alert("Olaaala");
@@ -150,7 +154,7 @@ const ChatHeader = () => {
                 </div>
                 <div className={styles.Status}>
                   {" "}
-                  {ChatPartnerData?.status ? "Online" : "Offline"}
+                  {ChatPartnerData?.status ? t("Online") : t("Offline")}
                 </div>
               </div>
             </div>
@@ -357,6 +361,8 @@ const ChatMainHolder = ({selectedImage, setSelectedImage}) => {
   const messagesEndRef = useRef(null);
   const CurrentUser = useContext(CurrentUserContext);
   const {status} = useContext(TypingContext)
+  const { t } = useTranslation();
+
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -409,7 +415,7 @@ const ChatMainHolder = ({selectedImage, setSelectedImage}) => {
           <div className={styles.QuoteContainer}>
             <blockquote className={styles.GoPickConversation}>
               {" "}
-              Another Conversation Another World{" "}
+              {t("Another Conversation Another World")}{" "}
             </blockquote>
           </div>
         </div>

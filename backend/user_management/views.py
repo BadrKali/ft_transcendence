@@ -16,8 +16,8 @@ from django.db.models import Q
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
 from django.http import HttpResponseForbidden
-from .models import Tournament, TournamentInvitation, TournamentParticipants, Friendship, Player, FriendInvitation, BlockedUsers, Notification, XPHistory
-from .serializers import TournamentSerializer, TournamentCreateSerializer , TournamentInvitationSerializer, TournamentParticipantsSerializer, FriendInvitation, NotificationSerializer,  PlayerSerializer, FriendshipSerializer
+from .models import Tournament, TournamentInvitation, TournamentParticipants, Friendship, Player, FriendInvitation, BlockedUsers, Notification, XPHistory, LocalTournament, LocalTournamentUser, LocalTournamanetParticipants
+from .serializers import *
 from django.db.models import Case, When, Value, IntegerField
 from game.serializers import GameHistorySerializer, UserAchievementSerializer
 from game.models import GameHistory, UserAchievement
@@ -462,3 +462,52 @@ class GlobalStatsView(APIView):
         return(Response(data, status=status.HTTP_200_OK))
 
 
+
+
+class LocalTournamentView(APIView):
+    def get(self, request):
+        tournament = LocalTournament.objects.filter(tournament_creator=request.user).first()
+        if tournament:
+            serializer = LocalTournamentSerializer(tournament)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        else:
+            return Response({'message': 'No tournament found'}, status=status.HTTP_404_NOT_FOUND)
+
+
+
+    def post(self, request):
+        serializer = LocalTournamentCreatSerializer(data=request.data, context={'request': request})
+        user = request.user
+        if serializer.is_valid():
+            invited_users = serializer.validated_data.pop('invitedUsers', [])
+            tournament = LocalTournament.objects.create(tournament_creator=request.user, **serializer.validated_data)
+            currentUserLocal = LocalTournamentUser.objects.create(tournament=tournament, username=user.username)
+            for participant in invited_users:
+                LocalTournamentUser.objects.create(tournament=tournament, username=participant)
+            tournament.assign_opponent()
+
+            return Response({'message': 'Tournament created successfully'}, status=status.HTTP_201_CREATED)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class LocalPlayerCreateView(APIView):
+    def post(self, request, format=None):
+        username = request.data.get('username')
+        paddle = request.data.get('paddle')
+        keys = request.data.get('keys')
+
+        if not username:
+            return Response({'error': 'Username is required'}, status=status.HTTP_400_BAD_REQUEST)
+
+        player = LocalPlayer.objects.create(
+            username=username,
+            paddle_color=paddle,
+            keys=keys
+        )
+        serializer = LocalPlayerSerializer(player)
+        print(f"Created player: {serializer.data}")
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+# to do list:
+# zid paddle keys avatar random
