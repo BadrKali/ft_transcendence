@@ -4,7 +4,7 @@ import EmptyChatAnimation from "../../ChatAssets/EmptyChatAnimation.json";
 import online from "../../ChatAssets/online.json";
 import offline from "../../ChatAssets/offline.json";
 import NoPickedConv from "../../ChatAssets/NoConversationchoiced.json";
-import { Smiley, Image , Gear, XCircle } from "phosphor-react";
+import { Smiley, Image , Gear, Trash } from "phosphor-react";
 import Lottie from "lottie-react";
 import data from "@emoji-mart/data";
 import Picker from "@emoji-mart/react";
@@ -203,6 +203,7 @@ const ChatInput = ({selectedImage, setSelectedImage}) => {
 
   const handleImageSelect = (event) => {
     try{
+      setSelectedImage(null);
       const file = event.target.files[0];
       const reader = new FileReader();
     
@@ -297,11 +298,6 @@ const ChatInput = ({selectedImage, setSelectedImage}) => {
   );
 };
 
-
-// =====Event Received=====
-// Chat.jsx:111 {id: 14, sender_id: 1, receiver_id: 2, msgType: 'image', content: null, …}ImgPath: "/media/chat_images/read.webm_5525.jpeg"content: nullcreated_at: "2024-09-21T17:01:12.151319Z"id: 14msgType: "image"receiver_id: 2seen: falsesender_id: 1[[Prototype]]: Object
-// Chat.jsx:112 ========================
-
 const MessageDisplayer = ({ message, IsIncoming }) => {
   const CurrentUser = useContext(CurrentUserContext);
   const {ChatPartner} = useContext(chatPartnerContext);
@@ -323,7 +319,7 @@ const MessageDisplayer = ({ message, IsIncoming }) => {
       <div className={styles.msgContent}>
         <div className={IsIncoming ? styles.incoming : styles.outgoing}>
           {
-            message.msgType === 'text' ? message.content : <img style={{borderRadius : '18px'}} src={`${BACKEND_URL}${message.ImgPath}`} alt="messagePhoto" /> 
+            message.msgType === 'text' ? message.content : <img width="200" height="200" style={{borderRadius : '18px'}} src={`${BACKEND_URL}${message.ImgPath}`} alt="messagePhoto" /> 
           }
         </div>
         <h1 className={IsIncoming ? styles.SendingTime : styles.SendingTimeout}>
@@ -404,7 +400,7 @@ const ChatMainHolder = ({selectedImage, setSelectedImage}) => {
               <div className={styles.UserSelectedImgHolder}>
                 <img className={styles.UserSelectedImg} src={selectedImage} alt="Selected" />
                 <div className={styles.EraseSelectedImgHolder}>
-                  <XCircle size={40} className={styles.EraseSelectedImg} onClick={handleCloseImg} color="white" />
+                  <Trash size={40} className={styles.EraseSelectedImg} onClick={handleCloseImg} color="#F62943" />
                 </div>
 
               </div>
