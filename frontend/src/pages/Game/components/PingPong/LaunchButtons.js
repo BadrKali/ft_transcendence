@@ -88,7 +88,7 @@ const LaunchButtons = ({ selectedMode, selectedBackground, selectedKeys, selecte
 
     const handleCreateLocalPlayer = async (username, avatar, paddle) => {
         try {
-            const opponentResponse = await axios.post(`${BACKEND_URL}/api/game/create-local-player/`, 
+            const opponentResponse = await axios.post(`${BACKEND_URL}/user/create-local-player/`, 
                 { 
                     username: username,
                     paddle: paddle,
@@ -102,7 +102,7 @@ const LaunchButtons = ({ selectedMode, selectedBackground, selectedKeys, selecte
                 }
             );
             const opponentUserId = opponentResponse.data.id
-            const currentUserResponse = await axios.post(`${BACKEND_URL}/api/game/create-local-player/`, 
+            const currentUserResponse = await axios.post(`${BACKEND_URL}/user/create-local-player/`, 
                 { 
                     username: currentUser.username,
                     paddle: selectedPaddle,
