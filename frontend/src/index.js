@@ -48,7 +48,7 @@ const routes = [
                   <UserProvider>
                     <RealTimeProvider>
                       <SocketClientProvider>
-                          <ProfileProviderWrapper> 
+                          <ProfileProviderWrapper>
                               <AppLayout />
                           </ProfileProviderWrapper>
                       </SocketClientProvider>

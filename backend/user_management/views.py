@@ -17,7 +17,7 @@ from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
 from django.http import HttpResponseForbidden
 from .models import Tournament, TournamentInvitation, TournamentParticipants, Friendship, Player, FriendInvitation, BlockedUsers, Notification, XPHistory, LocalTournament, LocalTournamentUser, LocalTournamanetParticipants
-from .serializers import TournamentSerializer, TournamentCreateSerializer , TournamentInvitationSerializer, TournamentParticipantsSerializer, FriendInvitation, NotificationSerializer,  PlayerSerializer, FriendshipSerializer, LocalTournamentSerializer, LocalTournamentCreatSerializer,LocalTournamentUserSerializer
+from .serializers import *
 from django.db.models import Case, When, Value, IntegerField
 from game.serializers import GameHistorySerializer, UserAchievementSerializer
 from game.models import GameHistory, UserAchievement
@@ -485,7 +485,29 @@ class LocalTournamentView(APIView):
             for participant in invited_users:
                 LocalTournamentUser.objects.create(tournament=tournament, username=participant)
             tournament.assign_opponent()
-            
+
             return Response({'message': 'Tournament created successfully'}, status=status.HTTP_201_CREATED)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class LocalPlayerCreateView(APIView):
+    def post(self, request, format=None):
+        username = request.data.get('username')
+        paddle = request.data.get('paddle')
+        keys = request.data.get('keys')
+
+        if not username:
+            return Response({'error': 'Username is required'}, status=status.HTTP_400_BAD_REQUEST)
+
+        player = LocalPlayer.objects.create(
+            username=username,
+            paddle_color=paddle,
+            keys=keys
+        )
+        serializer = LocalPlayerSerializer(player)
+        print(f"Created player: {serializer.data}")
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+# to do list:
+# zid paddle keys avatar random

@@ -1,7 +1,7 @@
 from django.db import models
 from django.conf import settings
 from django.core.exceptions import ValidationError
-from user_management.models import Player
+from user_management.models import Player, LocalPlayer
 from authentication.models import User
 
 def achievement_image_upload_path(instance, filename):
@@ -195,14 +195,8 @@ class TournamentGameRoom(models.Model):
             self.is_waiting = False
             self.save()
 
-class LocalPlayer(models.Model):
-    username = models.CharField(max_length=100)
-    avatar = models.ImageField(null=True, blank=True)
-    paddle_color = models.CharField(max_length=7, null=True, blank=True)
-    keys = models.JSONField(null=True, blank=True)
 
-    def __str__(self):
-        return self.username
+
 
 class LocalGameRoom(models.Model):
     player1 = models.ForeignKey(LocalPlayer, related_name='local_game_room_player1', on_delete=models.CASCADE, null=True, blank=True)

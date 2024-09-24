@@ -25,6 +25,7 @@ urlpatterns = [
     path('xp-history/', XPHistoryView.as_view(), name='xp-history'),
     path('leaderboard/', LeaderboardView.as_view(), name='leaderboard'),
     path('local-tournament/', LocalTournamentView.as_view(), name='local_tournament'),
+    path('create-local-player/', LocalPlayerCreateView.as_view(), name='create-local-player'),
     # path('friends/create/<int:friend_id>/', CreateFriendshipView.as_view(), name='create_friendship'),
     # path('friends/delete/<int:player_id>/<int:friend_id>/', DeleteFriendshipView.as_view(), name='delete_friendship'),
     # path('friends/list/<int:player_id>/', FriendsListView.as_view(), name='friends_list'),

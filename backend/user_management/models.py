@@ -328,3 +328,14 @@ class LocalTournamanetParticipants(models.Model):
 
     def __str__(self):
         return f"{self.player1} vs {self.player2} in {self.tournament}"
+
+
+class LocalPlayer(models.Model):
+    username = models.CharField(max_length=100)
+    avatar = models.ImageField(null=True, blank=True)
+    paddle_color = models.CharField(max_length=7, null=True, blank=True)
+    keys = models.JSONField(null=True, blank=True)
+
+    def __str__(self):
+        return self.username
+

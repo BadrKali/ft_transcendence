@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from .models import *
-from user_management.serializers import PlayerSerializer
+from user_management.serializers import PlayerSerializer, LocalPlayerSerializer
 
 class GameHistorySerializer(serializers.ModelSerializer):
     winner_user = PlayerSerializer()
@@ -56,11 +56,6 @@ class TournamentGameRoomSerializer(serializers.ModelSerializer):
         model = TournamentGameRoom
         fields = '__all__'
 
-
-class LocalPlayerSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = LocalPlayer
-        fields = '__all__'
 
 class LocalGameRoomSerializer(serializers.ModelSerializer):
     player1 = LocalPlayerSerializer(read_only=True)

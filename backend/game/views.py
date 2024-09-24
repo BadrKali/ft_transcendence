@@ -253,23 +253,7 @@ class CheckInviteReconnection(APIView):
         except Exception as e:
             return Response({ 'error': str(e) }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-class LocalPlayerCreateView(APIView):
-    def post(self, request, format=None):
-        username = request.data.get('username')
-        paddle = request.data.get('paddle')
-        keys = request.data.get('keys')
 
-        if not username:
-            return Response({'error': 'Username is required'}, status=status.HTTP_400_BAD_REQUEST)
-
-        player = LocalPlayer.objects.create(
-            username=username,
-            paddle_color=paddle,
-            keys=keys
-        )
-        serializer = LocalPlayerSerializer(player)
-        print(f"Created player: {serializer.data}")
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 class LocalGameRoomCreateView(APIView):
     def post(self, request, format=None):
