@@ -500,6 +500,7 @@ class LocalPlayerCreateView(APIView):
         username = request.data.get('username')
         paddle = request.data.get('paddle')
         keys = request.data.get('keys')
+        print(f"{paddle, keys}")
 
         if not username:
             return Response({'error': 'Username is required'}, status=status.HTTP_400_BAD_REQUEST)

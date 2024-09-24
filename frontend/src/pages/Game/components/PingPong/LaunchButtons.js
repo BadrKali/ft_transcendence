@@ -102,6 +102,7 @@ const LaunchButtons = ({ selectedMode, selectedBackground, selectedKeys, selecte
                 }
             );
             const opponentUserId = opponentResponse.data.id
+            console.log(opponentResponse.data);
             const currentUserResponse = await axios.post(`${BACKEND_URL}/user/create-local-player/`, 
                 { 
                     username: currentUser.username,
@@ -129,7 +130,6 @@ const LaunchButtons = ({ selectedMode, selectedBackground, selectedKeys, selecte
             const gameRoomId = gameRoomResponse.data.id;
             setShowCreateLocalPlayer(false);
             navigate('/local-game', { state: { gameRoomId: gameRoomId } }, {  replace:true } );
-            // alert("Game room created successfully!");
         } catch (error) {
             console.error("Error creating local players:", error);
             alert("Failed to create players. Please try again.");

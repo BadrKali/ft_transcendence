@@ -148,7 +148,7 @@ class TournamentParticipantsSerializer(serializers.ModelSerializer):
 class LocalPlayerSerializer(serializers.ModelSerializer):
     class Meta:
         model = LocalPlayer
-        fields = ['id', 'username', 'avatar']
+        fields = ['id', 'username', 'avatar', 'paddle_color', 'keys']
 
 class LocalTournamanetParticipantsSerializer(serializers.ModelSerializer):
     player1 = LocalPlayerSerializer()

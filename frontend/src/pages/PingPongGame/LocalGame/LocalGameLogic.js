@@ -1,286 +1,310 @@
-import React, { useRef, useEffect, useState } from 'react';
+import React, { useRef, useEffect, useState, useCallback } from 'react';
 import useFetch from '../../../hooks/useFetch';
 import { useNavigate } from 'react-router-dom';
 import ScoreBoard from '../components/ScoreBoard';
-import Timeout from '../components/TimeOut';
-import avatar from "../asstes/avatar3.png";
-import pongy from "../asstes/pongy.png";
 import exit from "../asstes/right-arrow.png";
 import { useTranslation } from 'react-i18next'
-
-
+import Loading from '../components/Loading';
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
 const LocalGameLogic = ({ player1Id, player2Id }) => {
     const { data: player1, isLoading: isLoadingPlayer1, error: player1Error } = useFetch(`${BACKEND_URL}/user/local-player/${player1Id}`);
     const { data: player2, isLoading: isLoadingPlayer2, error: player2Error } = useFetch(`${BACKEND_URL}/user/local-player/${player2Id}`);
-    console.log(player1, player2)
-    // console.log()
-//     const navigate = useNavigate();
-//     const canvasRef = useRef(null);
-//   const { t } = useTranslation();
+    // console.log(player1?.paddle_color || null, player2?.paddle_color || null)
+    const navigate = useNavigate();
+    const canvasRef = useRef(null);
+    const { t } = useTranslation();
 
+    const [user1Score, setUser1Score] = useState(0);
+    const [user2Score, setUser2Score] = useState(0);
+    const [gameRunning, setGameRunning] = useState(true);
+    const [matchRunning, setMatchRunning] = useState(false);
+    const [showExitPopup, setShowExitPopup] = useState(false);
+    const [pauseGame, setPauseGame] = useState(false);
+    const [canvasSize, setCanvasSize] = useState({ width: 1384, height: 696 });
+    const [keyState, setKeyState] = useState({
+        ArrowUp: false,
+        ArrowDown: false,
+        w: false,
+        s: false
+    });
 
-//     const user1Ref = useRef({
-//         x: 20,
-//         y: 0,
-//         width: 10,
-//         height: 140,
-//         score: 0,
-//         color: paddleColor,
-//     });
+    const user1Ref = useRef({
+        x: 20,
+        y: canvasSize.height / 2 - 70,
+        width: 10,
+        height: 140,
+        score: 0,
+        color: player1?.paddle_color || '#FFFFFF',
+    });
 
-//     const user2Ref = useRef({
-//         x: 1354,
-//         y: 0,
-//         width: 10,
-//         height: 140,
-//         score: 0,
-//         color: '#3357FF',
-//     });
+    const user2Ref = useRef({
+        x: canvasSize.width - 30,
+        y: canvasSize.height / 2 - 70,
+        width: 10,
+        height: 140,
+        score: 0,
+        color: player2?.paddle_color || '#3357FF',
+    });
 
-//     const [user1Score, setUser1Score] = useState(0);
-//     const [user2Score, setUser2Score] = useState(0);
-//     const [gameRunning, setGameRunning] = useState(true);
-//     const [showExitPopup, setShowExitPopup] = useState(false);
-//     const [pauseGame, setPauseGame] = useState(false);
+    const ballRef = useRef({
+        x: canvasSize.width / 2,
+        y: canvasSize.height / 2,
+        radius: 10,
+        velocityX: 5,
+        velocityY: 5,
+        speed: 7,
+        color: "WHITE"
+    });
 
-//     const handleUser1Score = (score) => {
-//         setUser1Score(score);
-//     };
+    const calculateCanvasSize = useCallback(() => {
+        const containerWidth = window.innerWidth * 0.8;
+        const containerHeight = window.innerHeight * 0.7;
+        const aspectRatio = 16 / 9;
 
-//     const handleUser2Score = (score) => {
-//         setUser2Score(score);
-//     };
+        let newWidth, newHeight;
 
-//     useEffect(() => {
-//         const canvas = canvasRef.current;
-//         const ctx = canvas.getContext('2d');
-//         const user1 = user1Ref.current;
-//         const user2 = user2Ref.current;
+        if (containerWidth / containerHeight > aspectRatio) {
+            newHeight = containerHeight;
+            newWidth = newHeight * aspectRatio;
+        } else {
+            newWidth = containerWidth;
+            newHeight = newWidth / aspectRatio;
+        }
 
-//         canvas.width = 1384;
-//         canvas.height = 696;
+        setCanvasSize({ width: Math.floor(newWidth), height: Math.floor(newHeight) });
+    }, []);
 
-//         const ball = {
-//             x: canvas.width / 2,
-//             y: canvas.height / 2,
-//             radius: 10,
-//             velocityX: 5,
-//             velocityY: 5,
-//             speed: 7,
-//             color: "WHITE"
-//         };
+    const scaleFactor = useCallback(() => {
+        return {
+            x: canvasSize.width / 1384,
+            y: canvasSize.height / 696
+        };
+    }, [canvasSize]);
 
-//         const net = {
-//             x: (canvas.width - 2) / 2,
-//             y: 0,
-//             height: 10,
-//             width: 2,
-//             color: "#D9D9D9"
-//         };
+    useEffect(() => {
+        calculateCanvasSize();
+        const debouncedResizeHandler = debounce(calculateCanvasSize, 250);
+        window.addEventListener('resize', debouncedResizeHandler);
+        return () => window.removeEventListener('resize', debouncedResizeHandler);
+    }, [calculateCanvasSize]);
 
-//         function drawRect(x, y, w, h, color) {
-//             ctx.fillStyle = color;
-//             ctx.fillRect(x, y, w, h);
-//         }
+    useEffect(() => {
+        if (player1 && player2) {
+            user1Ref.current.color = player1.paddle_color;
+            user2Ref.current.color = player2.paddle_color;
+            setMatchRunning(true);
+        }
+    }, [player1, player2]);
 
-//         function drawArc(x, y, r, color) {
-//             ctx.fillStyle = color;
-//             ctx.beginPath();
-//             ctx.arc(x, y, r, 0, Math.PI * 2, true);
-//             ctx.closePath();
-//             ctx.fill();
-//         }
+    useEffect(() => {
+        if (!canvasRef.current || !matchRunning) return;
 
-//         function handleKeyDown(evt) {
-//             if (keys === 'up-down') {
-//                 switch (evt.key) {
-//                     case 'ArrowUp':
-//                         if (user1.y > 0) {
-//                             user1.y -= 20;
-//                         }
-//                         break;
-//                     case 'ArrowDown':
-//                         if (user1.y < canvas.height - user1.height) {
-//                             user1.y += 20;
-//                         }
-//                         break;
-//                     case 'w':
-//                         if (user2.y > 0) {
-//                             user2.y -= 20;
-//                         }
-//                         break;
-//                     case 's':
-//                         if (user2.y < canvas.height - user2.height) {
-//                             user2.y += 20;
-//                         }
-//                         break;
-//                     default:
-//                         break;
-//                 }
-//             } else if (keys === 'ws') {
-//                 switch (evt.key) {
-//                     case 'w':
-//                         if (user1.y > 0) {
-//                             user1.y -= 20;
-//                         }
-//                         break;
-//                     case 's':
-//                         if (user1.y < canvas.height - user1.height) {
-//                             user1.y += 20;
-//                         }
-//                         break;
-//                     case 'ArrowUp':
-//                         if (user2.y > 0) {
-//                             user2.y -= 20;
-//                         }
-//                         break;
-//                     case 'ArrowDown':
-//                         if (user2.y < canvas.height - user2.height) {
-//                             user2.y += 20;
-//                         }
-//                         break;
-//                     default:
-//                         break;
-//                 }
-//             }
-//         }
+        const canvas = canvasRef.current;
+        const ctx = canvas.getContext('2d');
+        const user1 = user1Ref.current;
+        const user2 = user2Ref.current;
+        const ball = ballRef.current;
 
-//         window.addEventListener('keydown', handleKeyDown);
+        canvas.width = canvasSize.width;
+        canvas.height = canvasSize.height;
 
-//         function resetBall() {
-//             ball.x = canvas.width / 2;
-//             ball.y = canvas.height / 2;
-//             ball.velocityX = -ball.velocityX;
-//             ball.speed = 7;
-//         }
+        const scale = scaleFactor();
 
-//         function drawNet() {
-//             for (let i = 0; i <= canvas.height; i ++) {
-//                 drawRect(net.x, net.y + i, net.width, net.height, net.color);
-//             }
-//         }
+        function handleKeyDown(evt) {
+            if (['ArrowUp', 'ArrowDown', 'w', 's'].includes(evt.key)) {
+                setKeyState(prev => ({ ...prev, [evt.key]: true }));
+            }
+        }
 
-//         function collision(b, p) {
-//             p.top = p.y;
-//             p.bottom = p.y + p.height;
-//             p.left = p.x;
-//             p.right = p.x + p.width;
+        function handleKeyUp(evt) {
+            if (['ArrowUp', 'ArrowDown', 'w', 's'].includes(evt.key)) {
+                setKeyState(prev => ({ ...prev, [evt.key]: false }));
+            }
+        }
 
-//             b.top = b.y - b.radius;
-//             b.bottom = b.y + b.radius;
-//             b.left = b.x - b.radius;
-//             b.right = b.x + b.radius;
+        window.addEventListener('keydown', handleKeyDown);
+        window.addEventListener('keyup', handleKeyUp);
+        function movePaddles() {
+            const moveDistance = 5 ;
+            if (player2.keys === 'ws') {
+                if (keyState.w && user1.y > 0) {
+                    user1.y = Math.max(0, user1.y - moveDistance);
+                }
+                if (keyState.s && user1.y < canvas.height / scale.y - user1.height) {
+                    user1.y = Math.min(canvas.height / scale.y - user1.height, user1.y + moveDistance);
+                }
+                if (keyState.ArrowUp && user2.y > 0) {
+                    user2.y = Math.max(0, user2.y - moveDistance);
+                }
+                if (keyState.ArrowDown && user2.y < canvas.height / scale.y - user2.height) {
+                    user2.y = Math.min(canvas.height / scale.y - user2.height, user2.y + moveDistance);
+                }
+            } else {
+                if (keyState.ArrowUp && user1.y > 0) {
+                    user1.y = Math.max(0, user1.y - moveDistance);
+                }
+                if (keyState.ArrowDown && user1.y < canvas.height / scale.y - user1.height) {
+                    user1.y = Math.min(canvas.height / scale.y - user1.height, user1.y + moveDistance);
+                }
+                if (keyState.w && user2.y > 0) {
+                    user2.y = Math.max(0, user2.y - moveDistance);
+                }
+                if (keyState.s && user2.y < canvas.height / scale.y - user2.height) {
+                    user2.y = Math.min(canvas.height / scale.y - user2.height, user2.y + moveDistance);
+                }
+            }
+        }
 
-//             return p.left < b.right && p.top < b.bottom && p.right > b.left && p.bottom > b.top;
-//         }
+        function resetBall() {
+            ball.x = canvas.width / (2 * scale.x);
+            ball.y = canvas.height / (2 * scale.y);
+            ball.velocityX = -ball.velocityX;
+            ball.speed = 7;
+        }
 
-//         function update() {
-//             if (ball.x - ball.radius < 0) {
-//                 user2.score++;
-//                 handleUser2Score(user2.score);
-//                 resetBall();
-//             } else if (ball.x + ball.radius > canvas.width) {
-//                 user1.score++;
-//                 handleUser1Score(user1.score);
-//                 resetBall();
-//             }
+        function collision(b, p) {
+            const pScaled = {
+                top: p.y * scale.y,
+                bottom: (p.y + p.height) * scale.y,
+                left: p.x * scale.x,
+                right: (p.x + p.width) * scale.x,
+            };
 
-//             ball.x += ball.velocityX;
-//             ball.y += ball.velocityY;
+            const bScaled = {
+                top: (b.y - b.radius) * scale.y,
+                bottom: (b.y + b.radius) * scale.y,
+                left: (b.x - b.radius) * scale.x,
+                right: (b.x + b.radius) * scale.x,
+            };
+
+            return pScaled.left < bScaled.right && pScaled.top < bScaled.bottom && pScaled.right > bScaled.left && pScaled.bottom > bScaled.top;
+        }
+
+        function update() {
+            if (pauseGame) return;
+
+            movePaddles();
+
+            ball.x += ball.velocityX;
+            ball.y += ball.velocityY;
             
-//             if (ball.y - ball.radius < 0 || ball.y + ball.radius > canvas.height) {
-//                 ball.velocityY = -ball.velocityY;
-//             }
+            if (ball.y - ball.radius < 0 || ball.y + ball.radius > canvas.height / scale.y) {
+                ball.velocityY = -ball.velocityY;
+            }
             
-//             const player = (ball.x + ball.radius < canvas.width / 2) ? user1 : user2;
-//             if (collision(ball, player)) {
-//                 let collidePoint = (ball.y - (player.y + player.height / 2));
-//                 collidePoint = collidePoint / (player.height / 2);
-//                 let angleRad = (Math.PI / 4) * collidePoint;
-//                 let direction = (ball.x + ball.radius < canvas.width / 2) ? 1 : -1;
-//                 ball.velocityX = direction * ball.speed * Math.cos(angleRad);
-//                 ball.velocityY = ball.speed * Math.sin(angleRad);
-//                 ball.speed += 0.1;
-//             }
-//         }
+            const player = (ball.x < canvas.width / (2 * scale.x)) ? user1 : user2;
+            if (collision(ball, player)) {
+                let collidePoint = (ball.y - (player.y + player.height / 2)) / (player.height / 2);
+                let angleRad = (Math.PI / 4) * collidePoint;
+                let direction = (ball.x < canvas.width / (2 * scale.x)) ? 1 : -1;
+                ball.velocityX = direction * ball.speed * Math.cos(angleRad);
+                ball.velocityY = ball.speed * Math.sin(angleRad);
+                ball.speed += 1;
+            }
 
-//         function render() {
-//             ctx.clearRect(0, 0, canvas.width, canvas.height);
-//             ctx.fillStyle = 'rgba(22, 22, 37, 0.9)';
-//             ctx.fillRect(0, 0, canvas.width, canvas.height);
-//             drawNet();
-//             drawRect(user1.x, user1.y, user1.width, user1.height, user1.color);
-//             drawRect(user2.x, user2.y, user2.width, user2.height, user2.color);
-//             drawArc(ball.x, ball.y, ball.radius, ball.color);
-//         }
-
-//         function game() {
-//             if (!pauseGame){
-//                 update();
-//                 render();
-//             }
-//         }
-
-//         let framePerSecond = 50;
-//         let loop = setInterval(game, 1000 / framePerSecond);
+            if (ball.x - ball.radius < 0) {
+                user2.score++;
+                setUser2Score(user2.score);
+                resetBall();
+            } else if (ball.x + ball.radius > canvas.width / scale.x) {
+                user1.score++;
+                setUser1Score(user1.score);
+                resetBall();
+            }
+        }
+        const drawRoundedRect = (x, y, width, height, radius) => {
+            ctx.beginPath();
+            ctx.moveTo((x + radius) * scale.x, y * scale.y);
+            ctx.arcTo((x + width) * scale.x, y * scale.y, (x + width) * scale.x, (y + height) * scale.y, radius * Math.min(scale.x, scale.y));
+            ctx.arcTo((x + width) * scale.x, (y + height) * scale.y, x * scale.x, (y + height) * scale.y, radius * Math.min(scale.x, scale.y));
+            ctx.arcTo(x * scale.x, (y + height) * scale.y, x * scale.x, y * scale.y, radius * Math.min(scale.x, scale.y));
+            ctx.arcTo(x * scale.x, y * scale.y, (x + width) * scale.x, y * scale.y, radius * Math.min(scale.x, scale.y));
+            ctx.closePath();
+            ctx.fill();
+        };
         
-//         const speedInterval = setInterval(() => {
-//             ball.speed += 1;
-//         }, 20000);
+        function render() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = 'rgba(22, 22, 37, 0.9)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+        
+            const netWidth = 2;
+            const netX = canvas.width / 2 - netWidth / 2;
+            ctx.fillStyle = "#D9D9D9";
+            for (let i = 0; i <= canvas.height; i += 15) {
+                ctx.fillRect(netX, i, netWidth, 10);
+            }
+        
+            // Draw paddles using drawRoundedRect
+            ctx.fillStyle = user1.color;
+            drawRoundedRect(user1.x, user1.y, user1.width, user1.height, 5); // 5 is the corner radius, adjust as needed
+        
+            ctx.fillStyle = user2.color;
+            drawRoundedRect(user2.x, user2.y, user2.width, user2.height, 5);
+            ctx.beginPath();
+            ctx.arc(ball.x * scale.x, ball.y * scale.y, ball.radius * Math.min(scale.x, scale.y), 0, Math.PI * 2);
+            ctx.fillStyle = ball.color;
+            ctx.fill();
+            ctx.closePath();
+        }
 
-//         return () => {
-//             clearInterval(loop);
-//             clearInterval(speedInterval);
-//             window.removeEventListener('keydown', handleKeyDown);
-//         };
-//     }, [paddleColor, keys, pauseGame]);
+        let animationId;
+        function gameLoop() {
+            update();
+            render();
+            animationId = requestAnimationFrame(gameLoop);
+        }
 
-//     const handleTimeout = () => {
-//         setGameRunning(false);
-//         alert("Game Timeout! Returning to lobby...");
-//     };
+        gameLoop();
 
-//     const handleExitGame = () => {
-//         setPauseGame(true);
-//         setShowExitPopup(true);
-//     };
+        return () => {
+            window.removeEventListener('keydown', handleKeyDown);
+            window.removeEventListener('keyup', handleKeyUp);
+            cancelAnimationFrame(animationId);
+        };
+    }, [matchRunning, canvasSize, scaleFactor, keyState]);
 
-//     const confirmExitGame = (confirm) => {
-//         setShowExitPopup(false);
-//         if (confirm) {
-//             setGameRunning(false);
-//         } else {
-//             setPauseGame(false);
-//         }
-//     };
+    const handleExitGame = () => {
+        setPauseGame(true);
+        setShowExitPopup(true);
+    };
 
-//     if (!gameRunning) {
-//         navigate('game');
-//         return;
-//     }
-    if (isLoadingPlayer1 || isLoadingPlayer2) {
-        return <div>Loading players...</div>;
+    const confirmExitGame = (confirm) => {
+        setShowExitPopup(false);
+        if (confirm) {
+            setGameRunning(false);
+        } else {
+            setPauseGame(false);
+        }
+    };
+
+    if (!gameRunning) {
+        navigate('/game');
+        return null;
+    }
+
+    if (!matchRunning) {
+        return <div><Loading/></div>;
     }
 
     if (player1Error || player2Error) {
         return <div>Error loading players</div>;
     }
+
     return (
         <div className="pingponggame-container">
             <div className="info-container">
                 {player1 && player2 && (
                     <ScoreBoard
-                    user1Score={0}
-                    user2Score={0}
+                    user1Score={user1Score}
+                    user2Score={user2Score}
                     user1={player1}
                     user2={player2}
                     />
                 )}
-                {/* <Timeout onTimeout={handleTimeout} /> */}
             </div>
-            {/* <canvas className='canvas-container' ref={canvasRef}></canvas>
+            <canvas className='canvas-container' ref={canvasRef}></canvas>
             <button className='exit-game-button' onClick={handleExitGame}>
                 <img src={exit} alt="exit" className='exit-logo'/>
             </button>
@@ -294,9 +318,21 @@ const LocalGameLogic = ({ player1Id, player2Id }) => {
                         </div>
                     </div>
                 </div>
-            )} */}
+            )}
         </div>
     );
 };
+
+function debounce(func, wait) {
+    let timeout;
+    return function executedFunction(...args) {
+        const later = () => {
+            clearTimeout(timeout);
+            func(...args);
+        };
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+    };
+}
 
 export default LocalGameLogic;
