@@ -278,3 +278,8 @@ class LocalGameRoomCreateView(APIView):
         
         serializer = LocalGameRoomSerializer(game_room)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
+    
+    def get(self, request, game_room_id):
+        game_room = get_object_or_404(LocalGameRoom, id=game_room_id)
+        serializer = LocalGameRoomSerializer(game_room)
+        return Response(serializer.data)

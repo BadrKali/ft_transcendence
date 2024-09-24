@@ -126,8 +126,10 @@ const LaunchButtons = ({ selectedMode, selectedBackground, selectedKeys, selecte
                     'Authorization': `Bearer ${auth.accessToken}`
                 }
             });
+            const gameRoomId = gameRoomResponse.data.id;
             setShowCreateLocalPlayer(false);
-            alert("Game room created successfully!");
+            navigate('/local-game', { state: { gameRoomId: gameRoomId } }, {  replace:true } );
+            // alert("Game room created successfully!");
         } catch (error) {
             console.error("Error creating local players:", error);
             alert("Failed to create players. Please try again.");

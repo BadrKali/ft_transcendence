@@ -508,6 +508,10 @@ class LocalPlayerCreateView(APIView):
         serializer = LocalPlayerSerializer(player)
         print(f"Created player: {serializer.data}")
         return Response(serializer.data, status=status.HTTP_201_CREATED)
+    def get(self, request, player_id, format=None):
+        player = get_object_or_404(LocalPlayer, id=player_id)
+        serializer = LocalPlayerSerializer(player)
+        return Response(serializer.data)
 
 # to do list:
 # zid paddle keys avatar random
