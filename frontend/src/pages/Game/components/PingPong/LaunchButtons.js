@@ -18,20 +18,21 @@ const LaunchButtons = ({ selectedMode, selectedBackground, selectedKeys, selecte
     const [localPlayerUsername, setLocalPlayerUsername] = useState("");
     const [localPlayerAvatar, setLocalPlayerAvatar] = useState(null);
     const [showCreateLocalPlayer, setShowCreateLocalPlayer] = useState(false);
-    const [localPlayer, setLocalPlayer] = useState(null);
-    const [selfLocalPlayer, setSelfLocalPlayer] = useState(0);
-    const [opponentLocalPlayer, setOpponentLocalPlayer] = useState(0);
     const { data: currentUser } = useFetch(`${BACKEND_URL}/user/stats`);
     const [opponentKeys, setOpponentKeys] = useState("");
 
-    const handleOpponentKeys = () => {
-        if (selectedKeys === "up-down") {
-            setOpponentKeys("ws");
-        } else {
-            setOpponentKeys("up-down");
+    useEffect(() => {
+        const handleOpponentKeys = () => {
+            if (selectedKeys === "up-down") {
+                setOpponentKeys("ws");
+            } else {
+                setOpponentKeys("up-down");
+            }
+    
         }
+        handleOpponentKeys();
+    }, selectedKeys)
 
-    }
     const checkInviteRoom = async () => {
         setIsLoading(true);
         try {
@@ -71,7 +72,6 @@ const LaunchButtons = ({ selectedMode, selectedBackground, selectedKeys, selecte
                 navigate("/bot-game");
             } else if (selectedMode === 'Local') {
                 setShowCreateLocalPlayer(true);
-                // navigate("/local-game");
             } else if (selectedMode === 'Random') {
                 navigate("/random-game");
             }
@@ -151,9 +151,7 @@ const LaunchButtons = ({ selectedMode, selectedBackground, selectedKeys, selecte
                 )}
                 {showCreateLocalPlayer && (
                     <CreatLocalPlayer 
-                        handleCreateLocalPlayer={handleCreateLocalPlayer} 
-                        setLocalPlayerUsername={setLocalPlayerUsername}
-                        setLocalPlayerAvatar={setLocalPlayerAvatar}
+                        handleCreateLocalPlayer={handleCreateLocalPlayer}
                         handleCloseModal={handleCloseModal}
                     />
                 )}

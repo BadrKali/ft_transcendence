@@ -9,29 +9,33 @@ import GameMode from './GameMode';
 import axios from 'axios';
 import useAuth from "../../../../hooks/useAuth.js";
 import Paddles from './Paddle.js';
-
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
 
 const PingPong = () => {
     const { auth } = useAuth();
     const [selectedBackground, setSelectedBackground] = useState(null);
+    const [selectedPaddle, setSelectedPaddle] = useState("#BC4F00");
+    const [selectedKeys, setSelectedKeys] = useState(null);
+    const [selectedMode, setSelectedMode] = useState("Invite");
+    const deps = [selectedMode, selectedBackground, selectedKeys, selectedPaddle].filter(Boolean);
 
+
+    useEffect(() => {
+        console.log("Selected Data seted succefuly");
+    },);
     const handleBackgroundSelect = (background) => {
         setSelectedBackground(background);
     };
 
-    const [selectedPaddle, setSelectedPaddle] = useState("#BC4F00");
     const handlePaddleSelect = (paddle) => {
         setSelectedPaddle(paddle);
     };
 
-    const [selectedKeys, setSelectedKeys] = useState(null);
     const handleKeysSelect = (keys) => {
         setSelectedKeys(keys);
     };
 
-    const [selectedMode, setSelectedMode] = useState("Invite");
     const handleModeSelect = (mode) => {
         setSelectedMode(mode);
     };

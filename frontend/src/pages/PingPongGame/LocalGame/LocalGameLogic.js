@@ -10,7 +10,6 @@ const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const LocalGameLogic = ({ player1Id, player2Id }) => {
     const { data: player1, isLoading: isLoadingPlayer1, error: player1Error } = useFetch(`${BACKEND_URL}/user/local-player/${player1Id}`);
     const { data: player2, isLoading: isLoadingPlayer2, error: player2Error } = useFetch(`${BACKEND_URL}/user/local-player/${player2Id}`);
-    // console.log(player1?.paddle_color || null, player2?.paddle_color || null)
     const navigate = useNavigate();
     const canvasRef = useRef(null);
     const { t } = useTranslation();
@@ -21,6 +20,7 @@ const LocalGameLogic = ({ player1Id, player2Id }) => {
     const [matchRunning, setMatchRunning] = useState(false);
     const [showExitPopup, setShowExitPopup] = useState(false);
     const [pauseGame, setPauseGame] = useState(false);
+    const [gameOver, setGameOver] = useState(false);
     const [canvasSize, setCanvasSize] = useState({ width: 1384, height: 696 });
     const [keyState, setKeyState] = useState({
         ArrowUp: false,
@@ -127,20 +127,7 @@ const LocalGameLogic = ({ player1Id, player2Id }) => {
         window.addEventListener('keyup', handleKeyUp);
         function movePaddles() {
             const moveDistance = 5 ;
-            if (player2.keys === 'ws') {
-                if (keyState.w && user1.y > 0) {
-                    user1.y = Math.max(0, user1.y - moveDistance);
-                }
-                if (keyState.s && user1.y < canvas.height / scale.y - user1.height) {
-                    user1.y = Math.min(canvas.height / scale.y - user1.height, user1.y + moveDistance);
-                }
-                if (keyState.ArrowUp && user2.y > 0) {
-                    user2.y = Math.max(0, user2.y - moveDistance);
-                }
-                if (keyState.ArrowDown && user2.y < canvas.height / scale.y - user2.height) {
-                    user2.y = Math.min(canvas.height / scale.y - user2.height, user2.y + moveDistance);
-                }
-            } else {
+            if (player1.keys === 'ws') {
                 if (keyState.ArrowUp && user1.y > 0) {
                     user1.y = Math.max(0, user1.y - moveDistance);
                 }
@@ -151,6 +138,20 @@ const LocalGameLogic = ({ player1Id, player2Id }) => {
                     user2.y = Math.max(0, user2.y - moveDistance);
                 }
                 if (keyState.s && user2.y < canvas.height / scale.y - user2.height) {
+                    user2.y = Math.min(canvas.height / scale.y - user2.height, user2.y + moveDistance);
+                }
+               
+            } else {
+                if (keyState.w && user1.y > 0) {
+                    user1.y = Math.max(0, user1.y - moveDistance);
+                }
+                if (keyState.s && user1.y < canvas.height / scale.y - user1.height) {
+                    user1.y = Math.min(canvas.height / scale.y - user1.height, user1.y + moveDistance);
+                }
+                if (keyState.ArrowUp && user2.y > 0) {
+                    user2.y = Math.max(0, user2.y - moveDistance);
+                }
+                if (keyState.ArrowDown && user2.y < canvas.height / scale.y - user2.height) {
                     user2.y = Math.min(canvas.height / scale.y - user2.height, user2.y + moveDistance);
                 }
             }
@@ -200,7 +201,7 @@ const LocalGameLogic = ({ player1Id, player2Id }) => {
                 let direction = (ball.x < canvas.width / (2 * scale.x)) ? 1 : -1;
                 ball.velocityX = direction * ball.speed * Math.cos(angleRad);
                 ball.velocityY = ball.speed * Math.sin(angleRad);
-                ball.speed += 1;
+                ball.speed += 0.1;
             }
 
             if (ball.x - ball.radius < 0) {
@@ -235,10 +236,8 @@ const LocalGameLogic = ({ player1Id, player2Id }) => {
             for (let i = 0; i <= canvas.height; i += 15) {
                 ctx.fillRect(netX, i, netWidth, 10);
             }
-        
-            // Draw paddles using drawRoundedRect
             ctx.fillStyle = user1.color;
-            drawRoundedRect(user1.x, user1.y, user1.width, user1.height, 5); // 5 is the corner radius, adjust as needed
+            drawRoundedRect(user1.x, user1.y, user1.width, user1.height, 5);
         
             ctx.fillStyle = user2.color;
             drawRoundedRect(user2.x, user2.y, user2.width, user2.height, 5);
@@ -265,6 +264,12 @@ const LocalGameLogic = ({ player1Id, player2Id }) => {
         };
     }, [matchRunning, canvasSize, scaleFactor, keyState]);
 
+    useEffect(() => {
+        if (user1Score === 5 || user2Score === 5){
+            setGameOver(true);
+        }
+    }, [user1Score, user2Score]);
+
     const handleExitGame = () => {
         setPauseGame(true);
         setShowExitPopup(true);
@@ -279,7 +284,7 @@ const LocalGameLogic = ({ player1Id, player2Id }) => {
         }
     };
 
-    if (!gameRunning) {
+    if (!gameRunning || gameOver) {
         navigate('/game');
         return null;
     }

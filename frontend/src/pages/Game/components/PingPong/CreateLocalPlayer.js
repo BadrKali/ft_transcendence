@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import './CreateLocalPlayer.css';
 
-const CreateLocalPlayer = ({ handleCreateLocalPlayer, setLocalPlayerUsername, setLocalPlayerAvatar, handleCloseModal }) => {
+const CreateLocalPlayer = ({ handleCreateLocalPlayer, handleCloseModal }) => {
     const [username, setUsername] = useState('');
     const [currentAvatar, setCurrentAvatar] = useState(0);
     const [currentColorIndex, setCurrentColorIndex] = useState(0);
@@ -28,8 +28,6 @@ const CreateLocalPlayer = ({ handleCreateLocalPlayer, setLocalPlayerUsername, se
             return;
         }
         setError('');
-        setLocalPlayerUsername(username);
-        setLocalPlayerAvatar(avatars[currentAvatar]);
         handleCreateLocalPlayer(username, avatars[currentAvatar], paddleColors[currentColorIndex]);
         handleCloseModal();
     };

@@ -119,14 +119,15 @@
     font-weight: 550;
 }
 
-.underground.selectedUnderground {
-    transform: scale(1.05);
-}
-
 @keyframes pulse {
     0%, 100% { transform: scale(1); }
     50% { transform: scale(1.05); }
 }
+
+.underground.selectedUnderground {
+    animation: pulse 1s infinite;
+}
+
 
 .underground:hover {
     animation: pulse 1s infinite;
@@ -193,7 +194,7 @@
 
 .container.selectedOption {
     border: 2px solid #F62943;
-    transform: scale(1.05);
+    animation: pulse 1s infinite;
     box-shadow: 0 0 10px rgba(246, 41, 67, 0.3);
 }
 
@@ -236,7 +237,7 @@
 
 .paddle-display.selected {
     border: 1px solid white;
-    animation: wiggle 0.5s ease;
+    animation: pulse 1s infinite;
 }
 
 /* Game Mode Styles */
