@@ -29,7 +29,7 @@ function JoinedTournamentOffline({TournamentData}) {
     const navigate = useNavigate();
     const [matchToDisplay, setMatchToDisplay] = useState(null);
     const {data: matches ,isLoading: matchesisLoading, error: matchesError} = useFetch(`${BACKEND_URL}/user/local-tournament/SEMI-FINALS`)
-
+    console.log(TournamentData);
 
     useEffect(() => {
         console.log(matches);
@@ -88,7 +88,7 @@ function JoinedTournamentOffline({TournamentData}) {
         );
 
         const gameRoomId = gameRoomResponse.data.id;
-        navigate('/local-game', { state: { gameRoomId: gameRoomId , isTournament: true } }, { replace: true });
+        navigate('/local-tournament-game', { state: { gameRoomId: gameRoomId , isTournament: true } }, { replace: true });
       }
 
       const handleDeleteTournament = async () => {

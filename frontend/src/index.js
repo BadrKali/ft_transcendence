@@ -28,6 +28,7 @@ import { ProfileProvider } from "./context/ProfilContext";
 import ProfileProviderWrapper from './context/ProfileProviderWrapper'
 import TournamentGame from "./pages/PingPongGame/TournamentGame.js/TournamentGame";
 import { InviteGameReconnection } from "./pages/PingPongGame/Invite/Invite";
+import LocalGameTournament from "./pages/PingPongGame/LocalGame/LocalGameTournament";
 const routes = [
   {
     element: <OauthTwo />,
@@ -80,6 +81,7 @@ const routes = [
   {path: 'random-game', element: <Random/>},
   {path: 'invite-game', element: <Invite/>},
   {path: 'tournament-game', element: <TournamentGame/>},
+  {path: 'local-tournament-game', element: <LocalGameTournament/>},
   {path: 'invite-game-reconnection', element: <InviteGameReconnection/>},
 ];
 
