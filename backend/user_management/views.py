@@ -458,7 +458,9 @@ class GlobalStatsView(APIView):
                 if tournament:
                     tournament = LocalTournamentSerializer(tournament).data
                 else:
-                    tournament = None
+                    tournament = []
+            else:
+                tournament = []
 
 
         blocked_users = BlockedUsers.objects.filter(blocker=request.user).select_related('blocked')
