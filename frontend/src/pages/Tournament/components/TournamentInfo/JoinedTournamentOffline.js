@@ -88,7 +88,7 @@ function JoinedTournamentOffline({TournamentData}) {
         );
 
         const gameRoomId = gameRoomResponse.data.id;
-        navigate('/local-tournament-game', { state: { gameRoomId: gameRoomId , isTournament: true } }, { replace: true });
+        navigate('/local-tournament-game', { state: { gameRoomId: gameRoomId , tournamentId: matchToDisplay.id } }, { replace: true });
       }
 
       const handleDeleteTournament = async () => {

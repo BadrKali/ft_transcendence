@@ -7,7 +7,7 @@ import { useTranslation } from 'react-i18next'
 import Loading from '../components/Loading';
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
-const LocalGameLogic = ({ player1Id, player2Id }) => {
+const LocalGameLogic = ({ player1Id, player2Id, handleEndMatch }) => {
     const { data: player1, isLoading: isLoadingPlayer1, error: player1Error } = useFetch(`${BACKEND_URL}/user/local-player/${player1Id}`);
     const { data: player2, isLoading: isLoadingPlayer2, error: player2Error } = useFetch(`${BACKEND_URL}/user/local-player/${player2Id}`);
     const navigate = useNavigate();
@@ -265,7 +265,11 @@ const LocalGameLogic = ({ player1Id, player2Id }) => {
     }, [matchRunning, canvasSize, scaleFactor, keyState]);
 
     useEffect(() => {
-        if (user1Score === 5 || user2Score === 5){
+        const WINNING_SCORE = 5
+        if (user1Score === WINNING_SCORE || user2Score === WINNING_SCORE) {
+            const winner = user1Score > user2Score ? player1?.username : player2?.username;
+            const loser = user1Score > user2Score ? player2?.username : player1?.username;
+            handleEndMatch(winner, loser);
             setGameOver(true);
         }
     }, [user1Score, user2Score]);

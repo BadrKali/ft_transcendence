@@ -22,6 +22,7 @@ from django.db.models import Case, When, Value, IntegerField
 from game.serializers import GameHistorySerializer, UserAchievementSerializer
 from game.models import GameHistory, UserAchievement
 from django.db import models
+from django.db import transaction
 
 class FriendRequestManagementView(APIView):
     
@@ -550,7 +551,21 @@ class LocalTournamentParticipantsView(APIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
-
+class LocalTournamentParticipantResultView(APIView):
+    def post(self, request):
+        match_id = request.data.get('tournamentId');
+        winner = request.data.get('winner');
+        loser = request.data.get('loser');
+        match = get_object_or_404(LocalTournamanetParticipants, id=match_id)
+        winner_obj = get_object_or_404(LocalPlayer, username=winner)
+        loser_obj = get_object_or_404(LocalPlayer, username=loser)
+        print(f"{winner, loser}")
+        with transaction.atomic():
+            match.winner = winner_obj
+            match.loosers = loser_obj
+            match.matchPlayed = True
+            match.save()
+        return Response("MATCH ID RECEIVED")
 
 # to do list:
 # zid paddle keys avatar random

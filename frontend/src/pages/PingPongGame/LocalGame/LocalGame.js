@@ -44,10 +44,10 @@ const LocalGame = () => {
 
     return (
         <div className="pingponggame-container" style={{ backgroundImage: `url(${background})` }}>
-            <LocalGameLogic 
+            {/* <LocalGameLogic 
                 player1Id={gameRoom.player1.id} 
                 player2Id={gameRoom.player2.id}
-            />
+            /> */}
         </div>
     );
 };

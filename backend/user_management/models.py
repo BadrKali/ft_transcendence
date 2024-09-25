@@ -327,7 +327,6 @@ class LocalTournament(models.Model):
             LocalTournamanetParticipants.objects.create(tournament=self, player1=participants_list[i], player2=participants_list[i+1])
             # TournamentGameRoom.objects.create(player1=participants[i], player2=participants[i+1])
 
-
 class LocalTournamanetParticipants(models.Model):
     tournament = models.ForeignKey(LocalTournament, on_delete=models.CASCADE)
     player1 = models.ForeignKey(LocalPlayer, on_delete=models.CASCADE, related_name='local_player1')
@@ -339,6 +338,3 @@ class LocalTournamanetParticipants(models.Model):
 
     def __str__(self):
         return f"{self.player1} vs {self.player2} in {self.tournament}"
-
-
-

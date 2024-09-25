@@ -33,7 +33,7 @@ urlpatterns = [
     
     path('local-tournament/', LocalTournamentView.as_view(), name='local_tournament'),
     path('local-tournament/<str:stage>/', LocalTournamentParticipantsView.as_view(), name='local_tournament_stage'),
-
+    path('tournament-match-result', LocalTournamentParticipantResultView.as_view(), name='tournament_match_result'),
 
 
 
