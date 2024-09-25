@@ -231,9 +231,10 @@ class Tournament(models.Model):
     tournament_date = models.DateTimeField(auto_now_add=True) # hadi f ina date tournament hadi khasha t3awerd
     tournament_status = models.BooleanField(default=False) # hadi ghadi tbadelha b True lma ykono les places kamline
     tournament_stage = models.CharField(max_length=100, default="semi-finals") # hadi f ina stage wasla tournament
-    tournament_participants = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='tournament_participants')
     is_online = models.BooleanField(default=True)
 
+    tournament_participants = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='tournament_participants')
+   
     def assign_tournament_prize(self):
         print(self.tournament_creator.player.rank)
         if self.tournament_creator.player.rank == 'BRONZE':

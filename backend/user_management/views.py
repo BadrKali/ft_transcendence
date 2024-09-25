@@ -515,6 +515,8 @@ class LocalTournamentView(APIView):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+
+
 class LocalPlayerCreateView(APIView):
     def post(self, request, format=None):
         username = request.data.get('username')
@@ -537,6 +539,18 @@ class LocalPlayerCreateView(APIView):
         player = get_object_or_404(LocalPlayer, id=player_id)
         serializer = LocalPlayerSerializer(player)
         return Response(serializer.data)
+
+
+class LocalTournamentParticipantsView(APIView):
+    def get(self, request, stage):
+        currentLocalPlayer = LocalPlayer.objects.filter(username=request.user.username).first()
+        tournament = currentLocalPlayer.tournament
+        participants = LocalTournamanetParticipants.objects.filter(tournament=tournament, matchStage=stage)
+        serializer = LocalTournamentParticipantsSerializer(participants, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+
 
 # to do list:
 # zid paddle keys avatar random

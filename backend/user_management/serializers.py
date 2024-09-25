@@ -12,7 +12,6 @@ class FriendshipSerializer(serializers.ModelSerializer):
             'friend', 
             'blocked'
             ]
-
     def get_friend(self, obj):
         return PlayerSerializer(obj.friend).data
 
@@ -111,7 +110,11 @@ class TournamentCreateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Tournament
-        fields = ['tournament_name', 'tournament_map', 'invitedUsers']
+        fields = [
+            'tournament_name', 
+            'tournament_map', 
+            'invitedUsers'
+            ]
 
     def validate(self, data):
         maps = ['undergroundHell', 'undergroundForest', 'undergroundGraveyard']
@@ -149,7 +152,13 @@ class TournamentParticipantsSerializer(serializers.ModelSerializer):
 class LocalPlayerSerializer(serializers.ModelSerializer):
     class Meta:
         model = LocalPlayer
-        fields = ['id', 'username', 'avatar', 'paddle_color', 'keys']
+        fields = [
+            'id', 
+            'username', 
+            'avatar', 
+            'paddle_color', 
+            'keys'
+            ]
 
 class LocalTournamentParticipantsSerializer(serializers.ModelSerializer):
     player1 = LocalPlayerSerializer()
@@ -157,15 +166,30 @@ class LocalTournamentParticipantsSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = LocalTournamanetParticipants
-        fields = ['player1', 'player2']
+        fields = [
+            'id', 
+            'player1',
+            'player2',
+            'matchPlayed',
+            'matchStage'
+            ]
 
 class LocalTournamentSerializer(serializers.ModelSerializer):
     tournament_participants = serializers.SerializerMethodField()
 
     class Meta:
         model = LocalTournament
-        fields = ['id', 'tournament_creator', 'tournament_name', 'tournament_map',
-                  'created_at', 'tournament_status', 'tournament_stage','is_online', 'tournament_participants']
+        fields = [
+            'id', 
+            'tournament_creator', 
+            'tournament_name', 
+            'tournament_map',
+            'created_at', 
+            'tournament_status', 
+            'tournament_stage',
+            'is_online', 
+            'tournament_participants'
+            ]
 
     def get_tournament_participants(self, obj):
         participants = LocalTournamanetParticipants.objects.filter(tournament=obj)
@@ -182,7 +206,11 @@ class LocalTournamentCreatSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = LocalTournament
-        fields = ['tournament_name','tournament_map' ,'invitedUsers']
+        fields = [
+            'tournament_name',
+            'tournament_map' ,
+            'invitedUsers'
+            ]
 
     def validate(self, data):
         #the invited users are just names of the user that not created yet 
