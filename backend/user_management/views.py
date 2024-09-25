@@ -446,8 +446,21 @@ class GlobalStatsView(APIView):
         friendships = Friendship.objects.filter(Q(player=request.user, blocked=False) | Q(friend=request.user, blocked=False))
         friends = [friendship.friend if friendship.player == request.user else friendship.player for friendship in friendships]
         achievements = UserAchievement.objects.filter(user=request.user)
+
+        #here 3adna 2 anwa3 dyal tournament online / offiline 
         tournament = Tournament.objects.filter(tournament_participants=request.user).first()
-        
+        if tournament:
+            tournament = TournamentSerializer(tournament).data
+        else:
+            currentLocalPlayer = LocalPlayer.objects.filter(username=request.user.username).first()
+            if currentLocalPlayer:
+                tournament = currentLocalPlayer.tournament
+                if tournament:
+                    tournament = LocalTournamentSerializer(tournament).data
+                else:
+                    tournament = None
+
+
         blocked_users = BlockedUsers.objects.filter(blocker=request.user).select_related('blocked')
         blocked_list = [{'id': user.blocked.id, 'username': user.blocked.username} for user in blocked_users]
 
@@ -457,7 +470,7 @@ class GlobalStatsView(APIView):
             'notifications': NotificationSerializer(notifications, many=True).data,
             'game_history': GameHistorySerializer(game_history, many=True).data,
             'achievements': UserAchievementSerializer(achievements, many=True).data,
-            'tournament': TournamentSerializer(tournament).data,
+            'tournament': tournament,
             'blocked_users': blocked_list
         }
         return(Response(data, status=status.HTTP_200_OK))
@@ -467,14 +480,17 @@ class GlobalStatsView(APIView):
 
 class LocalTournamentView(APIView):
     def get(self, request):
-        tournament = LocalTournament.objects.filter(tournament_creator=request.user).first()
+        #here we should also the tournament he is participating on 
+        # currentLocalPlayer = LocalPlayer.objects.filter(username=request.user.username).first()
+        # print(currentLocalPlayer)
+        currentLocalPlayer = get_object_or_404(LocalPlayer, username=request.user.username)
+        tournament = currentLocalPlayer.tournament
+        # tournament = LocalTournament.objects.filter(tournament_participants=currentLocalPlayer).first()
         if tournament:
             serializer = LocalTournamentSerializer(tournament)
             return Response(serializer.data, status=status.HTTP_200_OK)
         else:
             return Response({'message': 'No tournament found'}, status=status.HTTP_404_NOT_FOUND)
-
-
 
 
     def post(self, request):
@@ -483,11 +499,13 @@ class LocalTournamentView(APIView):
         if serializer.is_valid():
             invited_users = serializer.validated_data.pop('invitedUsers', [])
             tournament = LocalTournament.objects.create(tournament_creator=request.user, **serializer.validated_data)
-            currentUserLocal = LocalPlayer.objects.create(username=user.username)
+            currentUserLocal = LocalPlayer.objects.create(tournament=tournament ,username=user.username)
+            # tournament.tournament_participants.add(currentUserLocal)
             participants_list = [currentUserLocal]
             for participant in invited_users:
-                participant = LocalPlayer.objects.create(username=participant)
+                participant = LocalPlayer.objects.create(tournament=tournament,username=participant)
                 participants_list.append(participant)
+                # tournament.tournament_participants.add(participant)
             tournament.assign_opponent(participants_list)
 
             return Response({'message': 'Tournament created successfully'}, status=status.HTTP_201_CREATED)

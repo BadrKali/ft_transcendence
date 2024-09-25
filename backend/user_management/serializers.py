@@ -85,6 +85,7 @@ class TournamentSerializer(serializers.ModelSerializer):
             'tournament_name',
             'tournament_prize',
             'tournament_map',
+            'is_online',
             'created_at',
             'tournament_date',
             'tournament_status',
@@ -150,7 +151,7 @@ class LocalPlayerSerializer(serializers.ModelSerializer):
         model = LocalPlayer
         fields = ['id', 'username', 'avatar', 'paddle_color', 'keys']
 
-class LocalTournamanetParticipantsSerializer(serializers.ModelSerializer):
+class LocalTournamentParticipantsSerializer(serializers.ModelSerializer):
     player1 = LocalPlayerSerializer()
     player2 = LocalPlayerSerializer()
 
@@ -158,15 +159,22 @@ class LocalTournamanetParticipantsSerializer(serializers.ModelSerializer):
         model = LocalTournamanetParticipants
         fields = ['player1', 'player2']
 
-
 class LocalTournamentSerializer(serializers.ModelSerializer):
-    tournament_participants = LocalTournamanetParticipantsSerializer(many=True, read_only=True)
+    tournament_participants = serializers.SerializerMethodField()
 
     class Meta:
         model = LocalTournament
-        fields = ['id', 'tournament_creator', 'tournament_name', 'tournament_map', 
-                  'created_at', 'tournament_status', 'tournament_stage', 'tournament_participants']
+        fields = ['id', 'tournament_creator', 'tournament_name', 'tournament_map',
+                  'created_at', 'tournament_status', 'tournament_stage','is_online', 'tournament_participants']
 
+    def get_tournament_participants(self, obj):
+        participants = LocalTournamanetParticipants.objects.filter(tournament=obj)
+        all_participants = []
+        for participant in participants:
+            all_participants.append(participant.player1)
+            all_participants.append(participant.player2)
+
+        return LocalPlayerSerializer(all_participants, many=True).data
 
 
 class LocalTournamentCreatSerializer(serializers.ModelSerializer):

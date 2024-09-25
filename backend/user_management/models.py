@@ -232,7 +232,7 @@ class Tournament(models.Model):
     tournament_status = models.BooleanField(default=False) # hadi ghadi tbadelha b True lma ykono les places kamline
     tournament_stage = models.CharField(max_length=100, default="semi-finals") # hadi f ina stage wasla tournament
     tournament_participants = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='tournament_participants')
-
+    is_online = models.BooleanField(default=True)
 
     def assign_tournament_prize(self):
         print(self.tournament_creator.player.rank)
@@ -300,6 +300,8 @@ class LocalPlayer(models.Model):
     avatar = models.ImageField(null=True, blank=True)
     paddle_color = models.CharField(max_length=7, null=True, blank=True)
     keys = models.JSONField(null=True, blank=True)
+    # i want to add a field for the tournament if the player is a prt of tournament if not i want it to be null
+    tournament = models.ForeignKey('LocalTournament', related_name='participants', on_delete=models.CASCADE, null=True, blank=True)
 
     def __str__(self):
         return self.username
@@ -313,7 +315,7 @@ class LocalTournament(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     tournament_status = models.BooleanField(default=False)
     tournament_stage = models.CharField(max_length=100, default="semi-finals")
-
+    is_online = models.BooleanField(default=False)
 
     def __str__(self):
         return self.tournament_name
