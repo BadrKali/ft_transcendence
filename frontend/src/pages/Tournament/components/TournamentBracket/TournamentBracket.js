@@ -36,7 +36,7 @@ function TournamentBracket() {
     { id: 1, player1: {}, player2: {} },
   ];
 
-  console.log(matches)
+
   useEffect(() => {
     if (matches) {
       const fetchPlayerDetails = async (playerId) => {
