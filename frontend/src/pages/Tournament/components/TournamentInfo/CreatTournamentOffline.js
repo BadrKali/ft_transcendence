@@ -29,7 +29,7 @@ const CreatTournamentOffline= ({onClose}) => {
     const [players, setPlayers] = useState([]);
     const { t } = useTranslation();
 
-
+    
     useEffect(() => {
         if (data) {
           setListFriend(data);

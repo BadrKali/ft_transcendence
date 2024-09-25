@@ -1,5 +1,7 @@
 import React from 'react'
 import { useState, useEffect, useContext } from 'react'
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 import useAuth from '../../../../hooks/useAuth'
 import useFetch from '../../../../hooks/useFetch'
 import Icon from '../../../../assets/Icon/icons'
@@ -24,8 +26,18 @@ function JoinedTournamentOffline({TournamentData}) {
     const [progress, setProgress] = useState(0);
     const { t } = useTranslation();
     const unknownAvatar = avatarsUnkown.img;
+    const navigate = useNavigate();
+    const [matchToDisplay, setMatchToDisplay] = useState(null);
+    const {data: matches ,isLoading: matchesisLoading, error: matchesError} = useFetch(`${BACKEND_URL}/user/local-tournament/SEMI-FINALS`)
 
 
+    useEffect(() => {
+        console.log(matches);
+        if (Array.isArray(matches) && matches.length > 0) {
+            const selectedMatch = matches[0]?.matchPlayed ? matches[1] : matches[0];
+            setMatchToDisplay(selectedMatch); 
+        }
+    }, [matches]); 
 
 
     const date = new Date(TournamentData.created_at);
@@ -36,7 +48,6 @@ function JoinedTournamentOffline({TournamentData}) {
             setjoinedOwner(true)
     },[userData]);
 
-    console.log(TournamentData)
     const formattedDate = date.toLocaleDateString('en-GB', {
         day: '2-digit',
         month: 'short',
@@ -61,28 +72,23 @@ function JoinedTournamentOffline({TournamentData}) {
       }, []);
   
       const handleStartTournament = async () => {
-        try {
-            const response = await fetch(`${BACKEND_URL}/user/tournament/start/`, {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${auth.accessToken}`
-              },
-            });
-        
-            if (response.ok) {
-              const data = await response.json();
-              console.log('Tournament started successfully:', data);
-           
-            } else {
-              const errorData = await response.json();
-              console.error('Failed to start tournament:', errorData);
-              
+        const gameRoomResponse = await axios.post(
+            `${BACKEND_URL}/api/game/create-local-game-room/`,
+            { 
+                player1: matchToDisplay.player1.id,
+                player2: matchToDisplay.player2.id,
+                arena: 'hell',
+            },
+            {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${auth.accessToken}`
+                }
             }
-          } catch (error) {
-            console.error('Error starting tournament:', error);
-          
-          }
+        );
+
+        const gameRoomId = gameRoomResponse.data.id;
+        navigate('/local-game', { state: { gameRoomId: gameRoomId , isTournament: true } }, { replace: true });
       }
 
       const handleDeleteTournament = async () => {
@@ -245,13 +251,17 @@ function JoinedTournamentOffline({TournamentData}) {
         <div className='matchWillPlayed'>
             <h2>Match will be played</h2>
             <div className='PlayersVs'>
+            {matchToDisplay ? ( 
+            <>
                 <div className='firstPlayerVS'>
                     <div className='TournamentPlayers-firstPlayerImage'>
-                        <img src={TournamentData.tournament_participants[0]?.avatar ? `${BACKEND_URL}${TournamentData.tournament_participants[0]?.avatar}` : unknownAvatar} alt={TournamentData.tournament_participants[0]?.avatar || 'Unknown Player'} />
+                        <img 
+                            src={matchToDisplay.player1.avatar ? `${BACKEND_URL}${matchToDisplay.player1.avatar}` : unknownAvatar} 
+                            alt={matchToDisplay.player1.avatar ? matchToDisplay.player1.username : 'Unknown Player'} 
+                        />
                     </div>
                     <div className='TournamentPlayers-firstPlayerName'>
-                        <p>{TournamentData.tournament_participants[0]?.username || 'Unknown Player'}</p>
-
+                        <p>{matchToDisplay.player1.username || 'Unknown Player'}</p>
                     </div>
                 </div>
                 <div className='vsLogoVS'>
@@ -259,12 +269,19 @@ function JoinedTournamentOffline({TournamentData}) {
                 </div>
                 <div className='secondPlayerVS'>
                     <div className='TournamentPlayers-secondPlayerName'>
-                        <p>{TournamentData.tournament_participants[1]?.username || 'Unknown Player'}</p>
+                        <p>{matchToDisplay.player2.username || 'Unknown Player'}</p>
                     </div>
                     <div className='TournamentPlayers-secondPlayerImage'>
-                        <img src={TournamentData.tournament_participants[1]?.avatar ? `${BACKEND_URL}${TournamentData.tournament_participants[1]?.avatar}` : unknownAvatar} alt={TournamentData.tournament_participants[1]?.avatar || 'Unknown Player'} />
+                        <img 
+                            src={matchToDisplay.player2.avatar ? `${BACKEND_URL}${matchToDisplay.player2.avatar}` : unknownAvatar} 
+                            alt={matchToDisplay.player2.avatar ? matchToDisplay.player2.username : 'Unknown Player'} 
+                        />
                     </div>
                 </div>
+            </>
+        ) : (
+            <p>No match available or loading...</p> // Fallback content
+        )}
             </div>
 
         </div>
