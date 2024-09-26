@@ -29,7 +29,7 @@ const CreatTournamentOffline= ({onClose}) => {
     const [players, setPlayers] = useState([]);
     const { t } = useTranslation();
 
-    
+
     useEffect(() => {
         if (data) {
           setListFriend(data);
@@ -100,7 +100,7 @@ const CreatTournamentOffline= ({onClose}) => {
             });
             if (response.ok) {
                 onClose(); 
-                const TournamentResponse = await fetch(`${BACKEND_URL}/user/tournament/`, {
+                const TournamentResponse = await fetch(`${BACKEND_URL}/user/local-tournament/`, {
                 method: 'GET',
                     headers: {
                     'Content-Type': 'application/json',

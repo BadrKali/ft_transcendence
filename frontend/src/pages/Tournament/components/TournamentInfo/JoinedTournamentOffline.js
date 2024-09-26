@@ -240,51 +240,51 @@ function JoinedTournamentOffline({TournamentData}) {
 
                             </div>
                          
-
                     </div>
                     
                 </div>
-                
+                             
+            <div className='matchWillPlayed'>
+                <h2>Match will be played</h2>
+                <div className='PlayersVs'>
+                {matchToDisplay ? ( 
+                <>
+                    <div className='firstPlayerVS'>
+                        <div className='TournamentPlayers-firstPlayerImage'>
+                            <img 
+                                src={matchToDisplay.player1.avatar ? `${BACKEND_URL}${matchToDisplay.player1.avatar}` : unknownAvatar} 
+                                alt={matchToDisplay.player1.avatar ? matchToDisplay.player1.username : 'Unknown Player'} 
+                            />
+                        </div>
+                        <div className='TournamentPlayers-firstPlayerName'>
+                            <p>{matchToDisplay.player1.username || 'Unknown Player'}</p>
+                        </div>
+                    </div>
+                    <div className='vsLogoVS'>
+                        <p>VS</p>
+                    </div>
+                    <div className='secondPlayerVS'>
+                        <div className='TournamentPlayers-secondPlayerName'>
+                            <p>{matchToDisplay.player2.username || 'Unknown Player'}</p>
+                        </div>
+                        <div className='TournamentPlayers-secondPlayerImage'>
+                            <img 
+                                src={matchToDisplay.player2.avatar ? `${BACKEND_URL}${matchToDisplay.player2.avatar}` : unknownAvatar} 
+                                alt={matchToDisplay.player2.avatar ? matchToDisplay.player2.username : 'Unknown Player'} 
+                            />
+                        </div>
+                    </div>
+                </>
+            ) : (
+                <p>No match available or loading...</p> // Fallback content
+            )}
+                </div>
+
+                </div>
             </div>
             
         </div>
-        <div className='matchWillPlayed'>
-            <h2>Match will be played</h2>
-            <div className='PlayersVs'>
-            {matchToDisplay ? ( 
-            <>
-                <div className='firstPlayerVS'>
-                    <div className='TournamentPlayers-firstPlayerImage'>
-                        <img 
-                            src={matchToDisplay.player1.avatar ? `${BACKEND_URL}${matchToDisplay.player1.avatar}` : unknownAvatar} 
-                            alt={matchToDisplay.player1.avatar ? matchToDisplay.player1.username : 'Unknown Player'} 
-                        />
-                    </div>
-                    <div className='TournamentPlayers-firstPlayerName'>
-                        <p>{matchToDisplay.player1.username || 'Unknown Player'}</p>
-                    </div>
-                </div>
-                <div className='vsLogoVS'>
-                    <p>VS</p>
-                </div>
-                <div className='secondPlayerVS'>
-                    <div className='TournamentPlayers-secondPlayerName'>
-                        <p>{matchToDisplay.player2.username || 'Unknown Player'}</p>
-                    </div>
-                    <div className='TournamentPlayers-secondPlayerImage'>
-                        <img 
-                            src={matchToDisplay.player2.avatar ? `${BACKEND_URL}${matchToDisplay.player2.avatar}` : unknownAvatar} 
-                            alt={matchToDisplay.player2.avatar ? matchToDisplay.player2.username : 'Unknown Player'} 
-                        />
-                    </div>
-                </div>
-            </>
-        ) : (
-            <p>No match available or loading...</p> // Fallback content
-        )}
-            </div>
-
-        </div>
+       
         <div className='JoinedTournomanentButoon'>
             {joinedOwner ? (
                 <div className='TournamentTwoButton'> 

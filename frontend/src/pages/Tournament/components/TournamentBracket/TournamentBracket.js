@@ -24,7 +24,7 @@ function TournamentBracket() {
   const [isOnline, setIsOnline] = useState(false);
   const {TounamentData, TounamenrLoading} = useContext(UserContext)
 
-
+  
 
   useEffect(() => {
       setIsOnline(TounamentData.is_online);
