@@ -6,7 +6,7 @@ import defit from '../../Game-assets/defit.png';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next'
-
+import { createSendInvitationHandler } from '../../../../tools/createSendInvitationHandler';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const WS_BACKEND_URL = process.env.REACT_APP_WS_BACKEND_URL;
@@ -17,39 +17,31 @@ const PlayerSelection = ({ onPlayerSelect, onCancel }) => {
   const { auth } = useAuth();
   const { data, isLoading, error } = useFetch(`${BACKEND_URL}/user/friends/list/`);
   const ws = useRef(null);
+  const handleSendInvitation = createSendInvitationHandler(auth);
 
-  useEffect(() => {
-    ws.current = new WebSocket(`${WS_BACKEND_URL}/ws/notifications/?token=${auth.accessToken}`);
-    ws.current.onopen = () => {
-      console.log('WebSocket connection established');
-    };
-    ws.current.onclose = () => {
-      console.log('WebSocket connection closed');
-    };
+  // useEffect(() => {
+  //   ws.current = new WebSocket(`${WS_BACKEND_URL}/ws/notifications/?token=${auth.accessToken}`);
+  //   ws.current.onopen = () => {
+  //     console.log('WebSocket connection established');
+  //   };
+  //   ws.current.onclose = () => {
+  //     console.log('WebSocket connection closed');
+  //   };
 
-    return () => {
-      if (ws.current) {
-        ws.current.close();
-      }
-    };
-  }, []);
+  //   return () => {
+  //     if (ws.current) {
+  //       ws.current.close();
+  //     }
+  //   };
+  // }, []);
 
   const handleChallenge = async (player) => {
-    const notification = {
-      player_receiver_id: player.id,
-    };
     try {
-      const response = await axios.post(`${BACKEND_URL}/api/game/send-challenge/`, notification, {
-            headers : {
-              'Content-Type' : 'application/json',
-              'Authorization': `Bearer ${auth.accessToken}`,
-          }
-      });
-      console.log("Game Settings saved", response.data);
+      await handleSendInvitation(player.id);
+      navigate('/invite-game', { replace:true })
     } catch (error) {
-      console.log("Failed to save game settings");
+      console.log(error);
     }
-    navigate('/invite-game', { replace : true });
   };
 
   return (

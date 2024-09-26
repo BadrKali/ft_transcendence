@@ -9,13 +9,14 @@ import { ErrorToast } from '../../../../components/ReactToastify/ErrorToast.js';
 import useAuth from '../../../../hooks/useAuth.js';
 import { ProfileContext } from '../../../../context/ProfilContext.js';
 import { useGetBlockDetails } from '../../usehooks/GetBlockDetails.jsx';
-
+import { createSendInvitationHandler } from '../../../../tools/createSendInvitationHandler.js';
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
 const UserParams = () => {
   const { auth } = useAuth();
   const {ChatPartner} = useContext(chatPartnerContext);
   const navigate = useNavigate();
+  const handleSendInvitation = createSendInvitationHandler(auth);
 
 
   const { blockRelation } = useGetBlockDetails(ChatPartner, auth);
@@ -27,13 +28,14 @@ const UserParams = () => {
         });
     }
 
-    function handleInviteToGame(){
-      // Please Don't Forgot to check block status for the users :
-      // Data that You will need is as follow :
-        // ChatPartner : obj of the user that you open the conversation with him ok !
-        // you can get id- username ....
-      // Block relation : contains if we have block relation either you block me or I block you !
-      alert('Hi InviteToGame Clicked');
+    const handleInviteToGame = async () => {
+      if (blockRelation) return;
+      try {
+        await handleSendInvitation(ChatPartner.id);
+        navigate('/invite-game', { replace:true })
+      } catch (error) {
+        console.log(error);
+      }
     }
 
     const  handleBlocking =  async() =>{
