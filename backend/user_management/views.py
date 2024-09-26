@@ -514,6 +514,15 @@ class LocalTournamentView(APIView):
             return Response({'message': 'Tournament created successfully'}, status=status.HTTP_201_CREATED)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    def delete(self, request):
+        tournament = get_object_or_404(LocalTournament, tournament_creator=request.user)
+        print(tournament)
+        if tournament:
+            tournament.delete()
+            return Response({'message': 'Tournament deleted successfully'}, status=status.HTTP_200_OK)
+        else:
+            return Response({'error': 'Tournament not found.'}, status=status.HTTP_404_NOT_FOUND)
 
 
 
