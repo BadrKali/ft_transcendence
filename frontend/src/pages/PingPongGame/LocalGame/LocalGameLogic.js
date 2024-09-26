@@ -289,7 +289,6 @@ const LocalGameLogic = ({ player1Id, player2Id, handleEndMatch }) => {
     };
 
     if (!gameRunning || gameOver) {
-        navigate('/game');
         return null;
     }
 
