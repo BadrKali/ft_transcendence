@@ -7,6 +7,8 @@ import TwoFa from './Components/TwoFa/TwoFa'
 import useAuth from '../../hooks/useAuth'
 import { useNavigate } from 'react-router-dom'
 import useRefresh from '../../hooks/useRefresh'
+import { SuccessToast } from '../../components/ReactToastify/SuccessToast'
+import ToastContainer from '../../components/ReactToastify/ToastContainer'
 
 const Auth = (props) => {
   const [isLogin, setIsLogin] = useState(true)
@@ -26,7 +28,6 @@ const Auth = (props) => {
     }
   }, [])
 
-  console.log("Auth page")
   return (
     <div className='auth-container'>
       <div className='auth-left-section'>
@@ -55,6 +56,7 @@ const Auth = (props) => {
         </div>
       </div>
       <div className='auth-right-section'></div>
+      <ToastContainer />
     </div>
   )
 }

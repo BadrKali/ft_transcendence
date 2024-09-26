@@ -4,6 +4,7 @@ import { assets, avatars } from '../../../../assets/assets'
 import AuthInput from '../AuthInput/AuthInput';
 import axios from '../../../../api/axios';
 import { useTranslation } from 'react-i18next'
+import { ErrorToast } from '../../../../components/ReactToastify/ErrorToast';
 
 
 const SIGNUP_URL = '/auth/user/register/'
@@ -55,9 +56,17 @@ const SignUp = (props) => {
             });
             console.log(response.data);
             props.setIsLogin(true);
-        } catch (err) {
+        }  catch (err) {
+            if (err.response && err.response.data) {
+                const errors = Object.values(err.response.data);
+                const message = errors.flat().join(' '); 
+                ErrorToast(message);
+            } else {
+                ErrorToast("An unexpected error occurred.");
+            }
             console.error(err);
         }
+        
     };
 
     const errorMsg = [

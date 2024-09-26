@@ -8,7 +8,8 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import useAuth from '../../../../hooks/useAuth'
 import { fetchData } from '../../../Setting/components/TwoFaModal/TwoFaModal'
 import useRefresh from '../../../../hooks/useRefresh'
-import { useTranslation } from 'react-i18next'
+import { useTranslation } from 'react-i18next';
+import { ErrorToast } from '../../../../components/ReactToastify/ErrorToast'
 
 
 
@@ -94,8 +95,15 @@ const SignIn = (props) => {
             // }
             // catch (error) {
             //     console.error('Error fetching user data:', error);
-            // }
+            // 
         } catch(err) {
+            console.log(err.response.status)
+            if(err.response.status === 401) {
+                ErrorToast("Invalid username or password.")
+            }
+            else {
+                ErrorToast("An error occurred. Please try again later.")
+            }
             console.log(err)
         } finally {
             // console.log("yay")
