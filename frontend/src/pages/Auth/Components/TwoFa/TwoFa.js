@@ -41,6 +41,7 @@ const TwoFa = (props) => {
     const handleContinueClick = () => {
       console.log('Continue clicked', verificationStatus);
       if(verificationStatus === 'success') {
+        setAuth({username:"belkala", accessToken: props.accessToken})
         navigate('/')
       }
       else {
@@ -55,7 +56,7 @@ const TwoFa = (props) => {
                 method: 'POST',
                 headers: {
                   'Content-Type': 'application/json',
-                  'Authorization': `Bearer ${auth.accessToken}`
+                  'Authorization': `Bearer ${props.accessToken}`
                 },
                 body: JSON.stringify({otp: otpCode}),
                 credentials: 'include'
@@ -63,6 +64,7 @@ const TwoFa = (props) => {
               });
               if (response.ok) {
                   console.log('OTP verified successfully');
+                  console.log(response)
                   // console.log(response.data.username, response.data.access)
                   // props.setAuth({username:response.data.username, accessToken: response.data.access})
                   setVerificationStatus('success');
@@ -88,7 +90,7 @@ const TwoFa = (props) => {
           }
           if (newOtp.every(data => data !== '')) {
             const otpCode = newOtp.join('');
-            const status = veryfyOtp(otpCode, auth.accessToken);
+            const status = veryfyOtp(otpCode, props.accessToken);
             console.log('status: ', status)
             if(status === true) {
                 // setVerificationStatus('success');
@@ -128,7 +130,7 @@ const TwoFa = (props) => {
         </div>
         <div className='AuthTwoFaAction'>
             <button className='AuthTwoFaButton' onClick={handleContinueClick}>Continue</button>
-            <button className="AuthTwoFaBackButton">&larr; Back to login</button>
+            <button className="AuthTwoFaBackButton" onClick={props.handleBackToLogin}>&larr; Back to login</button>
 
         </div>
     </div>

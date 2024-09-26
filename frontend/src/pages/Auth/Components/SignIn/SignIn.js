@@ -26,6 +26,7 @@ const SignIn = (props) => {
     const location = useLocation()
     const { t } = useTranslation();
 
+
     // const refresh = useRefresh()
     // const [isLoading, setIsLoading] = useState(true)
 
@@ -72,14 +73,16 @@ const SignIn = (props) => {
                 withCredentials: true
             });
             const accessToken = response?.data?.access;
-            props.setAuth({username:signInValues.username, accessToken: accessToken})
+            // props.setAuth({username:signInValues.username, accessToken: accessToken})
             console.log('daaataaaa', response.data)
             if(response.data['2fa_required'] === true) {
+                props.setAccessToken(accessToken)
                 console.log('2FA enabled ya kho');
                 props.setIsTwoFa(true)
                 props.setTwoFaUser(response.data.username)
             }
             else {
+                props.setAuth({username:signInValues.username, accessToken: accessToken})
                 navigate('/');
             }
             // try {
