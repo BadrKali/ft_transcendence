@@ -322,6 +322,7 @@ class GameConsumer(AsyncWebsocketConsumer):
             return
         if is_game_over:
             await self.leave_room("game_over")
+            return
         if not is_game_started:
             print("Game is already over or hasn't started, handling disconnect accordingly")
             await self.leave_room("game_canceled")
@@ -342,6 +343,7 @@ class GameConsumer(AsyncWebsocketConsumer):
                 }
             )
             await self.leave_room("game_canceled")
+            return
         else:
             await self.game_state.update_player_status(player_str, False)
             if await self.check_game_over():
@@ -354,6 +356,7 @@ class GameConsumer(AsyncWebsocketConsumer):
                         'message': { 'action': 'opponent_disconnected' },
                     }
                 )
+            return
 
     @database_sync_to_async
     def get_user_id(self, player_str):
@@ -383,7 +386,10 @@ class GameConsumer(AsyncWebsocketConsumer):
                 canvas_size = data.get('canvasSize')
                 self.game_state.player_mouvement(username, direction, canvas_size)
         elif action == "got_it":
-            asyncio.create_task(self.start_game_loop(self.room))
+            match_status = await self.game_state.get_game_started()
+            if not match_status:
+                await self.game_state.update_game_started(True)
+                asyncio.create_task(self.start_game_loop(self.room)) 
         elif action == "im_waiting":
             room = self.get_game_room()
             await self.waiting_for_reconnection(room)
@@ -454,7 +460,6 @@ class GameConsumer(AsyncWebsocketConsumer):
                 if not invite_game_room.is_waiting:
                     await self.game_state.add_player("", invite_game_room)
                     await self.notify_players(invite_game_room)
-                    await self.game_state.update_game_started(True)
             else:
                 print("InviteGameRoom not found")
         except Exception as e:
@@ -485,8 +490,7 @@ class GameConsumer(AsyncWebsocketConsumer):
                 self.game_state = game_state_manager.get_or_create_game_state(self.room_id)
                 if not tournament_game_room.is_waiting:
                     await self.game_state.add_player("", tournament_game_room)
-                    await self.notify_players(tournament_game_room)
-                    await self.game_state.update_game_started(True)
+                    await self.notify_players(tournament_game_room)            
             else:
                 print("TournamentGameRoom not found")
         except Exception as e:
@@ -505,7 +509,6 @@ class GameConsumer(AsyncWebsocketConsumer):
         if not room.is_waiting:
             await self.game_state.add_player(player_str, room)
             await self.notify_players(room)
-            await self.game_state.update_game_started(True)
         else:
             await self.notify_waiting_player(room)
     
@@ -601,8 +604,8 @@ class GameConsumer(AsyncWebsocketConsumer):
         }))
 
     async def start_game_loop(self, room):
-        # print("HELLO FROM START")
-        frame_duration = 1 / 60
+        print("HELLO FROM START")
+        frame_duration = 1 / 120
         while self.game_state.get_running():
             start_time = time.time()
             self.game_state.update_game_state()
