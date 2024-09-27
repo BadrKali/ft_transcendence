@@ -25,6 +25,7 @@ class PlayerSerializer(serializers.ModelSerializer):
     avatar = serializers.ImageField(source='user.avatar')
     is_2fa_enabled = serializers.BooleanField(source='user.is_2fa_enabled')
     rank_progress = serializers.IntegerField(source='get_rank_progress')
+    api_42_id = serializers.CharField(source='user.api_42_id')
 
     class Meta:
         model = Player
@@ -37,7 +38,9 @@ class PlayerSerializer(serializers.ModelSerializer):
             'rank_progress', 
             'games_played', 
             'games_won', 
-            'xp'
+            'xp',
+            'api_42_id'
+            
         ]
     
 

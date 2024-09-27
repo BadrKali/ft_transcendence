@@ -47,7 +47,6 @@ const Setting = () => {
     setQrCodeUrl(data.otp_uri);
     setShowTwoFaModal(true);
   }
-
   const closeTwoFaModal = () => {
     setShowTwoFaModal(false);
   }
@@ -139,8 +138,8 @@ const Setting = () => {
               <p>{t('Update your information about you and details here')}</p>
             </div>
             <div className={Style.InputSection}>
-              <SettingInput label={t('User Name')} name='username' placeholder='Perdoxii_noyat' type='text' onChange={handleInputChange} />
-              <SettingInput label={t('Email')} name='email' placeholder='perdoxi@admin.com' type='email' onChange={handleInputChange}/>
+              <SettingInput label={t('User Name')} name='username' placeholder='Perdoxii_noyat' type='text' onChange={handleInputChange} disabled={false}/>
+              <SettingInput label={t('Email')} name='email' placeholder='perdoxi@admin.com' type='email' onChange={handleInputChange} disabled={false}/>
             </div>
           </div>
           <div className={Style.SettingSep}></div>
@@ -150,8 +149,8 @@ const Setting = () => {
               <p>{t('Update your information about you and details here')}</p>
             </div>
             <div className={Style.InputSection}>
-              <SettingInput label={t('Current Password')}  name="old_password" placeholder='********************' type='password' onChange={handleInputChange}/>
-              <SettingInput label={t('New Password')} name="new_password" placeholder='********************' type='password' onChange={handleInputChange}/>
+              <SettingInput label={t('Current Password')}  name="old_password" placeholder='********************' type='password' onChange={handleInputChange} disabled={userData.api_42_id === null ? false : true}/>
+              <SettingInput label={t('New Password')} name="new_password" placeholder='********************' type='password' onChange={handleInputChange} disabled={userData.api_42_id === null ? false : true}/>
             </div>
           </div>
           <div className={Style.SettingSep}></div>

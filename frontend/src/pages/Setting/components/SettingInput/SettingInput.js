@@ -8,7 +8,13 @@ const SettingInput = (props) => {
   return (
     <div className='setting-input-container'>
             <span>{props.label}</span>
-            <input name={props.name} type={props.type} placeholder={props.placeholder} onChange={props.onChange}/>
+            <input 
+            name={props.name} 
+            type={props.type} 
+            placeholder={props.placeholder} 
+            onChange={props.onChange}
+            disabled={props.disabled}
+            />
     </div>
   )
 }
