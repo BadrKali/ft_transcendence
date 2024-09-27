@@ -229,6 +229,11 @@ class Enable2FA(APIView):
                 secure=True,    
                 samesite='None' 
             )
+            # i need to remove the qr code file 
+            file_name = f'{user.username}_2fa.png'
+            file_path = f'private_media/2fa/{file_name}'
+            if os.path.exists(file_path):
+                os.remove(file_path)
             return response
         return Response({"error": "Invalid OTP"}, status=status.HTTP_400_BAD_REQUEST)
 
