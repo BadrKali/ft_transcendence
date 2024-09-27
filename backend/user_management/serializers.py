@@ -166,6 +166,8 @@ class LocalPlayerSerializer(serializers.ModelSerializer):
 class LocalTournamentParticipantsSerializer(serializers.ModelSerializer):
     player1 = LocalPlayerSerializer()
     player2 = LocalPlayerSerializer()
+    winner = LocalPlayerSerializer()
+    loosers = LocalPlayerSerializer()
 
     class Meta:
         model = LocalTournamanetParticipants
@@ -174,7 +176,9 @@ class LocalTournamentParticipantsSerializer(serializers.ModelSerializer):
             'player1',
             'player2',
             'matchPlayed',
-            'matchStage'
+            'matchStage',
+            'winner',
+            'loosers'
             ]
 
 class LocalTournamentSerializer(serializers.ModelSerializer):
