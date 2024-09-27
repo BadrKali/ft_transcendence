@@ -68,6 +68,7 @@ const TwoFa = (props) => {
                   // console.log(response.data.username, response.data.access)
                   // props.setAuth({username:response.data.username, accessToken: response.data.access})
                   setVerificationStatus('success');
+                  props.setOtpSuccess(true)
                   return true;
                 }
                 return false;

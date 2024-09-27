@@ -19,6 +19,7 @@ const Auth = (props) => {
   const [accessToken, setAccessToken] = useState(null)
   const { auth, setAuth } = useAuth()
   const navigate = useNavigate()
+  const [otpSuccess, setOtpSuccess] = useState(false)
   
 
   const handleTwoFaSuccess = () => {
@@ -30,21 +31,28 @@ const Auth = (props) => {
 
   const handleBackToLogin = async () => {
     console.log('Back to login');
-    try {
-      const response = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/auth/logout/`, {}, {
-        headers: {
-          'Authorization': `Bearer ${accessToken}`, 
-        },
-        withCredentials: true,
-      });
-      if (response.status === 205) {
-        console.log('Logged out successfully');
+    if(otpSuccess) {
+      try {
+        const response = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/auth/logout/`, {}, {
+          headers: {
+            'Authorization': `Bearer ${accessToken}`, 
+          },
+          withCredentials: true,
+        });
+        if (response.status === 205) {
+          console.log('Logged out successfully');
+        }
+      }
+      catch (error) {
+        console.error('Error logging out:', error.response ? error.response.data : error.message);
+      } finally {
         setIsTwoFa(false)
         setAuth(null)
       }
     }
-    catch (error) {
-      console.error('Error logging out:', error.response ? error.response.data : error.message);
+    else {
+      setIsTwoFa(false)
+      setAuth(null)
     }
   };
 
@@ -80,6 +88,7 @@ const Auth = (props) => {
               onSuccess={handleTwoFaSuccess}
               accessToken={accessToken}
               handleBackToLogin={handleBackToLogin}
+              setOtpSuccess={setOtpSuccess}
             />
           }
         </div>
