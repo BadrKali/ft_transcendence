@@ -486,14 +486,16 @@ class LocalTournamentView(APIView):
         #here we should also the tournament he is participating on 
         # currentLocalPlayer = LocalPlayer.objects.filter(username=request.user.username).first()
         # print(currentLocalPlayer)
-        currentLocalPlayer = get_object_or_404(LocalPlayer, username=request.user.username)
+        try : 
+            currentLocalPlayer = LocalPlayer.objects.get(username=request.user.username)
+        except LocalPlayer.DoesNotExist:
+            return Response({}, status=status.HTTP_404_NOT_FOUND)
         tournament = currentLocalPlayer.tournament
-        # tournament = LocalTournament.objects.filter(tournament_participants=currentLocalPlayer).first()
         if tournament:
             serializer = LocalTournamentSerializer(tournament)
             return Response(serializer.data, status=status.HTTP_200_OK)
         else:
-            return Response({}, status=status.HTTP_200_OK)
+            return Response({}, status=status.HTTP_404_NOT_FOUND)
 
 
 
