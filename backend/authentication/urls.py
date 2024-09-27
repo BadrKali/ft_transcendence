@@ -1,6 +1,6 @@
 from django.urls import path,include
 from rest_framework_simplejwt.views import TokenObtainPairView , TokenRefreshView
-from .views import UserRegistration,CurrentUserView, UserView, CustomTokenObtainPairView, CustomTokenRefreshView, CallbackView, Enable2FA, Disable2FA, LogoutView
+from .views import *
 
 urlpatterns = [
     path("token/", CustomTokenObtainPairView.as_view(), name="get_token"),
@@ -13,4 +13,5 @@ urlpatterns = [
     path("callback/", CallbackView.as_view(), name="auth_callback"),
     path("enable2fa/", Enable2FA.as_view(), name="enable_2fa"),
     path("disable2fa/", Disable2FA.as_view(), name="disable_2fa"),
+    path('private_media/2fa/<str:file_name>', ProtectedQRCodeView.as_view(), name='protected_qrcode'),
 ] 

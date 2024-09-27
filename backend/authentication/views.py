@@ -20,6 +20,7 @@ from asgiref.sync import async_to_sync
 from user_management.models import Notification
 import pyotp
 import qrcode
+from django.http import FileResponse, Http404
 # Create your views here.
  
 token_url = 'https://api.intra.42.fr/oauth/token'
@@ -196,7 +197,7 @@ class Enable2FA(APIView):
         request.user.generate_otp_secret()
         otp_uri = request.user.get_otp_uri()
         file_name = f'{request.user.username}_2fa.png'
-        file_path = f'media/2fa/{file_name}'
+        file_path = f'private_media/2fa/{file_name}'
         qrcode.make(otp_uri).save(file_path)
         return Response({"otp_uri": file_path}, status=status.HTTP_200_OK)
     
@@ -254,3 +255,20 @@ class LogoutView(APIView):
             return Response({"message": "Successfully logged out"}, status=status.HTTP_205_RESET_CONTENT)
         except Exception as e:
             return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+class ProtectedQRCodeView(APIView):
+    permission_classes = [IsAuthenticated]  # Ensure the user is authenticated
+
+    def get(self, request, file_name):
+        print("asdasdasdasd")
+        user = request.user
+        expected_file_name = f'{user.username}_2fa.png'
+        file_path = f'private_media/2fa/{expected_file_name}'
+        print(f"file path: {file_path}")
+        # Ensure the file exists and the file name matches the expected file name
+        if not os.path.exists(file_path) or expected_file_name != file_name:
+            raise Http404("File not found or you don't have permission to access this file.")
+        
+        # Serve the file as a response
+        return FileResponse(open(file_path, 'rb'), content_type='image/png')

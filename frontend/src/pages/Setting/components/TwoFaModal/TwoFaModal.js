@@ -28,11 +28,37 @@ const TwoFaModal = ({handleClose, qrUrl}) => {
   const [verificationStatus, setVerificationStatus] = useState('idle');
   const {auth} = useAuth();
   const inputRefs = useRef([]);
+  const [qrCode, setQrCode] = useState('');
   const { userData , updateUserData } = useContext(UserContext);
-  console.log('qrUrl: ', `${BACKEND_URL}/${qrUrl}`);
+
+  console.log('qrUrl: ', qrUrl);
 
   useEffect(() => {
     inputRefs.current[0].focus();
+  }, []);
+
+  useEffect(() => {
+    setVerificationStatus('loading');
+    const fetchQrCode = async () => {
+      try {
+        const response = await fetch(`${BACKEND_URL}/auth/${qrUrl}`, {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${auth.accessToken}`
+          }
+        });
+        if(response.ok) {
+          const qrCode = await response.blob();
+          setQrCode(URL.createObjectURL(qrCode));
+          setVerificationStatus('idle');
+
+        }
+      } catch (error) {
+        setVerificationStatus('failed');
+        console.error('Error fetching qr code: ', error);
+      }
+    }
+    fetchQrCode();
   }, []);
 
   const veryfyOtp = async (otpCode) => {
@@ -91,7 +117,7 @@ const TwoFaModal = ({handleClose, qrUrl}) => {
   const renderVerificationStatus = () => {
     if (verificationStatus === 'idle') {
       return  <div className="qrcodeContainer">
-                  <img src={`${BACKEND_URL}/${qrUrl}`} alt="QR Code for 2FA setup" />
+                  <img src={qrCode} alt="QR Code for 2FA setup" />
               </div> ;
     }
 
