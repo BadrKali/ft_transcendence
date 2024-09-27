@@ -190,6 +190,7 @@ const CreatTournamentOffline= ({onClose}) => {
                                 type='text'
                                 value={username}
                                 onChange={(e) => setUsername(e.target.value)}
+                                disabled={players.length >= 3}
                             />
                             <p className="AddClick"onClick={handleAddPlayer}>ADD{t('FRIENDS')}</p>
                 </div>

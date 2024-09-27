@@ -493,7 +493,8 @@ class LocalTournamentView(APIView):
             serializer = LocalTournamentSerializer(tournament)
             return Response(serializer.data, status=status.HTTP_200_OK)
         else:
-            return Response({'message': 'No tournament found'}, status=status.HTTP_404_NOT_FOUND)
+            return Response({}, status=status.HTTP_200_OK)
+
 
 
     def post(self, request):

@@ -234,6 +234,7 @@ const CreatTournamentOnline = ({onClose}) => {
                     className='playerSelect'
                     styles={customStyles}
                     placeholder={t('Select players...')}
+                    isDisabled={selectedPlayers.length >= 3}
                 />
             </div>
             <div className='tournamentButton-container'>

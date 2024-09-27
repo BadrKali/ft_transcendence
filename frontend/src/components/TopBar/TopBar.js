@@ -256,7 +256,10 @@ const handleReject = async (id, type) => {
   };
 
   const handleIconClick = async () => {
-    setNotif(!showNotif);
+    if (modalOpen)
+      setNotif(false)
+    else
+      setNotif(!showNotif);
     clearNotification(); 
     await fetch(`${BACKEND_URL}/user/notifications/`, {
       method: 'POST',
@@ -323,7 +326,10 @@ const handleReject = async (id, type) => {
   };
 
   const handleProfilClick = (e) => {
-    setProfilActive(!isProfilActive);
+    if (modalOpenBlocked)
+      setProfilActive(false)
+    else
+      setProfilActive(!isProfilActive);
   };
 
   const handleClickOutsideSearch = (event) => {

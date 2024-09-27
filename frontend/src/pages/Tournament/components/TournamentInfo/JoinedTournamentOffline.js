@@ -93,7 +93,7 @@ function JoinedTournamentOffline({TournamentData}) {
 
       const handleDeleteTournament = async () => {
         try {
-          const response = await fetch(`${BACKEND_URL}/user/tournament/`, {
+          const response = await fetch(`${BACKEND_URL}/user/local-tournament/`, {
             method: 'DELETE',
             headers: {
               'Content-Type': 'application/json',
@@ -104,14 +104,14 @@ function JoinedTournamentOffline({TournamentData}) {
       
           if (response.ok) {
             const data = await response.json();
-            const TournamentResponse = await fetch(`${BACKEND_URL}/user/tournament/`, {
+            const TournamentResponse = await fetch(`${BACKEND_URL}/user/local-tournament/`, {
                 method: 'GET',
                     headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${auth.accessToken}`
                     }
                 });
-                
+                console.log(TournamentResponse)
                 if (!TournamentResponse.ok) {
                     throw new Error('Network response was not ok');
                 }
