@@ -326,7 +326,23 @@ class LocalTournament(models.Model):
         for i in range(0, len(participants_list), 2):
             LocalTournamanetParticipants.objects.create(tournament=self, player1=participants_list[i], player2=participants_list[i+1])
             # TournamentGameRoom.objects.create(player1=participants[i], player2=participants[i+1])
-
+    def assign_tournament_stage(self):
+        # participants = LocalTournamanetParticipants.objects.filter(tournament=self)
+        #the tournament created by default on semi-finals with 2 object of participant 2 players each so we have to check if the tournament is a Semi final after that we check the match played if both maches are played we change the stage to finals
+        # we creat the final match participants the both matches are played 
+        if self.tournament_stage == 'SEMI-FINALS':
+            participants = LocalTournamanetParticipants.objects.filter(tournament=self, matchStage='SEMI-FINALS')
+            if participants[0].matchPlayed and participants[1].matchPlayed:
+                winner1 = participants[0].winner
+                winner2 = participants[1].winner
+                LocalTournamanetParticipants.objects.create(tournament=self, player1=winner1, player2=winner2)
+                self.tournament_stage = 'FINALS'
+        elif self.tournament_stage == 'FINALS':
+            participants = LocalTournamanetParticipants.objects.filter(tournament=self, matchStage='FINALS')
+            if participants[0].matchPlayed:
+                self.tournament_stage = 'FINISHED'
+                self.save()
+                
 class LocalTournamanetParticipants(models.Model):
     tournament = models.ForeignKey(LocalTournament, on_delete=models.CASCADE)
     player1 = models.ForeignKey(LocalPlayer, on_delete=models.CASCADE, related_name='local_player1')
