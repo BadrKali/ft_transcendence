@@ -7,29 +7,6 @@ import { useNavigate } from 'react-router-dom';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
-// const veryfyOtp = async (otpCode, token) => {
-//     try {
-//         console.log(token)
-//         const response = await fetch(`${BACKEND_URL}/auth/enable2fa/`, {
-//             method: 'POST',
-//             headers: {
-//               'Content-Type': 'application/json',
-//               'Authorization': `Bearer ${token}`
-//             },
-//             body: JSON.stringify({otp: otpCode})
-//           });
-//           if (response.ok) {
-//               console.log('OTP verified successfully');
-//               return true;
-//             }
-//             return false;
-//     } catch(error) {
-//         console.log('Error verifying OTP: ', error);
-//         return false;
-//     }
-
-// }
-
 
 const TwoFa = (props) => {
     const [otp, setOtp] = useState(['', '', '', '', '', '']);

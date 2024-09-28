@@ -337,6 +337,7 @@ class LocalTournament(models.Model):
                 winner2 = participants[1].winner
                 LocalTournamanetParticipants.objects.create(tournament=self, player1=winner1, player2=winner2)
                 self.tournament_stage = 'FINALS'
+                self.save()
         elif self.tournament_stage == 'FINALS':
             participants = LocalTournamanetParticipants.objects.filter(tournament=self, matchStage='FINALS')
             if participants[0].matchPlayed:

@@ -178,6 +178,20 @@ class CallbackView(APIView):
         refresh = RefreshToken.for_user(user)
         access_token = str(refresh.access_token)
         refresh_token = str(refresh)
+        if user.is_2fa_enabled:
+            response_data = {
+                'access': access_token,
+                'username': username,
+                '2fa_required': True
+            }
+            response = Response(response_data, status=status.HTTP_200_OK)
+            # response.set_cookie(
+            #     key='refresh',
+            #     value=refresh_token,
+            #     httponly = True,
+            #     #more options to add when nedded 
+            # )
+            return response
         response_data = {
             'access': access_token
         }
