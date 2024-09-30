@@ -23,6 +23,7 @@ from game.serializers import GameHistorySerializer, UserAchievementSerializer
 from game.models import GameHistory, UserAchievement
 from django.db import models
 from django.db import transaction
+from django.core.paginator import Paginator
 
 class FriendRequestManagementView(APIView):
     
@@ -418,6 +419,15 @@ class XPHistoryView(APIView):
 
 class LeaderboardView(APIView):
     def get(self, request):
+        page = request.GET.get('page', 1) 
+        limit = request.GET.get('limit', 20)
+
+        try:
+            page = int(page)
+            limit = int(limit)
+        except ValueError:
+            return Response({'error': 'Invalid pagination parameters'}, status=status.HTTP_400_BAD_REQUEST)
+
         players = Player.objects.filter(
             user__is_staff=False,
             user__is_superuser=False
@@ -431,9 +441,19 @@ class LeaderboardView(APIView):
             )
         ).order_by('rank_order', '-xp')
         
-        serializer = PlayerSerializer(players, many=True)
+        paginator = Paginator(players, limit)
         
-        return Response(serializer.data)
+        try:
+            paginated_players = paginator.page(page)
+        except:
+            return Response({'results': [], 'has_more': False}, status=status.HTTP_200_OK)
+        
+        serializer = PlayerSerializer(paginated_players, many=True)
+
+        return Response({
+            'results': serializer.data,
+            'has_more': paginated_players.has_next() 
+        }, status=status.HTTP_200_OK)
 
 
 

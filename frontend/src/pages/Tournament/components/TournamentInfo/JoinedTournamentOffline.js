@@ -111,12 +111,15 @@ function JoinedTournamentOffline({TournamentData}) {
                     'Authorization': `Bearer ${auth.accessToken}`
                     }
                 });
-                console.log(TournamentResponse)
-                if (!TournamentResponse.ok) {
+                if (TournamentResponse.status === 404) {
+                    updatetounament([])
+    
+                } else if (TournamentResponse.ok) {
+                    const updatedTournamentData = await TournamentResponse.json();
+                    updatetounament(updatedTournamentData);
+                } else {
                     throw new Error('Network response was not ok');
                 }
-                const updatedTournamentData = await TournamentResponse.json();
-                updatetounament(updatedTournamentData);
             console.log('Tournament deleted successfully:', data);
     
           } else {

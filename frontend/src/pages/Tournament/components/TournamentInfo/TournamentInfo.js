@@ -22,7 +22,7 @@ const TournamentInfo = () => {
 
   console.log(TounamentData);
   useEffect (() => {
-    if (TounamentData.tournament_creator)
+    if (TounamentData && TounamentData.tournament_creator)
         setJoinedTournament(true)
     else
         setJoinedTournament(false)

@@ -1,5 +1,7 @@
 import React, { useState, useContext } from 'react';
 import { useEffect} from 'react';
+import { ErrorToast } from '../../../../components/ReactToastify/ErrorToast';
+import { SuccessToast } from '../../../../components/ReactToastify/SuccessToast';
 import useAuth from '../../../../hooks/useAuth';
 import useFetch from '../../../../hooks/useFetch';
 import Select from 'react-select';
@@ -115,7 +117,8 @@ const CreatTournamentOffline= ({onClose}) => {
                 updatetounament(updatedTournamentData);
             } else {
                 const errorData = await response.json();
-                console.log('Error creating tournament: ' );
+                ErrorToast( errorData.invitedUsers[0]);
+
             }
         } catch (error) {
 

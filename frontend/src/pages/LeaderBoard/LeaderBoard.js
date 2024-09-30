@@ -19,14 +19,17 @@ const LeaderBoard = () => {
   const [error, setError] = useState(null);
   const {auth} = useAuth()
   const { t } = useTranslation();
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true); 
 
   const defaultsecond = {user_id: 2, username: 'Uknown Player', rank: 'None'};
   const defaultthird = {user_id: 3, username: 'Uknown Player', rank: 'None'};
 
+
   useEffect(() => {
     const fetchLeaderboardData = async () => {
       try {
-        const response = await fetch(`${BACKEND_URL}/user/leaderboard`, {
+        const response = await fetch(`${BACKEND_URL}/user/leaderboard?page=${page}&limit=20`, {
           method: 'GET',
           headers: {
             'Authorization': `Bearer ${auth.accessToken}`,
@@ -38,7 +41,9 @@ const LeaderBoard = () => {
         }
   
         const data = await response.json();
-        setLeaderboardData(data);
+        setLeaderboardData((prevData) => [...prevData, ...data.results]);
+        setHasMore(data.results.length > 0); 
+     
       } catch (error) {
         setError('Failed to fetch leaderboard data');
       } finally {
@@ -47,10 +52,21 @@ const LeaderBoard = () => {
     };
   
     fetchLeaderboardData();
-  }, []);
+  }, [page]);
 
 
+  useEffect(() => {
+    const handleScroll = () => {
+      if (
+        window.innerHeight + window.scrollY >= document.body.offsetHeight - 500 && hasMore
+      ) {
+        setPage((prevPage) => prevPage + 1);
+      }
+    };
 
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [hasMore]);
 
   if (isLoading) return (
     <div className='oauth-loading'>
