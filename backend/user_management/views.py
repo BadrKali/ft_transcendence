@@ -597,6 +597,7 @@ class LocalTournamentParticipantResultView(APIView):
             match.loosers = loser_obj
             match.matchPlayed = True
             match.save()
+        match.tournament.assign_tournament_stage()
         return Response("MATCH ID RECEIVED")
 
 # to do list:

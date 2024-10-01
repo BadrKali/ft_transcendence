@@ -265,11 +265,12 @@ const LocalGameLogic = ({ player1Id, player2Id, handleEndMatch }) => {
     }, [matchRunning, canvasSize, scaleFactor, keyState]);
 
     useEffect(() => {
-        const WINNING_SCORE = 5
+        const WINNING_SCORE = 2
         if (user1Score === WINNING_SCORE || user2Score === WINNING_SCORE) {
             const winner = user1Score > user2Score ? player1?.username : player2?.username;
             const loser = user1Score > user2Score ? player2?.username : player1?.username;
             handleEndMatch(winner, loser);
+            setMatchRunning(false);
             setGameOver(true);
         }
     }, [user1Score, user2Score]);

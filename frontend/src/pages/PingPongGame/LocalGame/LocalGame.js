@@ -22,7 +22,7 @@ const LocalGame = () => {
     const gameRoomId = location.state?.gameRoomId;
     const [showWinner, setShowWinner] = useState(false);
     const [winner, setWinner] = useState("");
-    const [loser, setLoser] = useState(""); 
+    const [loser, setLoser] = useState("");
     const { data: gameSettings, isLoading: isLoadingSettings, error: settingsError } = useFetch(`${BACKEND_URL}/api/game/game-settings/current-user/`);
     const { data: gameRoom, isLoading: isLoadingGameRoom, error: gameRoomError } = useFetch(`${BACKEND_URL}/api/game/local-game-room/${gameRoomId}`);
 

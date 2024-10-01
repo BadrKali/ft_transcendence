@@ -327,6 +327,7 @@ class LocalTournament(models.Model):
             LocalTournamanetParticipants.objects.create(tournament=self, player1=participants_list[i], player2=participants_list[i+1])
             # TournamentGameRoom.objects.create(player1=participants[i], player2=participants[i+1])
     def assign_tournament_stage(self):
+        print("HELLO FROM TOURNAMENT STAGE")
         # participants = LocalTournamanetParticipants.objects.filter(tournament=self)
         #the tournament created by default on semi-finals with 2 object of participant 2 players each so we have to check if the tournament is a Semi final after that we check the match played if both maches are played we change the stage to finals
         # we creat the final match participants the both matches are played 
