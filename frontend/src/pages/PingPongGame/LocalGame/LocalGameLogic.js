@@ -5,8 +5,10 @@ import ScoreBoard from '../components/ScoreBoard';
 import exit from "../asstes/right-arrow.png";
 import { useTranslation } from 'react-i18next'
 import Loading from '../components/Loading';
-const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
+import AboutLocalGame from '../components/AboutLocalGame';
 
+
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const LocalGameLogic = ({ player1Id, player2Id, handleEndMatch }) => {
     const { data: player1, isLoading: isLoadingPlayer1, error: player1Error } = useFetch(`${BACKEND_URL}/user/local-player/${player1Id}`);
     const { data: player2, isLoading: isLoadingPlayer2, error: player2Error } = useFetch(`${BACKEND_URL}/user/local-player/${player2Id}`);
@@ -303,7 +305,7 @@ const LocalGameLogic = ({ player1Id, player2Id, handleEndMatch }) => {
 
     return (
         <div className="pingponggame-container">
-            <div className="info-container">
+            {/* <div className="info-container">
                 {player1 && player2 && (
                     <ScoreBoard
                     user1Score={user1Score}
@@ -313,21 +315,8 @@ const LocalGameLogic = ({ player1Id, player2Id, handleEndMatch }) => {
                     />
                 )}
             </div>
-            <canvas className='canvas-container' ref={canvasRef}></canvas>
-            <button className='exit-game-button' onClick={handleExitGame}>
-                <img src={exit} alt="exit" className='exit-logo'/>
-            </button>
-            {showExitPopup && (
-                <div className="exit-popup">
-                    <div className="exit-popup-content">
-                        <h2>{t('BACK TO LOBBY ?')}</h2>
-                        <div className="exit-popup-buttons">
-                            <button onClick={() => confirmExitGame(true)}>{t('Yes')}</button>
-                            <button onClick={() => confirmExitGame(false)}>{t('Cancel')}</button>
-                        </div>
-                    </div>
-                </div>
-            )}
+            <canvas className='canvas-container' ref={canvasRef}></canvas> */}
+            <AboutLocalGame player1={player1} player2={player2}/>
         </div>
     );
 };

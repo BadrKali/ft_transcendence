@@ -1,0 +1,35 @@
+.about-local-game-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    z-index: 1000;
+}
+
+.local-players {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+}
+
+.player , .timer {
+    padding: 80px;
+}
+
+.player .player-username {
+    text-align: center;
+    color: white;
+    
+}
+
+.timer {
+    color: white;
+    font-size: 96px;
+    font-weight: 600;
+}
