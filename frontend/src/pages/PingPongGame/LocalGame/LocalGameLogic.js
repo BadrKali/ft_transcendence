@@ -16,14 +16,14 @@ const LocalGameLogic = ({ player1Id, player2Id, handleEndMatch }) => {
     const canvasRef = useRef(null);
     const { t } = useTranslation();
 
+    const [showAboutGame, setShowAboutGame] = useState(true);
     const [user1Score, setUser1Score] = useState(0);
     const [user2Score, setUser2Score] = useState(0);
-    const [gameRunning, setGameRunning] = useState(true);
+    const [gameRunning, setGameRunning] = useState(false);
     const [matchRunning, setMatchRunning] = useState(false);
-    const [showExitPopup, setShowExitPopup] = useState(false);
-    const [pauseGame, setPauseGame] = useState(false);
     const [gameOver, setGameOver] = useState(false);
     const [canvasSize, setCanvasSize] = useState({ width: 1384, height: 696 });
+
     const [keyState, setKeyState] = useState({
         ArrowUp: false,
         ArrowDown: false,
@@ -95,7 +95,7 @@ const LocalGameLogic = ({ player1Id, player2Id, handleEndMatch }) => {
         if (player1 && player2) {
             user1Ref.current.color = player1.paddle_color;
             user2Ref.current.color = player2.paddle_color;
-            setMatchRunning(true);
+            setShowAboutGame(true);
         }
     }, [player1, player2]);
 
@@ -128,34 +128,27 @@ const LocalGameLogic = ({ player1Id, player2Id, handleEndMatch }) => {
         window.addEventListener('keydown', handleKeyDown);
         window.addEventListener('keyup', handleKeyUp);
         function movePaddles() {
-            const moveDistance = 5 ;
+            const moveDistance = 5;
+            const maxY = canvas.height / scale.y - user1.height;
+        
+            function moveUp(user) {
+                user.y = Math.max(0, user.y - moveDistance);
+            }
+        
+            function moveDown(user) {
+                user.y = Math.min(maxY, user.y + moveDistance);
+            }
+        
             if (player1.keys === 'ws') {
-                if (keyState.ArrowUp && user1.y > 0) {
-                    user1.y = Math.max(0, user1.y - moveDistance);
-                }
-                if (keyState.ArrowDown && user1.y < canvas.height / scale.y - user1.height) {
-                    user1.y = Math.min(canvas.height / scale.y - user1.height, user1.y + moveDistance);
-                }
-                if (keyState.w && user2.y > 0) {
-                    user2.y = Math.max(0, user2.y - moveDistance);
-                }
-                if (keyState.s && user2.y < canvas.height / scale.y - user2.height) {
-                    user2.y = Math.min(canvas.height / scale.y - user2.height, user2.y + moveDistance);
-                }
-               
+                if (keyState.ArrowUp) moveUp(user1);
+                if (keyState.ArrowDown) moveDown(user1);
+                if (keyState.w) moveUp(user2);
+                if (keyState.s) moveDown(user2);
             } else {
-                if (keyState.w && user1.y > 0) {
-                    user1.y = Math.max(0, user1.y - moveDistance);
-                }
-                if (keyState.s && user1.y < canvas.height / scale.y - user1.height) {
-                    user1.y = Math.min(canvas.height / scale.y - user1.height, user1.y + moveDistance);
-                }
-                if (keyState.ArrowUp && user2.y > 0) {
-                    user2.y = Math.max(0, user2.y - moveDistance);
-                }
-                if (keyState.ArrowDown && user2.y < canvas.height / scale.y - user2.height) {
-                    user2.y = Math.min(canvas.height / scale.y - user2.height, user2.y + moveDistance);
-                }
+                if (keyState.w) moveUp(user1);
+                if (keyState.s) moveDown(user1);
+                if (keyState.ArrowUp) moveUp(user2);
+                if (keyState.ArrowDown) moveDown(user2);
             }
         }
 
@@ -185,8 +178,6 @@ const LocalGameLogic = ({ player1Id, player2Id, handleEndMatch }) => {
         }
 
         function update() {
-            if (pauseGame) return;
-
             movePaddles();
 
             ball.x += ball.velocityX;
@@ -216,6 +207,7 @@ const LocalGameLogic = ({ player1Id, player2Id, handleEndMatch }) => {
                 resetBall();
             }
         }
+    
         const drawRoundedRect = (x, y, width, height, radius) => {
             ctx.beginPath();
             ctx.moveTo((x + radius) * scale.x, y * scale.y);
@@ -234,8 +226,8 @@ const LocalGameLogic = ({ player1Id, player2Id, handleEndMatch }) => {
         
             const netWidth = 2;
             const netX = canvas.width / 2 - netWidth / 2;
-            ctx.fillStyle = "#D9D9D9";
-            for (let i = 0; i <= canvas.height; i += 15) {
+            ctx.fillStyle = "#2C3143";
+            for (let i = 0; i <= canvas.height; i ++) {
                 ctx.fillRect(netX, i, netWidth, 10);
             }
             ctx.fillStyle = user1.color;
@@ -277,46 +269,50 @@ const LocalGameLogic = ({ player1Id, player2Id, handleEndMatch }) => {
         }
     }, [user1Score, user2Score]);
 
-    const handleExitGame = () => {
-        setPauseGame(true);
-        setShowExitPopup(true);
-    };
-
-    const confirmExitGame = (confirm) => {
-        setShowExitPopup(false);
-        if (confirm) {
-            setGameRunning(false);
-        } else {
-            setPauseGame(false);
-        }
-    };
-
-    if (!gameRunning || gameOver) {
+    if (gameOver) {
         return null;
     }
-
-    if (!matchRunning) {
+    
+    if (isLoadingPlayer1 || isLoadingPlayer2) {
         return <div><Loading/></div>;
     }
-
+    
     if (player1Error || player2Error) {
         return <div>Error loading players</div>;
     }
 
+    const handleStartGame = () => {
+        setShowAboutGame(false);
+        setMatchRunning(true);
+    };
+
     return (
         <div className="pingponggame-container">
-            <div className="info-container">
-                {player1 && player2 && (
-                    <ScoreBoard
-                    user1Score={user1Score}
-                    user2Score={user2Score}
-                    user1={player1}
-                    user2={player2}
-                    />
-                )}
-            </div>
-            <canvas className='canvas-container' ref={canvasRef}></canvas>
-            {/* <AboutLocalGame player1={player1} player2={player2}/> */}
+            {matchRunning && (
+                <>
+                    <div className="info-container">
+                        {player1 && player2 ? (
+                            <ScoreBoard
+                                user1Score={user1Score}
+                                user2Score={user2Score}
+                                user1={player1}
+                                user2={player2}
+                            />
+                        ) : (
+                            <div>LOADING PLAYERS</div>
+                        )}
+                    </div>
+                    <canvas className='canvas-container' ref={canvasRef}></canvas>
+                </>
+            )}
+    
+            {showAboutGame && (
+                <AboutLocalGame 
+                    player1={player1} 
+                    player2={player2} 
+                    handleStartGame={handleStartGame}
+                />
+            )}
         </div>
     );
 };
