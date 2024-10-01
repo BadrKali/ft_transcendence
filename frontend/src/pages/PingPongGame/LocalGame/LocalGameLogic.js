@@ -305,7 +305,7 @@ const LocalGameLogic = ({ player1Id, player2Id, handleEndMatch }) => {
 
     return (
         <div className="pingponggame-container">
-            {/* <div className="info-container">
+            <div className="info-container">
                 {player1 && player2 && (
                     <ScoreBoard
                     user1Score={user1Score}
@@ -315,8 +315,8 @@ const LocalGameLogic = ({ player1Id, player2Id, handleEndMatch }) => {
                     />
                 )}
             </div>
-            <canvas className='canvas-container' ref={canvasRef}></canvas> */}
-            <AboutLocalGame player1={player1} player2={player2}/>
+            <canvas className='canvas-container' ref={canvasRef}></canvas>
+            {/* <AboutLocalGame player1={player1} player2={player2}/> */}
         </div>
     );
 };
