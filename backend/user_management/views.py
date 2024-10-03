@@ -580,6 +580,7 @@ class LocalTournamentParticipantsView(APIView):
         tournament = currentLocalPlayer.tournament
         participants = LocalTournamanetParticipants.objects.filter(tournament=tournament, matchStage=stage)
         serializer = LocalTournamentParticipantsSerializer(participants, many=True)
+        
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 

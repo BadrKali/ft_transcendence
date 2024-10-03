@@ -315,7 +315,7 @@ class LocalTournament(models.Model):
     tournament_map = models.CharField(max_length=100)
     created_at = models.DateTimeField(auto_now_add=True)
     tournament_status = models.BooleanField(default=False)
-    tournament_stage = models.CharField(max_length=100, default="semi-finals")
+    tournament_stage = models.CharField(max_length=100, default="SEMI-FINALS")
     is_online = models.BooleanField(default=False)
 
     def __str__(self):
@@ -325,7 +325,7 @@ class LocalTournament(models.Model):
         # random.shuffle(participants)
         for i in range(0, len(participants_list), 2):
             LocalTournamanetParticipants.objects.create(tournament=self, player1=participants_list[i], player2=participants_list[i+1])
-            # TournamentGameRoom.objects.create(player1=participants[i], player2=participants[i+1])
+            # TournamentGameRoom.objects.create(ç=participants[i], player2=participants[i+1])
     def assign_tournament_stage(self):
         print("HELLO FROM TOURNAMENT STAGE")
         # participants = LocalTournamanetParticipants.objects.filter(tournament=self)
@@ -336,7 +336,7 @@ class LocalTournament(models.Model):
             if participants[0].matchPlayed and participants[1].matchPlayed:
                 winner1 = participants[0].winner
                 winner2 = participants[1].winner
-                LocalTournamanetParticipants.objects.create(tournament=self, player1=winner1, player2=winner2)
+                LocalTournamanetParticipants.objects.create(tournament=self, player1=winner1, player2=winner2, matchStage="FINALS")
                 self.tournament_stage = 'FINALS'
                 self.save()
         elif self.tournament_stage == 'FINALS':

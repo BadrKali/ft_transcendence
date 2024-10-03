@@ -21,7 +21,7 @@ function MatchHistory({profilData}) {
   const {matchHistory} = useContext(UserContext)
   
 
-
+  console.log(matchHistory)
   const handleItemClick = async (history) => {
     let playerId = history.winner_user.user_id;
     if (history.is_winner) {

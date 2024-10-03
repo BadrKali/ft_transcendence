@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useContext } from 'react'
 import useFetch from '../../../../hooks/useFetch'
 import './TournamentBracket.css'
 import TournamentsItem from './TournamentsItem'
@@ -12,7 +12,7 @@ import { CircularProgressbar, buildStyles } from 'react-circular-progressbar';
 import 'react-circular-progressbar/dist/styles.css';
 import { avatarsUnkown } from '../../../../assets/assets'
 import { useTranslation } from 'react-i18next'
-
+import { UserContext } from '../../../../context/UserContext'
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
@@ -21,11 +21,14 @@ function TournamentBracketOffline() {
   const four_lines = new Array(4).fill(null);
   const two_lines = new Array(2).fill(null);
   const one_lines = new Array(1).fill(null);
-  const {data: matches ,isLoading, error} = useFetch(`${BACKEND_URL}/user/local-tournament/SEMI-FINALS`)
-  const [FourPlayer, setFourPlayer] = useState([]);
-  const [TwoPlayer, setTwoPlayer] = useState([]);
   const { t } = useTranslation();
+  const {TounamentData, TounamenrLoading} = useContext(UserContext)
+  const [semiFinalMatches, setSemiFinalMatches] = useState([]);
+  const [finalMatches, setFinalMatches] = useState([]);
+  const {data: matches ,isLoading, error} = useFetch(`${BACKEND_URL}/user/local-tournament/${TounamentData.tournament_stage}`)
+
   const unknownAvatar = avatarsUnkown.img;
+  console.log(matches)
 
   const defaultTwoMatches = [
     { id: 1, player1: {}, player2: {} },
@@ -43,15 +46,24 @@ function TournamentBracketOffline() {
         id: match.id,
         player1: match.player1,
         player2: match.player2,
+        loosers: match.loosers,
+        winner: match.winner,
       }));
-  
-      setFourPlayer(formattedMatches);
+      if (TounamentData.tournament_stage === 'SEMI-FINALS' ) {
+        setSemiFinalMatches(formattedMatches);  
+      } else if (TounamentData.tournament_stage === 'FINALS' ) {
+        setFinalMatches(formattedMatches);  
+      }
+
     }
-  }, [matches]);
+  }, [matches, TounamentData.tournament_stage]);
   
-  const matchesToDisplayTwo = FourPlayer.length > 0 ? FourPlayer : defaultTwoMatches;
-  const matchesToDisplayOne = TwoPlayer.length > 0 ? FourPlayer : defaultOneMatches;
+  const matchesToDisplayTwo = semiFinalMatches.length > 0 ? semiFinalMatches : defaultTwoMatches;
+  const matchesToDisplayOne = finalMatches.length > 0 ? finalMatches : defaultOneMatches;
+
+
  
+  console.log(matchesToDisplayTwo)
   return (
     <div className='bracket-container'>
         <div className="second-four-player">
