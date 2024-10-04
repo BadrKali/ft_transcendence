@@ -1,9 +1,19 @@
 @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;400;500;600;700&display=swap');
+.joined-tournament{
+    height: 100%;
+    width: 100%;
 
+}
+
+.tournament-title{
+    height: 10%;
+    width: 100%;
+
+}
 .tournament-info-container {
-    margin-top:30px;
 
-    height: 150px;
+
+    height: 20%;
     display: flex;
     align-items: center;
     justify-content: space-around;
@@ -12,6 +22,7 @@
     box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25), 0px 4px 100px rgba(0, 0, 0, 0.25);
     background-size: cover; 
     background-position: center;
+
 }
 
 
@@ -36,6 +47,7 @@
     justify-content: center;
     gap: 10px;
     background: #1C1E27;
+
 }
 
 
@@ -76,8 +88,10 @@ color: #FFFFFF;
 .tournament-desc {
     /* border: 1px solid red; */
     width: 100%;
-    margin-top: 30px;
+    height: 50%;
+
     display: flex;
+
  
 
 }
@@ -111,19 +125,23 @@ color: #FFFFFF;
 .tournament-top-player-container {
 
     width: 100%;
-    height: 400px;
+    height: 100%;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
 
 
+
 }
 
+.tournament-top-player-container h2{
+    height: 5%;
 
+}
 .tournament-top-player {
     width: 80%;
-    height: 50%;
+    height: 40%;
     border-radius: 27px;
     padding: 10px;
 
@@ -206,8 +224,9 @@ color: #FFFFFF;
     justify-content: flex-end;
     align-items: flex-end;
 
-    margin-top: 200px;
-    height: 200px;
+    /* margin-top: 200px; */
+    height: 20%;
+
 }
 
 .disapledButton{
@@ -224,13 +243,20 @@ color: #FFFFFF;
 }
 
 .TournamentTwoButton{
-    gap: 20px;
+ 
+
+}
+@media screen and (max-height: 1200px){
+    .TournamentTwoButton{
+        display: flex;
+
+    }
 }
 @media screen and (max-width: 950px){
     .tournament-desc-rules{
        display: flex;
        flex-direction: row;
-    padding-bottom: 20px;
+        padding-bottom: 20px;
        width: 100%;
     }
     .tournament-desc-rules-top{
@@ -256,7 +282,8 @@ color: #FFFFFF;
         justify-content: center;
         align-items: center;
     
-        margin-top: 100px;
-        height: 200px;
+
+        height:20%;
+
     }
 }

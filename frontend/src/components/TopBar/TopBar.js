@@ -399,7 +399,7 @@ const handleReject = async (id, type) => {
         </div>
       </div>
       <div className='topbar-profile'>
-        {/* <LanguageSelector /> */}
+        <LanguageSelector />
         <div ref={dropdownRef} className="icon-container"  onClick={handleIconClick}>
           <Icon  name='notification' className={showNotif ? 'topbar-notification-icon active-icon' : 'topbar-notification-icon' }/>
           {hasNotification && <span className="notification-badge"></span>}

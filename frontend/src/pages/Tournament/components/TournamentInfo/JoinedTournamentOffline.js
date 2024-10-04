@@ -32,12 +32,23 @@ function JoinedTournamentOffline({TournamentData}) {
     console.log(TournamentData);
 
     useEffect(() => {
-        console.log(matches);
-        if (Array.isArray(matches) && matches.length > 0) {
-            const selectedMatch = matches[0]?.matchPlayed ? matches[1] : matches[0];
-            setMatchToDisplay(selectedMatch); 
+        if (matches && matches.semiFinal) {
+          const semiFinalMatches = matches.semiFinal;
+      
+
+          if (!semiFinalMatches[0]?.matchPlayed) {
+            setMatchToDisplay(semiFinalMatches[0]);
+          } 
+
+          else if (!semiFinalMatches[1]?.matchPlayed) {
+            setMatchToDisplay(semiFinalMatches[1]);
+          } 
+   
+          else if (matches.final && matches.final.length > 0 && !matches.final[0]?.matchPlayed) {
+            setMatchToDisplay(matches.final[0]);
+          }
         }
-    }, [matches]); 
+      }, [matches]);
 
 
     const date = new Date(TournamentData.created_at);
@@ -292,6 +303,7 @@ function JoinedTournamentOffline({TournamentData}) {
             {joinedOwner ? (
                 <div className='TournamentTwoButton'> 
 
+                    <MainButton type="submit"  functionHandler={handleDeleteTournament} content="Cancel"/>
                     <div className='disapledButton'
                         style={{
                             display: 'inline-block',
@@ -301,7 +313,6 @@ function JoinedTournamentOffline({TournamentData}) {
                     >
                         <MainButton type="submit" functionHandler={handleStartTournament} content="Start"/>
                     </div>
-                    <MainButton type="submit"  functionHandler={handleDeleteTournament} content="Cancel"/>
                 </div>
             ) : (
                 <div className='leaveTournomantButton'>

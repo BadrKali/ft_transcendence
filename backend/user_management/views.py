@@ -583,8 +583,8 @@ class LocalTournamentParticipantsView(APIView):
         finals_participants = LocalTournamanetParticipants.objects.filter(tournament=tournament, matchStage="FINALS")
         semi_finals_participants = LocalTournamanetParticipants.objects.filter(tournament=tournament, matchStage="SEMI-FINALS")
         data = {
-            'FINALS' : LocalTournamentParticipantsSerializer(finals_participants, many=True).data,
-            'SEMI-FINALS' : LocalTournamentParticipantsSerializer(semi_finals_participants, many=True).data,
+            'final' : LocalTournamentParticipantsSerializer(finals_participants, many=True).data,
+            'semiFinal' : LocalTournamentParticipantsSerializer(semi_finals_participants, many=True).data,
         }
         return Response(data,  status=status.HTTP_200_OK)
 

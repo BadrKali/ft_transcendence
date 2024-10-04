@@ -95,9 +95,9 @@ const icons = {
     inputTournamant : inputTournamant,
     TwoFaIcon: TwoFaIcon,
     cancelCircle: cancelCircle,
-    // EN : English,
-    // FR : Francais,
-    // ES : Espanol,
+    EN : English,
+    FR : Francais,
+    ES : Espanol,
 
     // school_icon: school_icon
 }

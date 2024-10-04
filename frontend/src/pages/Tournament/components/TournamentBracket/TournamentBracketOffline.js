@@ -30,36 +30,51 @@ function TournamentBracketOffline() {
   const unknownAvatar = avatarsUnkown.img;
   console.log(matches)
 
-  const defaultTwoMatches = [
+  const defaultSemiFInalMatches = [
     { id: 1, player1: {}, player2: {} },
     { id: 2, player1: {}, player2: {} },
   ];
 
-  const defaultOneMatches = [
+  const defaultFinalMatches = [
     { id: 1, player1: {}, player2: {} },
   ];
 
 
   useEffect(() => {
-    if (matches && matches.length > 0) {
-      const formattedMatches = matches.map(match => ({
+    if (matches && matches.semiFinal && matches.semiFinal.length > 0) {
+      const formattedSemiFinalMatches = matches.semiFinal.map(match => ({
         id: match.id,
         player1: match.player1,
         player2: match.player2,
-        loosers: match.loosers,
-        winner: match.winner,
+        loosers: match.loosers || null,
+        winner: match.winner || null,
+        matchPlayed: match.matchPlayed,
+        matchStage: match.matchStage,
       }));
-      if (TounamentData.tournament_stage === 'SEMI-FINALS' ) {
-        setSemiFinalMatches(formattedMatches);  
-      } else if (TounamentData.tournament_stage === 'FINALS' ) {
-        setFinalMatches(formattedMatches);  
-      }
+  
 
+      const formattedFinalMatches = matches.final && matches.final.length > 0
+        ? matches.final.map(match => ({
+            id: match.id,
+            player1: match.player1,
+            player2: match.player2,
+            loosers: match.loosers || null,
+            winner: match.winner || null,
+            matchPlayed: match.matchPlayed,
+            matchStage: match.matchStage,
+          }))
+        : []; 
+       
+      setSemiFinalMatches(formattedSemiFinalMatches);
+      setFinalMatches(formattedFinalMatches);
+    } else {
+      setSemiFinalMatches(defaultSemiFInalMatches);
+      setFinalMatches(defaultFinalMatches);
     }
   }, [matches, TounamentData.tournament_stage]);
-  
-  const matchesToDisplayTwo = semiFinalMatches.length > 0 ? semiFinalMatches : defaultTwoMatches;
-  const matchesToDisplayOne = finalMatches.length > 0 ? finalMatches : defaultOneMatches;
+
+  const matchesToDisplayTwo = semiFinalMatches.length > 0 ? semiFinalMatches : defaultSemiFInalMatches;
+  const matchesToDisplayOne = finalMatches.length > 0 ? finalMatches : defaultFinalMatches;
 
 
  
