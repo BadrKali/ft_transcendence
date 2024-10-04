@@ -576,13 +576,23 @@ class LocalPlayerCreateView(APIView):
 
 class LocalTournamentParticipantsView(APIView):
     def get(self, request, stage):
-        currentLocalPlayer = LocalPlayer.objects.filter(username=request.user.username).first()
-        tournament = currentLocalPlayer.tournament
-        participants = LocalTournamanetParticipants.objects.filter(tournament=tournament, matchStage=stage)
-        serializer = LocalTournamentParticipantsSerializer(participants, many=True)
-        
-        return Response(serializer.data, status=status.HTTP_200_OK)
-
+        if stage == 'FINALS':
+            currentLocalPlayer = LocalPlayer.objects.filter(username=request.user.username).first()
+            tournament = currentLocalPlayer.tournament
+            finals_participants = LocalTournamanetParticipants.objects.filter(tournament=tournament, matchStage="FINALS")
+            semi_finals_participants = LocalTournamanetParticipants.objects.filter(tournament=tournament, matchStage="SEMI-FINALS")
+            data = {
+                'FINALS' : LocalTournamentParticipantsSerializer(finals_participants, many=True).data,
+                'SEMI-FINALS' : LocalTournamentParticipantsSerializer(semi_finals_participants, many=True).data,
+            }
+            return Response(data,  status=status.HTTP_200_OK)
+        elif stage == 'SEMI-FINALS':
+            currentLocalPlayer = LocalPlayer.objects.filter(username=request.user.username).first()
+            tournament = currentLocalPlayer.tournament
+            participants = LocalTournamanetParticipants.objects.filter(tournament=tournament, matchStage=stage)
+            serializer = LocalTournamentParticipantsSerializer(participants, many=True)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response({}, status=status.HTTP_200_OK)
 
 class LocalTournamentParticipantResultView(APIView):
     def post(self, request):
