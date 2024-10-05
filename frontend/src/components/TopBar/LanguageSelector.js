@@ -11,7 +11,7 @@ const LanguageSelector = () => {
   const [isLanguageActive, setIsLanguageActive] = useState(false);
   const [selectedLanguage, setSelectedLanguage] = useState({
     code: localStorage.getItem('i18nextLng') || 'en',
-    label: localStorage.getItem('i18nextLnge') || 'en',
+    label: localStorage.getItem('i18nextLnge') || 'EN',
   });
 
 
@@ -42,7 +42,7 @@ const LanguageSelector = () => {
       document.removeEventListener('mousedown', handleClickOutsideLanguage);
     };
   }, []);
-
+  console.log(selectedLanguage.label)
   return (
     <div className='dropDwonLanguageContainer'>
       <button onClick={toggleDropdown} className="languageButton">
