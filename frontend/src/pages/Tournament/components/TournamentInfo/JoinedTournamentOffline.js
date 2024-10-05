@@ -24,6 +24,8 @@ function JoinedTournamentOffline({TournamentData}) {
     const [profilData, setProfilData] = useState([]);
     const {userData, updatetounament} = useContext(UserContext)
     const [progress, setProgress] = useState(0);
+    const [Finishid, setIsFinished] = useState(false)
+    const [winner, setWinner] = useState();
     const { t } = useTranslation();
     const unknownAvatar = avatarsUnkown.img;
     const navigate = useNavigate();
@@ -46,6 +48,10 @@ function JoinedTournamentOffline({TournamentData}) {
    
           else if (matches.final && matches.final.length > 0 && !matches.final[0]?.matchPlayed) {
             setMatchToDisplay(matches.final[0]);
+          }
+          if (TournamentData.tournament_stage === "FINISHED"){
+            setIsFinished(true)
+            setWinner(matches.final[0].winner.username);
           }
         }
       }, [matches]);
@@ -207,7 +213,7 @@ function JoinedTournamentOffline({TournamentData}) {
                         <img src={avatars[0].img}/>
                         <div className='nameRank'>
                             <span>{profilData.username}</span>
-                            <span>Rank{t('FRIENDS')} : {profilData.rank}</span>
+                            <span>{t('Rank')} : {profilData.rank}</span>
                         </div>
                     </div>
                     <div className='tournament-top-player-stats'>
@@ -259,65 +265,76 @@ function JoinedTournamentOffline({TournamentData}) {
                 </div>
                              
             <div className='matchWillPlayed'>
-                <h2>Match will be played</h2>
-                <div className='PlayersVs'>
-                {matchToDisplay ? ( 
-                <>
-                    <div className='firstPlayerVS'>
-                        <div className='TournamentPlayers-firstPlayerImage'>
-                            <img 
-                                src={matchToDisplay.player1.avatar ? `${BACKEND_URL}${matchToDisplay.player1.avatar}` : unknownAvatar} 
-                                alt={matchToDisplay.player1.avatar ? matchToDisplay.player1.username : 'Unknown Player'} 
-                            />
+                {Finishid  ?(
+                    <>
+                        <h1>Tournament Finished</h1>
+                        <p>The tournament has ended. Congratulations to the winner!</p>
+                        <h3>{winner}</h3>
+                    </>
+
+                ) : (
+
+                    <>
+                    <h2>Match will be played</h2>
+                    <div className='PlayersVs'>
+                    {matchToDisplay ? ( 
+                        <>
+                        <div className='firstPlayerVS'>
+                            <div className='TournamentPlayers-firstPlayerImage'>
+                                <img 
+                                    src={matchToDisplay.player1.avatar ? `${BACKEND_URL}${matchToDisplay.player1.avatar}` : unknownAvatar} 
+                                    alt={matchToDisplay.player1.avatar ? matchToDisplay.player1.username : 'Unknown Player'} 
+                                    />
+                            </div>
+                            <div className='TournamentPlayers-firstPlayerName'>
+                                <p>{matchToDisplay.player1.username || 'Unknown Player'}</p>
+                            </div>
                         </div>
-                        <div className='TournamentPlayers-firstPlayerName'>
-                            <p>{matchToDisplay.player1.username || 'Unknown Player'}</p>
+                        <div className='vsLogoVS'>
+                            <p>VS</p>
                         </div>
-                    </div>
-                    <div className='vsLogoVS'>
-                        <p>VS</p>
-                    </div>
-                    <div className='secondPlayerVS'>
-                        <div className='TournamentPlayers-secondPlayerName'>
-                            <p>{matchToDisplay.player2.username || 'Unknown Player'}</p>
+                        <div className='secondPlayerVS'>
+                            <div className='TournamentPlayers-secondPlayerName'>
+                                <p>{matchToDisplay.player2.username || 'Unknown Player'}</p>
+                            </div>
+                            <div className='TournamentPlayers-secondPlayerImage'>
+                                <img 
+                                    src={matchToDisplay.player2.avatar ? `${BACKEND_URL}${matchToDisplay.player2.avatar}` : unknownAvatar} 
+                                    alt={matchToDisplay.player2.avatar ? matchToDisplay.player2.username : 'Unknown Player'} 
+                                    />
+                            </div>
                         </div>
-                        <div className='TournamentPlayers-secondPlayerImage'>
-                            <img 
-                                src={matchToDisplay.player2.avatar ? `${BACKEND_URL}${matchToDisplay.player2.avatar}` : unknownAvatar} 
-                                alt={matchToDisplay.player2.avatar ? matchToDisplay.player2.username : 'Unknown Player'} 
-                            />
-                        </div>
+                    </>
+                        ) : (
+                            <p>No match available or loading...</p> // Fallback content
+                        )}
                     </div>
                 </>
-            ) : (
-                <p>No match available or loading...</p> // Fallback content
-            )}
-                </div>
-
-                </div>
+                )}
             </div>
-            
         </div>
+    </div>
        
         <div className='JoinedTournomanentButoon'>
-            {joinedOwner ? (
+            {Finishid ? (
+                <div className='leaveTournomantButton'>
+                <MainButton type="submit" functionHandler={handleDeleteTournament} content="Finish"/>
+                </div>
+          
+            ) : (
                 <div className='TournamentTwoButton'> 
 
-                    <MainButton type="submit"  functionHandler={handleDeleteTournament} content="Cancel"/>
-                    <div className='disapledButton'
-                        style={{
-                            display: 'inline-block',
-                            pointerEvents: TournamentData.tournament_participants && TournamentData.tournament_participants.length < 4 ? 'none' : 'auto',
-                            opacity: TournamentData.tournament_participants && TournamentData.tournament_participants.length < 4 ? 0.5 : 1
-                        }}
-                    >
-                        <MainButton type="submit" functionHandler={handleStartTournament} content="Start"/>
-                    </div>
+                <MainButton type="submit"  functionHandler={handleDeleteTournament} content="Cancel"/>
+                <div className='disapledButton'
+                    style={{
+                        display: 'inline-block',
+                        pointerEvents: TournamentData.tournament_participants && TournamentData.tournament_participants.length < 4 ? 'none' : 'auto',
+                        opacity: TournamentData.tournament_participants && TournamentData.tournament_participants.length < 4 ? 0.5 : 1
+                    }}
+                >
+                    <MainButton type="submit" functionHandler={handleStartTournament} content="Start"/>
                 </div>
-            ) : (
-                <div className='leaveTournomantButton'>
-                    <MainButton type="submit"  content="Leave"/>
-                </div>
+            </div>
             )}
         </div>
     </div>

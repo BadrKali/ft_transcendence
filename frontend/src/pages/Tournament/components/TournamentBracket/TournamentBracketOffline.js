@@ -25,11 +25,12 @@ function TournamentBracketOffline() {
   const {TounamentData, TounamenrLoading} = useContext(UserContext)
   const [semiFinalMatches, setSemiFinalMatches] = useState([]);
   const [finalMatches, setFinalMatches] = useState([]);
+  const [winner, setWinner] = useState()
   const {data: matches ,isLoading, error} = useFetch(`${BACKEND_URL}/user/local-tournament/${TounamentData.tournament_stage}`)
 
   const unknownAvatar = avatarsUnkown.img;
   console.log(matches)
-
+  
   const defaultSemiFInalMatches = [
     { id: 1, player1: {}, player2: {} },
     { id: 2, player1: {}, player2: {} },
@@ -64,6 +65,9 @@ function TournamentBracketOffline() {
             matchStage: match.matchStage,
           }))
         : []; 
+        if (TounamentData.tournament_stage === "FINISHED"){
+          setWinner(matches.final[0].winner.username);
+        }
        
       setSemiFinalMatches(formattedSemiFinalMatches);
       setFinalMatches(formattedFinalMatches);
@@ -78,7 +82,7 @@ function TournamentBracketOffline() {
 
 
  
-  console.log(matchesToDisplayTwo)
+ 
   return (
     <div className='bracket-container'>
         <div className="second-four-player">
@@ -140,7 +144,7 @@ function TournamentBracketOffline() {
                     <img src={unknownAvatar}/>
                   </div>
                   <div className='WinerNameRank'>
-                    <p>{t('Name of User')}</p>
+                    <p>{winner}</p>
                     <p>{t('Rank')} : GOLD</p>
                   </div>
                   <div className='winerProgress'>

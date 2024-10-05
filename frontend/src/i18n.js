@@ -201,6 +201,7 @@ const resources = {
       "Avatar": "Avatar",
       "Avatar": "Avatar",
       "Avatar": "Avatar",
+      "You haven't joined any tournament": "You haven't joined any tournament"
 
 
     }
