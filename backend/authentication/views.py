@@ -210,6 +210,8 @@ class Enable2FA(APIView):
     def get(self, request):
         request.user.generate_otp_secret()
         otp_uri = request.user.get_otp_uri()
+        if not os.path.exists('private_media/2fa'):
+            os.makedirs('private_media/2fa')
         file_name = f'{request.user.username}_2fa.png'
         file_path = f'private_media/2fa/{file_name}'
         qrcode.make(otp_uri).save(file_path)
@@ -243,7 +245,6 @@ class Enable2FA(APIView):
                 secure=True,    
                 samesite='None' 
             )
-            # i need to remove the qr code file 
             file_name = f'{user.username}_2fa.png'
             file_path = f'private_media/2fa/{file_name}'
             if os.path.exists(file_path):
@@ -280,7 +281,6 @@ class ProtectedQRCodeView(APIView):
     permission_classes = [IsAuthenticated]  # Ensure the user is authenticated
 
     def get(self, request, file_name):
-        print("asdasdasdasd")
         user = request.user
         expected_file_name = f'{user.username}_2fa.png'
         file_path = f'private_media/2fa/{expected_file_name}'

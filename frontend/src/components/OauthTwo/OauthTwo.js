@@ -24,8 +24,8 @@ const AuthTwo = () => {
       })
       .then(response => {
         const accessToken = response.data['access'];
-        const requires2FA = response.data['2fa_required']; // Assuming the backend sends this information
-        const username = response.data['username']; // Assuming the backend sends this information
+        const requires2FA = response.data['2fa_required']; 
+        const username = response.data['username']; 
 
 
         // setAuth({ accessToken });
