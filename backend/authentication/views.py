@@ -255,6 +255,10 @@ class Enable2FA(APIView):
 
 class Disable2FA(APIView):
     def delete(self, request):
+        file_name = f'{request.user.username}_2fa.png'
+        file_path = f'private_media/2fa/{file_name}'
+        if os.path.exists(file_path):
+            os.remove(file_path)
         user = request.user
         user.otp_secret = None
         user.is_2fa_enabled = False

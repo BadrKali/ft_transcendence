@@ -47,10 +47,7 @@ const Setting = () => {
     setQrCodeUrl(data.otp_uri);
     setShowTwoFaModal(true);
   }
-  const closeTwoFaModal = () => {
-    setShowTwoFaModal(false);
-  }
-
+  
   const disableTwoFa = async () => {
     const response = await fetch(`${BACKEND_URL}/auth/disable2fa/`, {
       method: 'DELETE',
@@ -59,16 +56,19 @@ const Setting = () => {
       }
     });
     if (response.ok) {
-      SuccessToast('Profile updated successfully!');
+      // SuccessToast('Profile updated successfully!');
       const userData = await fetchData(`${BACKEND_URL}/user/stats/`, auth.accessToken);
       updateUserData(userData);
     }
     else {
       ErrorToast('Failed to update settings. Please try again.');
     }
-
   }
-
+  
+  const closeTwoFaModal = () => {
+    disableTwoFa();
+    setShowTwoFaModal(false);
+  }
 
   const [updatedvalues, setUpdatedvalues] = useState({
     username : "",
@@ -105,7 +105,6 @@ const Setting = () => {
             }
         });
         updateUserData(response.data);
-
         SuccessToast('Profile updated successfully!');
     } catch (e) {
         ErrorToast('Failed to update settings. Please try again.');
