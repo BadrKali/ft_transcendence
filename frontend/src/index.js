@@ -29,6 +29,10 @@ import ProfileProviderWrapper from './context/ProfileProviderWrapper'
 import TournamentGame from "./pages/PingPongGame/TournamentGame.js/TournamentGame";
 import { InviteGameReconnection } from "./pages/PingPongGame/Invite/Invite";
 import LocalGameTournament from "./pages/PingPongGame/LocalGame/LocalGameTournament";
+import NotFound from "./pages/ErrorPages/404";
+import ServerError from "./pages/ErrorPages/500";
+
+
 const routes = [
   {
     element: <OauthTwo />,
@@ -83,6 +87,8 @@ const routes = [
   {path: 'tournament-game', element: <TournamentGame/>},
   {path: 'local-tournament-game', element: <LocalGameTournament/>},
   {path: 'invite-game-reconnection', element: <InviteGameReconnection/>},
+  { path: "*", element: <NotFound /> },
+  { path: "/server-error", element: <ServerError /> },
 ];
 
 const router = createBrowserRouter(routes);
