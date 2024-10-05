@@ -39,7 +39,7 @@ export const RealTimeProvider = ({ children }) => {
                         throw new Error('Failed to fetch notifications');
                     }
                     const NotificationFetch = await response.json();
-                    console.log(NotificationFetch)
+         
                     updateUserNotification(NotificationFetch);
                 } catch (error) {
                     console.error('Error fetching notifications:', error);
@@ -78,7 +78,7 @@ export const RealTimeProvider = ({ children }) => {
                     const data = await response.json();
                     if (data.hasNotification) {
                         setHasNotification(true);  
-                        console.log(data)
+                
                     }
                 } else {
                     console.error('Failed to fetch missed notifications');

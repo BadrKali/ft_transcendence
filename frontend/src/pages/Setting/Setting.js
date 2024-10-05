@@ -43,7 +43,6 @@ const Setting = () => {
 
   const toggleTwoFaModal = async () => {
     const data = await fetchQrCodeUrl(auth.accessToken);
-    console.log(data);
     setQrCodeUrl(data.otp_uri);
     setShowTwoFaModal(true);
   }

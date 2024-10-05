@@ -29,7 +29,7 @@ function TournamentBracketOffline() {
   const {data: matches ,isLoading, error} = useFetch(`${BACKEND_URL}/user/local-tournament/${TounamentData.tournament_stage}`)
 
   const unknownAvatar = avatarsUnkown.img;
-  console.log(matches)
+
   
   const defaultSemiFInalMatches = [
     { id: 1, player1: {}, player2: {} },

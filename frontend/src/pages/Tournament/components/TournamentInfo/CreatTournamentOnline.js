@@ -60,7 +60,6 @@ const CreatTournamentOnline = ({onClose}) => {
             tournament_map: selectedMap,
             invitedUsers: selectedPlayers.map(player => player.value),
         };
-        console.log(postData)
         if (!selectedMap){
             setMapError(true)
         }else{

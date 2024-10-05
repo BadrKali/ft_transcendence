@@ -34,7 +34,7 @@ function TournamentBracket() {
       setIsOnline(TounamentData.is_online);
     }, [TounamentData.is_online]);
 
-    console.log(TounamentData)
+
   return (
     <div className='bracket-container'>
       {TounamentData && TounamentData.tournament_participants && TounamentData.tournament_participants.length > 0 ? (

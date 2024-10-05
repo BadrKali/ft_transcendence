@@ -20,7 +20,6 @@ const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 function JoinedTournament({TournamentData}) {
     const [isOnline, setIsOnline] = useState(false);
 
-    console.log(TournamentData , "FUCK YOU")
     useEffect(() => {
         setIsOnline(TournamentData.is_online);
       }, [TournamentData.is_online]);

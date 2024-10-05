@@ -20,7 +20,7 @@ const TournamentInfo = () => {
   const {TounamentData, TounamenrLoading} = useContext(UserContext)
 
 
-  console.log(TounamentData);
+
   useEffect (() => {
     if (TounamentData && TounamentData.tournament_creator)
         setJoinedTournament(true)

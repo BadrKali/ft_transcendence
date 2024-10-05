@@ -42,7 +42,6 @@ const LanguageSelector = () => {
       document.removeEventListener('mousedown', handleClickOutsideLanguage);
     };
   }, []);
-  console.log(selectedLanguage.label)
   return (
     <div className='dropDwonLanguageContainer'>
       <button onClick={toggleDropdown} className="languageButton">

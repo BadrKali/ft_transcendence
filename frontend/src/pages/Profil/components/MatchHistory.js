@@ -41,7 +41,7 @@ function MatchHistory({profil}) {
             });
             if (response.ok) {
                 const dataa = await response.json();
-                console.log(dataa)
+               
                 navigate(`/user/${dataa.username}`, {
                   state: { userData: dataa },
                 });

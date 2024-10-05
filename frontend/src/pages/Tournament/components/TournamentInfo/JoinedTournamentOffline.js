@@ -31,7 +31,7 @@ function JoinedTournamentOffline({TournamentData}) {
     const navigate = useNavigate();
     const [matchToDisplay, setMatchToDisplay] = useState(null);
     const {data: matches ,isLoading: matchesisLoading, error: matchesError} = useFetch(`${BACKEND_URL}/user/local-tournament/${TournamentData.tournament_stage}`)
-    console.log(TournamentData);
+  
 
     useEffect(() => {
         if (matches && matches.semiFinal) {

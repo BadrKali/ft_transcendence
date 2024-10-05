@@ -10,9 +10,7 @@ const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 function FriendsItemMedia({list, friendsStatus}) {
   const [isonline, setOnline] = useState(false);
 
-  useEffect(() => {
-    console.log(list.username + "   ", list.is_online )
-  }, [])
+
   useEffect(() => {
     if (typeof friendsStatus === 'object' && friendsStatus !== null) {
       const friendStatus = friendsStatus[list.id];
