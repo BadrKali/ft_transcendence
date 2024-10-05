@@ -576,7 +576,7 @@ class LocalPlayerCreateView(APIView):
 
 class LocalTournamentParticipantsView(APIView):
     def get(self, request, stage):
-        if stage not in ["FINALS", "SEMI-FINALS"]:
+        if stage not in ["FINALS", "SEMI-FINALS", "FINISHED"]:
             return {"Message": "Bad Request"}, status.HTTP_400_BAD_REQUEST
         currentLocalPlayer = LocalPlayer.objects.filter(username=request.user.username).first()
         tournament = currentLocalPlayer.tournament
