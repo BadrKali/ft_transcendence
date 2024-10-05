@@ -13,7 +13,6 @@ function EmptyRestItem({ index}) {
     const { t } = useTranslation();
 
 
-    console.log(index)
     return (
         <div className={ifOdd ? 'listPlayerContainer' : 'listPlayerContainer Odd'}   style={{ animationDelay: `${index * 0.1}s` }} >
             <div className='number'>

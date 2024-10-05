@@ -9,8 +9,6 @@ function TournamentsItem({players}) {
   const [ifPlayer1Win, setIfPlayer1Win] = useState(false)
   const [ifPlayer2Win, setIfPlayer2Win] = useState(false)
 
-  console.log(players.player1)
-  console.log(players.winner)
 
 
 useEffect(() => {

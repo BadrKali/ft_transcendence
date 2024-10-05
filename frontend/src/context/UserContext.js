@@ -42,7 +42,7 @@ export const UserProvider = ({ children }) => {
             setTournamentLoading(false);
 
             setBlockedUsers(blocked_users);
-            console.log(globalStatsFetch)
+           
         }
     }, [globalStatsFetch]);
 
@@ -82,7 +82,7 @@ export const UserProvider = ({ children }) => {
             ...newMatches,
         }));
     };
-    console.log(matchHistory)
+   
     return (
         <UserContext.Provider value={{
             userData, 

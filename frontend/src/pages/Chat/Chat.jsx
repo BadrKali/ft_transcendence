@@ -110,10 +110,6 @@ const updateLastMessage = (data, result) =>{
     clientSocket.onmessage = (event) => {
     const data = JSON.parse(event.data);
     const notif = new Audio(receivedmsgsound);
-
-    console.log('=====Event Received=====')
-    console.log(data.message)
-    console.log('========================')
     
     if (data.type === 'receive_typing'){
       if (ChatPartner && ChatPartner.id === data.message.sender_id){

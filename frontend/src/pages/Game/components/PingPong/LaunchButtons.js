@@ -102,7 +102,6 @@ const LaunchButtons = ({ selectedMode, selectedBackground, selectedKeys, selecte
                 }
             );
             const opponentUserId = opponentResponse.data.id
-            console.log(opponentResponse.data);
             const currentUserResponse = await axios.post(`${BACKEND_URL}/user/create-local-player/`, 
                 { 
                     username: currentUser.username,

@@ -24,7 +24,7 @@ const useFetch = (endpoint) => {
                     }
                 });
                 if (response.status === 403) {
-                    console.log(response)
+                  
                     setError('You are blocked from viewing this content.');
                     setData(null);
                 }else if(response.status === 404){
