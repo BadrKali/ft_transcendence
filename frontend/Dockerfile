@@ -1,8 +1,8 @@
 FROM node:20
 
-WORKDIR front
+WORKDIR /front
 
-COPY . /front
+COPY . .
 
 RUN npm i
 
