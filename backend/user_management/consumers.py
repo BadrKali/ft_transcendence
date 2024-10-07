@@ -74,8 +74,8 @@ class NotificationConsumer(AsyncWebsocketConsumer):
             'user_id': user_id,
             'status': status
         }))
+
     async def join_game(self, event):
-        print("hello from join Game")
         message = event['message']
         await self.send(text_data=json.dumps({
             'type' : 'join_game',
@@ -87,6 +87,27 @@ class NotificationConsumer(AsyncWebsocketConsumer):
         await self.send(text_data=json.dumps({
             'type' : 'notification',
             'message': message
+        }))
+
+    async def notification_tournament(self, event):
+        message = event['message']
+        sender_id = event['sender']
+        await self.send(text_data=json.dumps({
+            'type' : 'tournament_notification',
+            'message': message,
+            'sender_id': sender_id
+        }))
+
+    async def invite_reconnection(self, event):
+        print("HELLO BABY FROM NOTIFICATION INVITE RECONNECTION")
+        message = event['message']
+        sender = event['sender']
+        receiver = event['receiver']
+        await self.send(text_data=json.dumps({
+            'type': 'invite_reconnection',
+            'message': message,
+            'sender': sender,
+            'receiver': receiver
         }))
 
     async def notification_match(self, event):

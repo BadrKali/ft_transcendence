@@ -3,7 +3,6 @@ import './searchItem.css'
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
-
 function SearchItem({result}) {
   // ALSO
   return (

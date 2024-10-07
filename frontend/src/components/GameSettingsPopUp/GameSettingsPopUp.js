@@ -15,6 +15,8 @@ import useFetch from "../../hooks/useFetch";
 import useAuth from "../../hooks/useAuth";
 import axios from "axios";
 import { RealTimeContext } from "../../context/RealTimeProvider";
+import { useTranslation } from 'react-i18next'
+
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
@@ -22,11 +24,13 @@ const GameSettingsPopUp = ({ onExit }) => {
     const {auth} = useAuth();
     const areasArray = [hell, forest, graveyard];
     const areasNames = ["hell", "forest", "graveyard"];
-    const paddleColors = ['#BC4F00', '#33FF57', '#3357FF', '#F3FF33', '#FF33F5'];
+    const paddleColors = ['#BC4F00', '#036145', '#8D0202', '#002194'];
     const [currentAreaIndex, setCurrentAreaIndex] = useState(0);
     const [currentColorIndex, setCurrentColorIndex] = useState(0);
     const [selectedOption, setSelectedOption] = useState(null);
     const {setGameAccepted} = useContext(RealTimeContext);
+    const { t } = useTranslation();
+
 
 
     const handleLeftClick = () => {
@@ -75,14 +79,14 @@ const GameSettingsPopUp = ({ onExit }) => {
 
     return (
         <div className="gameSettings-container">
-            <h1>Customize Your Game</h1>
+            <h1>{t('Customize Your Game')}</h1>
             <div className="backgrounds-container">
                 <img src={leftArrow} alt="Left" onClick={handleLeftClick} />
                 <img src={areasArray[currentAreaIndex]} alt="Background" className="background-image" />
                 <img src={rightArrow} alt="Right" onClick={handleRightClick} />
             </div>
             <div className="tools">
-                <h2>KEYS</h2>
+                <h2>{t('KEYS')}</h2>
                 <div className="keys-selection">
                         <div className={`ws-container container ${selectedOption === 'ws' ? 'selectedOption' : ''}`} onClick={() => handleSelectOption('ws')}>
                             <img src={wKey} alt="" className='key' />
@@ -93,14 +97,13 @@ const GameSettingsPopUp = ({ onExit }) => {
                             <img src={downKey} alt="" className='key' />
                         </div>
                 </div>
-                <h2>PADDLE</h2>
-                <div className="paddle-colors-container">
-                    <img src={leftPaddleArrow} alt="Left" onClick={handlePaddleLeftClick} />
-                    <div className="paddle-color-preview" style={{ backgroundColor: paddleColors[currentColorIndex] }} />
-                    <img src={rightPaddleArrow} alt="Right" onClick={handlePaddleRightClick} />
-                </div>
             </div>
-            <button onClick={handleSubmit} className="cancel-button">Submit</button>
+            <div className="paddle-colors-container">
+                <img src={leftPaddleArrow} alt="Left" onClick={handlePaddleLeftClick} />
+                <div className="paddle-color-preview" style={{ backgroundColor: paddleColors[currentColorIndex] }} />
+                <img src={rightPaddleArrow} alt="Right" onClick={handlePaddleRightClick} />
+            </div>
+            <button onClick={handleSubmit} className="cancel-button">{t('Submit')}</button>
         </div>
     );
 };

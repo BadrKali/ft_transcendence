@@ -1,6 +1,5 @@
 import React, { createContext, useState, useEffect } from 'react';
 import useFetch from '../hooks/useFetch';
-import useAuth from '../hooks/useAuth';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 export const UserContext = createContext();
@@ -15,52 +14,37 @@ export const UserProvider = ({ children }) => {
     const [matchHistory, setMatchHistory] = useState(null);
     const [matchHistoryLoading, setMatchHistoryLoading] = useState(true);
     const [notifications, setNotifications] = useState(null);
+    const [TounamentData, setTounamentData] = useState(null);
+    const [TounamenrLoading, setTournamentLoading] = useState(true);
+    const [blockedUsers, setBlockedUsers] = useState([]);
 
+    const { data: globalStatsFetch, isLoading: globalStatsLoading, isError: globalStatsError } = useFetch(`${BACKEND_URL}/user/globalstats/`);
 
-
-    const { data: userDataFetch, isLoading: userLoading, isError: userDataError } = useFetch(`${BACKEND_URL}/user/stats/`);
-    const { data: userAchievementsFetch, isLoading: achievementsLoading, isError: userAchievementsError } = useFetch(`${BACKEND_URL}/api/game/achievements/me`);
-    const { data: userFriendsFetch, isLoading: friendsLoading, isError: userFriendsError } = useFetch(`${BACKEND_URL}/user/friends/list/`);
-    const { data: matchHistoryFetch, isLoading: matchHistoryLoadingFetch, isError: matchHistoryError } = useFetch(`${BACKEND_URL}/api/game/game-history/`);
-    const { data: NotificationFetch, isLoading: NotificationLoadingFetch, isError: NotificationError } = useFetch(`${BACKEND_URL}/user/notifications/`);
-  
     useEffect(() => {
-        if (userDataFetch) {
-            setUserData(userDataFetch);
+        if (globalStatsFetch) {
+            const { player_stats, friends, notifications, game_history, achievements, tournament,  blocked_users} = globalStatsFetch;
+
+            setUserData(player_stats);
             setUserDataLoading(false);
-        }
-    }, [userDataFetch]);
 
-
-
-
-    useEffect(() => {
-        if (NotificationFetch) {
-            setNotifications(NotificationFetch);
-        
-        }
-    }, [NotificationFetch]);
-
-    useEffect(() => {
-        if (userAchievementsFetch) {
-            setUserAchievements(userAchievementsFetch);
-            setUserAchievementsLoading(false);
-        }
-    }, [userAchievementsFetch]);
-
-    useEffect(() => {
-        if (userFriendsFetch) {
-            setUserFriends(userFriendsFetch);
+            setUserFriends(friends);
             setUserFriendsLoading(false);
-        }
-    }, [userFriendsFetch]);
 
-    useEffect(() => {
-        if (matchHistoryFetch) {
-            setMatchHistory(matchHistoryFetch);
+            setNotifications(notifications);
+
+            setMatchHistory(game_history);
             setMatchHistoryLoading(false);
+
+            setUserAchievements(achievements);
+            setUserAchievementsLoading(false);
+
+            setTounamentData(tournament);
+            setTournamentLoading(false);
+
+            setBlockedUsers(blocked_users);
+           
         }
-    }, [matchHistoryFetch]);
+    }, [globalStatsFetch]);
 
     const updateUserData = (newData) => {
         setUserData((prevData) => ({
@@ -80,11 +64,17 @@ export const UserProvider = ({ children }) => {
         setUserFriends(newFriends);
     };
 
-
-    const updateUserNotification = (newNotifcation) => {
-        setNotifications(newNotifcation);
+    const updatetounament = (newTournament) => {
+        setTounamentData(newTournament);
     };
 
+    const updateBlockedList = (newBlockedList) => {
+        setBlockedUsers(newBlockedList);
+    };
+
+    const updateUserNotification = (newNotification) => {
+        setNotifications(newNotification);
+    };
 
     const updateMatchHistory = (newMatches) => {
         setMatchHistory((prevMatches) => ({
@@ -92,30 +82,30 @@ export const UserProvider = ({ children }) => {
             ...newMatches,
         }));
     };
-
+   
     return (
         <UserContext.Provider value={{
             userData, 
             userDataLoading, 
-            userDataError, 
+            globalStatsError, 
             userAchievements, 
             userAchievementsLoading, 
-            userAchievementsError,
             userFriends,
             userFriendsLoading,
-            userFriendsError,
             matchHistory,
             matchHistoryLoading,
-            matchHistoryError,
             notifications,
-            
+            TounamentData,
+            TounamenrLoading,
+            blockedUsers,
             updateUserData, 
             updateUserAchievements,
             updateUserFriends,
             updateMatchHistory,
             updateUserNotification,
             setNotifications,
-            
+            updatetounament,
+            updateBlockedList,
         }}>
             {children}
         </UserContext.Provider>

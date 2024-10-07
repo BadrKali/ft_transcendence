@@ -17,15 +17,10 @@ const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const DashBoard = () => {
   const [profilData, setProfilData] = useState([]);
   const { t } = useTranslation();
-  const {data ,isLoading, error} = useFetch(`${BACKEND_URL}/user/stats`)
-  const {userData} = useContext(UserContext)
-  useEffect(() => {
-     if (data) {
-       setProfilData(data);
-     }
-   }, [data]);
 
-   console.log(userData);
+  const {userData} = useContext(UserContext)
+ 
+
   return (
     <div className='dashboard-contianer'>
        <div className='page-title'>

@@ -35,6 +35,11 @@ export const ProfileProvider = ({ children, userId }) => {
 
     useEffect(() => {
         const fetchProfileData = async () => {
+            if (!nameOfUser) {
+                console.warn("nameOfUser is undefined, skipping fetch.");
+                setIsProfileDataReady(true);
+                return;
+            }
             const url = `${BACKEND_URL}/user/stats/username/${nameOfUser}`;
             try {
                 const response = await fetch(url, {
@@ -49,7 +54,7 @@ export const ProfileProvider = ({ children, userId }) => {
                     setProfileData(data);
                     setIsBlockedMe(data.is_blocked);
                     setIsBlocking(data.is_blocking);
-                    console.log("hh", data)
+                  
 
                 } else {
                     console.error('Error fetching profile data:', response.statusText);
@@ -79,7 +84,7 @@ export const ProfileProvider = ({ children, userId }) => {
                 if (response.ok) {
                     const data = await response.json();
                     setIsRequst(data.message)
-           
+          
                 } else {
                     console.error('Error fetching block status:', response.statusText);
                 }
@@ -152,9 +157,11 @@ export const ProfileProvider = ({ children, userId }) => {
     }, [profilData, auth.accessToken]);
   
     useEffect(() => {
+        console.log(profileDataLoading, profileBlockLoading,profileFriendLoading, HistoryLoading)
         if (!profileDataLoading && !profileBlockLoading && !profileFriendLoading && !HistoryLoading) {
             setIsProfileDataReady(true);
         }
+   
     }, [profileDataLoading, profileBlockLoading, profileFriendLoading, HistoryLoading]);
 
     if (!isProfileDataReady) {

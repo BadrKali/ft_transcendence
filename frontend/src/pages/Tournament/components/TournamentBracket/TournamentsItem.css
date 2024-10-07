@@ -4,6 +4,7 @@
     height: 100%;
 
     justify-content: space-around;
+
     /* gap: 45%;
     margin-top: 50%; */
 }
@@ -33,6 +34,7 @@
 
 .tournamentsItem-container .player-name{
     padding-left: 20px;
+    color: white;
 }
 
 .wone::before{

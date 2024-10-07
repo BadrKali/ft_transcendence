@@ -1,10 +1,7 @@
 import React, { createContext, useEffect, useContext, useState } from 'react';
 import useAuth from '../hooks/useAuth';
 import ToastContainer from '../components/ReactToastify/ToastContainer';
-import GameChallengeNotification from '../components/Notification/GameChallengeNotification';
 import { SuccessToast } from '../components/ReactToastify/SuccessToast'
-import { ErrorToast } from '../components/ReactToastify/ErrorToast'
-import {InfoToast} from '../components/ReactToastify/InfoToast';
 import GameSettingsPopUp from '../components/GameSettingsPopUp/GameSettingsPopUp';
 import { UserContext } from './UserContext';
 
@@ -14,6 +11,7 @@ const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 export const RealTimeContext = createContext({});
 
 export const RealTimeProvider = ({ children }) => {
+    const [tournamentMatchAccepted, setTournamentMatchAccepted] = useState(false);
     const [notifications, setNotifications] = useState([]);
     const [friendsStatus, setFriendsStatus] = useState({});
     const { auth } = useAuth();
@@ -23,9 +21,9 @@ export const RealTimeProvider = ({ children }) => {
     const [joinGame, setJoinGame] = useState(false);
     const [showGameSettings, setShowGameSettings] = useState(false);
     const {updateUserNotification} =  useContext(UserContext)
-
+    const [data, setData] = useState(null);
     const [shouldFetchNotifications, setShouldFetchNotifications] = useState(false);
-
+    const [tournamentType, setTournamentType] = useState(false);
 
     useEffect(() => {
         if (shouldFetchNotifications) {
@@ -41,7 +39,7 @@ export const RealTimeProvider = ({ children }) => {
                         throw new Error('Failed to fetch notifications');
                     }
                     const NotificationFetch = await response.json();
-                    console.log(NotificationFetch)
+         
                     updateUserNotification(NotificationFetch);
                 } catch (error) {
                     console.error('Error fetching notifications:', error);
@@ -80,8 +78,7 @@ export const RealTimeProvider = ({ children }) => {
                     const data = await response.json();
                     if (data.hasNotification) {
                         setHasNotification(true);  
-                        // setNotifications(data.notifications);  
-                        console.log(data)
+                
                     }
                 } else {
                     console.error('Failed to fetch missed notifications');
@@ -93,9 +90,15 @@ export const RealTimeProvider = ({ children }) => {
 
         ws.onmessage = (message) => {
             const dataFromServer = JSON.parse(message.data);
+            setData(dataFromServer);
             console.log({dataFromServer});
             if (dataFromServer.type === 'match_notification') {
                 setGameChallenge(dataFromServer);
+            } else if (dataFromServer.type === 'tournament_notification') {
+                setTournamentType(true);
+                setGameChallenge(dataFromServer);
+            } else if (dataFromServer.type === "invite_reconnection") {
+                alert("hello");
             } else if (dataFromServer.type === 'status_update') {
                 const { user_id, status } = dataFromServer;
                 setFriendsStatus(prevStatus => ({
@@ -105,11 +108,11 @@ export const RealTimeProvider = ({ children }) => {
             } else if (dataFromServer.type === 'notification') {
                     setHasNotification(true);
                     setShouldFetchNotifications(true);
-            
-            } else if (dataFromServer.type === 'join_game') {
-                console.log("Joining Game From RealTimeProvider");
-                setJoinGame(true);
             }
+            // } else if (dataFromServer.type === 'join_game') {
+            //     console.log("Joining Game From RealTimeProvider");
+            //     setJoinGame(true);
+            // }
         };
 
         ws.onclose = () => {
@@ -123,11 +126,14 @@ export const RealTimeProvider = ({ children }) => {
         return () => {
             ws.close();
         };
+
     }, [auth.accessToken]);
 
     const handleAcceptGame = (id) => {
         setGameChallenge(null);
-        let url = `${BACKEND_URL}/api/game/game-challenges/${id}/response/`;
+        let url = tournamentType 
+        ? `${BACKEND_URL}/user/tournament/invitation/${id}/responce` 
+        : `${BACKEND_URL}/api/game/game-challenges/${id}/response/`;
         let body = JSON.stringify({ 'status': 'accepted' });
         fetch(url, {
             method: 'PATCH',
@@ -150,18 +156,16 @@ export const RealTimeProvider = ({ children }) => {
         .catch(error => {
             console.error('Error accepting game challenge:', error);
         });
-        fetch(`${BACKEND_URL}/api/game/game-response/${id}/`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${auth.accessToken}`
-            },
-            body: body
-        })
+        // if (tournamentType)
+        //     setTournamentMatchAccepted(true);
+        setShowGameSettings(true);
     }
+
     const handleRejectGame = (id) => {
         setGameChallenge(null);
-        let url = `${BACKEND_URL}/api/game/game-challenges/${id}/response/`;
+        let url = tournamentType 
+        ? `${BACKEND_URL}/user/tournament/invitation/${id}/response` 
+        : `${BACKEND_URL}/api/game/game-challenges/${id}/response/`;
         let body = JSON.stringify({ 'status': 'rejected' });
         fetch(url, {
             method: 'PATCH',
@@ -185,15 +189,36 @@ export const RealTimeProvider = ({ children }) => {
             console.error('Error rejecting game challenge:', error);
         });
     }
+
     const handleExitGameSettings = () => {
         setShowGameSettings(false);
+        tournamentType ? setTournamentMatchAccepted(true) : setGameAccepted(true);
     }
+
 return (
-        <RealTimeContext.Provider value={{ setNotifications, notifications, friendsStatus, hasNotification, setHasNotification, clearNotification, gameChallenge, handleAcceptGame, handleRejectGame, gameAccepted, joinGame, setGameAccepted, setJoinGame, showGameSettings, setShowGameSettings }}>
+        <RealTimeContext.Provider value={{ setNotifications, 
+            notifications, 
+            friendsStatus, 
+            hasNotification, 
+            setHasNotification, 
+            clearNotification, 
+            gameChallenge, 
+            handleAcceptGame,
+            handleRejectGame, 
+            gameAccepted, 
+            joinGame, 
+            setGameAccepted, 
+            setJoinGame,
+            showGameSettings, 
+            setShowGameSettings, 
+            tournamentMatchAccepted, 
+            setTournamentMatchAccepted
+            }}>
             {children}
             <ToastContainer />
             {showGameSettings && (
-                <GameSettingsPopUp onExit={handleExitGameSettings}/>
+                <GameSettingsPopUp 
+                    onExit={handleExitGameSettings}/>
             )}
         </RealTimeContext.Provider>
     );

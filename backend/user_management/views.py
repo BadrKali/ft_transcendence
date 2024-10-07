@@ -16,9 +16,14 @@ from django.db.models import Q
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
 from django.http import HttpResponseForbidden
-from .models import Tournament, TournamentInvitation, TournamentParticipants, Friendship, Player, FriendInvitation, BlockedUsers, Notification, XPHistory
-from .serializers import TournamentSerializer, TournamentCreateSerializer , TournamentInvitationSerializer, TournamentParticipantsSerializer, FriendInvitation, NotificationSerializer,  PlayerSerializer, FriendshipSerializer
+from .models import *
+from .serializers import *
 from django.db.models import Case, When, Value, IntegerField
+from game.serializers import GameHistorySerializer, UserAchievementSerializer
+from game.models import GameHistory, UserAchievement
+from django.db import models
+from django.db import transaction
+from django.core.paginator import Paginator
 
 class FriendRequestManagementView(APIView):
     
@@ -167,7 +172,7 @@ class BlockUnblockView(APIView):
     def post(self, request, blocked_id):
         blocker = request.user
         blocked = get_object_or_404(User, id=blocked_id)
-        if BlockedUsers.objects.filter(Q(blocker=blocker, blocked=blocked)).exists():
+        if BlockedUsers.objects.filter(Q(blocker=blocker, blocked=blocked) | Q(blocker=blocked, blocked=blocker)).exists():
             return Response({'error': 'User is already blocked.'}, status=status.HTTP_400_BAD_REQUEST)
         blocking = BlockedUsers(blocker=blocker, blocked=blocked)
         blocking.save()
@@ -196,7 +201,7 @@ class BlockUnblockView(APIView):
         else:
             blocked_users = BlockedUsers.objects.filter(blocker=blocker).select_related('blocked')
             blocked_list = [{'id': user.blocked.id, 'username': user.blocked.username} for user in blocked_users]
-            return Response({'blocked_users': blocked_list}, status=status.HTTP_200_OK)
+            return Response( blocked_list, status=status.HTTP_200_OK)
 
         
 class CurrentFriendsListView(generics.ListAPIView):
@@ -267,7 +272,7 @@ class SearchAPIView(APIView):
                 username__startswith=query,
                 is_staff=False,  
                 is_superuser=False 
-            ).exclude(id=current_user.id)
+            ).exclude(id=current_user.id)[:10]
             serializer = CurrentUserSerializer(results, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response({"results": []}, status=status.HTTP_200_OK)
@@ -363,15 +368,26 @@ class TournamentInvitationView(APIView):
                 tournament.assign_opponent()
                 tournament.tournament_status = True
                 tournament.assign_tournament_stage()
-
-                # TournamentGameRoom.objects.create(player1=player, player2=tournament.get_opponent(player))
                 tournament.save()
             invitation.delete()
             return Response({'message': 'Invitation accepted.'}, status=status.HTTP_200_OK)
         elif action == 'reject':
             invitation.delete()
             return Response({'message': 'Invitation rejected.'}, status=status.HTTP_200_OK)
-        
+
+class TournamentInvitationResponse(APIView):
+    def patch(self, request, tournament_id):
+        print("TOURNAMENT INVITATION HANDLER")
+        return(Response({'message': 'Tournament started successfully'}, status=status.HTTP_200_OK))
+
+class StartTournamentView(APIView):
+    def post(self, request):
+        current_user = request.user
+        tournament = Tournament.objects.filter(tournament_creator=request.user).first()
+        tournament.start_tournament()
+        return(Response({'message': 'Tournament started successfully'}, status=status.HTTP_200_OK))
+
+
 
 class TournamentByStageView(APIView):
     def get(self, request, stage):
@@ -401,12 +417,17 @@ class XPHistoryView(APIView):
         }
         return Response(data)
 
-
-
-
-
 class LeaderboardView(APIView):
     def get(self, request):
+        page = request.GET.get('page', 1) 
+        limit = request.GET.get('limit', 20)
+
+        try:
+            page = int(page)
+            limit = int(limit)
+        except ValueError:
+            return Response({'error': 'Invalid pagination parameters'}, status=status.HTTP_400_BAD_REQUEST)
+
         players = Player.objects.filter(
             user__is_staff=False,
             user__is_superuser=False
@@ -420,6 +441,169 @@ class LeaderboardView(APIView):
             )
         ).order_by('rank_order', '-xp')
         
-        serializer = PlayerSerializer(players, many=True)
+        paginator = Paginator(players, limit)
         
+        try:
+            paginated_players = paginator.page(page)
+        except:
+            return Response({'results': [], 'has_more': False}, status=status.HTTP_200_OK)
+        
+        serializer = PlayerSerializer(paginated_players, many=True)
+
+        return Response({
+            'results': serializer.data,
+            'has_more': paginated_players.has_next() 
+        }, status=status.HTTP_200_OK)
+
+
+
+class GlobalStatsView(APIView):
+    def get(self, request):
+
+        player = get_object_or_404(Player, user=request.user)
+        notifications = Notification.objects.filter(recipient=request.user).order_by('-timestamp')
+        #youness checki chnahiya dik models.Q
+        game_history = GameHistory.objects.filter(models.Q(winner_user_id=request.user.id) | models.Q(loser_user_id=request.user.id))
+        friendships = Friendship.objects.filter(Q(player=request.user, blocked=False) | Q(friend=request.user, blocked=False))
+        friends = [friendship.friend if friendship.player == request.user else friendship.player for friendship in friendships]
+        achievements = UserAchievement.objects.filter(user=request.user)
+
+        #here 3adna 2 anwa3 dyal tournament online / offiline 
+        tournament = Tournament.objects.filter(tournament_participants=request.user).first()
+        if tournament:
+            tournament = TournamentSerializer(tournament).data
+        else:
+            currentLocalPlayer = LocalPlayer.objects.filter(username=request.user.username).first()
+            if currentLocalPlayer:
+                tournament = currentLocalPlayer.tournament
+                if tournament:
+                    tournament = LocalTournamentSerializer(tournament).data
+                else:
+                    tournament = []
+            else:
+                tournament = []
+
+
+        blocked_users = BlockedUsers.objects.filter(blocker=request.user).select_related('blocked')
+        blocked_list = [{'id': user.blocked.id, 'username': user.blocked.username} for user in blocked_users]
+
+        data = {
+            'player_stats' : PlayerSerializer(player).data,
+            'friends': CurrentUserSerializer(friends, many=True).data,
+            'notifications': NotificationSerializer(notifications, many=True).data,
+            'game_history': GameHistorySerializer(game_history, many=True).data,
+            'achievements': UserAchievementSerializer(achievements, many=True).data,
+            'tournament': tournament,
+            'blocked_users': blocked_list
+        }
+        return(Response(data, status=status.HTTP_200_OK))
+
+
+
+
+class LocalTournamentView(APIView):
+    def get(self, request):
+        #here we should also the tournament he is participating on 
+        # currentLocalPlayer = LocalPlayer.objects.filter(username=request.user.username).first()
+        # print(currentLocalPlayer)
+        try : 
+            currentLocalPlayer = LocalPlayer.objects.get(username=request.user.username)
+        except LocalPlayer.DoesNotExist:
+            return Response({}, status=status.HTTP_404_NOT_FOUND)
+        tournament = currentLocalPlayer.tournament
+        if tournament:
+            serializer = LocalTournamentSerializer(tournament)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        else:
+            return Response({}, status=status.HTTP_404_NOT_FOUND)
+
+
+
+    def post(self, request):
+        serializer = LocalTournamentCreatSerializer(data=request.data, context={'request': request})
+        user = request.user
+        if serializer.is_valid():
+            invited_users = serializer.validated_data.pop('invitedUsers', [])
+            tournament = LocalTournament.objects.create(tournament_creator=request.user, **serializer.validated_data)
+            currentUserLocal = LocalPlayer.objects.create(tournament=tournament ,username=user.username)
+            # tournament.tournament_participants.add(currentUserLocal)
+            participants_list = [currentUserLocal]
+            for participant in invited_users:
+                participant = LocalPlayer.objects.create(tournament=tournament,username=participant)
+                participants_list.append(participant)
+                # tournament.tournament_participants.add(participant)
+            tournament.assign_opponent(participants_list)
+
+            return Response({'message': 'Tournament created successfully'}, status=status.HTTP_201_CREATED)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    def delete(self, request):
+        tournament = get_object_or_404(LocalTournament, tournament_creator=request.user)
+        print(tournament)
+        if tournament:
+            tournament.delete()
+            return Response({'message': 'Tournament deleted successfully'}, status=status.HTTP_200_OK)
+        else:
+            return Response({'error': 'Tournament not found.'}, status=status.HTTP_404_NOT_FOUND)
+
+
+
+
+class LocalPlayerCreateView(APIView):
+    def post(self, request, format=None):
+        username = request.data.get('username')
+        paddle = request.data.get('paddle')
+        keys = request.data.get('keys')
+        print(f"{paddle, keys}")
+
+        if not username:
+            return Response({'error': 'Username is required'}, status=status.HTTP_400_BAD_REQUEST)
+
+        player = LocalPlayer.objects.create(
+            username=username,
+            paddle_color=paddle,
+            keys=keys
+        )
+        serializer = LocalPlayerSerializer(player)
+        print(f"Created player: {serializer.data}")
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    def get(self, request, player_id, format=None):
+        player = get_object_or_404(LocalPlayer, id=player_id)
+        serializer = LocalPlayerSerializer(player)
         return Response(serializer.data)
+
+
+class LocalTournamentParticipantsView(APIView):
+    def get(self, request, stage):
+        if stage not in ["FINALS", "SEMI-FINALS", "FINISHED"]:
+            return {"Message": "Bad Request"}, status.HTTP_400_BAD_REQUEST
+        currentLocalPlayer = LocalPlayer.objects.filter(username=request.user.username).first()
+        tournament = currentLocalPlayer.tournament
+        finals_participants = LocalTournamanetParticipants.objects.filter(tournament=tournament, matchStage="FINALS")
+        semi_finals_participants = LocalTournamanetParticipants.objects.filter(tournament=tournament, matchStage="SEMI-FINALS")
+        data = {
+            'final' : LocalTournamentParticipantsSerializer(finals_participants, many=True).data,
+            'semiFinal' : LocalTournamentParticipantsSerializer(semi_finals_participants, many=True).data,
+        }
+        return Response(data,  status=status.HTTP_200_OK)
+
+class LocalTournamentParticipantResultView(APIView):
+    def post(self, request):
+        match_id = request.data.get('tournamentId');
+        winner = request.data.get('winner');
+        loser = request.data.get('loser');
+        match = get_object_or_404(LocalTournamanetParticipants, id=match_id)
+        winner_obj = get_object_or_404(LocalPlayer, username=winner)
+        loser_obj = get_object_or_404(LocalPlayer, username=loser)
+        print(f"{winner, loser}")
+        with transaction.atomic():
+            match.winner = winner_obj
+            match.loosers = loser_obj
+            match.matchPlayed = True
+            match.save()
+        match.tournament.assign_tournament_stage()
+        return Response("MATCH ID RECEIVED")
+
+# to do list:
+# zid paddle keys avatar random

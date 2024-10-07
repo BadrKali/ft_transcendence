@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, useCallback } from 'react';
 import useAuth from '../../../hooks/useAuth';
 import useFetch from '../../../hooks/useFetch';
 import Waiting from '../components/Waiting';
@@ -14,6 +14,7 @@ import exit from "../asstes/right-arrow.png";
 import MatchResult from '../components/MatchResult';
 import "../stylesheet/game-style.css";
 import WaitForReconnection from '../components/WaitForReconnection';
+import { useTranslation } from 'react-i18next'
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const WS_BACKEND_URL = process.env.REACT_APP_WS_BACKEND_URL;
@@ -22,6 +23,7 @@ const RealTimeGame = ({ mode }) => {
     const lastUpdateTime = useRef(0);
     const animationFrameId = useRef(null);
     const canvasRef = useRef(null);
+    const { t } = useTranslation();
     const navigate = useNavigate();
     const { auth } = useAuth();
     const [opponentDisconnected, showOpponentDisconnected] = useState(false);
@@ -41,20 +43,19 @@ const RealTimeGame = ({ mode }) => {
     const [gameRunning, setGameRunning] = useState(true);
     const [showExitPopup, setShowExitPopup] = useState(false);
     const [showResult, setShowResult] = useState(false);
-    const [backToLobby, setBackToLobby] = useState(false);
-    const [pauseGame, setPauseGame] = useState(false);
-    const [message, setMessage] = useState("");
-    const [profileData, setProfileData] = useState(null);
-    const [won, setWon] = useState(false);
     const [winner, setWinner] = useState("");
     const [sendGotIt, setSendGotIt] = useState(false);
     const [sendWaiting, setSendWaiting] = useState(false);
     const [gameOver, setGameOver] = useState();
-
-
+    const [canvasSize, setCanvasSize] = useState({ width: 1384, height: 696 });
+    const [isReconnected, setIsReconnected] = useState(false);
+    const [previousPaddlePositions, setPreviousPaddlePositions] = useState({});
+    const [keyState, setKeyState] = useState({ up: false, down: false });
+    const animationId = useRef(null);
     useEffect(() => {
         switch (mode) {
             case "invite":
+            case "invite-game-reconnection":
                 setEndPoint("invite-game-room");
                 break;
             case "random":
@@ -75,9 +76,6 @@ const RealTimeGame = ({ mode }) => {
     const { data: currentUser } = useFetch(`${BACKEND_URL}/user/stats`);
 
     useEffect(() => {
-        if (currentUser) {
-            setProfileData(currentUser);
-        }
         if (currentUser === player1) {
             setOpponent(player2);
         } else {
@@ -86,11 +84,14 @@ const RealTimeGame = ({ mode }) => {
     }, [currentUser, player1, player2])
 
     const initializeWebSocket = () => {
-        if (socket) {
-            socket.close();
-        }
         const ws = new WebSocket(`${WS_BACKEND_URL}/ws/game/?token=${auth.accessToken}`);
-        ws.onopen = () => ws.send(JSON.stringify({ action: mode}));
+        ws.onopen = () => {
+            if (mode === "invite-game-reconnection") {
+                ws.send(JSON.stringify({ action: "invite-game-reconnection" }));
+            } else {
+                ws.send(JSON.stringify({ action: mode }));
+            }
+        };
         ws.onmessage = handleWebSocketMessage;
         ws.onclose = () => console.log("WebSocket connection closed");
         ws.onerror = (error) => console.error("WebSocket connection error:", error);
@@ -104,7 +105,6 @@ const RealTimeGame = ({ mode }) => {
         switch (data.action) {
             case 'start_game':
                 startNewGame(data);
-                setSendGotIt(true);
                 break;
             case 'connected':
                 setRoomId(data.room_id);
@@ -143,6 +143,7 @@ const RealTimeGame = ({ mode }) => {
                 setStartGame(true);
                 setGameRunning(true);
                 setSendGotIt(true);
+                setIsReconnected(true);
                 break;
             case "you_won":
                 showOpponentDisconnected(false);
@@ -207,54 +208,96 @@ const RealTimeGame = ({ mode }) => {
             socket.close();
         }
     };
-
-    const initializeCanvas = () => {
-        const canvas = canvasRef.current;
     
-        const ctx = canvas?.getContext('2d');
-        if (!ctx || !canvas){ 
-            return;
+    const calculateCanvasSize = useCallback(() => {
+        const containerWidth = window.innerWidth * 0.8;
+        const containerHeight = window.innerHeight * 0.7;
+        const aspectRatio = 16 / 9;
+
+        let newWidth, newHeight;
+
+        if (containerWidth / containerHeight > aspectRatio) {
+            newHeight = containerHeight;
+            newWidth = newHeight * aspectRatio;
+        } else {
+            newWidth = containerWidth;
+            newHeight = newWidth / aspectRatio;
         }
-        
-        canvas.width = gameState.canvas.width;
-        canvas.height = gameState.canvas.height;
+
+        setCanvasSize({ width: Math.floor(newWidth), height: Math.floor(newHeight) });
+    }, []);
+
+    useEffect(() => {
+        calculateCanvasSize();
+        window.addEventListener('resize', calculateCanvasSize);
+        return () => window.removeEventListener('resize', calculateCanvasSize);
+    }, [calculateCanvasSize]);
+
+    const scaleFactor = useCallback(() => {
+        return {
+            x: canvasSize.width / gameState.canvas.width,
+            y: canvasSize.height / gameState.canvas.height
+        };
+    }, [canvasSize, gameState]);
+
+    
+    const initializeCanvas = useCallback(() => {
+        const canvas = canvasRef.current;
+        const ctx = canvas?.getContext('2d');
+        if (!ctx || !canvas || !gameState) return;
+
+        canvas.width = canvasSize.width;
+        canvas.height = canvasSize.height;
         const { ball, net } = gameState;
-        const user1 = gameState.players[player1?.username];
-        const user2 = gameState.players[player2?.username];
-        setScore1(user1?.score || 0);
-        setScore2(user2?.score || 0);
+        const players = Object.values(gameState.players);
+        if (players.length >= 2) {
+            setScore1(players[0].score || 0);
+            setScore2(players[1].score || 0);
+        }
+
+        const scale = scaleFactor();
 
         const drawRect = (x, y, w, h, color) => {
             ctx.fillStyle = color;
-            ctx.fillRect(x, y, w, h);
+            ctx.fillRect(x * scale.x, y * scale.y, w * scale.x, h * scale.y);
         };
 
         const drawArc = (x, y, r, color) => {
             ctx.fillStyle = color;
             ctx.beginPath();
-            ctx.arc(x, y, r, 0, Math.PI * 2, true);
+            ctx.arc(x * scale.x, y * scale.y, r * Math.min(scale.x, scale.y), 0, Math.PI * 2, true);
             ctx.closePath();
             ctx.fill();
         };
 
         const drawRoundedRect = (x, y, width, height, radius) => {
             ctx.beginPath();
-            ctx.moveTo(x + radius, y);
-            ctx.lineTo(x + width - radius, y);
-            ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
-            ctx.lineTo(x + width, y + height - radius);
-            ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
-            ctx.lineTo(x + radius, y + height);
-            ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
-            ctx.lineTo(x, y + radius);
-            ctx.quadraticCurveTo(x, y, x + radius, y);
+            ctx.moveTo((x + radius) * scale.x, y * scale.y);
+            ctx.arcTo((x + width) * scale.x, y * scale.y, (x + width) * scale.x, (y + height) * scale.y, radius * Math.min(scale.x, scale.y));
+            ctx.arcTo((x + width) * scale.x, (y + height) * scale.y, x * scale.x, (y + height) * scale.y, radius * Math.min(scale.x, scale.y));
+            ctx.arcTo(x * scale.x, (y + height) * scale.y, x * scale.x, y * scale.y, radius * Math.min(scale.x, scale.y));
+            ctx.arcTo(x * scale.x, y * scale.y, (x + width) * scale.x, y * scale.y, radius * Math.min(scale.x, scale.y));
             ctx.closePath();
             ctx.fill();
         };
 
+        const drawPaddles = () => {
+            Object.values(gameState.players).forEach(player => {
+                const prevY = previousPaddlePositions[player.username] || player.y;
+                const currentY = player.y;
+                const interpolatedY = prevY + (currentY - prevY) * 0.5;
+                ctx.fillStyle = player.color;
+                drawRoundedRect(player.x , interpolatedY, player.width , player.height ,9);
+                setPreviousPaddlePositions(prev => ({
+                    ...prev,
+                    [player.username]: interpolatedY
+                }));
+            });
+        };
+    
         const drawNet = () => {
-            for (let i = 0; i <= canvas.height; i+=15) {
-                drawRect(net.x, net.y + i, net.width, net.height, net.color);
+            for (let i = 0; i <= canvas.height; i++ * scale.y) {
+                drawRect(net.x, net.y + i / scale.y, net.width, net.height, net.color);
             }
         };
 
@@ -263,17 +306,7 @@ const RealTimeGame = ({ mode }) => {
             ctx.fillStyle = 'rgba(22, 22, 37, 0.9)';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
             drawNet();
-
-            if (user1) {
-                ctx.fillStyle = user1.color;
-                drawRoundedRect(user1.x, user1.y, user1.width, user1.height, 9);
-            }
-
-            if (user2) {
-                ctx.fillStyle = user2.color;
-                drawRoundedRect(user2.x, user2.y, user2.width, user2.height, 9);
-            }
-
+            drawPaddles();
             drawArc(ball.x, ball.y, ball.radius, ball.color);
         };
 
@@ -286,44 +319,71 @@ const RealTimeGame = ({ mode }) => {
             render(interpolation);
 
             lastUpdateTime.current = timestamp;
-            animationFrameId.current = requestAnimationFrame(gameLoop);
         };
+        gameLoop()
+    }, [gameState, canvasSize, scaleFactor, gameRunning]);
 
-        animationFrameId.current = requestAnimationFrame(gameLoop);
-    };
+    useEffect(() => {
+        if (gameState) {
+            initializeCanvas();
+        }
+    }, [gameState, initializeCanvas]);
 
     const handleKeyDown = (evt) => {
         let direction = null;
-        switch(evt.key) {
-            case 'w':
-            case 'ArrowUp':
-                direction = 'up'
-                break
-            case 's':
-            case 'ArrowDown':
-                direction = 'down'
-                break
-            default:
-                break
+        if (keys === 'ws') {
+            if (evt.key === 'w') direction = 'up';
+            else if (evt.key === 's') direction = 'down';
+        } else {
+            if (evt.key === 'ArrowUp') direction = 'up';
+            else if (evt.key === 'ArrowDown') direction = 'down';
         }
-
+        
         if (direction) {
-            sendPlayerMovement(currentUser?.username, direction);
+            setKeyState(prev => ({ ...prev, [direction]: true }));
+            sendPlayerMovement(currentUser?.username, direction, canvasSize);
         }
     };
 
-    const sendPlayerMovement = (username, direction) => {
+    const handleKeyUp = (evt) => {
+        let direction = null;
+        if (keys === 'ws') {
+            if (evt.key === 'w') direction = 'up';
+            else if (evt.key === 's') direction = 'down';
+        } else {
+            if (evt.key === 'ArrowUp') direction = 'up';
+            else if (evt.key === 'ArrowDown') direction = 'down';
+        }
+        
+        if (direction) {
+            setKeyState(prev => ({ ...prev, [direction]: false }));
+            sendPlayerMovement(currentUser?.username, 'stop', canvasSize);
+        }
+    };
+
+    const sendPlayerMovement = (username, direction, size) => {
         if (socket && username) {
             socket.send(JSON.stringify({
                 action: 'player_movement',
                 user: username,
                 direction: direction,
+                canvasSize: size
             }));
         }
     };
 
+    useEffect(() => {
+        window.addEventListener('keydown', handleKeyDown);
+        window.addEventListener('keyup', handleKeyUp);
+
+        return () => {
+            window.removeEventListener('keydown', handleKeyDown);
+            window.removeEventListener('keyup', handleKeyUp);
+        };
+    }, [currentUser, canvasSize, keys]);
+
+
     const handleExitGame = () => {
-        setPauseGame(true);
         setShowExitPopup(true);
     };
 
@@ -333,8 +393,6 @@ const RealTimeGame = ({ mode }) => {
             setGameRunning(false);
             socket.close();
             navigate('/game', {replace:true})
-        } else {
-            setPauseGame(false);
         }
     };
 
@@ -349,7 +407,6 @@ const RealTimeGame = ({ mode }) => {
         if (auth.accessToken) {
             initializeWebSocket();
         }
-
     }, [auth.accessToken]);
 
     useEffect(() => {
@@ -359,12 +416,6 @@ const RealTimeGame = ({ mode }) => {
         }
     }, [room]);
 
-    useEffect(() => {
-        window.addEventListener('keydown', handleKeyDown);
-        return () => {
-            window.removeEventListener('keydown', handleKeyDown);
-        };
-    }, [keys, currentUser]);
 
     useEffect(() => {
         window.onpopstate = () => {
@@ -389,6 +440,7 @@ const RealTimeGame = ({ mode }) => {
     }, [gameState]);
 
     const handleStartGame = () => {
+        setSendGotIt(true);
         setStartGame(true);
     }
 
@@ -403,9 +455,15 @@ const RealTimeGame = ({ mode }) => {
             }
         };
     }, [socket]);
+
+    const handleInvitationRejected = () => {
+        socket.close();
+        navigate('/game', { replace:true});
+    }
+
     return (
         <div className="pingponggame-container random-game" style={{ backgroundImage: `url(${background})` }}>
-            {room && player1 && player2 && (
+            {room && player1 && player2 && !isReconnected && (
                 <div className="player-info-container">
                     <PlayerInfo player1={player1} player2={player2} onStartGame={handleStartGame} socket={socket}/>
                 </div>
@@ -417,18 +475,16 @@ const RealTimeGame = ({ mode }) => {
                 <MatchResult winner={winner} onBack={handleBackToLobby}/>
             )}
             {showWaiting && (
-                <Waiting player={currentUser}/>
+                <Waiting player={currentUser} onNoPlayerFound={handleInvitationRejected}/>
             )}
             {startGame && room && player1 && player2 && (
                 <>
-                    <h1>{message}</h1>
                     <ScoreBoard
                         user1Score={score1}
                         user2Score={score2}
-                        user1Name={player1.username}
-                        user2Name={player2.username}
-                        user1Avatar={avatar1}
-                        user2Avatar={avatar2}
+                        user1={player1}
+                        user1Avatar={`${BACKEND_URL}${player1.avatar}`}
+                        user2={player2}
                     />
                     <div className="game-container">
                         <canvas className='canvas-container' ref={canvasRef}></canvas>
@@ -441,10 +497,10 @@ const RealTimeGame = ({ mode }) => {
             {showExitPopup && (
                 <div className="exit-popup">
                     <div className="exit-popup-content">
-                        <h2>BACK TO LOBBY ?</h2>
+                        <h2>{t('BACK TO LOBBY ?')}</h2>
                         <div className="exit-popup-buttons">
-                            <button onClick={() => confirmExitGame(true)}>Yes</button>
-                            <button onClick={() => confirmExitGame(false)}>Cancel</button>
+                            <button onClick={() => confirmExitGame(true)}>{t('Yes')}</button>
+                            <button onClick={() => confirmExitGame(false)}>{t('Cancel')}</button>
                         </div>
                     </div>
                 </div>

@@ -1,6 +1,7 @@
 import React from 'react'
 import { useState, useEffect, useRef, useContext } from 'react'
 import './TopBar.css'
+import { useDebounce } from "@uidotdev/usehooks";
 import Icon from '../../assets/Icon/icons'
 import { avatars } from '../../assets/assets'
 import NotificationItem from './NotificationItem'
@@ -22,30 +23,38 @@ import LanguageSelector from './LanguageSelector'
 import GameChallengeNotification from '../Notification/GameChallengeNotification'
 import GameSettingsPopUp from '../GameSettingsPopUp/GameSettingsPopUp'
 import { UserContext } from '../../context/UserContext'
+import { useTranslation } from 'react-i18next'
+
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
 const TopBar = () => {
   const [showNotif, setNotif] = useState(false)
   const dropdownRef = useRef(null);
+  const dropdownProfilRef = useRef(null);
+  const { t } = useTranslation();
   const dropdownSearchRef = useRef(null);
   const [isProfilActive, setProfilActive] = useState(false)
   const [isDropdownActive, setDropdownActive] = useState(false);
   const [query, setQuery] = useState('');
   const [results, setResults] = useState([]);
-  const [profilData, setProfilData] = useState([]);
-  const [queryEndpoint, setQueryEndpoint] = useState(`${BACKEND_URL}/user/search/?q=${query}`)
-  const response1 = useFetch(`${BACKEND_URL}/user/stats/`)
   const navigate = useNavigate();
   const { hasNotification, clearNotification} = useContext(RealTimeContext);
-  // const [notifications, setNotifications] = useState([]);
   const { auth }  = useAuth()
   const [modalOpen, setModalOpen] = useState(false);
   const [modalOpenBlocked, setModalOpenBlocked] = useState(false);
   const [selectedNotification, setSelectedNotification] = useState(null);
-  const {gameChallenge, handleAcceptGame, handleRejectGame, gameAccepted, joinGame, setGameAccepted, showGameSettings, setShowGameSettings} = useContext(RealTimeContext);
-  const { userData, userDataLoading, userDataError, updateUserFriends, notifications, setNotifications} = useContext(UserContext);
+  const { gameChallenge, 
+    handleAcceptGame, 
+    handleRejectGame, 
+    gameAccepted,
+    setGameAccepted, 
+    setShowGameSettings, 
+    tournamentMatchAccepted, 
+    setTournamentMatchAccepted } = useContext(RealTimeContext);
+  const { userData, userDataLoading, userDataError, updateUserFriends, notifications, setNotifications, updatetounament} = useContext(UserContext);
+  const debouncedQuery = useDebounce(query, 300);
+  const [queryEndpoint, setQueryEndpoint] = useState(`${BACKEND_URL}/user/search/?q=${query}`)
 
-  
   const handleNotificationClick = (notif) => {
     setSelectedNotification(notif);
     setModalOpen(true);
@@ -56,12 +65,19 @@ const TopBar = () => {
   }
 
   const handleMyProfilClick = () => {
-      navigate(`/user/${profilData.username}`)
+      navigate(`/user/${userData.username}`)
   }
 
   const handleSettingClick = () => {
       navigate(`/setting`)
   }
+
+  useEffect(() => {
+    if (tournamentMatchAccepted) {
+      setTournamentMatchAccepted(false);
+      navigate('/tournament-game', { replace:true });
+    }
+  }, [tournamentMatchAccepted, navigate]);
 
   useEffect(() => {
     if (gameAccepted) {
@@ -105,7 +121,7 @@ const TopBar = () => {
             const data = await response.json();
             const tournamentId = data.tournament.id;
 
-            url = `${BACKEND_URL}/user/tournament/invitations/${tournamentId}/response/`;
+            url = `${BACKEND_URL}/user/tournament/invitations/${tournamentId}`;
             body = JSON.stringify({ 'status': 'accept' });
         }
 
@@ -141,8 +157,24 @@ const TopBar = () => {
               }
               
               const updatedFriendsData = await friendsResponse.json();
-              console.log(updatedFriendsData)
+
             updateUserFriends(updatedFriendsData);
+        }else if (type === 'Tournament'){
+          const TournamentResponse = await fetch(`${BACKEND_URL}/user/tournament/`, {
+            method: 'GET',
+                headers: {
+                  'Content-Type': 'application/json',
+                  'Authorization': `Bearer ${auth.accessToken}`
+                }
+              });
+              
+              if (!TournamentResponse.ok) {
+                throw new Error('Network response was not ok');
+              }
+              
+              const updatedTournament = await TournamentResponse.json();
+      
+              updatetounament(updatedTournament);
         }
 
     } catch (error) {
@@ -178,8 +210,7 @@ const handleReject = async (id, type) => {
 
           const data = await response.json();
           const tournamentId = data.tournament;
-          console.log(data)
-
+     
           url = `${BACKEND_URL}/user/tournament/invitations/${tournamentId}`;
           body = JSON.stringify({ 'status': 'reject' });
 
@@ -224,7 +255,10 @@ const handleReject = async (id, type) => {
   };
 
   const handleIconClick = async () => {
-    setNotif(!showNotif);
+    if (modalOpen)
+      setNotif(false)
+    else
+      setNotif(!showNotif);
     clearNotification(); 
     await fetch(`${BACKEND_URL}/user/notifications/`, {
       method: 'POST',
@@ -234,12 +268,6 @@ const handleReject = async (id, type) => {
       }
     });
   };
-
-  useEffect(() => {
-    if (response1.data) {
-      setProfilData(response1.data);
-    }
-  }, [response1.data]);
 
   const handleClickOutside = (event) => {
     if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -261,17 +289,31 @@ const handleReject = async (id, type) => {
   }, [query])
 
 
-  const response = useFetch(queryEndpoint)
   useEffect(() => {
-    if (response.data) {
-      setResults(Array.isArray(response.data) ? response.data : []);
+    if (debouncedQuery) {
+      fetchResults(debouncedQuery);
     }
-  }, [response.data]);
-  
+  }, [debouncedQuery]);
+
+  const fetchResults = async () => {
+
+      const response = await fetch((queryEndpoint), {
+      method: 'GET',
+      headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${auth.accessToken}`
+      }
+      })
+      const data = await response.json();
+    
+      setResults(Array.isArray(data) ? data : []);
+  };
+
   const handleChange = (e) => {
     setQuery(e.target.value);
     setDropdownActive(true);
   };
+
   const handleItemClick = (result) => {
   
     navigate(`/user/${result.username}`, {
@@ -283,7 +325,10 @@ const handleReject = async (id, type) => {
   };
 
   const handleProfilClick = (e) => {
-    setProfilActive(!isProfilActive);
+    if (modalOpenBlocked)
+      setProfilActive(false)
+    else
+      setProfilActive(!isProfilActive);
   };
 
   const handleClickOutsideSearch = (event) => {
@@ -299,6 +344,22 @@ const handleReject = async (id, type) => {
 
     return () => {
       document.removeEventListener('mousedown', handleClickOutsideSearch);
+    };
+  }, []);
+
+  const handleClickOutsideProfil = (event) => {
+    if (dropdownProfilRef.current && !dropdownProfilRef.current.contains(event.target)) {
+      setProfilActive(false);
+    setQuery('');
+
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener('mousedown', handleClickOutsideProfil);
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutsideProfil);
     };
   }, []);
 
@@ -319,12 +380,9 @@ const handleReject = async (id, type) => {
                 onReject={handleRejectGame}
             />
       )}
-      {/* {showGameSettings && (
-        <GameSettingsPopUp onExit={handleExitGameSettings}/>
-      )} */}
       <div className='topbar-search'>
         <Icon name='search' className='topbar-search-icon'/>
-        <input placeholder='Search' value={query}  type='text' onChange={handleChange}/>
+        <input placeholder={t('Search')}  value={query}  type='text' onChange={handleChange}/>
         <div 
         ref={dropdownSearchRef} 
         className={isDropdownActive && results.length > 0 ? "search-dropDwon searchActiv" : "search-dropDwon"}
@@ -359,17 +417,17 @@ const handleReject = async (id, type) => {
             <NotificationPopup isOpen={modalOpen} onClose={handleClose} notif={selectedNotification} onAccept={handleAccept} onReject={handleReject} />
           )}
         </div>
-        <div className='profile-pic-container'  onClick={handleProfilClick}>
+        <div className={isProfilActive ? 'profile-pic-container profile-pic-container-active' : 'profile-pic-container '} onClick={handleProfilClick}>
           <div className='profile-pic'>
-            <img src={`${BACKEND_URL}${userData.avatar}`}/>
+            <img src={`${BACKEND_URL}${userData.avatar}`} alt="profil Picture"/>
           </div>
           <span>{userData.username}</span>
-          <div  className={isProfilActive ? "dropDwonProfil profilActive" : "dropDwonProfil"}>
+          <div ref={dropdownProfilRef} className={isProfilActive ? "dropDwonProfil profilActive" : "dropDwonProfil"}>
             <div className='dropList'>
-              <p className='list' onClick={handleMyProfilClick}>View My Profil</p>
-              <p className='list' onClick={handleListBlockedClick}>List Blocked</p>
-              <p className='list' onClick={handleSettingClick}>Setting</p>
-              <p className='list'>Log Out</p>
+              <p className='list' onClick={handleMyProfilClick}>{t('View My Profil')}</p>
+              <p className='list' onClick={handleListBlockedClick}>{t('List Blocked')}</p>
+              <p className='list' onClick={handleSettingClick}>{t('Setting')}</p>
+              <p className='list'>{t('Log Out')}</p>
             </div>
           </div>
             <ListBlockedPopup isOpen={modalOpenBlocked} onClose={handleCloseBlocked} />

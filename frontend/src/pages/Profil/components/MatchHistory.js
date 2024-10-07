@@ -2,12 +2,14 @@ import React from 'react'
 import { useState, useEffect } from 'react'
 import useFetch from '../../../hooks/useFetch'
 import useAuth from '../../../hooks/useAuth';
+import Lottie from 'lottie-react';
 import { useNavigate } from 'react-router-dom';   
 import { useContext } from 'react';  
 import { ProfileContext } from '../../../context/ProfilContext'; 
 import History from '../../../assets/MatchHistoryData'
 import { useTranslation } from 'react-i18next';
 import HistoryItem from './HistoryItem'
+import sadFace from '../../../assets/sadFace.json'
 import './matchHistory.css'
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
@@ -39,7 +41,7 @@ function MatchHistory({profil}) {
             });
             if (response.ok) {
                 const dataa = await response.json();
-                console.log(dataa)
+               
                 navigate(`/user/${dataa.username}`, {
                   state: { userData: dataa },
                 });
@@ -52,20 +54,24 @@ function MatchHistory({profil}) {
         }
     
       };
+
   return (
     <div className="macthContainer">
     <div className="matchHeader">
       <h2>{t('Match History')}</h2>
     </div>
     <div className="historyCard">
-      {history.length > 0 ? (
-        history.map((historyItem) => (
+      {history && history.length > 0 ? (
+        history.slice().reverse().map((historyItem) => (
           <div key={historyItem.id} onClick={() => handleItemClick(historyItem)}>
             <HistoryItem history={historyItem} />
           </div>
         ))
       ) : (
-        <p>{t('No match history available.')}</p>
+        <div className='sadFaceAnimationGame'>
+              <div className='sadeFaceGame'><Lottie  animationData={sadFace} /> </div>
+              <h3>{t('No match history available.')}</h3>
+        </div>
       )}
     </div>
   </div>

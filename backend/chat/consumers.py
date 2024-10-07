@@ -18,6 +18,12 @@ import openai
 from django.shortcuts import get_object_or_404
 from dotenv import load_dotenv
 import os
+from django.test import RequestFactory
+from .views import RetreiveContacts
+import base64
+from django.core.files.base import ContentFile
+from faker import Faker
+import random
 
 
 load_dotenv()
@@ -105,15 +111,50 @@ class ChatConsumer(AsyncWebsocketConsumer):
         await (self.channel_layer.group_add)(
             self.room_group_name,
             self.channel_name
-        ) 
+        )
+
+        await self.broadcast_status_update(True)
         await self.accept()
 
     async def disconnect(self, __quitcode__):
+        await self.broadcast_status_update(False)
         await (self.channel_layer.group_discard(
                 self.room_group_name,
                 self.channel_name
         )
         )
+
+    async def broadcast_status_update(self, online):
+        status = True if online else False
+        online_contacted_users = await self.retreive_contacted_users()
+        if len(online_contacted_users):
+            [await self.status_acknowledgment(user.get('id'), status) for user in online_contacted_users]
+
+    async def status_acknowledgment(self, user_id, status):
+        await self.channel_layer.group_send(
+            f'room_{user_id}',{
+                'type'    : 'status_update',
+                'message' : {
+                    'status_owner' : self.sender_id,
+                    'status'       : status,
+                }
+            }
+        )
+    
+    async def status_update(self, event):
+        await (self.send( text_data=json.dumps(event) ))
+
+    @database_sync_to_async
+    def retreive_contacted_users(self):
+        factory = RequestFactory()
+        user = User.objects.get(id=self.sender_id)
+        request = factory.get('/chat/GetContactSection/')
+        request.user = user
+        response = RetreiveContacts(request)
+        response.render()
+        contacted_users = json.loads(response.content.decode('utf-8'))
+        online_contacted_users = [user for user in contacted_users if user.get('status') == True]
+        return online_contacted_users
 
     async def receive(self, text_data=None):
         self.extracted_msg = json.loads(text_data)
@@ -212,14 +253,6 @@ class ChatConsumer(AsyncWebsocketConsumer):
                 'message': ContactData
             }
             )
-        # Dont' send start_first_conv event to msg receiver for first time!
-        # # I have no focus When I added this line payattention !
-        # await (self.channel_layer.group_send)( 
-        #     f'room_{self.MSGreceiver.id}',{ 
-        #         'type': 'start_Firstconv',
-        #         'message': ContactData
-        #     }
-        #     )
     
     async def start_Firstconv(self, event):
         await (self.send( text_data=json.dumps(event) ))
@@ -276,35 +309,34 @@ class ChatConsumer(AsyncWebsocketConsumer):
         receiverBlockedSender = await self.check_blockStatus(self.receiver_id, self.sender_id)
         if not senderBlockedreceiver and not receiverBlockedSender:
             already_have_conv = await self.already_have_record(self.sender_id, self.receiver_id)
-            await self.save_to_db();
+            saved_message = await self.save_to_db()
             try :
                 receiver_status = await self.get_user_status(self.receiver_id);
                 if receiver_status :
                     await (self.channel_layer.group_send)(
                         f'room_{self.receiver_id}',{
                             'type': 'newchat.message',
-                            'message': self.extracted_msg.get('messageData')
+                            'message' : saved_message
                         }
                         )
                     if already_have_conv :
-                        print('Now We will Send you last Message because we already talked ! => ', already_have_conv)
                         await (self.channel_layer.group_send)(
                             f'room_{self.receiver_id}',{
                                 'type': 'last.message',
-                                'message': self.extracted_msg.get('messageData')
+                                'message' : saved_message
                             }
                             )
                 if (self.receiver_id != self.extracted_msg.get('messageData').get('sender_id')):
                     await (self.channel_layer.group_send)(
                     f"room_{self.extracted_msg.get('messageData').get('sender_id')}",{
                             'type': 'newchat.message',
-                            'message': self.extracted_msg.get('messageData')
+                            'message' : saved_message
                      }
                     )
                     await (self.channel_layer.group_send)(
                         f"room_{self.extracted_msg.get('messageData').get('sender_id')}",{
                               'type': 'last.message',
-                            'message': self.extracted_msg.get('messageData')
+                            'message' : saved_message
                         }
                     )
             except Exception as e:
@@ -328,13 +360,9 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
     @database_sync_to_async
     def update_unique_msg_status(self):
-        self.msgcontent = self.extracted_msg.get('messageData').get('content')
-        self.createdAt  = self.extracted_msg.get('messageData').get('created_at')
-        created_at = parse(self.createdAt)
-        created_at = created_at.replace(microsecond=0)
-        requiredMsg = message.objects.filter(content=self.msgcontent, created_at__second=created_at.second)
+        msgId = self.extracted_msg.get('messageData').get('id')
+        requiredMsg = message.objects.filter(id=msgId)
         requiredMsg.update(seen=True)
-        # print(requiredMsg)
 
 
     async def msgs_areReaded(self, event):
@@ -350,12 +378,30 @@ class ChatConsumer(AsyncWebsocketConsumer):
     @database_sync_to_async
     def save_to_db(self):
         self.msgDetails = self.extracted_msg.get('messageData')
+        msgType = self.msgDetails.get('msgType')
+
         Usersender = User.objects.get(id=self.msgDetails.get('sender_id'))
         UserReceiver = User.objects.get(id=self.msgDetails.get('receiver_id'))
-        message.objects.create(
+        
+        if msgType == 'text':
+            saved_model = message.objects.create(
                            sender_id=Usersender,
                            receiver_id = UserReceiver,
                            content= self.msgDetails.get('content'),
                            seen = self.msgDetails.get('seen'),
-                           created_at=self.msgDetails.get('created_at')
                         )
+        elif msgType == 'image':
+            fake = Faker()
+            format, imgstr = self.msgDetails.get('ImgPath').split(';base64,')
+            ext = format.split('/')[-1] 
+            filename = fake.file_name() + '_' + str(random.randint(1, 10000)) + '.' + ext
+            data = ContentFile(base64.b64decode(imgstr), name=filename)
+            saved_model = message.objects.create(
+                           sender_id=Usersender,
+                           receiver_id = UserReceiver,
+                           seen = self.msgDetails.get('seen'),
+                           msgType= self.msgDetails.get('msgType'),
+                           ImgPath=data,
+                        )
+        serialiser = __messageSerializer__(saved_model)
+        return serialiser.data

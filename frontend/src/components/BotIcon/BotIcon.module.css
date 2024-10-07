@@ -12,9 +12,9 @@
 .conversationHolder{
     width: 25rem;
     height: 35rem;
-    background-color:#56596544;
     border-radius: 12px;
     overflow: auto;
+    background-color:#56596544;
     backdrop-filter : blur(20px);
     box-shadow: 0 0 12px rgb(0, 0, 0);
     grid-template-columns: 1fr;

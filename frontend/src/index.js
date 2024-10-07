@@ -24,14 +24,16 @@ import { BlockPopUpProvider } from "./pages/Chat/usehooks/ChatContext";
 import { CurrentUserProvider } from "./pages/Chat/usehooks/ChatContext";
 import Invite from './pages/PingPongGame/Invite/Invite';
 import { UserProvider } from "./context/UserContext";
-import Design from "./pages/Design/Design";
+import { ProfileProvider } from "./context/ProfilContext";
+import ProfileProviderWrapper from './context/ProfileProviderWrapper'
+import TournamentGame from "./pages/PingPongGame/TournamentGame.js/TournamentGame";
+import { InviteGameReconnection } from "./pages/PingPongGame/Invite/Invite";
+import LocalGameTournament from "./pages/PingPongGame/LocalGame/LocalGameTournament";
+import NotFound from "./pages/ErrorPages/404";
+import ServerError from "./pages/ErrorPages/500";
 
 
 const routes = [
-  {
-    element: <Auth />,
-    path: "/auth",
-  },
   {
     element: <OauthTwo />,
     path: "/42_api",
@@ -40,6 +42,10 @@ const routes = [
     element: <PersistLogin />,
     children: [
       {
+        element: <Auth />,
+        path: "/auth",
+      },
+      {
         element: <ProtectedRoutes />,
         children: [
           {
@@ -47,7 +53,9 @@ const routes = [
                   <UserProvider>
                     <RealTimeProvider>
                       <SocketClientProvider>
+                          <ProfileProviderWrapper>
                               <AppLayout />
+                          </ProfileProviderWrapper>
                       </SocketClientProvider>
                     </RealTimeProvider>
                   </UserProvider>,
@@ -62,18 +70,25 @@ const routes = [
               { path: "tournament", element: <Tournament /> },
               { path: "leaderboard", element: <LeaderBoard /> },
               { path: "setting", element: <Setting /> },
-              { path: "/user/:nameOfUser", element: <Profil /> },
+              { path: "/user/:nameOfUser", element:
+                                            
+                                                <Profil /> 
+                                            },
             ],
           },
         ],
       },
     ],
   },
-  // { path: "design", element: <Design /> },
   {path: 'bot-game', element: <Bot />},
   {path: 'local-game', element: <LocalGame />},
   {path: 'random-game', element: <Random/>},
   {path: 'invite-game', element: <Invite/>},
+  {path: 'tournament-game', element: <TournamentGame/>},
+  {path: 'local-tournament-game', element: <LocalGameTournament/>},
+  {path: 'invite-game-reconnection', element: <InviteGameReconnection/>},
+  { path: "*", element: <NotFound /> },
+  { path: "/server-error", element: <ServerError /> },
 ];
 
 const router = createBrowserRouter(routes);

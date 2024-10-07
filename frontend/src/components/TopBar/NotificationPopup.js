@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import './notificationPopup.css'
+import { useTranslation } from 'react-i18next'
 import useFetch from '../../hooks/useFetch';
 import backGround from '../../assets/backGroungHell.png'
 import MainButton from '../MainButton/MainButton';
@@ -8,7 +9,7 @@ import Icon from '../../assets/Icon/icons';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
-const GeneralNotificationComponent = ({ notif, typeNotif, profilData, onAccept, onReject }) => (
+const GeneralNotificationComponent = ({ notif, typeNotif, profilData, onAccept, onReject, t }) => (
     <>
       <h2>{typeNotif}</h2>
       <div className='NotifUserImageName-container' style={{
@@ -18,26 +19,26 @@ const GeneralNotificationComponent = ({ notif, typeNotif, profilData, onAccept, 
             <img src={`${BACKEND_URL}${profilData.avatar}`} alt="profile_pic" />
             <div className='NotiddName'>
               <p>{profilData.username}</p>
-              <p>Rank : Gold</p>
+              <p>{t('Rank')} : Gold</p>
             </div>
           </div>
           <div className='WinRate'>
-            <p>Win Rate</p>
+            <p>{t('Win Rate')}</p>
             <p>50%</p>
           </div>
       </div>
       <div className='buttunsAR'>
         {/* <button className='buttonA Accept' onClick={() => onAccept(notif.sender, typeNotif)}>Accept</button> */}
-        <MainButton type="button" functionHandler={() => onAccept(notif.sender, typeNotif)} content="Accept"/>
+        <MainButton type="button" functionHandler={() => onAccept(notif.sender_id, typeNotif)} content="Accept"/>
 
         {/* <button  className='buttonA Reject' onClick={() => onReject(notif.sender, typeNotif)}>Reject</button> */}
         {/* <MainButton type="button" onClick={() => onReject(notif.sender, typeNotif)} content="Reject"/> */}
-        <SecondButton type="button" functionHandler={() => onReject(notif.sender, typeNotif)} content="Reject"/>
+        <SecondButton type="button" functionHandler={() => onReject(notif.sender_id, typeNotif)} content="Reject"/>
       </div>
     </>
 );
 
-const TournamentPopupComponent = ({ notif, typeNotif, profilData, onAccept, onReject }) => {
+const TournamentPopupComponent = ({ notif, typeNotif, profilData, onAccept, onReject, t }) => {
   const {data ,isLoading, error} = useFetch(`${BACKEND_URL}/user/tournament/invitations/`)
 
   return (
@@ -51,7 +52,7 @@ const TournamentPopupComponent = ({ notif, typeNotif, profilData, onAccept, onRe
             <img src={`${BACKEND_URL}${profilData.avatar}`} alt="profile_pic" />
             <div className='NotiddName'>
               <p>{profilData.username}</p>
-              <p>Rank : Gold</p>
+              <p>{t('Rank')} : Gold</p>
             </div>
           </div>
           <div className='tournament-info-item popup-item'>
@@ -60,10 +61,10 @@ const TournamentPopupComponent = ({ notif, typeNotif, profilData, onAccept, onRe
                   {data && data.tournament ? (
                       <>
                           <p>{data.tournament.tournament_prize}</p>
-                          <span>Total Prize Pool</span>
+                          <span>{t('Total Prize Pool')}</span>
                       </>
                   ) : (
-                      <span>Total Prize Pool</span> 
+                      <span>{t('Total Prize Pool')}</span> 
                   )}
               </div>
           </div>
@@ -72,10 +73,10 @@ const TournamentPopupComponent = ({ notif, typeNotif, profilData, onAccept, onRe
                 <div className='tournament-info-item-txt'>
                   {data && data.tournament ? (
                     <>
-                      <p>Map</p>
+                      <p>{t('Map')}</p>
                       <span>{data.tournament.tournament_map}</span>
                     </> ) : (
-                      <p>Map</p>
+                      <p>{t('Map')}</p>
                     )}
                 </div>
             </div>
@@ -91,7 +92,7 @@ const TournamentPopupComponent = ({ notif, typeNotif, profilData, onAccept, onRe
                             />
                         ))
                     ) : (
-                        <p>Loading participants...</p> 
+                        <p>{t('Loading participants...')}</p> 
                     )}
                 </div>
                 <span className='tournament-subscribers-counter'>
@@ -104,18 +105,19 @@ const TournamentPopupComponent = ({ notif, typeNotif, profilData, onAccept, onRe
             </div>
       </div>
       <div className='buttunsAR'>
-        <MainButton type="button" functionHandler={() => onAccept(notif.sender, typeNotif)} content="Accept"/>
-        <SecondButton type="button" functionHandler={() => onReject(notif.sender, typeNotif)} content="Reject"/>
+        <MainButton type="button" functionHandler={() => onAccept(notif.sender_id, typeNotif)} content="Accept"/>
+        <SecondButton type="button" functionHandler={() => onReject(notif.sender_id, typeNotif)} content="Reject"/>
       </div>
     </>
   );
 };
 
-const AchievementComponent = ({notif}) => (
+const AchievementComponent = ({notif , t}) => (
+
     <>
-      <h2>Achievement</h2>
+      <h2>{t('Achievement')}</h2>
       <div className='NotifUserImageNameAchievment'>
-        <p>Image</p>
+        <p>{t('Image')}</p>
       </div>
       <p className='NotifMessageAchievment'>{notif.message}</p>
       <div className='AchivmentTitleDes'>
@@ -127,9 +129,11 @@ const AchievementComponent = ({notif}) => (
 
 const NotificationPopup = ({ isOpen, onClose, notif, onAccept, onReject })=> {
   const [typeNotif, setTypeNotif] = useState('');
-  const {data ,isLoading, error} = useFetch(`${BACKEND_URL}/user/stats/${notif.sender}`)
+  const {data ,isLoading, error} = useFetch(`${BACKEND_URL}/user/stats/${notif.sender_id}`)
   const [profilData, setProfilData] = useState([]);
-  
+  const { t } = useTranslation();
+
+
   useEffect(() => {
     if (data) {
     setProfilData(data);
@@ -137,7 +141,7 @@ const NotificationPopup = ({ isOpen, onClose, notif, onAccept, onReject })=> {
   }, [data]);
 
   useEffect(() => {
-    console.log(notif.message)
+
     if (notif.message === 'has challenged you to a game!') {
       setTypeNotif('Game Challenge');
     }
@@ -165,7 +169,7 @@ const NotificationPopup = ({ isOpen, onClose, notif, onAccept, onReject })=> {
       <div className="modal">
         <button className="modalCloseButton" onClick={onClose}>&times;</button>
         {typeNotif === 'Achievement' && (
-        <AchievementComponent notif={notif} BACKEND_URL={BACKEND_URL} />
+        <AchievementComponent notif={notif} BACKEND_URL={BACKEND_URL} t={t} />
       )}
         {typeNotif === 'Tournament' && (
           <TournamentPopupComponent
@@ -174,6 +178,7 @@ const NotificationPopup = ({ isOpen, onClose, notif, onAccept, onReject })=> {
             profilData={profilData}
             onAccept={onAccept}
             onReject={onReject}
+            t={t}
           />
         )}
         {typeNotif !== 'Achievement' && typeNotif !== 'Tournament' && (
@@ -183,6 +188,7 @@ const NotificationPopup = ({ isOpen, onClose, notif, onAccept, onReject })=> {
             profilData={profilData}
             onAccept={onAccept}
             onReject={onReject}
+            t={t}
           />
         )}
       </div>

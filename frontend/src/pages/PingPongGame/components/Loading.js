@@ -1,13 +1,17 @@
 import { useEffect, useState } from "react";
 import LoadingIMG from "../asstes/loading.svg";
+import { useTranslation } from 'react-i18next'
+
 
 const Loading = () => {
     const [text, setText] = useState('');
     const [showImg, setShowImg] = useState(true);
+    const { t } = useTranslation();
+
 
     useEffect (() => {
         setTimeout(() =>{
-            setText('Loading...');
+            setText(t('Loading...'));
         }, 3000)
     }, [])
     

@@ -18,7 +18,7 @@ function AddFriendUnfriendButton({ FriendId }) {
     const { t } = useTranslation();
     const isDisabled = isBlockingHim || isBlockedMe;
  
-    
+   
     const handleAddFriend = async () => {
         try {
             const response = await fetch(`${BACKEND_URL}/user/friends-request/${FriendId}/`, {
@@ -99,7 +99,7 @@ function AddFriendUnfriendButton({ FriendId }) {
                   }
                   
                   const updatedFriendsData = await friendsResponse.json();
-                  console.log(updatedFriendsData)
+            
                 updateUserFriends(updatedFriendsData);
 
         } catch (error) {

@@ -1,5 +1,5 @@
 import React from 'react';
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import Icon from '../../assets/Icon/icons';
 import './languageSelector.css'
@@ -7,10 +7,11 @@ import i18n from '../../i18n'
 
 const LanguageSelector = () => {
   const { i18n } = useTranslation();
+  const dropdownLanguageRef = useRef(null);
   const [isLanguageActive, setIsLanguageActive] = useState(false);
   const [selectedLanguage, setSelectedLanguage] = useState({
     code: localStorage.getItem('i18nextLng') || 'en',
-    label: localStorage.getItem('i18nextLnge') || 'en',
+    label: localStorage.getItem('i18nextLnge') || 'EN',
   });
 
 
@@ -28,22 +29,35 @@ const LanguageSelector = () => {
       setIsLanguageActive(false);
   };
 
+  const handleClickOutsideLanguage = (event) => {
+    if (dropdownLanguageRef.current && !dropdownLanguageRef.current.contains(event.target)) {
+      setIsLanguageActive(false);
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener('mousedown', handleClickOutsideLanguage);
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutsideLanguage);
+    };
+  }, []);
   return (
-    <div>
+    <div className='dropDwonLanguageContainer'>
       <button onClick={toggleDropdown} className="languageButton">
-        <Icon name='English' className='flagIcon'/> 
+        <Icon name={selectedLanguage.label} className='flagIcon'/> 
         {selectedLanguage.label}
       </button>
-      <div className={isLanguageActive ? "dropDwonLanguage LanguageActive" : "dropDwonLanguage"}>
-        <div className='dropList'>
+      <div ref={dropdownLanguageRef} className={isLanguageActive ? "dropDwonLanguage LanguageActive" : "dropDwonLanguage"}>
+        <div className='dropListLanguage'>
           <p className='list' onClick={() => changeLanguage('en', 'EN')}>
-            <Icon name='English' className='flagIcon'/> English 
+            <Icon name='EN' className='flagIcon'/> English 
           </p>
           <p className='list' onClick={() => changeLanguage('fr', 'FR')}>
-            <Icon name='English' className='flagIcon'/>  Français
+            <Icon name='FR' className='flagIcon'/>  Français
           </p>
-          <p className='list' onClick={() => changeLanguage('ar', 'AR')}>
-            <Icon name='English' className='flagIcon'/>  العربية
+          <p className='list' onClick={() => changeLanguage('es', 'ES')}>
+            <Icon name='ES' className='flagIcon'/>  Español
           </p>
         </div>
       </div>

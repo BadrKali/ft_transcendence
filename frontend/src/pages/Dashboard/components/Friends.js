@@ -13,6 +13,7 @@ import RealTimeProvider from '../../../context/RealTimeProvider'
 import { UserContext } from '../../../context/UserContext'
 import { useTranslation } from 'react-i18next'
 
+
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
 function Friends() {

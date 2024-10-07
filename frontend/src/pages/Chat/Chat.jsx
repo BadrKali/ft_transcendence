@@ -8,14 +8,13 @@ import { CurrentUserContext } from "./usehooks/ChatContext.js";
 import { clientSocketContext } from "./usehooks/ChatContext.js";
 import { blockPopUpContext } from "./usehooks/ChatContext.js";
 import receivedmsgsound from "./ChatAssets/receivemsgnotif.mp3"
-
+import { ErrorToast } from "../../components/ReactToastify/ErrorToast.js";
 
 
 export const conversationMsgContext = createContext();
 export const ChatListContext = createContext();
 export const PickedConvContext = createContext();
 export const conversationSetterContext = createContext();
-export const SendMessageEventContext = createContext();
 export const chatPartnerContext = createContext();
 // status : false | true ,sender_id : null | value
 export const TypingContext = createContext();
@@ -36,7 +35,6 @@ const Chat = () => {
   const { auth } = useAuth();
   const { stateValue: clientSocket } = useContext(clientSocketContext);
   const CurrentUser = useContext(CurrentUserContext);
-  const [sendMessage, setSendMessage] = useState(0);
   const [ChatPartner, setChatPartner] = useState(null);
   const [requestRefetch, setrequestRefetch] = useState(false);
   const{blockpopUp, setblockpopUp} = useContext(blockPopUpContext)
@@ -66,40 +64,59 @@ const alreadyHaveConversation = (id) =>{
 }
 
 const sortConversations = () =>{
-  setChatList(prevChatList => {
-    const sortedChatList = [...prevChatList].sort((a, b) => {
-      return a.created_at.localeCompare(b.created_at);
+  if (ChatList.length > 1){
+    setChatList(prevChatList => {
+      const sortedChatList = [...prevChatList].sort((a, b) => {
+        return b.created_at.localeCompare(a.created_at);
+      });
+      return sortedChatList;
     });
-    return sortedChatList;
-  });
+  }
 }
 
+const update_status = (userdata) =>{
+  if (ChatList && ChatList.length){
+    setChatList(prev => {
+      return prev.map(contact =>{
+        if (contact.id === userdata?.status_owner){
+          return {...contact, status : userdata?.status}
+        }else
+          return contact
+      })
+    })
+  }
+}
+
+const getContentOrPhoto = (message) =>{
+  return message.msgType === 'text' ? message.content : 'shared Photo'
+}
 const updateLastMessage = (data, result) =>{
+
   setChatList(prevChatList => {
     return prevChatList.map((contact) => {
       if (contact.id === result[0]?.id) {
         return {        
             ...contact,
             lastTime : reformeDate(data.message.created_at),
-            lastMessage : data.message.content
+            lastMessage : CurrentUser?.user_id === data.message.sender_id ? `You: ${getContentOrPhoto(data.message)}` : `${ChatList?.filter(user => user.id === data.message.sender_id)[0].username.substring(0, 5)}: ${getContentOrPhoto(data.message)}`
         };
       } else {
         return contact;
       }
     });
   });
-  sortConversations();
 }
   if (clientSocket) {
     clientSocket.onmessage = (event) => {
-      const data = JSON.parse(event.data);
-      console.log('data.type is : ' + data.type)
+    const data = JSON.parse(event.data);
     const notif = new Audio(receivedmsgsound);
-
+    
     if (data.type === 'receive_typing'){
+      if (ChatPartner && ChatPartner.id === data.message.sender_id){
       setTypingData({status: true,
         sender_id : data.message.sender_id
       })
+    }
     }
 
     if (data.type === 'deactivate_typing_event'){
@@ -108,7 +125,12 @@ const updateLastMessage = (data, result) =>{
       })
     }
 
+    if (data.type === 'status_update'){
+      update_status(data.message);
+    }
+
     if (data.type === 'newchat.message'){
+      
       // You are receiver you got notif sound! not your self too talk with your self .
       if (data.message.receiver_id === CurrentUser?.user_id && data.message.sender_id !== CurrentUser?.user_id){ 
           notif.play().then(() => {}).catch((error) => {
@@ -126,7 +148,8 @@ const updateLastMessage = (data, result) =>{
                 // clientSocket.send Stored on Db as unread but being on a conv is should be setted as read !
                 clientSocket.send(JSON.stringify({type : 'Update_msgStatus', messageData : {
                   content : data.message.content,
-                  created_at : data.message.created_at
+                  created_at : data.message.created_at,
+                  id : data.message.id
                 }}))
               }
           setconversationMsgs(prevConversationMsgs => [...prevConversationMsgs, data.message]);
@@ -140,6 +163,7 @@ const updateLastMessage = (data, result) =>{
           // console.log('Will Go and Update the unread messages with :=> ' + data.message.sender_id) // no Partner no conversation Selected
           updateUnreadMsgs(data.message)
       }
+      sortConversations();
     }
       
     if (data.type === "last.message"){
@@ -153,8 +177,6 @@ const updateLastMessage = (data, result) =>{
     }
 
     if (data.type === "msgs.areReaded"){
-        console.log(` You readed all msg With `, data.message.all_readed_From)
-
         setChatList(prevChatList => {
           return prevChatList.map((contact) => {
             if (contact.username === data.message.all_readed_From) {
@@ -167,13 +189,11 @@ const updateLastMessage = (data, result) =>{
             }
           });
         });
-      }
+    }
 
     if (data.type === "Pick_existed_conv"){
-        // Here is the issue the Pickedusername change 
-        // but the chatlist is not yet setted because contact Section is not rendred !
           setPickerUsername(data.message.username)
-      }
+    }
     
     if (data.type === 'Blocke_Warning'){
       setblockpopUp(true)
@@ -212,7 +232,6 @@ const updateLastMessage = (data, result) =>{
         }
         const data = await response.json();
         setChatList(data);
-        console.log('I refetcheeeed did you get last update or not ??')
       } catch (error) {
         console.error(error.message);
       }
@@ -222,8 +241,7 @@ const updateLastMessage = (data, result) =>{
     return () => {
       abortController.abort(); 
     };
-  }, [requestRefetch, auth.accessToken]); //PickedUsername -dependencies will change
-  // I fogot why I added PickedUsername ???
+  }, [requestRefetch, auth.accessToken]);
 
   const handleConversationSelect = (conversationId) => {
     setPickerUsername(conversationId);
@@ -277,9 +295,7 @@ const updateLastMessage = (data, result) =>{
               <chatPartnerContext.Provider value={{ChatPartner, setChatPartner}}>
                 <TypingContext.Provider value={{status : typingData.status, setTypingData}}>
                   <ContactSection handleConversationSelect={handleConversationSelect} />
-                  <SendMessageEventContext.Provider value ={{sendMessage, setSendMessage}}>
                     <MessageSection />
-                      </SendMessageEventContext.Provider>
                     {PickedUsername ? <UserParams /> : null}
                     </TypingContext.Provider>
                 </chatPartnerContext.Provider>
@@ -291,5 +307,67 @@ const updateLastMessage = (data, result) =>{
     </>
   );
 };
+
+
+// function Chat() {
+//   const [recording, setRecording] = useState(false);
+//   const [mediaRecorder, setMediaRecorder] = useState(null);
+//   const [AudioUrl, setAudioUrl] = useState(null);
+//   const [error , seterror] = useState("");
+
+//   const startRecording = async () => {
+//     try {
+//       setRecording(true);
+//       setMediaRecorder(null);
+//       setAudioUrl(null);
+//       seterror("")
+  
+//       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+//       const options = { mimeType: 'audio/ogg;codecs=opus' };
+//       const newMediaRecorder = new MediaRecorder(stream, options);
+//       setMediaRecorder(newMediaRecorder);
+  
+//       newMediaRecorder.start();
+  
+//       const audioChunks = [];
+//       newMediaRecorder.ondataavailable = event => {
+//         audioChunks.push(event.data);
+//       };
+  
+//       newMediaRecorder.onstop = () => {
+//         const audioBlob = new Blob(audioChunks);
+//         const reader = new FileReader();
+//         reader.onloadend = () => {
+//           if (reader.result) 
+//             setAudioUrl(reader.result);
+//     };
+//         reader.readAsDataURL(audioBlob);
+//     };
+    
+//     } catch (catchederror) {
+//       ErrorToast(catchederror.message);
+//       setRecording(false);
+//     }
+//   };
+
+//   const stopRecording = () => {
+//     if (mediaRecorder) {
+//       mediaRecorder.stop();
+//       setRecording(false);
+//     }
+//   };
+
+//   return (
+//     <div style={{display : 'grid', gridTemplateColumns: '1fr', gridTemplateRows : '1fr 1fr 1fr 1fr'}}>
+//       <button onClick={startRecording} disabled={recording}>
+//         Start Recording
+//       </button>
+//       <button onClick={stopRecording} disabled={!recording}>
+//         Stop Recording
+//       </button>
+//       {AudioUrl && <audio controls src={AudioUrl}>Your browser does not support the audio element.</audio>}
+//     </div>
+//   );
+// }
 
 export default Chat;

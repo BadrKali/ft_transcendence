@@ -20,6 +20,7 @@ from asgiref.sync import async_to_sync
 from user_management.models import Notification
 import pyotp
 import qrcode
+from django.http import FileResponse, Http404
 # Create your views here.
  
 token_url = 'https://api.intra.42.fr/oauth/token'
@@ -94,15 +95,24 @@ class CustomTokenObtainPairView(TokenObtainPairView):
     def post(self, request, *args, **kwargs):
         response = super().post(request, *args, **kwargs)
         if response.status_code == status.HTTP_200_OK:
-            refreshToken = response.data['refresh']
-            response.set_cookie(
-                key = 'refresh',
-                value = refreshToken,
-                httponly = True,
-                #more options to add when nedded 
-            )
-            del response.data["refresh"]
-        return response
+            user = get_object_or_404(User, username=request.data['username'])
+            response.data['username'] = request.data['username']
+            if(user.is_2fa_enabled):
+                response.data['2fa_required'] = True
+                del response.data["refresh"]
+                return response
+            else:
+                refreshToken = response.data['refresh']
+                response.set_cookie(
+                    key = 'refresh',
+                    value = refreshToken,
+                    httponly = True,
+                    #more options to add when nedded 
+                )
+                del response.data["refresh"]
+            return response
+        else:
+            return response
 
 class CustomTokenRefreshView(TokenRefreshView):
     def post(self, request, *args, **kwargs):
@@ -168,6 +178,20 @@ class CallbackView(APIView):
         refresh = RefreshToken.for_user(user)
         access_token = str(refresh.access_token)
         refresh_token = str(refresh)
+        if user.is_2fa_enabled:
+            response_data = {
+                'access': access_token,
+                'username': username,
+                '2fa_required': True
+            }
+            response = Response(response_data, status=status.HTTP_200_OK)
+            # response.set_cookie(
+            #     key='refresh',
+            #     value=refresh_token,
+            #     httponly = True,
+            #     #more options to add when nedded 
+            # )
+            return response
         response_data = {
             'access': access_token
         }
@@ -186,26 +210,55 @@ class Enable2FA(APIView):
     def get(self, request):
         request.user.generate_otp_secret()
         otp_uri = request.user.get_otp_uri()
+        if not os.path.exists('private_media/2fa'):
+            os.makedirs('private_media/2fa')
         file_name = f'{request.user.username}_2fa.png'
-        file_path = f'media/2fa/{file_name}'
+        file_path = f'private_media/2fa/{file_name}'
         qrcode.make(otp_uri).save(file_path)
         return Response({"otp_uri": file_path}, status=status.HTTP_200_OK)
     
     def post(self, request):
         user = request.user
         otp = request.data.get('otp')
+        
         if not otp:
             return Response({"error": "OTP is required"}, status=status.HTTP_400_BAD_REQUEST)
+        
         if pyotp.TOTP(user.otp_secret).verify(otp):
             user.is_2fa_verified = True
             user.is_2fa_enabled = True
             user.save()
-            return Response({"message": "2FA has been verified"}, status=status.HTTP_200_OK)
+            refresh = RefreshToken.for_user(user)
+            access_token = str(refresh.access_token)
+            refresh_token = str(refresh)
+            username = user.username
+            response_data = {
+                'access': access_token,
+                'username': username,
+                "message": "2FA has been verified"
+            }
+            response = Response(response_data, status=status.HTTP_200_OK)
+            response.set_cookie(
+                key='refresh',
+                value=refresh_token,
+                httponly=True,  
+                secure=True,    
+                samesite='None' 
+            )
+            file_name = f'{user.username}_2fa.png'
+            file_path = f'private_media/2fa/{file_name}'
+            if os.path.exists(file_path):
+                os.remove(file_path)
+            return response
         return Response({"error": "Invalid OTP"}, status=status.HTTP_400_BAD_REQUEST)
-    
+
 
 class Disable2FA(APIView):
     def delete(self, request):
+        file_name = f'{request.user.username}_2fa.png'
+        file_path = f'private_media/2fa/{file_name}'
+        if os.path.exists(file_path):
+            os.remove(file_path)
         user = request.user
         user.otp_secret = None
         user.is_2fa_enabled = False
@@ -213,3 +266,32 @@ class Disable2FA(APIView):
         user.save()
         return Response({"message": "2FA has been disabled"}, status=status.HTTP_200_OK)
     
+
+
+class LogoutView(APIView):
+    def post(self, request):
+        try:
+            refresh_token = request.COOKIES.get('refresh')
+            if not refresh_token:
+                return Response({"error": "Refresh token not found in cookies"}, status=status.HTTP_400_BAD_REQUEST)
+            token = RefreshToken(refresh_token)
+            token.blacklist()
+            return Response({"message": "Successfully logged out"}, status=status.HTTP_205_RESET_CONTENT)
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+class ProtectedQRCodeView(APIView):
+    permission_classes = [IsAuthenticated]  # Ensure the user is authenticated
+
+    def get(self, request, file_name):
+        user = request.user
+        expected_file_name = f'{user.username}_2fa.png'
+        file_path = f'private_media/2fa/{expected_file_name}'
+        print(f"file path: {file_path}")
+        # Ensure the file exists and the file name matches the expected file name
+        if not os.path.exists(file_path) or expected_file_name != file_name:
+            raise Http404("File not found or you don't have permission to access this file.")
+        
+        # Serve the file as a response
+        return FileResponse(open(file_path, 'rb'), content_type='image/png')

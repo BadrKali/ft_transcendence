@@ -1,10 +1,10 @@
-import React, { useState, useRef, useContext, useEffect, createContext, } from "react";
+import React, { useState, useRef, useContext, useEffect, } from "react";
 import styles from "./MessageSection.module.css";
 import EmptyChatAnimation from "../../ChatAssets/EmptyChatAnimation.json";
 import online from "../../ChatAssets/online.json";
 import offline from "../../ChatAssets/offline.json";
 import NoPickedConv from "../../ChatAssets/NoConversationchoiced.json";
-import { Smiley, Image, Files, Gear } from "phosphor-react";
+import { Smiley, Image , Gear, Trash } from "phosphor-react";
 import Lottie from "lottie-react";
 import data from "@emoji-mart/data";
 import Picker from "@emoji-mart/react";
@@ -13,14 +13,15 @@ import { ChatListContext } from "../../Chat.jsx";
 import { PickedConvContext } from "../../Chat.jsx";
 import { CurrentUserContext } from "../../usehooks/ChatContext.js";
 import { clientSocketContext } from "../../usehooks/ChatContext.js";
-import { SendMessageEventContext } from "../../Chat.jsx";
 import { chatPartnerContext } from "../../Chat.jsx";
 import notificationSound from "../../ChatAssets/notification.mp3";
 import BlockPopUps from "../BlockPopUps/BlockPopUps.jsx";
 import { TypingContext } from "../../Chat.jsx";
 import typinganimation from "../../ChatAssets/lastTyping.json"
+import { ErrorToast } from "../../../../components/ReactToastify/ErrorToast.js";
+import { useTranslation } from 'react-i18next'
 
-export const PickerClickContext = createContext();
+
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
@@ -51,13 +52,8 @@ function reformeDate(datestr) {
   return `${hours}:${minutes}`;
 }
 
-const SendMessage = ({ message, setMessage }) => {
-  const CurrentUser = useContext(CurrentUserContext);
-  const {ChatPartner} = useContext(chatPartnerContext);
-  const PickerClicksetter = useContext(PickerClickContext);
-  const {stateValue: clientSocket} = useContext(clientSocketContext);
-  const {setSendMessage} = useContext(SendMessageEventContext)
-  const {status, setTypingData} = useContext(TypingContext)
+/*ADD props to args Here*/
+const SendMessage = ({ message, setMessage ,CurrentUser, ChatPartner, clientSocket, handleSendMessage}) => {
   let typingTimeoutId = null; //Pay Attention to this fucking 0
 
   useEffect(() =>{
@@ -67,17 +63,14 @@ const SendMessage = ({ message, setMessage }) => {
     }
     if (message.length && message.length % 2 === 0){
         clientSocket?.send(JSON.stringify({type: "typing_event", messageData: messageData}))
-
       // ********* 4 seconds Logic********************************************************************************
           if (typingTimeoutId !== null) {                                                                             
             clearTimeout(typingTimeoutId);
           }
-
           typingTimeoutId = setTimeout(() => {
             clientSocket?.send(JSON.stringify({ type: "deactivate_typing_event", messageData: messageData }));
             }, 5000);
       // ***********************************************************************************************************
-      
     }
       if (message.length === 0){
       clientSocket?.send(JSON.stringify({type: "deactivate_typing_event", messageData: messageData}))
@@ -87,33 +80,8 @@ const SendMessage = ({ message, setMessage }) => {
   
 }, [message])
 
-
-  const handleSendMessage = () => {
-    if (message.trim()) {
-      PickerClicksetter((prev) => (prev ? !prev : prev));
-      const messageData = {
-        sender_id: CurrentUser?.user_id,
-        receiver_id: ChatPartner?.id,
-        content: message,
-        seen: false,
-        created_at: new Date().toISOString()
-      };
-
-      clientSocket?.send(JSON.stringify({type: 'newchat.message', messageData: messageData}));
-      
-      const notif = new Audio(notificationSound);
-      notif.play();
-      setSendMessage(prev => prev + 1)   
-      setMessage("");
-    }
-    // *********************************************************
-  };
   return (
     <svg
-    onKeyDown={(e) => {
-      if (e.key === "Enter")
-          handleSendMessage();
-      }}
       onClick={handleSendMessage}
       width="30"
       height="30"
@@ -129,7 +97,7 @@ const SendMessage = ({ message, setMessage }) => {
     </svg>
   );
 };
-
+/***********************STOOOOOP */
 const Emojies = ({ SetPicker }) => {
   return (
     <Smiley
@@ -142,21 +110,26 @@ const Emojies = ({ SetPicker }) => {
   );
 };
 
-const InputField = ({ message, handleWritedMessage, inputRef }) => {
+const InputField = ({ message, handleWritedMessage, inputRef, handleSendMessage }) => {
+  const { t } = useTranslation();
+
   return (
     <input
       ref={inputRef}
       className={styles.inputMessage}
       onChange={(e) => handleWritedMessage(e)}
+      onKeyDown={(e) => handleSendMessage(e)}
       type="text"
       value={message}
-      placeholder="write a message ... "
+      placeholder={t('write a message ...')} 
+
     />
   );
 };
 
 const ChatHeader = () => {
   const {ChatPartner: ChatPartnerData} = useContext(chatPartnerContext);
+  const { t } = useTranslation();
 
   function handleParamsClick() {
     alert("Olaaala");
@@ -181,7 +154,7 @@ const ChatHeader = () => {
                 </div>
                 <div className={styles.Status}>
                   {" "}
-                  {ChatPartnerData?.status ? "Online" : "Offline"}
+                  {ChatPartnerData?.status ? t("Online") : t("Offline")}
                 </div>
               </div>
             </div>
@@ -199,14 +172,15 @@ const ChatHeader = () => {
   );
 };
 
-const ChatInput = () => {
+const ChatInput = ({selectedImage, setSelectedImage}) => {
+  const CurrentUser = useContext(CurrentUserContext);
+  const {ChatPartner} = useContext(chatPartnerContext);
+  const {stateValue: clientSocket} = useContext(clientSocketContext);
   const Pickerusername = useContext(PickedConvContext);
   const [PickerClick, SetPicker] = useState(false);
   const [ImportItemsClicked, setImportClicked] = useState(false);
   const [message, setMessage] = useState("");
   const inputRef = useRef(null);
-  const [selectedImage, setSelectedImage] = useState(null);
-  const [selectedFile, setSelectedFile] = useState(null);
 
   function handleWritedMessage(e) {
     setMessage(e.target.value);
@@ -227,23 +201,62 @@ const ChatInput = () => {
     return -1;
   };
 
-  function handleImageSelect(e) {
-    console.log(e.target.files[0]);
-    setSelectedImage(() => e.target.files[0]);
-  }
+  const handleImageSelect = (event) => {
+    try{
+      setSelectedImage(null);
+      const file = event.target.files[0];
+      const reader = new FileReader();
+    
+      reader.onloadend = () => {
+        setSelectedImage(reader.result);
+      };
+      if (file) {
+        reader.readAsDataURL(file);
+      } else {
+        setSelectedImage(null);
+      }
+    } catch(e){
+      ErrorToast('can\'t Load Image');
+    }
+    };
 
-  function handleFileSelect(e) {
-    console.log(e.target.files[0]);
-    setSelectedFile(e.target.files[0]);
-  }
+    const handleSendMessage = (event) => {
+      if (event.type === 'keydown' && event.key !== 'Enter')
+          return ;
+      if (message.trim() || selectedImage) {
+
+        SetPicker((prev) => (prev ? !prev : prev));//deactivate emojies palett when - sending msg !
+        const messageData = {
+          sender_id: CurrentUser?.user_id,
+          receiver_id: ChatPartner?.id,
+          seen: false,
+        };
+        // try to send message only
+        if (message.trim() && !selectedImage){
+          messageData.msgType = 'text';
+          messageData.content = message;
+          setMessage("");
+        }
+        // try to send image
+        else if (!message.trim() && selectedImage){
+          messageData.msgType = 'image';
+          messageData.ImgPath=selectedImage
+          setSelectedImage(null)
+        }
+        if (!(message.trim() && selectedImage)){
+            clientSocket?.send(JSON.stringify({type: 'newchat.message', messageData: messageData}));
+            const notif = new Audio(notificationSound);
+            notif.play();
+        }
+      }
+    };
 
   return (
     <div className={styles.ChatInputHolder}>
       {Pickerusername.length ? (
         <>
           <BlockPopUps/>
-          <div
-            className={styles.ImportOptions}
+          <div className={styles.ImportOptions}
             style={{ display: ImportItemsClicked ? "flex" : "none" }}
           >
             <div className={styles.ImageBack}>
@@ -252,41 +265,21 @@ const ChatInput = () => {
               </label>
               <input
                 type="file"
-                name="-photo-"
+                name="chat-photo"
                 id="uploadImagebtn"
                 className="upload-input"
                 onChange={handleImageSelect}
                 accept="image/*"
               />
             </div>
-
-            <div className={styles.FilesBack}>
-              <label htmlFor="uploadFileBtn">
-                {" "}
-                <Files className={styles.ImportFiles} size={40} />{" "}
-              </label>
-              <input
-                type="file"
-                name="-FILE-"
-                id="uploadFileBtn"
-                className="upload-input"
-                onChange={handleFileSelect}
-                accept=".txt,.cpp,.c,.jsx,.py"
-              />
-            </div>
           </div>
 
           <div className={styles.inputMainDiv}>
             <ImportItem setImportClicked={setImportClicked} />
-            <InputField
-              inputRef={inputRef}
-              message={message}
-              handleWritedMessage={handleWritedMessage}
-            />
+            <InputField inputRef={inputRef} message={message} handleWritedMessage={handleWritedMessage} handleSendMessage ={handleSendMessage} />
             <Emojies SetPicker={SetPicker} />
-            <PickerClickContext.Provider value={SetPicker}>
-              <SendMessage message={message} setMessage={setMessage} />
-            </PickerClickContext.Provider>
+            <SendMessage message={message} setMessage={setMessage} CurrentUser={CurrentUser}
+                         ChatPartner={ChatPartner} clientSocket={clientSocket} handleSendMessage={handleSendMessage}/>
           </div>
 
           <div
@@ -325,8 +318,9 @@ const MessageDisplayer = ({ message, IsIncoming }) => {
 
       <div className={styles.msgContent}>
         <div className={IsIncoming ? styles.incoming : styles.outgoing}>
-          {" "}
-          {message.content}{" "}
+          {
+            message.msgType === 'text' ? message.content : <img width="200" height="200" style={{borderRadius : '18px'}} src={`${BACKEND_URL}${message.ImgPath}`} alt="messagePhoto" /> 
+          }
         </div>
         <h1 className={IsIncoming ? styles.SendingTime : styles.SendingTimeout}>
           {reformeDate(message.created_at)}
@@ -350,8 +344,10 @@ const Typing =() => {
         />
       </div>
 
-      <div className={styles.msgContent}>
+      <div className={styles.msgContentanimation}>
+        <div className={styles.typingholder}>
           <Lottie animationData={typinganimation}/>
+        </div>
         <h1 className={styles.SendingTime}> now </h1>
       </div>
 
@@ -359,25 +355,30 @@ const Typing =() => {
   )
 }
 
-const ChatMainHolder = () => {
+const ChatMainHolder = ({selectedImage, setSelectedImage}) => {
   const Pickedusername = useContext(PickedConvContext);
   const conversationMsg = useContext(conversationMsgContext);
   const messagesEndRef = useRef(null);
   const CurrentUser = useContext(CurrentUserContext);
   const {status} = useContext(TypingContext)
+  const { t } = useTranslation();
+
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
+  const handleCloseImg = () =>{
+    setSelectedImage(null);
+  }
 
   useEffect(() => {
     scrollToBottom();
-  }, [conversationMsg]);
+  }, [conversationMsg, status]);
 
   return (
     <div className={styles.ChatMainHolder}>
       {Pickedusername.length ? (
-       
+        <>
         <div className={styles.ConversationMessages}>
           {conversationMsg?.map((elem, index) => {
             return (
@@ -393,6 +394,18 @@ const ChatMainHolder = () => {
           <div ref={messagesEndRef} />
           { status ? <Typing/> : null }
         </div>
+        {
+          // Display Selected Img
+            selectedImage && (
+              <div className={styles.UserSelectedImgHolder}>
+                <img className={styles.UserSelectedImg} src={selectedImage} alt="Selected" />
+                <div className={styles.EraseSelectedImgHolder}>
+                  <Trash size={40} className={styles.EraseSelectedImg} onClick={handleCloseImg} color="#F62943" />
+                </div>
+
+              </div>
+        )}
+        </>
       ) : (
         <div className={styles.StartMessageHolder}>
           <div className={styles.NoPickedConvContainer}>
@@ -402,7 +415,7 @@ const ChatMainHolder = () => {
           <div className={styles.QuoteContainer}>
             <blockquote className={styles.GoPickConversation}>
               {" "}
-              Another Conversation Another World{" "}
+              {t("Another Conversation Another World")}{" "}
             </blockquote>
           </div>
         </div>
@@ -415,6 +428,10 @@ const MessageSection = () => {
   const {ChatList} = useContext(ChatListContext);
   const PickedUsername = useContext(PickedConvContext);
   const {setChatPartner} = useContext(chatPartnerContext)
+  const [selectedImage, setSelectedImage] = useState(null);
+  const { t } = useTranslation();
+
+
 
   useEffect(() => {
   
@@ -433,17 +450,17 @@ const MessageSection = () => {
             </div>
             <blockquote className={styles.ChatQuote}>
               {" "}
-              Unleash the power of connection! <br />
-              Start chatting and discover what{" "}
-              <span className={styles.Clunca}>Clunca </span> has to offer you .{" "}
+              {t("Unleash the power of connection!")} <br />
+              {t("Start chatting and discover what")}{" "}
+              <span className={styles.Clunca}>Clunca </span> {t("has to offer you.")}{" "}
             </blockquote>
           </div>
         </div>
       ) : (
         <div className={styles.MessageSectionFull}>
             <ChatHeader />
-            <ChatMainHolder />
-            <ChatInput />
+            <ChatMainHolder selectedImage={selectedImage} setSelectedImage={setSelectedImage}/>
+            <ChatInput selectedImage={selectedImage} setSelectedImage={setSelectedImage}/>
         </div>
       )}
     </>

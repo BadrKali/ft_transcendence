@@ -1,16 +1,27 @@
 import React from 'react'
 import './playerSelectedItem.css'
+import { avatarsUnkown } from '../../../../assets/assets';
+
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
 function PlayerSelectedItem({player}) {
-    console.log(player)
+  const unknownAvatar = avatarsUnkown.img;
+
+  let name = 'username'
+  
+  if (player.username)
+    name = player.username
+  else
+    name = player.label
+
   return (
     <div className='slectedPlayerItem'>
         <div className='imagePlayerSelected'>
-            <img src={`${BACKEND_URL}${player.image}`}/>
+            <img src={player.avatar ? `${BACKEND_URL}${player.avatar}` : unknownAvatar}/>
         </div>
-        <p>{player.label}</p>
+        <p>{name}</p>
     </div>
   )
 }

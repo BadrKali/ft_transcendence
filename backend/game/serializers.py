@@ -1,6 +1,6 @@
 from rest_framework import serializers
-from .models import GameHistory, Achievement, UserAchievement, GameSettings, GameRoom, GameChallenge, InviteGameRoom
-from user_management.serializers import PlayerSerializer
+from .models import *
+from user_management.serializers import PlayerSerializer, LocalPlayerSerializer
 
 class GameHistorySerializer(serializers.ModelSerializer):
     winner_user = PlayerSerializer()
@@ -50,3 +50,19 @@ class InviteGameRoomSerializer(serializers.ModelSerializer):
     class Meta:
         model = InviteGameRoom
         fields = '__all__'
+
+class TournamentGameRoomSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = TournamentGameRoom
+        fields = '__all__'
+
+
+class LocalGameRoomSerializer(serializers.ModelSerializer):
+    player1 = LocalPlayerSerializer(read_only=True)
+    player2 = LocalPlayerSerializer(read_only=True)
+
+    class Meta:
+        model = LocalGameRoom
+        fields = '__all__'
+
+ 

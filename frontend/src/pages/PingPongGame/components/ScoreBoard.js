@@ -1,11 +1,13 @@
 import React from 'react';
 import './scoreboard.css';
 
-const ScoreBoard = ({ user1Score, user2Score, user1Name, user1Avatar, user2Name, user2Avatar }) => {
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
+
+const ScoreBoard = ({ user1Score, user2Score, user1, user2 }) => {
     return (
         <div className="scoreboard-container">
-                <span className="username">{user1Name}</span>
-                <img src={user1Avatar} alt="User 1 Avatar" className="avatar" />
+                <span className="username">{user1.username}</span>
+                <img src={`${BACKEND_URL}${user1.avatar}`} alt="User 1 Avatar" className="avatar" />
                 <div className="score">
                     <p className="user-score">{user1Score}</p>
                 </div>
@@ -13,8 +15,8 @@ const ScoreBoard = ({ user1Score, user2Score, user1Name, user1Avatar, user2Name,
                 <div className="score">
                     <p className="user-score">{user2Score}</p>
                 </div>
-                <img src={user2Avatar} alt="User 2 Avatar" className="avatar" />
-                <span className="username">{user2Name}</span>
+                <img src={`${BACKEND_URL}${user2.avatar}`} alt="User 2 Avatar" className="avatar" />
+                <span className="username">{user2.username}</span>
         </div>
     );
 };

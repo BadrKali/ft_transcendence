@@ -129,7 +129,7 @@
 
   .otp-card-input {
     display: flex;
-    gap: 10px;
+    gap: 15px;
     margin-bottom: 30px;
   }
 
@@ -140,7 +140,6 @@
     border: none;
     outline: none;
     padding: 0 1rem;
-    border-radius: 17px;
     text-align: center;
     background: rgba(128, 128, 128, 0.1);
     color: #fff;
@@ -155,10 +154,10 @@
 
 
 .setup-button {
-    width: 60%;
+    width: 70%;
     height: 50px;
     border: none;
-    border-radius: 20px;
+    /* border-radius: 20px; */
     background-color: #F62943;
     color: white;
     font-size: 16px;

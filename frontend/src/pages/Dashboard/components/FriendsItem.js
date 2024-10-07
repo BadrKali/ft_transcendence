@@ -7,7 +7,6 @@ import { useTranslation } from 'react-i18next';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
-
 function FriendsItem({list, friendsStatus}) {
   const [isonline, setOnline] = useState(false);
   const { t } = useTranslation();

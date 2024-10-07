@@ -38,11 +38,16 @@ export const avatars = [
         name: 'brain',
         img: avatar4
     },
-    {
-        name: 'unknown',
-        img : unknownAvatar
-    }
+
 ]
+
+export const avatarsUnkown = 
+  {
+      name: 'unknown',
+      img : unknownAvatar
+  }
+
+
 
 export const leaderBoard = [
     {
