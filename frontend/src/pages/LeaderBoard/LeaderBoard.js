@@ -13,7 +13,7 @@ import loadingAnimation from '../../components/OauthTwo/loading-animation.json'
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
-const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
+// const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
 
 const LeaderBoard = () => {
