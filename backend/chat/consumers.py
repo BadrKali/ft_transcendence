@@ -24,15 +24,14 @@ import base64
 from django.core.files.base import ContentFile
 from faker import Faker
 import random
+from together import Together
 
 
 load_dotenv()
 API_KEY= os.getenv('api_key')
 
-client = openai.OpenAI(
-    api_key=API_KEY,
-    base_url="https://api.aimlapi.com",
-)
+client = Together(api_key=API_KEY)
+
 
 class ChatBotConsumer(AsyncWebsocketConsumer):
     async def connect(self):
@@ -68,10 +67,10 @@ class ChatBotConsumer(AsyncWebsocketConsumer):
             self.messages.append({"role" : "user", "content" : self.msgData.get('message').get('content') + limiter})
             try :
                 chat_completion = client.chat.completions.create(
-                model="mistralai/Mistral-7B-Instruct-v0.2",
+                model="meta-llama/Llama-3.2-11B-Vision-Instruct-Turbo",
                     messages=self.messages,
+                    max_tokens=512,
                     temperature=0.7,
-                    max_tokens=128,
                 )
                 response = chat_completion.choices[0].message.content
                 await (self.channel_layer.group_send)(
@@ -87,6 +86,7 @@ class ChatBotConsumer(AsyncWebsocketConsumer):
                 })
                 self.messages.append({"role" : "assistant", "content" : response})
             except Exception as e:
+                print(e)
                 await (self.channel_layer.group_send)(
                   f'{self.sender_id}_withBot',{
                         'type': 'bot_msg',

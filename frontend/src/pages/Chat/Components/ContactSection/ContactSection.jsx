@@ -11,12 +11,10 @@ import { CurrentUserContext } from "../../usehooks/ChatContext.js";
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
 const SendToNoneFriend = () => {
-  function handleGlobalMessage() {
-    alert("You touched Icon to send Message to GlobalUsers");
-  }
+
 
   return (
-    <NotePencil onClick={handleGlobalMessage} size={32}
+    <NotePencil  size={32}
                 color="#ffffff" weight="light" />
   );
 };

@@ -344,6 +344,7 @@
     font-size: 18px;
     max-width: 27rem;
     background-color: rgba(115, 115, 115, 0.2);
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
     padding: 1rem;
     border-top-left-radius: 18px;
     border-top-right-radius: 18px;
@@ -353,7 +354,8 @@
 
 .outgoing{
     font-size: 18px;
-    background-color: rgba(115, 115, 115, 0.2);
+    background-color: #11141B;
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
     border-top-left-radius: 18px;
     border-top-right-radius: 18px;
     border-bottom-left-radius: 18px;

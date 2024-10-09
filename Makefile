@@ -12,7 +12,6 @@ else
     COMPOSEFILE = $(COMPOSEGOINFRE)
 endif
 
-
 up: 
 	docker compose -f ${COMPOSEFILE} up
 
