@@ -3,6 +3,10 @@ version: '3.8'
 volumes:
   postgres_data:
     name: postgres_data
+  frontend:
+    name: frontend
+  redis:
+    name: redis
   certs:
     name: certs
   elasticsearch:
@@ -31,8 +35,9 @@ services:
       backend:
         condition: service_healthy
     volumes:
+      - frontend:/front
+      - frontend:/front/node_modules
       - ./frontend:/front
-      - /front/node_modules
     env_file:
       - ./frontend/.env
     networks:
@@ -92,6 +97,8 @@ services:
     container_name: redis
     build:
       dockerfile: ./database/Dockerfile.redis
+    volumes:
+      - redis:/data
     ports:
       - "6379:6379"
     networks:
@@ -135,6 +142,9 @@ services:
     image: setup
     build: ./SRE-SLI/ELK-Stack/setup
     container_name: setup
+    depends_on:
+      nginx:
+        condition: service_healthy
     volumes:
       - certs:/usr/share/elasticsearch/config/certs
       - /var/run/docker.sock:/var/run/docker.sock
@@ -155,8 +165,6 @@ services:
     container_name: elasticsearch
     depends_on:
       setup:
-        condition: service_healthy
-      nginx:
         condition: service_healthy
     volumes:
       - certs:/usr/share/elasticsearch/config/certs
@@ -181,8 +189,6 @@ services:
     depends_on:
       setup:
         condition: service_healthy
-      nginx:
-        condition: service_healthy
     volumes:
       - certs:/usr/share/kibana/config/certs
       - kibana:/usr/share/kibana/data
@@ -202,17 +208,14 @@ services:
     depends_on:
       setup:
         condition: service_healthy
-      nginx:
-        condition: service_healthy
     volumes:
-      - certs:/usr/share/logstash/certs
-      -  ./nginx/access.log:/usr/share/logstash/nginx/access.log
+      - certs:/usr/share/logstash/config/certs
+      - ./nginx/access.log:/usr/share/logstash/nginx/access.log
     env_file:
       - .env
     networks:
       - elk-stack
     restart: always
-    mem_limit: ${MEM_LIMIT}
 
 
 ################################### Prom-Graf ###################################
@@ -257,7 +260,7 @@ services:
       - ./SRE-SLI/prom-grafana/grafana/config/provisioning:/etc/grafana/provisioning
       - ./SRE-SLI/prom-grafana/grafana/dashboards:/etc/grafana/dashboards
     networks:
-      - prom-graf
+      - prom-graf 
       - ft_transcendence
     restart: always
 
@@ -273,27 +276,8 @@ services:
       - "9113:9113"
     env_file:
       - .env
-    networks:
-      - prom-graf
-      - ft_transcendence
-    restart: always
-
-  cadvisor:
-    image: cadvisor
-    container_name: cadvisor
-    privileged: true
-    devices:
-      - /dev/kmsg:/dev/kmsg
-    build:
-      dockerfile: ./SRE-SLI/prom-grafana/exporters/Dockerfile.cadvisor
-    ports:
-      - "8080:8080"
-    volumes:
-      - /:/rootfs:ro
-      - /var/run/docker.sock:/var/run/docker.sock:rw
-      - /sys:/sys:ro
-      - /var/lib/docker/:/var/lib/docker:ro
-      - /dev/disk/:/dev/disk:ro
+    command:
+      - -nginx.scrape-uri=${NGINX_SCRAPE_URI}
     networks:
       - prom-graf
       - ft_transcendence
@@ -305,6 +289,8 @@ services:
     depends_on:
       redis:
         condition: service_healthy
+      nginx:
+        condition: service_healthy
     build:
       dockerfile: ./SRE-SLI/prom-grafana/exporters/Dockerfile.redis
     ports:
@@ -312,15 +298,15 @@ services:
     env_file:
       - .env
     networks:
-      - ft_transcendence
       - prom-graf
+      - ft_transcendence
     restart: always
 
   postgres-exporter:
     image: postgres-exporter
     container_name: postgres-exporter
     depends_on:
-      postgres:
+      nginx:
         condition: service_healthy
     build:
       dockerfile: ./SRE-SLI/prom-grafana/exporters/Dockerfile.postgresql
@@ -329,6 +315,21 @@ services:
     env_file:
       - .env
     networks:
-      - ft_transcendence
       - prom-graf
+      - ft_transcendence
+    restart: always
+
+  node-exporter:
+    image: node-exporter
+    container_name: node-exporter
+    depends_on:
+      nginx:
+        condition: service_healthy
+    build:
+      dockerfile: ./SRE-SLI/prom-grafana/exporters/Dockerfile.node
+    ports:
+      - "9100:9100"
+    networks:
+      - prom-graf
+      - ft_transcendence
     restart: always

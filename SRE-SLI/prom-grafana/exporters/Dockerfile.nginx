@@ -1,1 +1,1 @@
-FROM nginx/nginx-prometheus-exporter:latest
+FROM nginx/nginx-prometheus-exporter:1.3.0

@@ -272,16 +272,12 @@
                       "value": null
                     },
                     {
-                      "color": "rgba(237, 129, 40, 0.89)",
-                      "value": null
+                      "color": "rgba(237, 129, 40, 0.89)"
                     },
                     {
-                      "color": "rgba(255, 0, 0, 0.97)",
-                      "value": null
+                      "color": "rgba(255, 0, 0, 0.97)"
                     },
-                    {
-                      "value": null
-                    }
+                    {}
                   ]
                 }
               }
@@ -3268,7 +3264,7 @@
     ]
   },
   "timezone": "",
-  "title": "Prometheus Dashboard",
+  "title": "Prometheus",
   "uid": "fduaooauml2wwf",
   "version": 1,
   "weekStart": ""

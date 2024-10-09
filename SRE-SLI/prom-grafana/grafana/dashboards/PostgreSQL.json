@@ -15,12 +15,11 @@
       }
     ]
   },
-  "description": "This dashboard works with postgres_exporter for prometheus",
+  "description": "This dashboard works with postgres_exporter for Prometheus",
   "editable": true,
   "fiscalYearStartMonth": 0,
   "gnetId": 9628,
   "graphTooltip": 0,
-  "id": 2,
   "links": [],
   "panels": [
     {
@@ -3201,9 +3200,10 @@
       },
       {
         "current": {
+          "isNone": true,
           "selected": false,
-          "text": "postgres-exporter:9187",
-          "value": "postgres-exporter:9187"
+          "text": "None",
+          "value": ""
         },
         "datasource": {
           "type": "prometheus",
@@ -3312,8 +3312,8 @@
     ]
   },
   "timezone": "",
-  "title": "PostgreSQL Database",
+  "title": "PostgreSQL",
   "uid": "000000039",
-  "version": 2,
+  "version": 1,
   "weekStart": ""
 }
