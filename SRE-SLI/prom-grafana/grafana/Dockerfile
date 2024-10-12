@@ -1,25 +1,11 @@
-# grafana/Dockerfile
+FROM grafana/grafana:latest
 
-# Use Debian Bullseye as the base image
-FROM debian:bullseye
+USER root
 
-# Install necessary packages including gnupg for adding repositories
-RUN apt-get update && apt-get install -y \
-    wget \
-    ca-certificates \
-    gnupg \
+# Install necessary packages
+RUN apk update && apk add --no-cache \
     openssl \
-    apt-transport-https \
-    software-properties-common \
-    && rm -rf /var/lib/apt/lists/*
-
-# Add Grafana's APT key and repository
-RUN wget -q -O - https://packages.grafana.com/gpg.key | apt-key add - \
-    && add-apt-repository "deb https://packages.grafana.com/oss/deb stable main"
-
-# Install Grafana
-RUN apt-get update && apt-get install -y grafana \
-    && rm -rf /var/lib/apt/lists/*
+    && rm -rf /var/cache/apk/*
 
 # Generate a self-signed SSL certificate
 RUN mkdir -p /etc/grafana/ssl && \
@@ -29,11 +15,15 @@ RUN mkdir -p /etc/grafana/ssl && \
     -subj "/C=MO/ST=KH/L=KH/O=1337/OU=1337/CN=localhost/UID=user"
 
 # Set password and username for Grafana
-RUN export GF_SECURITY_ADMIN_USER=${GF_SECURITY_ADMIN_USER} \
-    export GF_SECURITY_ADMIN_PASSWORD=${GF_SECURITY_ADMIN_PASSWORD}
+ENV GF_SECURITY_ADMIN_USER=${GF_SECURITY_ADMIN_USER}
+ENV GF_SECURITY_ADMIN_PASSWORD=${GF_SECURITY_ADMIN_PASSWORD}
 
-# Copy custom configuration file
+# Copy custom configuration files
 COPY ./config/grafana.ini /etc/grafana/grafana.ini
+COPY ./config/provisioning /etc/grafana/provisioning
+COPY ./dashboards /etc/grafana/dashboards
 
-# Start Grafana
-CMD ["/usr/sbin/grafana-server", "--config=/etc/grafana/grafana.ini", "--homepath=/usr/share/grafana"]
+# Ensure grafana user owns all configuration files
+RUN chown -R grafana:root /etc/grafana
+
+USER grafana

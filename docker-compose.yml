@@ -15,6 +15,8 @@ volumes:
     name: kibana
   prometheus:
     name: prometheus
+  alertmanager:
+    name: alertmanager
   grafana:
     name: grafana
 
@@ -78,8 +80,6 @@ services:
       dockerfile: ./database/Dockerfile.postgres
     volumes:
       - postgres_data:/var/lib/postgresql/data
-    ports:
-      - "5432:5432"
     env_file:
       - ./backend/.env.database
     networks:
@@ -99,8 +99,6 @@ services:
       dockerfile: ./database/Dockerfile.redis
     volumes:
       - redis:/data
-    ports:
-      - "6379:6379"
     networks:
       - ft_transcendence
     restart: always
@@ -234,10 +232,7 @@ services:
       - .env
     volumes:
       - prometheus:/var/lib/prometheus
-      - ./SRE-SLI/prom-grafana/prometheus/prom-config/prometheus.yml:/etc/prometheus/prometheus.yml
-      - ./SRE-SLI/prom-grafana/prometheus/prom-config/web-config.yml:/etc/prometheus/web-config.yml
-      - ./SRE-SLI/prom-grafana/prometheus/prom-config/alert_rules.yml:/etc/prometheus/alert_rules.yml
-      - ./SRE-SLI/prom-grafana/prometheus/alert-config/web-config.yml:/etc/alertmanager/web-config.yml
+      - alertmanager:/var/lib/alertmanager
     networks:
       - prom-graf
       - ft_transcendence
@@ -256,9 +251,6 @@ services:
       - .env
     volumes:
       - grafana:/var/lib/grafana
-      - ./SRE-SLI/prom-grafana/grafana/config/grafana.ini:/etc/grafana/grafana.ini
-      - ./SRE-SLI/prom-grafana/grafana/config/provisioning:/etc/grafana/provisioning
-      - ./SRE-SLI/prom-grafana/grafana/dashboards:/etc/grafana/dashboards
     networks:
       - prom-graf 
       - ft_transcendence
@@ -272,8 +264,6 @@ services:
     depends_on:
       nginx:
         condition: service_healthy
-    ports:
-      - "9113:9113"
     env_file:
       - .env
     command:
@@ -293,8 +283,6 @@ services:
         condition: service_healthy
     build:
       dockerfile: ./SRE-SLI/prom-grafana/exporters/Dockerfile.redis
-    ports:
-      - "9121:9121"
     env_file:
       - .env
     networks:
@@ -310,8 +298,6 @@ services:
         condition: service_healthy
     build:
       dockerfile: ./SRE-SLI/prom-grafana/exporters/Dockerfile.postgresql
-    ports:
-      - "9187:9187"
     env_file:
       - .env
     networks:
@@ -327,8 +313,6 @@ services:
         condition: service_healthy
     build:
       dockerfile: ./SRE-SLI/prom-grafana/exporters/Dockerfile.node
-    ports:
-      - "9100:9100"
     networks:
       - prom-graf
       - ft_transcendence

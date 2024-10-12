@@ -10,7 +10,7 @@ envsubst < /etc/alertmanager/alertmanager.yml.tpl > /etc/alertmanager/alertmanag
   --web.listen-address=:9090 \
   --web.config.file=/etc/prometheus/web-config.yml &
 
-# Start Alertmanager without HTTPS
+# Start Alertmanager
 /usr/local/bin/alertmanager \
   --config.file=/etc/alertmanager/alertmanager.yml \
   --storage.path=/var/lib/alertmanager \
