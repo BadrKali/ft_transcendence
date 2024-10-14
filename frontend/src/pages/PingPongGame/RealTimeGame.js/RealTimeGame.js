@@ -51,7 +51,7 @@ const RealTimeGame = ({ mode }) => {
     const [isReconnected, setIsReconnected] = useState(false);
     const [previousPaddlePositions, setPreviousPaddlePositions] = useState({});
     const [keyState, setKeyState] = useState({ up: false, down: false });
-    const animationId = useRef(null);
+
     useEffect(() => {
         switch (mode) {
             case "invite":
@@ -482,9 +482,8 @@ const RealTimeGame = ({ mode }) => {
                     <ScoreBoard
                         user1Score={score1}
                         user2Score={score2}
-                        user1={player1}
-                        user1Avatar={`${BACKEND_URL}${player1.avatar}`}
-                        user2={player2}
+                        user1Id={player1Id}
+                        user2Id={player2Id}
                     />
                     <div className="game-container">
                         <canvas className='canvas-container' ref={canvasRef}></canvas>
