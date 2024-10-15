@@ -98,7 +98,7 @@ class GameSettingsView(APIView):
 class GameRoomView(APIView):
     def get(self, request, room_id):
         try:
-            room = GameRoom.objects.get(id=room_id)
+            room = get_object_or_404(GameRoom, id=room_id)
             print(f"{room.player1}")
             print(f"{room.player2}")
             serializer = GameRoomSerializer(room)

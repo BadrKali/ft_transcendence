@@ -183,14 +183,13 @@ const RealTimeGame = ({ mode }) => {
     }, [socket, sendGotIt]);
 
     useEffect(() => {
-        if (gameState) {
-            const players = Object.values(gameState.players);
-            if (players.length === 2) {
-                setPlayer1Id(players[0].id);
-                setPlayer2Id(players[1].id);
+        if (room) {
+            if (room.player1.id && room.player2.id) {
+                setPlayer1Id(room.player1.id );
+                setPlayer2Id(room.player2.id );
             }
         }
-    }, [gameState]);
+    }, [room]);
 
     const startNewGame = (data) => {
         setShowWaiting(false);
