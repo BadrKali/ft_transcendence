@@ -648,8 +648,8 @@ class GameConsumer(AsyncWebsocketConsumer):
         from user_management.models import Player
         from .models import GameHistory
         try:
-            player1 = self.game_state.get_player_username(room.player1)
-            player2 = self.game_state.get_player_username(room.player2)
+            player1 = room.player1.user.username
+            player2 = room.player2.user.username
 
             if player1 == winner:
                 winner_user = room.player1

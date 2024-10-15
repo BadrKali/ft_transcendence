@@ -116,8 +116,19 @@ class SendChallengeView(APIView):
         try:
             player_receiver = get_object_or_404(User, id=player_receiver_id)
             player_sender = request.user
-            player1, created= Player.objects.get_or_create(user_id=request.user.id)
+        
+            existing_challenge = GameChallenge.objects.filter(
+                Q(player_sender=player_sender, player_receiver=player_receiver) |
+                Q(player_sender=player_receiver, player_receiver=player_sender)
+            ).first()
+
+            if existing_challenge:
+                print("there's already a game b this id")
+                return Response({'error': 'A challenge already exists between these players.'}, status=status.HTTP_400_BAD_REQUEST)
+
+            player1, created = Player.objects.get_or_create(user_id=request.user.id)
             player2, created = Player.objects.get_or_create(user_id=player_receiver_id)
+            
             try:
                 invite_game_room, created = InviteGameRoom.objects.get_or_create(player1=player1, player2=player2)
                 game_challenge = GameChallenge.objects.create(
@@ -127,11 +138,14 @@ class SendChallengeView(APIView):
                 )
             except Exception as e:
                 print(f"Error creating InviteGameRoom: {e}")
-            Notification.objects.create (
+                return Response({'error': 'Error creating game room.'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+            Notification.objects.create(
                 recipient=player_receiver,
                 sender=player_sender,
                 message='has challenged you to a game!'
             )
+
             channel_layer = get_channel_layer()
             async_to_sync(channel_layer.group_send)(
                 f'notifications_{player_receiver.id}',
@@ -141,12 +155,13 @@ class SendChallengeView(APIView):
                     'sender': player_sender.id, 
                 }
             )
+
             return Response({'message': 'Challenge sent successfully.'}, status=status.HTTP_201_CREATED)
+
         except User.DoesNotExist:
             return Response({'error': 'Player not found.'}, status=status.HTTP_404_NOT_FOUND)
         except Player.DoesNotExist:
             return Response({'error': 'Player instance not found for the sender or receiver.'}, status=status.HTTP_404_NOT_FOUND)
-
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
