@@ -418,11 +418,9 @@ const RealTimeGame = ({ mode }) => {
 
     useEffect(() => {
         window.onpopstate = () => {
-            socket.close();
             navigate('/game', { replace:true});
         };
         window.onbeforeunload = () => {
-            socket.close();
             navigate('/game', { replace:true});
         }
     }, [socket])
@@ -447,6 +445,7 @@ const RealTimeGame = ({ mode }) => {
         setShowResult(false);
         navigate('/game', { replace:true});
     }
+
     useEffect(() => {
         return () => {
             if (socket) {
@@ -456,7 +455,6 @@ const RealTimeGame = ({ mode }) => {
     }, [socket]);
 
     const handleInvitationRejected = () => {
-        socket.close();
         navigate('/game', { replace:true});
     }
 
