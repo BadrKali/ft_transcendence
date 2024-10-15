@@ -1,6 +1,4 @@
 import React, {useState, useEffect} from "react";
-import leftArrow from '../../Game-assets/left-arrow.png';
-import rightArrow from '../../Game-assets/right-arrow.png';
 import sKey from '../../Game-assets/s.png';
 import upKey from '../../Game-assets/up.png';
 import downKey from '../../Game-assets/down.png';
@@ -13,11 +11,6 @@ const ToolsContainer = ( {className, onPaddleSelect, onKeysSelect}) => {
     const [currentColorIndex, setCurrentColorIndex] = useState(0);
     const { t } = useTranslation();
     const [selectedOption, setSelectedOption] = useState(null);
-
-    // useEffect(() => {
-    //     // This is correct
-    //     console.log('Selected keys changed:', selectedOption);
-    //   }, [setSelectedOption]);
     
     const handleSelectOption = (option) => {
         setSelectedOption(option);

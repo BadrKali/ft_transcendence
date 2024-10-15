@@ -16,7 +16,7 @@ const PingPong = () => {
     const { auth } = useAuth();
     const [selectedBackground, setSelectedBackground] = useState(null);
     const [selectedPaddle, setSelectedPaddle] = useState("#BC4F00");
-    const [selectedKeys, setSelectedKeys] = useState(null);
+    const [selectedKeys, setSelectedKeys] = useState("ws");
     const [selectedMode, setSelectedMode] = useState("Invite");
     const deps = [selectedMode, selectedBackground, selectedKeys, selectedPaddle].filter(Boolean);
 

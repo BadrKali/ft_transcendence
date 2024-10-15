@@ -31,7 +31,7 @@ const LaunchButtons = ({ selectedMode, selectedBackground, selectedKeys, selecte
     
         }
         handleOpponentKeys();
-    }, selectedKeys)
+    }, [selectedKeys])
 
     const checkInviteRoom = async () => {
         setIsLoading(true);
