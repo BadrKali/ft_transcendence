@@ -173,6 +173,7 @@ class GameState:
         player1_status = player1['status']
         player2_status = player2['status']
         if player1_status and player2_status:
+            await self.update_game_started(False)
             print("BOTH PLAYERS ARE CONNECTED ++++++++++++++++++++")
             return True
         else:
@@ -330,8 +331,7 @@ class GameConsumer(AsyncWebsocketConsumer):
         elif self.game_state.remove_player(player_str):
             current_player_username = await self.game_state.get_player_username(self.player)
             opponent_username = next(username for username in self.game_state.state['players'].keys() if username != current_player_username)
-            await self.update_xp(self.player, current_player_username, self.room)
-            await self.save_game_history(opponent_username, current_player_username, self.room)
+            await self.update_xp_and_save_history(opponent_username, current_player_username, self.room)
             await self.channel_layer.group_send(
                 self.room_group_name,{
                     'type': 'send_message',
@@ -417,10 +417,8 @@ class GameConsumer(AsyncWebsocketConsumer):
             if await self.game_state.get_players_status():
                 print("Player has reconnected.")
                 return  
-
             await asyncio.sleep(interval)
             total_time_waited += interval
-
         await self.send(text_data=json.dumps({
             'action': 'you_won',
             'winner': winner
