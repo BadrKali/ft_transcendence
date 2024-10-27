@@ -132,7 +132,6 @@ const ChatHeader = () => {
   const { t } = useTranslation();
 
   function handleParamsClick() {
-    alert("Olaaala");
   }
 
   return (

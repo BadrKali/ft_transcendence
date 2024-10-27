@@ -218,16 +218,15 @@
         display: none;
     }
 }
+
 .ConversationMessages::-webkit-scrollbar {
     width: 0.5rem;
     backdrop-filter : blur(20px);
-
 }
 
 .ConversationMessages::-webkit-scrollbar-track {
     background-color: none;
     margin-block: 4rem;
-
 }
 
 .ConversationMessages::-webkit-scrollbar-thumb {

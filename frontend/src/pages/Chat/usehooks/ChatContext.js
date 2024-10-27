@@ -1,7 +1,6 @@
 import React, {createContext, useState, useEffect} from "react";
 import useFetch from "../../../hooks/useFetch.js";
 import useAuth from "../../../hooks/useAuth.js";
-import { SuccessToast } from "../../../components/ReactToastify/SuccessToast.js";
 import { ErrorToast } from "../../../components/ReactToastify/ErrorToast.js";
 
 
@@ -49,11 +48,10 @@ export const SocketClientProvider = ({children}) =>{
     
     clientSocket.onopen = () => {
         setsocket(clientSocket);
-        SuccessToast(" Clunca WebSocket instanciated")
     };
 
     clientSocket.onclose = () => {
-      ErrorToast('Clunca WebSocket closed (onclose)');
+      // ErrorToast('Clunca WebSocket closed (onclose)');
     };
 
     clientSocket.onerror = (error)=>{
@@ -63,11 +61,10 @@ export const SocketClientProvider = ({children}) =>{
     // ****************************************************************************************
     forBotSocket.onopen = () => {
         setbotSocket(forBotSocket);
-        SuccessToast(" ChatBot WebSocket instanciated (onopen)")
     };
 
     forBotSocket.onclose = () => {
-      ErrorToast('ChatBot WebSocket closed (onclose)');
+      // ErrorToast('ChatBot WebSocket closed (onclose)');
     };
 
     forBotSocket.onerror = (error)=>{
