@@ -13,6 +13,9 @@ import loadingAnimation from '../../components/OauthTwo/loading-animation.json'
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
+// const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
+
+
 const LeaderBoard = () => {
   const [leaderboardData, setLeaderboardData] = useState([]);
   const [isLoading, setIsLoading] = useState(true);

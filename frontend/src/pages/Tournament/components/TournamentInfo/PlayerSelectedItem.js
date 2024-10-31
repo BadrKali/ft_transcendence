@@ -4,6 +4,8 @@ import { avatarsUnkown } from '../../../../assets/assets';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
+// const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
+
 function PlayerSelectedItem({player}) {
   const unknownAvatar = avatarsUnkown.img;
 

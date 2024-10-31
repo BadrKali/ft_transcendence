@@ -41,6 +41,8 @@ const Setting = () => {
   const { t } = useTranslation();
 
 
+  const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
+
   const toggleTwoFaModal = async () => {
     const data = await fetchQrCodeUrl(auth.accessToken);
     setQrCodeUrl(data.otp_uri);

@@ -36,7 +36,20 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-*vhv@l8+%lbvd^ag(ste@uc^ww0yim&%j1!km-ixvp$k%fnxh&'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = True #hadi bedelnaha kant true
+
+#I ADD THIS 
+
+#==============================================================================
+# Static files (CSS, JavaScript, Images)
+STATIC_URL = '/static/'
+
+# Directory where static files will be collected in production
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+# Static files storage for production with compression and cache control
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+#==============================================================================
 
 ALLOWED_HOSTS = ['*']
 
@@ -122,6 +135,7 @@ DATABASES = {
         'PORT'    : os.getenv('POSTGRES_PORT'),
     }
 }
+
 # DATABASES = {
 #     'default': {
 #         'ENGINE': 'django.db.backends.sqlite3',
@@ -181,20 +195,34 @@ CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOWED_ORIGINS = [
     "http://frontend:3000",
     "http://localhost:3000",
+    "https://localhost",
 ]
 
 CORS_ALLOW_CREDENTIALS = True
 
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels.layers.InMemoryChannelLayer",
+    }
+}
+
+
+# REDIS_URL = f"rediss://:{os.getenv('REDIS_PASSWORD')}@{os.getenv('REDIS_ADDRESS')}:6379/0"
+
+
 # CHANNEL_LAYERS = {
 #     "default": {
-#         "BACKEND": "channels.layers.InMemoryChannelLayer",
-#     }
+#         "BACKEND": "channels_redis.core.RedisChannelLayer",
+#         "CONFIG": {
+#             "hosts": [{
+#                 "address": REDIS_URL,
+#                 "ssl_cert_reqs": "required",  # Ensure SSL certificate is verified
+#             }],
+#         },
+#     },
 # }
-CHANNEL_LAYERS = {
-    'default': {
-        'BACKEND': 'channels_redis.core.RedisChannelLayer',
-        'CONFIG': {
-            'hosts': [('redis', 6379)],
-        },
-    },
-}
+
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+SECURE_SSL_REDIRECT = True
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True

@@ -1,0 +1,8 @@
+groups:
+  - name: all-instances-alerts
+    rules:
+      - alert: Instance-Status-Change
+        expr: up == 0
+        for: 10s
+        annotations:
+          summary: "[{{ $labels.instance }}] Instance in [{{ $labels.job }}] Job is experiencing status changes."

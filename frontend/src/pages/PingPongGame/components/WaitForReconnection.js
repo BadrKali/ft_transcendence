@@ -4,6 +4,8 @@ import { useTranslation } from 'react-i18next'
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
+// const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
+
 const WaitForReconnection = ({ opponent }) => {
     const { t } = useTranslation();
 
