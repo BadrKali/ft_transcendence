@@ -3,12 +3,16 @@ import './SignUp.css'
 import { assets, avatars } from '../../../../assets/assets'
 import AuthInput from '../AuthInput/AuthInput';
 import axios from '../../../../api/axios';
+import { useTranslation } from 'react-i18next'
+import { ErrorToast } from '../../../../components/ReactToastify/ErrorToast';
+
 
 const SIGNUP_URL = '/auth/user/register/'
 
 const SignUp = (props) => {
     const [activeAvatar, setActiveAvatar] = useState(0);
     const [avatarFile, setAvatarFile] = useState(null);
+    const { t } = useTranslation();
     const [signUpValues, setSignUpValues] = useState({
         username: "",
         email: "",
@@ -52,39 +56,47 @@ const SignUp = (props) => {
             });
             console.log(response.data);
             props.setIsLogin(true);
-        } catch (err) {
+        }  catch (err) {
+            if (err.response && err.response.data) {
+                const errors = Object.values(err.response.data);
+                const message = errors.flat().join(' '); 
+                ErrorToast(message);
+            } else {
+                ErrorToast("An unexpected error occurred.");
+            }
             console.error(err);
         }
+        
     };
 
     const errorMsg = [
         {
             id: 0,
-            msg: "Username cannot contain special characters or spaces.",
+            msg: t("Username cannot contain special characters or spaces."),
             pattern: "^[A-Za-z][A-Za-z0-9_]{7,29}$"
         },
         {
             id: 1,
-            msg: "Email address must follow the format user@example.com.",
+            msg: t("Email address must follow the format user@example.com."),
             pattern: "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
         },
         {
             id: 2,
-            msg: "Password is too weak. Please choose a more complex password to ensure account security.",
+            msg: t("Password is too weak. Please choose a more complex password to ensure account security."),
             pattern: "^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$",
         },
         {
             id: 3,
-            msg: "Oops! Looks like your passwords don't match. Please try again.",
+            msg: t("Oops! Looks like your passwords don't match. Please try again."),
             pattern: signUpValues.password
         }
     ];
 
     return (
         <div className='signup-container'>
-            <h1>Create Account</h1>
+            <h1>{t('Create Accoun')}t</h1>
             <div className='signup-avatar-section'>
-                <h3>Avatar</h3>
+                <h3>{t('Avatar')}</h3>
                 <div className='signup-avatar-list'>
                     {avatars.map((avatar, index) => (
                         <img
@@ -109,12 +121,12 @@ const SignUp = (props) => {
                     </label>
                 </div>
                 <form className='signup-input-section' onSubmit={handleSignUpSubmit}>
-                    <AuthInput name="username" placeholder="User Name" type="text" value={signUpValues.username} onChange={handleInputChange} errorMessage={errorMsg[0].msg} pattern={errorMsg[0].pattern} />
-                    <AuthInput name="email" placeholder="Email" type="email" value={signUpValues.email} onChange={handleInputChange} errorMessage={errorMsg[1].msg} pattern={errorMsg[1].pattern} />
-                    <AuthInput name="password" placeholder="Password" type="password" value={signUpValues.password} onChange={handleInputChange} errorMessage={errorMsg[2].msg} pattern={errorMsg[2].pattern} />
-                    <AuthInput name="confirm_password" placeholder="Confirm Password" type="password" value={signUpValues.confirm_password} onChange={handleInputChange} errorMessage={errorMsg[3].msg} pattern={errorMsg[3].pattern} />
-                    <button className="signup-switch" type="submit">Create Account</button>
-                    <button className="signup-switch" type="button" onClick={props.setIsLogin}>Sign In</button>
+                    <AuthInput name="username" placeholder={t('User Name')} type="text" value={signUpValues.username} onChange={handleInputChange} errorMessage={errorMsg[0].msg} pattern={errorMsg[0].pattern} />
+                    <AuthInput name="email" placeholder={t('Email')} type="email" value={signUpValues.email} onChange={handleInputChange} errorMessage={errorMsg[1].msg} pattern={errorMsg[1].pattern} />
+                    <AuthInput name="password" placeholder={t('Password')} type="password" value={signUpValues.password} onChange={handleInputChange} errorMessage={errorMsg[2].msg} pattern={errorMsg[2].pattern} />
+                    <AuthInput name="confirm_password" placeholder={t('Confirm Password')} type="password" value={signUpValues.confirm_password} onChange={handleInputChange} errorMessage={errorMsg[3].msg} pattern={errorMsg[3].pattern} />
+                    <button className="signup-switch" type="submit">{t('Create Account')}</button>
+                    <button className="signup-switch" type="button" onClick={props.setIsLogin}>{t('Sign In')}</button>
                 </form>
             </div>
         </div>

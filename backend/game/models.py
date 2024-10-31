@@ -1,7 +1,7 @@
 from django.db import models
 from django.conf import settings
 from django.core.exceptions import ValidationError
-from user_management.models import Player
+from user_management.models import Player, LocalPlayer
 from authentication.models import User
 
 def achievement_image_upload_path(instance, filename):
@@ -63,8 +63,8 @@ class GameSettings(models.Model):
     user = models.ForeignKey(Player, on_delete=models.CASCADE, blank=True, null=True)
     background = models.CharField(max_length=255)
     paddle = models.CharField(max_length=255)
-    keys = models.CharField(max_length=255, null=True)
-    gameMode = models.CharField(max_length=255, default="flesh")
+    keys = models.CharField(max_length=255)
+    gameMode = models.CharField(max_length=255)
     def __str__(self):
         return f"{self.background} {self.paddle} {self.gameMode}"
 
@@ -73,7 +73,11 @@ class GameRoom(models.Model):
     player2 = models.ForeignKey(Player, related_name='player2', on_delete=models.CASCADE, null=True, blank=True)
     is_waiting = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
-
+    player1_disconnected_at = models.DateTimeField(null=True, blank=True)
+    player2_disconnected_at = models.DateTimeField(null=True, blank=True)
+    player1_reconnected = models.BooleanField(default=False)
+    player2_reconnected = models.BooleanField(default=False)
+    
     def add_player(self, player):
         if not self.player1:
             self.player1 = player
@@ -99,6 +103,57 @@ class GameRoom(models.Model):
         else:
             self.save()
 
+class InviteGameRoom(models.Model):
+    player1 = models.ForeignKey(Player, related_name='invited1', on_delete=models.CASCADE, null=True, blank=True)
+    player2 = models.ForeignKey(Player, related_name='invited2', on_delete=models.CASCADE, null=True, blank=True)
+    is_waiting = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    player1_connected = models.BooleanField(default=False)
+    player2_connected = models.BooleanField(default=False)
+
+    def set_player_connected(self, player):
+        print(f"{self.player1_connected, self.player2_connected} ++++++++++++++++++++++++++++")
+        if self.player1 == player:
+            self.player1_connected = True
+            print("player1 connected")
+        elif self.player2 == player:
+            self.player2_connected = True
+            print("player2 connected")
+        self.save()
+        print(f"{self.player1_connected, self.player2_connected} ++++++++++++++++++++++++++++")
+
+
+    def check_and_update_status(self):
+        if self.player1_connected and self.player2_connected:
+            self.is_waiting = False
+            print("Both players are connected, game is ready to start.")
+            self.save()
+        
+    def add_player(self, player):
+        if not self.player1:
+            self.player1 = player
+        elif not self.player2:
+            self.player2 = player
+        else:
+            raise ValueError("Room is already full")
+        if self.player1 and self.player2:
+            self.is_waiting = False
+        self.save()
+
+    def get_players(self):
+        return self.player1, self.player2
+
+    def leave_room(self, player):
+        if self.player1 == player:
+            self.player1 = None
+        elif self.player2 == player:
+            self.player2 = None
+        
+        if not self.player1 and not self.player2:
+            self.delete()
+        else:
+            self.save()
+        
 class GameChallenge(models.Model):
     INVITATION_CHOICES = [
         ('A', 'ACCEPTED'),
@@ -109,9 +164,44 @@ class GameChallenge(models.Model):
     player_receiver = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='receiver',on_delete=models.CASCADE)
     status = models.CharField(max_length=1,choices=INVITATION_CHOICES, default='P')
     send_at = models.DateTimeField(auto_now_add=True)
-
+    invite_game_room = models.OneToOneField(InviteGameRoom, on_delete=models.CASCADE, null=True, blank=True)
     class Meta:
         unique_together = ["player_sender", "player_receiver"]
 
     def __str__(self) -> str:
         return f"invitation from {self.player_sender.username} to {self.player_receiver.username} - status : {self.invite_status}"
+
+
+
+class TournamentGameRoom(models.Model):
+    player1 = models.ForeignKey(Player, related_name='tournament_player1', on_delete=models.CASCADE, null=True, blank=True)
+    player2 = models.ForeignKey(Player, related_name='tournament_player2', on_delete=models.CASCADE, null=True, blank=True)
+    is_waiting = models.BooleanField(default=True)
+    crateated_at = models.DateTimeField(auto_now_add=True)
+    player1_connected = models.BooleanField(default=False)
+    player2_connected = models.BooleanField(default=False)
+
+    def set_player_connected(self, player):
+        if self.player1 == player:
+            self.player1_connected = True
+            print("player1 connected")
+        elif self.player2 == player:
+            self.player2_connected = True
+            print("player2 connected")
+        self.save()
+    
+    def check_and_update_status(self):
+        if self.player1_connected and self.player2_connected:
+            self.is_waiting = False
+            self.save()
+
+
+
+
+class LocalGameRoom(models.Model):
+    player1 = models.ForeignKey(LocalPlayer, related_name='local_game_room_player1', on_delete=models.CASCADE, null=True, blank=True)
+    player2 = models.ForeignKey(LocalPlayer, related_name='local_game_room_player2', on_delete=models.CASCADE, null=True, blank=True)
+    arena = models.CharField(max_length=100)
+    crateated_at = models.DateTimeField(auto_now_add=True)
+    def __str__(self):
+        return "__Local_Game_Room"

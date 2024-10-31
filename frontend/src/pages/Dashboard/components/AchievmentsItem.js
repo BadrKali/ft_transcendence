@@ -1,9 +1,10 @@
 import React from 'react'
 import Icon from '../../../assets/Icon/icons'
 import './achievmentsItem.css'
+import { useTranslation } from 'react-i18next';
 
 function AchievmentsItem({achiev}) {
-    // console.log(achiev.image)
+    const { t } = useTranslation();
   return (
     <div className={achiev.unlocked === "false" ? 'AchievmentsItemContainer unlockedAchiev' : 'AchievmentsItemContainer'}>
         <div className='IconContainer'>
@@ -12,10 +13,10 @@ function AchievmentsItem({achiev}) {
         </div>
         <div className='AchievmentsInfo'>
             <div className='AchievmentsName'>
-                <p>{achiev.title}</p>
+                <p>{t(achiev.title)}</p>
             </div>
             <div className='AchievmenstDescription'>
-                <p style={{color: '#8D93AC'}}>{achiev.description}</p>
+                <p style={{color: '#8D93AC'}}>{t(achiev.description)}</p>
             </div>
         </div>
     </div>

@@ -25,11 +25,15 @@ const PersistLogin = () => {
             }
         }
         !auth?.accessToken ?  checkToken() : setIsLoading(false);
+        // if(!auth?.accessToken) {
+        //     checkToken()
+        // }
     }, [])
     return (
         <>
             {isLoading ?           
             <div className='oauth-loading'>
+                {console.log("i am loading effect nigga")}
                 <Lottie animationData={loadingAnimation} style={{ width: 400, height: 400 }} />
             </div>
             : 

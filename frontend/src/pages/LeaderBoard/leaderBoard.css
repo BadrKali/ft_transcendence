@@ -46,6 +46,7 @@
     height: 12%;
     justify-content: space-between;
     /* flex-wrap: wrap; */
+
 }
 
 .leaderBoard-RestList {
@@ -55,6 +56,7 @@
     display: flex;
     flex-direction: column;
     padding-top: 20px;
+
 }
 
 .leaderBoard-RestList .restList-Header{
@@ -86,4 +88,22 @@
   
 .restList-Players::-webkit-scrollbar {
     display: none;
+}
+
+@media screen and (max-width: 950px) {
+    .leaderBoard-FirstThree{
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        height: 30%;
+        gap: 10px;
+    }
+
+    .leaderBoard-RestList{
+        width: 100%;
+        height: 70%;
+    }
+    .leaderBoard-RestList .restList-Header{
+        display: none;
+    }
 }

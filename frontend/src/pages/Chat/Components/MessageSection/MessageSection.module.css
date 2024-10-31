@@ -7,7 +7,6 @@
     border-radius: 6px;
     opacity: 0.4;
     background-color:#1C1E27;
-
 }
 
 .WelcomeChat{
@@ -39,9 +38,8 @@
     border-radius: 0.4rem;
     gap: 4px;
     overflow-y: auto;
-
 }
-/***************************************************/
+
 .ChatHeaderHolder{
     display: flex;
     align-items: center;
@@ -97,7 +95,6 @@
     display: flex;
     align-items: center;
     gap: 3px;
-
 }
 
 .StatusIcon{
@@ -109,8 +106,38 @@
 .ChatMainHolder{
     background-color:#1C1E27;
     overflow: auto;
+    position: relative;
 }
-/*****************************************/
+
+.UserSelectedImgHolder{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    height: 100%;
+    width : 100%;
+    display: flex;
+    gap : 1rem;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    backdrop-filter: blur(5px);
+    z-index: 9999;
+}
+
+.UserSelectedImg{
+    max-width: 60%;
+    max-height: 40%;
+    border-radius: 1rem;
+    border: 3px solid white;
+}
+
+.EraseSelectedImgHolder{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
 .ChatInputHolder{
     position: relative;
     display: flex;
@@ -136,9 +163,7 @@
     width: 95%;
 }
 
-.ImportButton{
 
-}
 
 .ImportOptions{
     position: absolute;
@@ -147,9 +172,10 @@
     justify-content: space-around;
     width: 5rem;
     height: 12.5rem;
-    bottom: 5.625rem;
-    left: 1.25rem;
+    bottom: 2.425rem;
+    left: 1.65rem;
     opacity: 0.6;
+    z-index: 99999;
 }
 
 .ImportOptions:hover{
@@ -163,27 +189,12 @@
     align-items: center;
     justify-content: center;
     justify-items: center;
-    border-radius: 50%;
     background-color: #C5D0FF;
+    border-radius: 50%;
 }
 
 .ImportImage{
     color : #1C1E27;
-}
-.ImportFiles{
-    color : #1C1E27;
-}
-
-.FilesBack{
-    height: 30%;
-    width: 75%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    justify-items: center;
-    background-color: #C5D0FF;
-    border-radius: 50%;
-
 }
 
 .Emojie{
@@ -200,38 +211,6 @@
     font-size: 20px;
     font-family: 'Saira Semi Condensed', sans-serif;
 } 
-/*******************INPUT HOLDER***********************/
-
-/* .Color1{ */
-    /* width: 30px; */
-    /* height: 30px; */
-    /* background-color: #22420d; */
-    /* border-bottom-left-radius: 10px; */
-    /* border-top-right-radius: 10px ; */
-    /* border *
-}
-
-.Color2{
-    width: 30px;
-    height: 30px;
-    background-color: #F62943;
-    border-bottom-left-radius: 10px;
-    border-top-right-radius: 10px ;
-}
-
-.Color3{
-    width: 30px;
-    height: 30px;
-    background-color: #333497;
-    border-bottom-left-radius: 10px;
-    border-top-right-radius: 10px ;
-}
-.Color4{
-    /* background-color: var(--message-background-color); */
-    /* width: 30px; */
-    /* height: 30px; */
-/* } */
-
 
 .StartMessageHolder{
     width: 100%;
@@ -293,13 +272,11 @@
 }
 
 .MsgIncom{
-
     animation: sliding linear;
     animation-timeline: View();
     animation-range: entry -1000%  30%;
     margin-top: 1rem;
     margin-bottom: 1rem;
-
     align-self: flex-start;
     display: grid;
     grid-template-columns: 80px 1fr;
@@ -351,10 +328,23 @@
     gap: 0.4rem;
 }
 
+.msgContentanimation{
+    display: flex;
+    flex-direction: column;
+}
+
+.typingholder{
+    width: 5rem;
+    height: 5rem;
+    justify-content: flex-end;
+    align-self: flex-end;
+}
+
 .incoming{
     font-size: 18px;
     max-width: 27rem;
     background-color: rgba(115, 115, 115, 0.2);
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
     padding: 1rem;
     border-top-left-radius: 18px;
     border-top-right-radius: 18px;
@@ -364,7 +354,8 @@
 
 .outgoing{
     font-size: 18px;
-    background-color: rgba(115, 115, 115, 0.2);
+    background-color: #11141B;
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
     border-top-left-radius: 18px;
     border-top-right-radius: 18px;
     border-bottom-left-radius: 18px;

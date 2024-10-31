@@ -4,6 +4,7 @@ import avatar1 from './avatar1.png'
 import avatar2 from './avatar2.png'
 import avatar3 from './avatar3.png'
 import avatar4 from './avatar4.png'
+import unknownAvatar from './unknown.png'
 import addAvatar from './addAvatar.png'
 import SchoolIcon from './school_icon.png'
 import sep from './sep.png'
@@ -37,7 +38,16 @@ export const avatars = [
         name: 'brain',
         img: avatar4
     },
+
 ]
+
+export const avatarsUnkown = 
+  {
+      name: 'unknown',
+      img : unknownAvatar
+  }
+
+
 
 export const leaderBoard = [
     {

@@ -1,81 +1,54 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
+import useFetch from '../../../../hooks/useFetch'
+import { useContext } from 'react'
 import './TournamentBracket.css'
 import TournamentsItem from './TournamentsItem'
 import Icon from '../../../../assets/Icon/icons'
 import EightPlayer from '../../../../assets/TournamentEightPlayer'
-import FourPlayer from '../../../../assets/TournamentFourPlayers'
-import TwoPlayer from '../../../../assets/TournamentTwoPlayers'
+// import FourPlayer from '../../../../assets/TournamentFourPlayers'
+// import TwoPlayer from '../../../../assets/TournamentTwoPlayers'
+import useAuth from '../../../../hooks/useAuth'
+import TournamentPlayersItem from './TournamentPlayersItem'
+import { CircularProgressbar, buildStyles } from 'react-circular-progressbar';
+import 'react-circular-progressbar/dist/styles.css';
+import { avatarsUnkown } from '../../../../assets/assets'
+import { useTranslation } from 'react-i18next'
+import { UserContext } from '../../../../context/UserContext'
+import TournamentBracketOnline from './TournamentBracketOnline'
+import TournamentBracketOffline from './TournamentBracketOffline'
+import Lottie from 'lottie-react'
+import sadFace from '../../../../assets/sadFace.json'
+
+
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
 function TournamentBracket() {
-  const four_lines = new Array(4).fill(null);
-  const two_lines = new Array(2).fill(null);
-  const one_lines = new Array(1).fill(null);
+  const [isOnline, setIsOnline] = useState(false);
+  const {TounamentData, TounamenrLoading} = useContext(UserContext)
+  const { t } = useTranslation();
+
+
+  
+
+  useEffect(() => {
+      setIsOnline(TounamentData.is_online);
+    }, [TounamentData.is_online]);
+
 
   return (
     <div className='bracket-container'>
-        <div className="first-eight-players">
-            <div className="player-items">
-                {EightPlayer.map((players) => (
-                  <TournamentsItem key={players.id} players={players}/>
-                ))}
-            </div>
-            <div className="eight-lines">
-                 {four_lines.map((_, index) => (
-                    <div className="two-lines" key={index}>
-                      <div className="first-line"></div>
-                    </div>
-                  ))}
-            </div>
-            <div className="last-line">
-                {four_lines.map((_, index) => (
-                    <div className="t-lines" key={index}>
-                    </div>
-                  ))}
-            </div>
+      {TounamentData && TounamentData.tournament_participants && TounamentData.tournament_participants.length > 0 ? (
+        isOnline ? (
+          <TournamentBracketOnline /> 
+        ) : (
+          <TournamentBracketOffline />
+        )
+      ) : (
+        <div className='sadFaceAnimationGame'>
+          <div className='sadeFaceGame'><Lottie  animationData={sadFace} /> </div>
+          <h3>{t("You haven't joined any tournament")}</h3>
         </div>
-        <div className="second-four-player">
-            <div className="player-items">
-                  {FourPlayer.map((players) => (
-                    <TournamentsItem key={players.id} players={players}/>
-                  ))}
-              </div>
-              <div className="four-lines">
-                  {two_lines.map((_, index) => (
-                    <div className="two-lines" key={index}>
-                      <div className="first-line"></div>
-                    </div>
-                  ))}
-              </div>
-              <div className="last-line">
-                  {two_lines.map((_, index) => (
-                    <div className="t-lines" key={index}>
-                    </div>
-                  ))}
-              </div>
-        </div>
-        <div className="final-game-players">
-              <div className="player-items">
-                  {TwoPlayer.map((players) => (
-                    <TournamentsItem key={players.id} players={players}/>
-                  ))}
-              </div>
-              <div className="final-lines">
-                  {one_lines.map((_, index) => (
-                    <div className="one-lines" key={index}>
-                      <div className="first-line"></div>
-                    </div>
-                  ))}
-              </div>
-              <div className="last-line">
-                  {one_lines.map((_, index) => (
-                    <div className="t-lines" key={index}>
-                    </div>
-                  ))}
-              </div>
-        </div>
-        <div className="winner">
-         <Icon name='TournamentWin' className='tournament-win' />
-        </div>
+      )}
     </div>
   )
 }

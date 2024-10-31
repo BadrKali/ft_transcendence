@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from django.db import models
+from django.db.models import Q
 from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -7,18 +8,28 @@ from rest_framework import status
 from rest_framework.views import APIView
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
-from .models import GameHistory, Achievement, UserAchievement, GameSettings, GameRoom, GameChallenge
-from .serializers import GameHistorySerializer, AchievementSerializer, UserAchievementSerializer, GameSettingsSerializer, GameRoomSerializer
+from .models import *
+from .serializers import *
 from user_management.models import Player, Notification
 from authentication .models import User
 from django.shortcuts import get_object_or_404
 
-class PlayerGameHistoryView(generics.ListAPIView):
-    serializer_class = GameHistorySerializer
+class CurrentUserGameHistoryView(APIView):
+    def get(self, request):
+        player_id = request.user.id
+        queryset = GameHistory.objects.filter(
+            models.Q(winner_user_id=player_id) | models.Q(loser_user_id=player_id)
+        )
+        serializer = GameHistorySerializer(queryset, many=True, context={'player_id': player_id})
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
-    def get_queryset(self):
-        player_id = self.kwargs['player_id']
-        return GameHistory.objects.filter(models.Q(winner_user_id=player_id) | models.Q(loser_user_id=player_id))
+class PlayerGameHistoryView(APIView):
+    def get(self, request, player_id):
+        queryset = GameHistory.objects.filter(
+            models.Q(winner_user_id=player_id) | models.Q(loser_user_id=player_id)
+        )
+        serializer = GameHistorySerializer(queryset, many=True, context={'player_id': player_id})
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class AchievementListView(APIView):
@@ -87,7 +98,7 @@ class GameSettingsView(APIView):
 class GameRoomView(APIView):
     def get(self, request, room_id):
         try:
-            room = GameRoom.objects.get(id=room_id)
+            room = get_object_or_404(GameRoom, id=room_id)
             print(f"{room.player1}")
             print(f"{room.player2}")
             serializer = GameRoomSerializer(room)
@@ -98,51 +109,192 @@ class GameRoomView(APIView):
 class SendChallengeView(APIView):
     def post(self, request):
         player_receiver_id = request.data.get('player_receiver_id')
+        
         if not player_receiver_id:
             return Response({'error': 'player_receiver_id is required.'}, status=status.HTTP_400_BAD_REQUEST)
+        
         try:
             player_receiver = get_object_or_404(User, id=player_receiver_id)
             player_sender = request.user
-            # friend_request = GameChallenge(player_sender=player_sender, player_receiver=player_receiver)
-            # friend_request.save()
+        
+            existing_challenge = GameChallenge.objects.filter(
+                Q(player_sender=player_sender, player_receiver=player_receiver) |
+                Q(player_sender=player_receiver, player_receiver=player_sender)
+            ).first()
+
+            if existing_challenge:
+                print("there's already a game b this id")
+                return Response({'error': 'A challenge already exists between these players.'}, status=status.HTTP_400_BAD_REQUEST)
+
+            player1, created = Player.objects.get_or_create(user_id=request.user.id)
+            player2, created = Player.objects.get_or_create(user_id=player_receiver_id)
+            
+            try:
+                invite_game_room, created = InviteGameRoom.objects.get_or_create(player1=player1, player2=player2)
+                game_challenge = GameChallenge.objects.create(
+                    player_sender=player_sender,
+                    player_receiver=player_receiver,
+                    invite_game_room=invite_game_room
+                )
+            except Exception as e:
+                print(f"Error creating InviteGameRoom: {e}")
+                return Response({'error': 'Error creating game room.'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
             Notification.objects.create(
                 recipient=player_receiver,
                 sender=player_sender,
                 message='has challenged you to a game!'
             )
+
             channel_layer = get_channel_layer()
             async_to_sync(channel_layer.group_send)(
                 f'notifications_{player_receiver.id}',
                 {
-                    'type': 'notification_message',
-                    'message': f'{player_sender.username} has challenged you to a game!'
+                    'type': 'notification_match',
+                    'message': f'{player_sender.username} has invited you to play a game.',
+                    'sender': player_sender.id, 
                 }
             )
+
             return Response({'message': 'Challenge sent successfully.'}, status=status.HTTP_201_CREATED)
 
         except User.DoesNotExist:
             return Response({'error': 'Player not found.'}, status=status.HTTP_404_NOT_FOUND)
-
+        except Player.DoesNotExist:
+            return Response({'error': 'Player instance not found for the sender or receiver.'}, status=status.HTTP_404_NOT_FOUND)
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
 class GameChallengeResponse(APIView):
     def patch(self, request, sender_id):
-        print("hello World")
+        print("hello world")
         player_sender = get_object_or_404(User, id=sender_id)
         player_receiver = request.user
-        friend_request = get_object_or_404(GameChallenge, player_sender=player_sender, player_receiver=player_receiver)
-        if friend_request.invite_status != 'P':
+    
+        game_challenge = get_object_or_404(GameChallenge, player_sender=player_sender, player_receiver=player_receiver)
+
+
+        if game_challenge.status != 'P':
             return Response({'error': 'Invalid status.'}, status=status.HTTP_400_BAD_REQUEST)
+    
         action = request.data.get('status')
         if action not in ['accepted', 'rejected']:
-            return Response({'error': 'Invalid action. Choose "accept" or "reject".'}, status=status.HTTP_400_BAD_REQUEST)
+            game_challenge.delete()
+            return Response({'error': 'Invalid action. Choose "accepted" or "rejected".'}, status=status.HTTP_400_BAD_REQUEST)
+        
         if action == 'accepted':
-            friend_request.invite_status = 'A'
-            friendship = GameChallenge(player=player_sender, friend=player_receiver)
-            friendship.save()
-            friend_request.delete()
-            return Response({'message': 'Friend request accepted.'}, status=status.HTTP_200_OK)
+            game_challenge.status = 'A'
+            game_challenge.save()
+            game_challenge.delete()
+            invite_game_room = game_challenge.invite_game_room
+            invite_game_room.player2 = Player.objects.get(user=player_receiver)
+            invite_game_room.save()
+            print("InviteGameRoom is created")
+            return Response({'message': 'Game challenge accepted.'}, status=status.HTTP_200_OK)
+        
         elif action == 'rejected':
-            friend_request.delete()
-        return Response({'message': 'Friend request rejected.'}, status=status.HTTP_200_OK)
+            game_challenge.status = 'D'
+            game_challenge.save()
+            invite_game_room = game_challenge.invite_game_room
+            invite_game_room.delete()
+            game_challenge.delete()
+            print(f"invite_game_room && game_challenge are deleted")
+            return Response({'message': 'Game challenge rejected.'}, status=status.HTTP_200_OK)
+
+class GameInvitationResponse(APIView):
+    def post(self, request, invited):
+        oppenent = get_object_or_404(User, id=invited);
+        current_user = request.user
+        action = request.data.get('status')
+        if action == 'accepted':
+            message = f"{oppenent.username} has accept your game invitaion"
+        elif action == 'rejected':
+            message = f"{oppenent.username} has reject your game invitaion"
+        Notification.objects.create(
+                recipient=oppenent,
+                sender=current_user,
+                message=message
+            )
+        channel_layer = get_channel_layer()
+        async_to_sync(channel_layer.group_send)(
+            f'notifications_{current_user.id}',
+            {
+                'type': 'join_game',
+                'message': message,
+            }
+        )
+        return Response({'message': 'Game challenge accepted.'}, status=status.HTTP_200_OK)
+    
+class InviteGameRoomView(APIView):
+    def get(self, request, room_id):
+        try:
+            room = InviteGameRoom.objects.get(id=room_id)
+            print(f"{room.player1}")
+            print(f"{room.player2}")
+            serializer = InviteGameRoomSerializer(room)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except InviteGameRoom.DoesNotExist:
+            return Response({"error": "Game room not found"}, status=status.HTTP_404_NOT_FOUND)
+
+class TournamentGameRoomView(APIView):
+    def get(self, request, room_id):
+        try:
+            room = TournamentGameRoom.objects.get(id=room_id)
+            print(f"{room.player1}")
+            print(f"{room.player2}")
+            serializer = TournamentGameRoomSerializer(room)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except TournamentGameRoom.DoesNotExist:
+            return Response({"error": "Game room not found"}, status=status.HTTP_404_NOT_FOUND)
+
+class CheckInviteReconnection(APIView):
+    def get(self, request):
+        try:
+            player = get_object_or_404(Player, user=request.user)
+            room = InviteGameRoom.objects.filter(
+                Q(player1=player) | Q(player2=player)
+            ).first()
+
+            if room:
+                return Response({
+                    'exists': True,
+                    'room_id': room.id,
+                    'player1': room.player1.user.username,
+                    'player2': room.player2.user.username if room.player2 else None,
+                    'is_waiting': room.is_waiting,
+                }, status=status.HTTP_200_OK)
+            else:
+                return Response({ 'exists': False }, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({ 'error': str(e) }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+
+class LocalGameRoomCreateView(APIView):
+    def post(self, request, format=None):
+        player1_id = request.data.get('player1')
+        player2_id = request.data.get('player2')
+        arena = request.data.get('arena')
+
+        if not all([player1_id, player2_id, arena]):
+            return Response({'error': 'player1, player2, and arena are required'}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            player1 = LocalPlayer.objects.get(id=player1_id)
+            player2 = LocalPlayer.objects.get(id=player2_id)
+        except LocalPlayer.DoesNotExist:
+            return Response({'error': 'One or both players do not exist'}, status=status.HTTP_404_NOT_FOUND)
+
+        game_room = LocalGameRoom.objects.create(
+            player1=player1,
+            player2=player2,
+            arena=arena
+        )
+        
+        serializer = LocalGameRoomSerializer(game_room)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    
+    def get(self, request, game_room_id):
+        game_room = get_object_or_404(LocalGameRoom, id=game_room_id)
+        serializer = LocalGameRoomSerializer(game_room)
+        return Response(serializer.data)

@@ -3,35 +3,31 @@ import './Tournament.css'
 import Icon from '../../assets/Icon/icons'
 import TournamentInfo from './components/TournamentInfo/TournamentInfo'
 import TournamentBracket from './components/TournamentBracket/TournamentBracket'
+import { useTranslation } from 'react-i18next'
+
 
 
 const Tournament = () => {
 
-
+  const { t } = useTranslation();
   const [tournamentMenuItem, setTournamentMenuItem] = useState('overview')
   return (
     <div className='tournment-container'>
       <div className='page-title'>
-          <h1>Tournament</h1>
+          <h1>{t('Tournament')}</h1>
       </div>
       <div className='tournament-menu'>
         <div className={`tournament-menu-item ${tournamentMenuItem === 'overview' ? 'active-tournament-menu' : ''}`} onClick={() => {
           setTournamentMenuItem('overview')
         }}>
           <Icon name='view' className='tournament-icon' />
-          <span>Overview</span>
+          <span>{t('Overview')}</span>
         </div>
         <div className={`tournament-menu-item ${tournamentMenuItem === 'bracket' ? 'active-tournament-menu' : ''}`} onClick={() => {
           setTournamentMenuItem('bracket')
         }}>
           <Icon name='bracket' className='tournament-icon'/>
-          <span>Bracket</span>
-        </div>
-        <div className={`tournament-menu-item ${tournamentMenuItem === 'logs' ? 'active-tournament-menu' : ''}`} onClick={() => {
-          setTournamentMenuItem('logs')
-        }}>
-          <Icon name='history' className='tournament-icon'/>
-          <span>Logs</span>
+          <span>{t('Bracket')}</span>
         </div>
       </div>
       <div className='tournament-menu-content'>

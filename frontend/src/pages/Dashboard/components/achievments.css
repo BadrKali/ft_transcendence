@@ -26,3 +26,10 @@
 .achievmentsCard::-webkit-scrollbar {
     display: none;
 }
+
+@media screen and (max-width: 950px) {
+    .achievmentsContainer{
+        padding-left: 0 !important;
+  
+    }
+}

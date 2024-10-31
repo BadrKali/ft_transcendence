@@ -22,6 +22,7 @@
     justify-content: center;
     margin-bottom: 125px;
     padding: 15px 0;
+
 }
 .sidebar-logo-container {
     width: 100%;
@@ -33,7 +34,7 @@
     height: calc(100% - 170px);
     display: flex;
     justify-content: center;
-    /* border: 1px solid pink; */
+
 }
 
 .nav-menu-items {
@@ -79,6 +80,7 @@
     padding: 0 20px;
     transition: all 0.3s ease-out;
 
+
 }
 
 
@@ -101,11 +103,13 @@
 }
 
 .navbar-toggle.active .navbar-toggle-link .navbar-toggle-icon {
+
     stroke: #fff;
 }
 
 .navbar-toggle-icon {
     stroke: #8D93AC;
+
     transition: all 0.3s ease-out;
 }
 
@@ -126,3 +130,25 @@
     text-decoration: none;
     color: #8D93AC;
 }
+
+@media screen and (max-width: 1300px) {
+  
+    .sidebar-container{
+        width: 80px !important;
+    }
+    .navbar-toggle-icon{
+        width: 100%;
+        height: 100%;
+    }
+    .navbar-toggle-link span{
+        display: none;
+    }
+    .logout-link span{
+        display: none;
+    }
+
+    .logout-sep{
+        display: none;
+    }
+}
+  

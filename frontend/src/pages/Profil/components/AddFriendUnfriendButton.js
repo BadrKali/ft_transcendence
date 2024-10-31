@@ -1,42 +1,24 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 import useAuth from '../../../hooks/useAuth';
 import Icon from '../../../assets/Icon/icons'
 import { InfoToast } from '../../../components/ReactToastify/InfoToast'
 import { ErrorToast } from '../../../components/ReactToastify/ErrorToast'
 import { SuccessToast } from '../../../components/ReactToastify/SuccessToast'
+import { UserContext } from '../../../context/UserContext';
+import { ProfileContext } from '../../../context/ProfilContext';
+import { useTranslation } from 'react-i18next';
+
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
 function AddFriendUnfriendButton({ FriendId }) {
     const { auth }  = useAuth()
-    const [isRequest, setIsRequst] = useState('Friend request does not exist.')
-
-    useEffect(() => {
-        const fetchRequestStatus = async () => {
-            const url = `${BACKEND_URL}/user/friends-request/${FriendId}/`;
-            try {
-                const response = await fetch(url, {
-                    method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${auth.accessToken}`,
-                    },
-                });
-                if (response.ok) {
-                    const data = await response.json();
-                    setIsRequst(data.message)
-                    console.log(data.message);
-                } else {
-                    console.error('Error fetching block status:', response.statusText);
-                }
-            } catch (error) {
-                console.error('Error fetching block status:', error);
-            }
-        };
-
-        fetchRequestStatus();
-    }, [FriendId]);
-
+    const {updateUserFriends} = useContext(UserContext)
+    const {isBlockedMe, isBlockingHim, isRequest, setIsRequst} = useContext(ProfileContext)
+    const { t } = useTranslation();
+    const isDisabled = isBlockingHim || isBlockedMe;
+ 
+   
     const handleAddFriend = async () => {
         try {
             const response = await fetch(`${BACKEND_URL}/user/friends-request/${FriendId}/`, {
@@ -104,6 +86,21 @@ function AddFriendUnfriendButton({ FriendId }) {
 
             const data = await response.json();
             setIsRequst(data.message);
+            const friendsResponse = await fetch(`${BACKEND_URL}/user/friends/list/`, {
+                method: 'GET',
+                    headers: {
+                      'Content-Type': 'application/json',
+                      'Authorization': `Bearer ${auth.accessToken}`
+                    }
+                  });
+                  
+                  if (!friendsResponse.ok) {
+                    throw new Error('Network response was not ok');
+                  }
+                  
+                  const updatedFriendsData = await friendsResponse.json();
+            
+                updateUserFriends(updatedFriendsData);
 
         } catch (error) {
             ErrorToast(error.message);
@@ -137,24 +134,24 @@ function AddFriendUnfriendButton({ FriendId }) {
       };
 
     const getButtonAction = () => {
-        console.log(isRequest);
         switch (isRequest) {
           case 'Friend request does not exist.':
-            return { text: 'Add Friend', action: handleAddFriend };
+            return { text: t('Add Friend'), action: handleAddFriend };
           case 'Friend request sent.':
-            return { text: 'Cancel Request', action: handleCancelRequest };
+            return { text: t('Cancel Request'), action: handleCancelRequest };
           case 'Friend request received.':
-            return { text: 'Reject Request', action: handleRejectRequest };
+            return { text: t('Reject Request'), action: handleRejectRequest };
           case 'Friends':
-            return { text: 'Unfriend', action: handleUnfriend };
+            return { text: t('Unfriend'), action: handleUnfriend };
           default:
-            return { text: 'Add Friend', action: handleAddFriend };
+            return { text: t('Add Friend'), action: handleAddFriend };
         }
       };
 
     const { text, action } = getButtonAction();
+
     return (
-        <div className='AddFriend-button profil-button' onClick={action}>
+        <div className={`AddFriend-button  profil-button ${isDisabled ? 'disabled' : ''}`} onClick={action}>
             <Icon name='AddFriend' className='Add-Friend profil-icon' />
             <p>{text}</p>
         </div>

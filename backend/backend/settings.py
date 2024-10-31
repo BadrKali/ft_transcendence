@@ -14,8 +14,16 @@ from pathlib import Path
 from datetime import timedelta
 from dotenv import load_dotenv
 import os
+from channels_redis.core import RedisChannelLayer
+# from decouple import Config
 
+
+
+load_dotenv('../.env.database')
+# load_dotenv('../.env')
 load_dotenv()
+
+# config = Config("../.env.database")
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -30,7 +38,7 @@ SECRET_KEY = 'django-insecure-*vhv@l8+%lbvd^ag(ste@uc^ww0yim&%j1!km-ixvp$k%fnxh&
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": (
@@ -44,12 +52,12 @@ REST_FRAMEWORK = {
 }
 
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(days=1),
-    "REFRESH_TOKEN_LIFETIME": timedelta(days=30),
+    'ACCESS_TOKEN_LIFETIME': timedelta(days=1),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=30),
+    'BLACKLIST_AFTER_ROTATION': True,  
 }
 
 # Application definition
-
 INSTALLED_APPS = [
     'daphne',
     'django.contrib.admin',
@@ -60,6 +68,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'authentication',
     'rest_framework',
+    'rest_framework_simplejwt.token_blacklist',
     'channels',
     'user_management',
     'game',
@@ -102,12 +111,23 @@ ASGI_APPLICATION = 'backend.asgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
+
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE'  : 'django.db.backends.postgresql_psycopg2',
+        'NAME'    : os.getenv('POSTGRES_DB'),
+        'USER'    : os.getenv('POSTGRES_USER'),
+        'PASSWORD': os.getenv('POSTGRES_PASSWORD'),
+        'HOST'    : os.getenv('POSTGRES_HOST'),
+        'PORT'    : os.getenv('POSTGRES_PORT'),
     }
 }
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
+#     }
+# }
 
 
 # Password validation
@@ -147,6 +167,7 @@ USE_TZ = True
 STATIC_URL = 'static/'
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 MEDIA_URL = "media/"
+PRIVATE_MEDIA_ROOT = os.path.join(BASE_DIR, 'private_media/2fa')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
@@ -158,13 +179,22 @@ AUTH_USER_MODEL = 'authentication.User'
 CORS_ALLOW_ALL_ORIGINS = True
 
 CORS_ALLOWED_ORIGINS = [
+    "http://frontend:3000",
     "http://localhost:3000",
 ]
 
 CORS_ALLOW_CREDENTIALS = True
 
+# CHANNEL_LAYERS = {
+#     "default": {
+#         "BACKEND": "channels.layers.InMemoryChannelLayer",
+#     }
+# }
 CHANNEL_LAYERS = {
-    "default": {
-        "BACKEND": "channels.layers.InMemoryChannelLayer",
-    }
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            'hosts': [('redis', 6379)],
+        },
+    },
 }
