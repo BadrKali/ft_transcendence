@@ -12,10 +12,8 @@
 #     COMPOSEFILE = $(COMPOSEGOINFRE)
 # endif
 
-<<<<<<< HEAD
-up: 
-	docker compose -f ${COMPOSEFILE} up
-=======
+# up: 
+# 	docker compose -f ${COMPOSEFILE} up
 
 # up: 
 # 	docker compose -f ${COMPOSEFILE} up
@@ -42,7 +40,6 @@ all:
 
 down:
 	docker-compose down
->>>>>>> refs/remotes/origin/main
 
 stop:
 	docker-compose stop

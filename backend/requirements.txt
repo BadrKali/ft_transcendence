@@ -29,7 +29,6 @@ eval_type_backport==0.2.0
 exceptiongroup==1.2.2
 Faker==26.0.0
 filelock==3.15.4
-<<<<<<< HEAD
 frozenlist==1.4.1
 google-ai-generativelanguage==0.6.6
 google-api-core==2.19.1
@@ -38,8 +37,6 @@ google-auth==2.33.0
 google-auth-httplib2==0.2.0
 google-generativeai==0.7.2
 googleapis-common-protos==1.63.2
-=======
->>>>>>> refs/remotes/origin/main
 grpcio==1.65.5
 grpcio-status==1.62.3
 h11==0.14.0

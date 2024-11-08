@@ -5,4 +5,5 @@ groups:
         expr: up == 0
         for: 10s
         annotations:
-          summary: "[{{ $labels.instance }}] Instance in [{{ $labels.job }}] Job is experiencing status changes."
+          summary: "Status Change Detected"
+          description: "[{{ $labels.instance }}] Instance in [{{ $labels.job }}] Job is experiencing status changes."
