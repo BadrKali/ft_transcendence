@@ -6,8 +6,8 @@ import exit from "../asstes/right-arrow.png";
 import { useTranslation } from 'react-i18next'
 import Loading from '../components/Loading';
 import AboutLocalGame from '../components/AboutLocalGame';
-
-
+import avatar2 from "../../../assets/avatar2.png"
+import LocalScoreBoard from '../components/LocalScoreBoard';
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const LocalGameLogic = ({ player1Id, player2Id, handleEndMatch }) => {
     const { data: player1, isLoading: isLoadingPlayer1, error: player1Error } = useFetch(`${BACKEND_URL}/user/local-player/${player1Id}`);
@@ -259,7 +259,7 @@ const LocalGameLogic = ({ player1Id, player2Id, handleEndMatch }) => {
     }, [matchRunning, canvasSize, scaleFactor, keyState]);
 
     useEffect(() => {
-        const WINNING_SCORE = 2
+        const WINNING_SCORE = 11;
         if (user1Score === WINNING_SCORE || user2Score === WINNING_SCORE) {
             const winner = user1Score > user2Score ? player1?.username : player2?.username;
             const loser = user1Score > user2Score ? player2?.username : player1?.username;
@@ -292,7 +292,7 @@ const LocalGameLogic = ({ player1Id, player2Id, handleEndMatch }) => {
                 <>
                     <div className="info-container">
                         {player1 && player2 ? (
-                            <ScoreBoard
+                            <LocalScoreBoard
                                 user1Score={user1Score}
                                 user2Score={user2Score}
                                 user1={player1}
