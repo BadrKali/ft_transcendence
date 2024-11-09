@@ -32,30 +32,10 @@ const CreateLocalPlayer = ({ handleCreateLocalPlayer, handleCloseModal }) => {
         handleCloseModal();
     };
 
-    const cycleAvatar = (direction) => {
-        setCurrentAvatar((prev) => {
-            if (direction === 'next') {
-                return (prev + 1) % avatars.length;
-            } else {
-                return (prev - 1 + avatars.length) % avatars.length;
-            }
-        });
-    };
-
     return (
         <div className="modal-overlay" onClick={handleCloseModal}>
             <div className="modal-content" onClick={(e) => e.stopPropagation()}>
                 <h2 className="modal-title">Guest Part</h2>
-                
-                <div className="avatar-selection">
-                    <button onClick={() => cycleAvatar('prev')} className="avatar-button">
-                        <ChevronLeft size={24} />
-                    </button>
-                    <img src={avatars[currentAvatar]} alt="Avatar" className="avatar-image" />
-                    <button onClick={() => cycleAvatar('next')} className="avatar-button">
-                        <ChevronRight size={24} />
-                    </button>
-                </div>
                 <h2>PADDLE</h2>
                 <div className="paddle-colors-container1">
                     <button onClick={() => handlePaddleColorChange('prev')} className="avatar-button">
