@@ -162,10 +162,6 @@ const SignIn = (props) => {
             <img src={assets.SchoolIcon}/>
             <p>{t('Sign In With 42')}</p>
         </div>
-        <div className='school_auth' onClick={handle42Click}>
-            <img src={assets.google}/>
-            <p>{t('Sign In With Google')}</p>
-        </div>
         
         <div className='signin-text-bottom'>
             <p>{t('Don’t have an account ?')} <span onClick={handleSignUpClick}>Sign Up here</span></p>

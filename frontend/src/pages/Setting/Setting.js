@@ -67,7 +67,8 @@ const Setting = () => {
   }
   
   const closeTwoFaModal = () => {
-    disableTwoFa();
+    // console.log("hello boy ")
+    // disableTwoFa();
     setShowTwoFaModal(false);
   }
 
