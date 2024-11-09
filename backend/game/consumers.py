@@ -8,6 +8,8 @@ from django.db.models import Q
 import time
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
+from asyncio import create_task, TimeoutError
+
 class GameState:
     def __init__(self):
         self.state = {
@@ -294,10 +296,12 @@ class GameStateManager:
 game_state_manager = GameStateManager()
 
 class GameConsumer(AsyncWebsocketConsumer):
+
     async def connect(self):
         if self.scope['user'].is_anonymous:
             await self.close()
         else:
+            self.reconnection_task = None
             self.player = await self.get_player(self.scope['user'])
             self.keep_running = True
             self.room_name = None
@@ -318,7 +322,14 @@ class GameConsumer(AsyncWebsocketConsumer):
         self.game_state.update_game_running(False)
         is_game_over = await self.game_state.get_game_over()
         is_game_started = await self.game_state.get_game_started()
-            
+
+        if self.reconnection_task and not self.reconnection_task.done():
+            self.reconnection_task.cancel()
+            try:
+                await self.reconnection_task
+            except asyncio.CancelledError:
+                print("Reconnection task was cancelled on disconnect.")
+
         if self.game_mode == "tournament":
             return
         if is_game_over:
@@ -330,7 +341,10 @@ class GameConsumer(AsyncWebsocketConsumer):
             return
         elif self.game_state.remove_player(player_str):
             current_player_username = await self.game_state.get_player_username(self.player)
-            opponent_username = next(username for username in self.game_state.state['players'].keys() if username != current_player_username)
+            opponent_username = next(
+                username for username in self.game_state.state['players'].keys() 
+                if username != current_player_username
+            )
             await self.update_xp_and_save_history(opponent_username, current_player_username, self.room)
             await self.channel_layer.group_send(
                 self.room_group_name,{
@@ -386,13 +400,39 @@ class GameConsumer(AsyncWebsocketConsumer):
                 canvas_size = data.get('canvasSize')
                 self.game_state.player_mouvement(username, direction, canvas_size)
         elif action == "got_it":
+            if self.reconnection_task and not self.reconnection_task.done():
+                self.reconnection_task.cancel()
+                await self.game_state.update_game_started(False)
+                try:
+                    await self.reconnection_task
+                except asyncio.CancelledError:
+                    print("Reconnection task was cancelled on disconnect.")
             match_status = await self.game_state.get_game_started()
+            print(f"Match status: {match_status}")
             if not match_status:
                 await self.game_state.update_game_started(True)
+                print("Match started")
                 asyncio.create_task(self.start_game_loop(self.room)) 
         elif action == "im_waiting":
             room = self.get_game_room()
-            await self.waiting_for_reconnection(room)
+            self.reconnection_task = create_task(self.waiting_for_reconnection(room))
+
+
+    async def waiting_for_reconnection(self, room):
+        timeout = 20
+        interval = 1 
+        total_time_waited = 0
+        winner = await self.game_state.get_player_username(self.player)
+        while total_time_waited < timeout:
+            if await self.game_state.get_players_status():
+                print("Player has reconnected.")
+                return
+            await asyncio.sleep(interval)
+            total_time_waited += interval
+        await self.send(text_data=json.dumps({
+            'action': 'you_won',
+            'winner': winner
+        }))
 
     async def handle_invite_reconnection(self):
         player_str = await self.get_player_str()
@@ -407,23 +447,7 @@ class GameConsumer(AsyncWebsocketConsumer):
             await self.game_state.reconnect_player(player_str, invite_game_room)
             await self.notify_reconnection(player_str, invite_game_room)
             await self.send_reconnection_info(invite_game_room)
-
-    async def waiting_for_reconnection(self, room):
-        timeout = 20
-        interval = 1 
-        total_time_waited = 0
-        winner = await self.game_state.get_player_username(self.player)
-        while total_time_waited < timeout:
-            if await self.game_state.get_players_status():
-                print("Player has reconnected.")
-                return  
-            await asyncio.sleep(interval)
-            total_time_waited += interval
-        await self.send(text_data=json.dumps({
-            'action': 'you_won',
-            'winner': winner
-        }))
-
+    
     async def check_game_over(self):
         player_statuses = await self.game_state.get_game_players_status()
         if all(status == False for status in player_statuses.values()):
