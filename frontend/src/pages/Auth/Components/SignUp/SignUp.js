@@ -68,30 +68,28 @@ const SignUp = (props) => {
         }
         
     };
-
     const errorMsg = [
         {
             id: 0,
             msg: t("Username cannot contain special characters or spaces."),
-            pattern: "^[A-Za-z][A-Za-z0-9_]{7,29}$"
+            pattern: "^[A-Za-z0-9_]{8,30}$"  
         },
         {
             id: 1,
             msg: t("Email address must follow the format user@example.com."),
-            pattern: "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
+            pattern: "^[^@]+@[^@]+\.[a-zA-Z]{2,}$" 
         },
         {
             id: 2,
             msg: t("Password is too weak. Please choose a more complex password to ensure account security."),
-            pattern: "^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$",
+            pattern: "^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9]).{8,}$"
         },
         {
             id: 3,
             msg: t("Oops! Looks like your passwords don't match. Please try again."),
-            pattern: signUpValues.password
+            pattern: signUpValues.password  
         }
     ];
-
     return (
         <div className='signup-container'>
             <h1>{t('Create Accoun')}t</h1>
