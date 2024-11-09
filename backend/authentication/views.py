@@ -152,67 +152,72 @@ class CustomTokenRefreshView(TokenRefreshView):
 
 class CallbackView(APIView):
     permission_classes = [AllowAny]
+    
     def post(self, request, *args, **kwargs):
         code = request.data.get('code')
-        print(f"code: {code}")
         if not code:
-            print("you touched my tralala")
             return Response({"error": "No code provided"}, status=400)
+
         data = {
-            'grant_type'  : 'authorization_code',
-            'client_id'    : os.getenv('CLIENT_ID'),
+            'grant_type': 'authorization_code',
+            'client_id': os.getenv('CLIENT_ID'),
             'client_secret': os.getenv('CLIENT_SECRET'),
-            "code"         : code,
-            "redirect_uri" : os.getenv('REDIRECT_URI')
+            'code': code,
+            'redirect_uri': os.getenv('REDIRECT_URI')
         }
-        print(f"code: {data}")
+        
         response = requests.post(token_url, data=data)
         if response.status_code != 200:
-            print(response.status_code)
             return Response({"error": "Failed to fetch token"}, status=response.status_code)
+        
         access_token = response.json().get('access_token')
         headers = {'Authorization': f'Bearer {access_token}'}
         user_info_response = requests.get(user_info_url, headers=headers)
 
         if user_info_response.status_code != 200:
             return Response({"error": "Failed to fetch user data"}, status=user_info_response.status_code)
+        
         user_info = user_info_response.json()
         api_42_id = user_info['id']
         username = user_info['login']
         email = user_info.get('email', '')
         avatar = user_info['image']['link']
-        # avatarList = [0, 1, 2, 4]
-        user, created = User.objects.get_or_create(api_42_id=api_42_id, defaults={'username': f"{username}{api_42_id}", 'avatar' : avatar,'email': email})
+        
+        base_username = f"{username}{api_42_id}"
+        unique_username = base_username
+        counter = 1
+        while User.objects.filter(username=unique_username).exists():
+            unique_username = f"{base_username}{counter}"
+            counter += 1
+        
+        user, created = User.objects.get_or_create(api_42_id=api_42_id, defaults={
+            'username': unique_username,
+            'avatar': avatar,
+            'email': email
+        })
+        
         if created:
             user.set_avatar_from_url(avatar)
             user.save()
-        # khasni nzid wa7ed check ila ken l user already exist 
+        
         refresh = RefreshToken.for_user(user)
         access_token = str(refresh.access_token)
         refresh_token = str(refresh)
-        if user.is_2fa_enabled:
-            response_data = {
-                'access': access_token,
-                'username': username,
-                '2fa_required': True
-            }
-            response = Response(response_data, status=status.HTTP_200_OK)
-            # response.set_cookie(
-            #     key='refresh',
-            #     value=refresh_token,
-            #     httponly = True,
-            #     #more options to add when nedded 
-            # )
-            return response
+
         response_data = {
-            'access': access_token
+            'access': access_token,
+            'username': unique_username
         }
+
+        if user.is_2fa_enabled:
+            response_data['2fa_required'] = True
+            return Response(response_data, status=status.HTTP_200_OK)
+
         response = Response(response_data, status=status.HTTP_200_OK)
         response.set_cookie(
             key='refresh',
             value=refresh_token,
-            httponly = True,
-            #more options to add when nedded 
+            httponly=True,
         )
         return response
 
