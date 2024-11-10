@@ -4,6 +4,8 @@ import ToastContainer from '../components/ReactToastify/ToastContainer';
 import { SuccessToast } from '../components/ReactToastify/SuccessToast'
 import GameSettingsPopUp from '../components/GameSettingsPopUp/GameSettingsPopUp';
 import { UserContext } from './UserContext';
+import { useTranslation } from 'react-i18next'
+
 
 const WS_BACKEND_URL = process.env.REACT_APP_WS_BACKEND_URL;
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
@@ -24,6 +26,8 @@ export const RealTimeProvider = ({ children }) => {
     const [data, setData] = useState(null);
     const [shouldFetchNotifications, setShouldFetchNotifications] = useState(false);
     const [tournamentType, setTournamentType] = useState(false);
+    const { t } = useTranslation();
+
 
     useEffect(() => {
         if (shouldFetchNotifications) {
@@ -183,7 +187,7 @@ export const RealTimeProvider = ({ children }) => {
         })
         .then(data => {
             console.log('Game challenge rejected:', data);
-            SuccessToast('Game challenge rejected');
+            SuccessToast(t('Game challenge rejected'));
         })
         .catch(error => {
             console.error('Error rejecting game challenge:', error);

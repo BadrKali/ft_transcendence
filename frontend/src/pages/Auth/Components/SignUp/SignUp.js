@@ -60,9 +60,10 @@ const SignUp = (props) => {
             if (err.response && err.response.data) {
                 const errors = Object.values(err.response.data);
                 const message = errors.flat().join(' '); 
+                console.log(message);
                 ErrorToast(message);
             } else {
-                ErrorToast("An unexpected error occurred.");
+                ErrorToast(t("An unexpected error occurred."));
             }
             console.error(err);
         }

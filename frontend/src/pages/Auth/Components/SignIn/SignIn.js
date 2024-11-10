@@ -102,10 +102,10 @@ const SignIn = (props) => {
         } catch(err) {
             console.log(err.response.status)
             if(err.response.status === 401) {
-                ErrorToast("Invalid username or password.")
+                ErrorToast(t("Invalid username or password."))
             }
             else {
-                ErrorToast("An error occurred. Please try again later.")
+                ErrorToast(t("An error occurred. Please try again later."))
             }
             console.log(err)
         } finally {

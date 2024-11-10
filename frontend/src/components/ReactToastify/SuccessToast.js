@@ -1,6 +1,7 @@
 import { toast, Slide } from 'react-toastify';
 
 export const SuccessToast = (msg) => {
+  
     toast.success(msg, {
       position: "top-right",
       autoClose: 5000,

@@ -31,15 +31,15 @@ function AddFriendUnfriendButton({ FriendId }) {
             });
 
             if (!response.ok) {
-            const errorData = await response.json();
-            throw new Error(errorData.error || 'An error occurred while sending the friend request.');
+                const errorData = await response.json();
+                throw new Error('An error occurred while sending the friend request.');
             }
 
             const data = await response.json();
             setIsRequst('Friend request sent.');
 
         } catch (error) {
-            ErrorToast(error.message);
+            ErrorToast(t("An error occurred while sending the friend request."));
             // alert(error.message);
         }
     };
@@ -57,14 +57,15 @@ function AddFriendUnfriendButton({ FriendId }) {
 
             if (!response.ok) {
                 const errorData = await response.json();
-                throw new Error(errorData.error || 'An error occurred while sending the friend request.');
+                throw new Error('An error occurred while sending the friend request.');
             }
 
             const data = await response.json();
             setIsRequst(data.message);
 
         } catch (error) {
-            ErrorToast(error.message);
+            console.log(error.message);
+            ErrorToast(t("An error occurred while sending the friend request."));
             // alert(error.message);
         }
     };
@@ -103,7 +104,7 @@ function AddFriendUnfriendButton({ FriendId }) {
                 updateUserFriends(updatedFriendsData);
 
         } catch (error) {
-            ErrorToast(error.message);
+            ErrorToast(t("Network response was not ok"));
             // alert(error.message);
         }
     };
@@ -122,13 +123,13 @@ function AddFriendUnfriendButton({ FriendId }) {
 
             if (!response.ok) {
                 const errorData = await response.json();
-                throw new Error(errorData.error || 'An error occurred while unfriending the user.');
+                throw new Error('An error occurred while unfriending the user.');
             }
             const data = await response.json();
             setIsRequst('Friend request does not exist.');
 
         } catch (error) {
-            ErrorToast(error.message);
+            ErrorToast("An error occurred while unfriending the user.");
             // alert(error.message);
         }
       };

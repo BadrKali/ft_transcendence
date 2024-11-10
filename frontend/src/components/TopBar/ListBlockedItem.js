@@ -41,7 +41,7 @@ function ListBlockedItem({user}) {
             if (response.ok) {
                 setIsBlocked(!profilisBlocked)
                 setIsBlocking(!isBlockingHim);
-                SuccessToast(`User has been unblocked successfully.`);
+                SuccessToast(t('User has been unblocked successfully.'));
                 const BlockedResponse = await fetch(`${BACKEND_URL}/user/block-unblock/`, {
                     method: 'GET',
                         headers: {
@@ -58,12 +58,12 @@ function ListBlockedItem({user}) {
                       updateBlockedList(newBlockedList);
             } else {
                 const data = await response.json();
-                ErrorToast(data.error || 'An error occurred.');
+                ErrorToast(t('An error occurred.'));
 
             }
         } catch (error) {
-            console.error(`Error unblocking user:`, error);
-            ErrorToast('An error occurred.');
+         
+            ErrorToast(t('An error occurred.'));
          
         }
     };

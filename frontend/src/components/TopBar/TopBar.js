@@ -140,10 +140,10 @@ const TopBar = () => {
         }
 
         const patchData = await patchResponse.json();
-        console.log(`${type} accepted:`, patchData);
-        SuccessToast(`${type} accepted`);
+        SuccessToast(t('{{type}} accepted', { type: t(type) }));
 
-        if (type === '/    FRIEND REQUEST    /') {
+
+        if (type === 'FRIEND REQUEST') {
           const friendsResponse = await fetch(`${BACKEND_URL}/user/friends/list/`, {
             method: 'GET',
                 headers: {
@@ -216,7 +216,7 @@ const handleReject = async (id, type) => {
 
       } catch (error) {
           console.error('Error fetching tournament details:', error);
-          ErrorToast('Error fetching tournament details');
+          ErrorToast(t('Error fetching tournament details'));
           return;
       }
   }
@@ -236,12 +236,12 @@ const handleReject = async (id, type) => {
         return response.json();
     })
     .then(data => {
-        console.log('Game challenge rejected:', data);
-        SuccessToast('Game challenge rejected');
+
+        SuccessToast(t('Game challenge rejected'));
     })
     .catch(error => {
-        console.error('Error rejecting game challenge:', error);
-        ErrorToast('Error rejecting game challenge');
+ 
+        ErrorToast(t('Error rejecting game challenge'));
     });
     // Send a Response to the oppenent
   //   fetch(`${BACKEND_URL}/api/game/game-response/${id}/`, {

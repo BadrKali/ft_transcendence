@@ -58,6 +58,9 @@ class Player(models.Model):
         elif self.rank == self.PLAYER_RANK_GOLD:
             return (self.xp / self.RANK_XP_THRESHOLDS[self.PLAYER_RANK_GOLD]) * 100
 
+    def add_xp(self):
+        print("hak hak hak")
+        self.xp += 50
     def update_xp(self, won: bool):
         print(f"Before: {self.xp}")
         if won:

@@ -31,7 +31,6 @@ class PlayerGameHistoryView(APIView):
         serializer = GameHistorySerializer(queryset, many=True, context={'player_id': player_id})
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-
 class AchievementListView(APIView):
     def get(self, request):
         achievements = Achievement.objects.all()

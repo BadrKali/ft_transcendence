@@ -36,7 +36,6 @@ export const ProfileProvider = ({ children, userId }) => {
     useEffect(() => {
         const fetchProfileData = async () => {
             if (!nameOfUser) {
-                console.warn("nameOfUser is undefined, skipping fetch.");
                 setIsProfileDataReady(true);
                 return;
             }

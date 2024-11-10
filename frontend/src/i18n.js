@@ -201,9 +201,24 @@ const resources = {
       "Avatar": "Avatar",
       "Avatar": "Avatar",
       "Avatar": "Avatar",
-      "You haven't joined any tournament": "You haven't joined any tournament"
-
-
+      "You haven't joined any tournament": "You haven't joined any tournament",
+      //neww
+      "User has been unblocked successfully." : "User has been unblocked successfully.",
+      "Game challenge rejected" : "Game challenge rejected",
+      "User has been blocked successfully." : "User has been blocked successfully.",
+      "Profile updated successfully!" : "Profile updated successfully!",
+      "Failed to update settings. Please try again." : "Failed to update settings. Please try again.",
+      "An error occurred." : "An error occurred.",
+      "Error fetching tournament details" : "Error fetching tournament details",
+      "Error rejecting game challenge" : "Error rejecting game challenge",
+      "Invalid username or password." : "Invalid username or password.",
+      "An error occurred. Please try again later." : "An error occurred. Please try again later.",
+      "An unexpected error occurred." : "An unexpected error occurred.",
+      "FRIEND REQUEST" : "FRIEND REQUEST",
+      "Duplicate user IDs detected in the invited players list" : "Duplicate user IDs detected in the invited players list",
+      "An error occurred while sending the friend request." : "An error occurred while sending the friend request.",
+      "Network response was not ok" : "Network response was not ok",
+      "An error occurred while unfriending the user." : "An error occurred while unfriending the user.",
     }
   },
   fr: {
@@ -400,7 +415,10 @@ const resources = {
       "minutes": "minutes",
       "second": "seconde",
       "seconds": "secondes",
-      "ago": "il y a"
+      "ago": "il y a",
+      "FRIEND REQUEST" : "Demande d'ami",
+      "{{type}} accepted": "{{type}} acceptée",
+
       
 
     

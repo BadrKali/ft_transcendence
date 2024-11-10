@@ -30,8 +30,11 @@ const LocalGameTournament = () => {
     const [winner, setWinner] = useState("");
     const [loser, setLoser] = useState(""); 
     const { data: gameRoom, isLoading: isLoadingGameRoom, error: gameRoomError } = useFetch(`${BACKEND_URL}/api/game/local-game-room/${gameRoomId}`);
+    const { data: tournament, isLoading: isLoadingTournament, error: tournamentError } = useFetch(`${BACKEND_URL}/user/local-tournament`);
+    // const { data: tournament, isLoading: isLoadingTournament, error: tournamentError } = useFetch(`${BACKEND_URL}/api/user/local-tournament`); //URL
     const [background, setBackground] = useState(null);
     
+    const [map, setMap] = useState("");
     const handleEndMatch = useCallback(async (winner, loser) => {
         if (!winner || !loser) return;
         try {
@@ -58,21 +61,39 @@ const LocalGameTournament = () => {
         setShowWinner(true);
       }, [tournamentId, gameRoom, auth.accessToken]);
     
+      useEffect(() => {
+        console.log(tournament?.tournament_map);
+      
+        switch (tournament?.tournament_map) {
+          case "hell":
+            setMap(hell);
+            break;
+          case "forest":
+            setMap(forest);
+            break;
+          case "graveyard":
+            setMap(graveyard);
+            break;
+          default:
+            setMap("");
+        }
+      }, [tournament]);
+    
     useEffect(() => {
         if (gameRoom && gameRoom.player1 && gameRoom.player2) {
             handleEndMatch();
         }
     }, [handleEndMatch, gameRoom]);
 
-    if (isLoadingGameRoom) {
+    if (isLoadingGameRoom || isLoadingTournament) {
         return <Loading />;
     }
 
-    if (gameRoomError) {
+    if (gameRoomError || tournamentError) {
         return <div>Error: {gameRoomError}</div>;
     }
 
-    if (!gameRoom) {
+    if (!gameRoom || !tournament) {
         return <div>No data available</div>;
     }
     const handleBackToLobby = () => {
@@ -80,7 +101,7 @@ const LocalGameTournament = () => {
       navigate('/tournament', { replace:true })
     }
     return (
-        <div className="pingponggame-container" style={{ backgroundImage: `url(${hell})` }}>
+        <div className="pingponggame-container" style={{ backgroundImage: `url(${map})` }}>
             <LocalGameLogic
                 player1Id={gameRoom.player1.id}
                 player2Id={gameRoom.player2.id}

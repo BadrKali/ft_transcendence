@@ -120,7 +120,7 @@ class TournamentCreateSerializer(serializers.ModelSerializer):
             ]
 
     def validate(self, data):
-        maps = ['undergroundHell', 'undergroundForest', 'undergroundGraveyard']
+        maps = ['hell', 'forest', 'graveyard']
         currentUser = self.context['request'].user
         if data['tournament_map'] not in maps:
             raise serializers.ValidationError({"tournament_map": "Invalid map name"})

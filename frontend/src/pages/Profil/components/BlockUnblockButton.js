@@ -35,7 +35,6 @@ const BlockUnblockButton = ({ blockedId }) => {
                 setIsBlocked(!profilisBlocked);
                 setIsBlocking(!isBlockingHim);
                 setIsRequst('Friend request does not exist.')
-                SuccessToast(`User has been ${profilisBlocked ? 'unblocked' : 'blocked'} successfully.`);
                 const BlockedResponse = await fetch(`${BACKEND_URL}/user/block-unblock/`, {
                     method: 'GET',
                         headers: {
@@ -53,12 +52,12 @@ const BlockUnblockButton = ({ blockedId }) => {
 
             } else {
                 const data = await response.json();
-                ErrorToast(data.error || 'An error occurred.');
+                ErrorToast(t('An error occurred.'));
     
             }
         } catch (error) {
             console.error(`Error ${profilisBlocked ? 'unblocking' : 'blocking'} user:`, error);
-            ErrorToast('An error occurred.');
+            ErrorToast(t('An error occurred.'));
     
         }
     };
