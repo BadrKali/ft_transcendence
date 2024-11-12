@@ -14,6 +14,7 @@ class AchievementService:
         from game.models import Achievement, UserAchievement
         from user_management.models import Notification
 
+        player.add_xp()
         achievement, _ = Achievement.objects.get_or_create(
             title="First Game",
             defaults={'description': "Complete your first game of Ping Pong."}
@@ -46,7 +47,7 @@ class AchievementService:
         from game.models import Achievement, UserAchievement 
         from user_management.models import Notification  
 
-        if player.games_won >= 2:
+        if player.games_won >= 10 :
             AchievementService.unlock_ten_wins_achievement(player)
 
     @staticmethod
@@ -54,6 +55,7 @@ class AchievementService:
         from game.models import Achievement, UserAchievement  
         from user_management.models import Notification 
 
+        player.add_xp()
         achievement, _ = Achievement.objects.get_or_create(
             title="Ping Pong Prodigy",
             defaults={'description': "Win 10 games of Ping Pong."}

@@ -112,10 +112,10 @@ class FriendRequestResponse(APIView):
     def check_and_award_friends_achievement(self, player_sender, player_receiver):
         sender_friend_count = Friendship.objects.filter(player=player_sender).count() + Friendship.objects.filter(friend=player_sender).count()
         receiver_friend_count = Friendship.objects.filter(player=player_receiver).count() + Friendship.objects.filter(friend=player_receiver).count()
-        
-        if sender_friend_count >= 1:
+        print(sender_friend_count)
+        if sender_friend_count >= 2:
             self.unlock_five_friends_achievement(player_sender)
-        if receiver_friend_count >= 1:
+        if receiver_friend_count >= 2:
             self.unlock_five_friends_achievement(player_receiver)
     
     def unlock_five_friends_achievement(self, user):
@@ -125,6 +125,7 @@ class FriendRequestResponse(APIView):
         )
         user_achievement_exists = UserAchievement.objects.filter(user=user, achievement=achievement).exists()
         if not user_achievement_exists:
+           
             UserAchievement.objects.create(
                 user=user,
                 achievement=achievement,
@@ -590,9 +591,9 @@ class LocalTournamentParticipantsView(APIView):
 
 class LocalTournamentParticipantResultView(APIView):
     def post(self, request):
-        match_id = request.data.get('tournamentId');
-        winner = request.data.get('winner');
-        loser = request.data.get('loser');
+        match_id = request.data.get('tournamentId')
+        winner = request.data.get('winner')
+        loser = request.data.get('loser')
         match = get_object_or_404(LocalTournamanetParticipants, id=match_id)
         winner_obj = get_object_or_404(LocalPlayer, username=winner)
         loser_obj = get_object_or_404(LocalPlayer, username=loser)

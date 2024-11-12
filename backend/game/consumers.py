@@ -76,7 +76,7 @@ class GameState:
 
     def check_winning_condition(self):
         for player in self.state['players'].values():
-            if player['score'] >= 10:
+            if player['score'] >= 11:
                 self.state['game_over'] = True
                 self.state['winner'] = player['username']
                 return True
@@ -672,7 +672,8 @@ class GameConsumer(AsyncWebsocketConsumer):
         try:
             player1 = room.player1.user.username
             player2 = room.player2.user.username
-
+            print(f"{player1, player2}")
+            print(f"{winner, loser}")
             if player1 == winner:
                 winner_user = room.player1
                 loser_user = room.player2

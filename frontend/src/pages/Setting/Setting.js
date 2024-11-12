@@ -57,12 +57,11 @@ const Setting = () => {
       }
     });
     if (response.ok) {
-      // SuccessToast('Profile updated successfully!');
       const userData = await fetchData(`${BACKEND_URL}/user/stats/`, auth.accessToken);
       updateUserData(userData);
     }
     else {
-      ErrorToast('Failed to update settings. Please try again.');
+      ErrorToast(t('Failed to update settings. Please try again.'));
     }
   }
   
@@ -107,9 +106,9 @@ const Setting = () => {
             }
         });
         updateUserData(response.data);
-        SuccessToast('Profile updated successfully!');
+        SuccessToast(t('Profile updated successfully!'));
     } catch (e) {
-        ErrorToast('Failed to update settings. Please try again.');
+        ErrorToast(t('Failed to update settings. Please try again.'));
     }
   };
 

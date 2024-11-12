@@ -201,6 +201,8 @@ const ChatInput = ({selectedImage, setSelectedImage}) => {
   };
 
   const handleImageSelect = (event) => {
+  
+
     try{
       setSelectedImage(null);
       const file = event.target.files[0];
@@ -215,7 +217,7 @@ const ChatInput = ({selectedImage, setSelectedImage}) => {
         setSelectedImage(null);
       }
     } catch(e){
-      ErrorToast('can\'t Load Image');
+      // ErrorToast('can\'t Load Image');
     }
     };
 

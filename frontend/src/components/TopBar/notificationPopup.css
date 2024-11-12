@@ -139,7 +139,7 @@
   justify-content: center;
   width: 100px;
   height: 100px;
-  border: solid;
+
 }
 
 .NotifMessageAchievment {
@@ -169,3 +169,6 @@
   background-color: #1C1E27;
 }
 
+.AchivmentPopup_container{
+  display: flex;
+}

@@ -117,12 +117,14 @@ const AchievementComponent = ({notif , t}) => (
     <>
       <h2>{t('Achievement')}</h2>
       <div className='NotifUserImageNameAchievment'>
-        <p>{t('Image')}</p>
+          
+              <Icon name="Achiev1" className="AchievmentsIcon"/> 
+      
       </div>
       <p className='NotifMessageAchievment'>{notif.message}</p>
       <div className='AchivmentTitleDes'>
-        <p className='NotifTitleAchievment'>{notif.title}</p>
-        <p className='NotifDescriptionAchievment'>{notif.description}</p>
+        <h3 className='NotifTitleAchievment'>{notif.title}</h3>
+        <h4 className='NotifDescriptionAchievment'>{notif.description} (+50xp)</h4>
       </div>
     </>
 );
@@ -154,7 +156,7 @@ const NotificationPopup = ({ isOpen, onClose, notif, onAccept, onReject })=> {
       setTypeNotif('Achievement')
     } 
     else {
-      setTypeNotif('/    FRIEND REQUEST    /');
+      setTypeNotif('FRIEND REQUEST');
     }
   }, [notif]);
 

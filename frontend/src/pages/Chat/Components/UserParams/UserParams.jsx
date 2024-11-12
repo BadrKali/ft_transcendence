@@ -10,6 +10,8 @@ import useAuth from '../../../../hooks/useAuth.js';
 import { ProfileContext } from '../../../../context/ProfilContext.js';
 import { useGetBlockDetails } from '../../usehooks/GetBlockDetails.jsx';
 import { createSendInvitationHandler } from '../../../../tools/createSendInvitationHandler.js';
+import { useTranslation } from 'react-i18next'
+
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
 const UserParams = () => {
@@ -17,6 +19,8 @@ const UserParams = () => {
   const {ChatPartner} = useContext(chatPartnerContext);
   const navigate = useNavigate();
   const handleSendInvitation = createSendInvitationHandler(auth);
+  const { t } = useTranslation();
+
 
 
   const { blockRelation } = useGetBlockDetails(ChatPartner, auth);
@@ -49,7 +53,7 @@ const UserParams = () => {
           }
         })
         if (response.ok){
-          SuccessToast(`User has been blocked successfully.`);
+          SuccessToast(t(`User has been blocked successfully.`));
         }else {
           const data = await response.json();
           ErrorToast(`Error : ${data.error}`)
