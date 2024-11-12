@@ -6,7 +6,7 @@ const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
 // const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
-function PlayerSelectedItem({player}) {
+function PlayerSelectedItem({player, onRemove}) {
   const unknownAvatar = avatarsUnkown.img;
 
   let name = 'username'
@@ -18,6 +18,7 @@ function PlayerSelectedItem({player}) {
 
   return (
     <div className='slectedPlayerItem'>
+       <button className="remove-button" onClick={onRemove}>x</button>
         <div className='imagePlayerSelected'>
             <img src={player.avatar ? `${BACKEND_URL}${player.avatar}` : unknownAvatar}/>
         </div>

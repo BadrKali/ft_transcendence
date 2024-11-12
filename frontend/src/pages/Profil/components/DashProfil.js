@@ -11,7 +11,8 @@ const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 function DashProfil({profil}) {
     const {isBlockedMe, isBlockingHim} = useContext(ProfileContext)
     const { t } = useTranslation();
-
+    const winPer = 0;
+    const lossPer = 0;
 
     const [progress, setProgress] = useState('0%');
     useEffect(() => {
@@ -45,8 +46,10 @@ function DashProfil({profil}) {
         );
     }
 
-     const winPer = Math.floor((profil.games_won / profil.games_played) * 100);
-    const lossPer = 100 - winPer ;
+    if (profil.games_played) {
+        winPer = Math.floor((profil.games_won / profil.games_played) * 100);
+       lossPer = 100 - winPer ;
+    }
   return (
     <div className='profilInfo'>
     <div className="userInfo">

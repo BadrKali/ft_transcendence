@@ -10,6 +10,7 @@
     width: 10%;
     height: 90%;
     margin: 0 10px;
+    position: relative;
 
 }
 
@@ -29,4 +30,14 @@
 
 .slectedPlayerItem p{
     /* padding-top: 10px; */
+}
+.remove-button {
+    position: absolute; /* Position the button in the top-right corner */
+    top: -1px;
+    right: 5px;
+    color: white;
+    cursor: pointer;
+    background: none;
+    border: none;
+    font-size: 1rem;
 }

@@ -9,7 +9,8 @@ const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 function DashProfil({profilData}) {
   const [progress, setProgress] = useState('0%');
   const { t, i18n } = useTranslation();
-
+  const winPer = 0;
+  const lossPer = 0;
   const isArabic = i18n.language === 'ar';
 
   useEffect(() => {
@@ -17,10 +18,12 @@ function DashProfil({profilData}) {
         setProgress(profilData.rank_progress);
       }, 500); 
     }, []);
+    if (profilData.games_played){
 
-     const winPer = Math.floor((profilData.games_won / profilData.games_played) * 100);
-    // const winPer = Math.floor((30 / 100) * 100);
-    const lossPer = 100 - winPer ;
+        winPer = Math.floor((profilData.games_won / profilData.games_played) * 100);
+        
+       lossPer = 100 - winPer ;
+    }
 // ALSO
     return (
         <div className={`profilInfo ${isArabic ? 'rtl' : 'ltr'}`}>

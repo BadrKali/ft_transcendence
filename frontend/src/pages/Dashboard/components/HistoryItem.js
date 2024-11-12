@@ -21,7 +21,7 @@ function HistoryItem( {history} ) {
     const [player, setPlayer] = useState(null);
 
 
-    console.log(history);
+    
     useEffect(() => {
         console.log(userData.user_id + "  === " + history.winner_user.user_id)
         if (userData.user_id === history.winner_user.user_id) {

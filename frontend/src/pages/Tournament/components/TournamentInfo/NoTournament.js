@@ -133,7 +133,9 @@ function NoTournament({setJoinedTournament}) {
         } 
     };
 
-
+    const handleRemovePlayer = (indexToRemove) => {
+        setPlayers(players.filter((_, index) => index !== indexToRemove));
+    };
 
 
    
@@ -198,7 +200,7 @@ function NoTournament({setJoinedTournament}) {
                     </div>
                     <div className='playerselected'>
                         {players.map((player, index) => (
-                            <PlayerSelectedItem key={index} player={player}/>
+                            <PlayerSelectedItem key={index} player={player} onRemove={() => handleRemovePlayer(index)} />
                         ))
                     }
                     </div>
