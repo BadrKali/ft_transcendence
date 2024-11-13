@@ -19,16 +19,17 @@ function HistoryItem( {history} ) {
     const { t } = useTranslation();
     const [isWineer, setIsWinner] = useState(false);
     const [player, setPlayer] = useState(null);
+    let winPer = 0;
+
 
 
     
     useEffect(() => {
-        console.log(userData.user_id + "  === " + history.winner_user.user_id)
         if (userData.user_id === history.winner_user.user_id) {
             setIsWinner(true);
             setPlayer(history.loser_user);
      
-            console.log(history.loser_user);
+        
         }else{
             setPlayer(history.winner_user);
    
@@ -37,8 +38,10 @@ function HistoryItem( {history} ) {
   
       if (!player) return <div>Loading...</div>;
 
+if (player.games_played){
 
-    const winPer = Math.floor((30 / 100) * 100);
+    winPer = Math.floor((30 / 100) * 100);
+}
   return (
     <div className={isWineer ? "card won" : "card loss"}>
         <div className="playerImage">

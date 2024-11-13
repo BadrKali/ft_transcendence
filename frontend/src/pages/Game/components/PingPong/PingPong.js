@@ -21,9 +21,7 @@ const PingPong = () => {
     const deps = [selectedMode, selectedBackground, selectedKeys, selectedPaddle].filter(Boolean);
 
 
-    useEffect(() => {
-        console.log("Selected Data seted succefuly");
-    },);
+
     const handleBackgroundSelect = (background) => {
         setSelectedBackground(background);
     };
@@ -54,7 +52,7 @@ const PingPong = () => {
                     'Authorization': `Bearer ${auth.accessToken}`,
                 }
             });
-            console.log("Game Settings saved", response.data);
+           
         } catch (error) {
             console.log("Failed to save game settings");
         }

@@ -8,6 +8,8 @@ import failed from './failed.json';
 import {QRCodeSVG} from 'qrcode.react';
 import useAuth from '../../../../hooks/useAuth';
 import { UserContext } from '../../../../context/UserContext';
+import { useTranslation } from 'react-i18next';
+
 
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
@@ -30,8 +32,10 @@ const TwoFaModal = ({handleClose, qrUrl}) => {
   const inputRefs = useRef([]);
   const [qrCode, setQrCode] = useState('');
   const { userData , updateUserData } = useContext(UserContext);
+  const { t } = useTranslation();
 
-  console.log('qrUrl: ', qrUrl);
+
+ 
 
   useEffect(() => {
     inputRefs.current[0].focus();
@@ -64,7 +68,7 @@ const TwoFaModal = ({handleClose, qrUrl}) => {
   const veryfyOtp = async (otpCode) => {
     setVerificationStatus('loading');
     try {
-      console.log('otpCode: ', otpCode);
+     
       const response = await fetch(`${BACKEND_URL}/auth/enable2fa/`, {
         method: 'POST',
         headers: {
@@ -77,7 +81,7 @@ const TwoFaModal = ({handleClose, qrUrl}) => {
         setVerificationStatus('success');
         try {
           const userData = await fetchData(`${BACKEND_URL}/user/stats/`, auth.accessToken);
-          console.log('userData: ', userData);
+  
           updateUserData(userData);
         } catch (error) {
           console.error('Error fetching user data:', error);
@@ -142,8 +146,8 @@ const TwoFaModal = ({handleClose, qrUrl}) => {
         </button>
         <div className="TwoFaModalHead">
           <Icon name="TwoFaIcon" className="TwoFaIcon" />
-          <h1>Set up two factor authentication (2FA)</h1>
-          <p>To authorize, scan the QR code with any authentication app</p>
+          <h1>{t("Set up two factor authentication (2FA)")}</h1>
+          <p>{t("To authorize, scan the QR code with any authentication app")}</p>
         </div>
         <div className="TwoFaBody">
           {renderVerificationStatus()}
@@ -170,7 +174,8 @@ const TwoFaModal = ({handleClose, qrUrl}) => {
             disabled={otp.some(digit => digit === '')}
             onClick={handleClose}
           >
-            Complete Setup
+            {t("Complete Setup")}
+            
           </button>
         </div>
       </div>

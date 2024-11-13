@@ -33,7 +33,7 @@ const SignUp = (props) => {
     const handleInputChange = (e) => {
 
         setSignUpValues({ ...signUpValues, [e.target.name]: e.target.value });
-        console.log(signUpValues)
+   
     };
 
     const handleSignUpSubmit = async (e) => {
@@ -54,13 +54,13 @@ const SignUp = (props) => {
                 headers: { 'Content-Type': 'multipart/form-data' },
                 withCredentials: true
             });
-            console.log(response.data);
+          
             props.setIsLogin(true);
         }  catch (err) {
             if (err.response && err.response.data) {
                 const errors = Object.values(err.response.data);
                 const message = errors.flat().join(' '); 
-                console.log(message);
+             
                 ErrorToast(message);
             } else {
                 ErrorToast(t("An unexpected error occurred."));

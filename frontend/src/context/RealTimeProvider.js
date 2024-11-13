@@ -67,7 +67,7 @@ export const RealTimeProvider = ({ children }) => {
         const ws = new WebSocket(`${WS_BACKEND_URL}/ws/notifications/?token=${auth.accessToken}`);
 
         ws.onopen = async () => {
-            console.log("Client Connected to the server");
+           
         
             try {
                 const response = await fetch(`${BACKEND_URL}/user/missed-notifications/`, {
@@ -95,7 +95,7 @@ export const RealTimeProvider = ({ children }) => {
         ws.onmessage = (message) => {
             const dataFromServer = JSON.parse(message.data);
             setData(dataFromServer);
-            console.log({dataFromServer});
+          
             if (dataFromServer.type === 'match_notification') {
                 setGameChallenge(dataFromServer);
             } else if (dataFromServer.type === 'tournament_notification') {
@@ -154,7 +154,7 @@ export const RealTimeProvider = ({ children }) => {
             return response.json();
         })
         .then(data => {
-            console.log('Game challenge accepted:', data);
+            
             setShowGameSettings(true);
         })
         .catch(error => {
@@ -186,7 +186,7 @@ export const RealTimeProvider = ({ children }) => {
             return response.json();
         })
         .then(data => {
-            console.log('Game challenge rejected:', data);
+            
             SuccessToast(t('Game challenge rejected'));
         })
         .catch(error => {

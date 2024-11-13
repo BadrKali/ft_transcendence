@@ -15,6 +15,8 @@ function formatTimeAgo(dateString) {
 
 function HistoryItem( {history} ) {
   const { t } = useTranslation();
+  
+  let winPer = 0;
 
 
     
@@ -22,7 +24,9 @@ function HistoryItem( {history} ) {
     if (history.is_winner)
         player = history.loser_user
 
-     const winPer = Math.floor((30 / 100) * 100);
+  if (player.games_played){
+      winPer = Math.floor((30 / 100) * 100);
+  }
   return (
     <div className={history.is_winner ? "card won" : "card loss"}>
       <div className="playerImage">

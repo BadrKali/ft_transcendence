@@ -145,40 +145,9 @@ function TournamentBracketOffline() {
                   </div>
                   <div className='WinerNameRank'>
                     <p>{winner}</p>
-                    <p>{t('Rank')} : GOLD</p>
+                
                   </div>
-                  <div className='winerProgress'>
-                          <CircularProgressbar
-                                value={75}
-                                text={`${75}%`}
-                                styles={buildStyles({
-                                    pathColor: '#F62943',
-                                    textColor: '#F62943',
-                                    trailColor: '#A9A6A6',
-                                    backgroundColor: '#11141B',
-                                })}
-                            />
-                            <CircularProgressbar
-                                value={75}
-                                text={`${75}%`}
-                                styles={buildStyles({
-                                    pathColor: '#F62943',
-                                    textColor: '#F62943',
-                                    trailColor: '#A9A6A6',
-                                    backgroundColor: '#11141B',
-                                })}
-                            />
-                            <CircularProgressbar
-                                value={75}
-                                text={`${75}%`}
-                                styles={buildStyles({
-                                    pathColor: '#F62943',
-                                    textColor: '#F62943',
-                                    trailColor: '#A9A6A6',
-                                    backgroundColor: '#11141B',
-                                })}
-                            />
-                  </div>
+           
                 </div>
               </div>
         </div>

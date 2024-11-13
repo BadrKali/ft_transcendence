@@ -10,6 +10,8 @@ import useRefresh from '../../hooks/useRefresh'
 import { SuccessToast } from '../../components/ReactToastify/SuccessToast'
 import ToastContainer from '../../components/ReactToastify/ToastContainer'
 import axios from 'axios';
+import { useTranslation } from 'react-i18next';
+
 
 const Auth = (props) => {
   const [isLogin, setIsLogin] = useState(true)
@@ -21,12 +23,14 @@ const Auth = (props) => {
   const location = useLocation()
   const [otpSuccess, setOtpSuccess] = useState(false)
   const [error, setError] = useState(null)
+  const { t } = useTranslation();
+
 
   useEffect(() => {
     const state = location.state;
     if (state) {
       if (state.is2FA) {
-        console.log(state)
+       
         setIsTwoFa(true)
         setAccessToken(state.accessToken)
         setTwoFaUser(state.username) // Adjust this based on your userInfo structure
@@ -42,11 +46,11 @@ const Auth = (props) => {
 
   const handleTwoFaSuccess = () => {
     navigate('/')
-    console.log("2FA successful, navigate to home page")
+
   }
 
   const handleBackToLogin = async () => {
-    console.log('Back to login');
+  
     if(otpSuccess) {
       try {
         const response = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/auth/logout/`, {}, {
@@ -88,7 +92,7 @@ const Auth = (props) => {
           {error && (
             <div className="error-message">
               <p>{error}</p>
-              <button onClick={() => setError(null)}>Dismiss</button>
+              <button onClick={() => setError(null)}>{t("Dismiss")} </button>
             </div>
           )}
           {!isLogin && <SignUp isLogin={isLogin} setIsLogin={setIsLogin} />}

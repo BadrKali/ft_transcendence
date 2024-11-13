@@ -152,7 +152,7 @@ function JoinedTournamentOffline({TournamentData}) {
       
   return (
     <div className="joined-tournament">
-       <h1 className='tournament-title'>{TournamentData.tournament_name}OFFLINE</h1>
+       <h1 className='tournament-title'>{TournamentData.tournament_name} OFFLINE</h1>
        
        <div className={`tournament-info-container ${TournamentData.tournament_map}`}>
             <div className='tournament-info-item'>
@@ -173,7 +173,7 @@ function JoinedTournamentOffline({TournamentData}) {
                 <Icon name='game_mode' className="tournament-info-icon"/>
                 <div className='tournament-info-item-txt'>
                     <p>{t('Game Mode')}</p>
-                    <span>Offline</span>
+                    <span>{t('Offline')}</span>
                 </div>
             </div>
             <div className='tournament-info-item'>
@@ -184,12 +184,7 @@ function JoinedTournamentOffline({TournamentData}) {
                 </div>
             </div>
             <div className='tournament-subscribers'>
-                <div className='tournament-subscribers-avatars'>
-                {TournamentData.tournament_participants && TournamentData.tournament_participants.map((player, index) => (
-                    <img key={index} className={`image${index + 1}`} src={`${BACKEND_URL}${player.avatar}`} alt={`Player ${index + 1}`} />
-               
-                ))}
-                </div>
+      
                 <span className='tournament-subscribers-counter'>
                     {TournamentData.tournament_participants && TournamentData.tournament_participants.length}/4 Joined
                 </span>
@@ -207,75 +202,20 @@ function JoinedTournamentOffline({TournamentData}) {
                 </div>
             </div>
             <div className='tournament-top-player-container'>
-                <h2>Tournament Creator</h2>
-                <div className='tournament-top-player'>
-                    <div className='tournament-top-player-avatar'>
-                        <img src={avatars[0].img}/>
-                        <div className='nameRank'>
-                            <span>{profilData.username}</span>
-                            <span>{t('Rank')} : {profilData.rank}</span>
-                        </div>
-                    </div>
-                    <div className='tournament-top-player-stats'>
-                        <div className='ownerWinRate'>
-                            <CircularProgressbar
-                                value={75}
-                                text={`${75}%`}
-                                styles={buildStyles({
-                                    pathColor: '#F62943',
-                                    textColor: '#F62943',
-                                    trailColor: '#A9A6A6',
-                                    backgroundColor: '#11141B',
-                                })}
-                            />
-                            <p>WinRate</p>
-                        </div>
-                        <div className='ownerWinRate'>
-                            <CircularProgressbar
-                                value={30}
-                                text={`${30}%`}
-                                styles={buildStyles({
-                                    pathColor: '#F62943',
-                                    textColor: '#F62943',
-                                    trailColor: '#A9A6A6',
-                                    backgroundColor: '#11141B',
-                                })}
-                            />
-                            <p>WinRate</p>
-
-                            </div>
-                            <div className='ownerWinRate'>
-
-                            <CircularProgressbar
-                                value={92}
-                                text={`${92}%`}
-                                styles={buildStyles({
-                                    pathColor: '#F62943',
-                                    textColor: '#F62943',
-                                    trailColor: '#A9A6A6',
-                                    backgroundColor: '#11141B',
-                                })}
-                            />
-                            <p>WinRate</p>
-
-                            </div>
-                         
-                    </div>
-                    
-                </div>
+        
                              
             <div className='matchWillPlayed'>
                 {Finishid  ?(
                     <>
-                        <h1>Tournament Finished</h1>
-                        <p>The tournament has ended. Congratulations to the winner!</p>
+                        <h1>{t('Tournament Finished')}</h1>
+                        <p>{t('The tournament has ended. Congratulations to the winner!')}</p>
                         <h3>{winner}</h3>
                     </>
 
                 ) : (
 
                     <>
-                    <h2>Match will be played</h2>
+                    <h2>{t('Match will be played')}</h2>
                     <div className='PlayersVs'>
                     {matchToDisplay ? ( 
                         <>
@@ -306,7 +246,7 @@ function JoinedTournamentOffline({TournamentData}) {
                         </div>
                     </>
                         ) : (
-                            <p>No match available or loading...</p> // Fallback content
+                            <p>{t('No match available or loading...')}</p> 
                         )}
                     </div>
                 </>

@@ -18,14 +18,16 @@ function MatchHistory({profilData}) {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { auth }  = useAuth()
-  const {matchHistory} = useContext(UserContext)
+  const {matchHistory, userData} = useContext(UserContext)
   
 
 
   const handleItemClick = async (history) => {
-    let playerId = history.winner_user.user_id;
-    if (history.is_winner) {
+    let playerId = 0;
+    if (userData.user_id === history.winner_user.user_id) {
       playerId = history.loser_user.user_id;
+    }else{
+      playerId = history.winner_user.user_id;
     }
   
   

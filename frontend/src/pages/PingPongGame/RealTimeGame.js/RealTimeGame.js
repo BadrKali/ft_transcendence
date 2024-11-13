@@ -101,7 +101,7 @@ const RealTimeGame = ({ mode }) => {
 
     const handleWebSocketMessage = (event) => {
         const data = JSON.parse(event.data);
-        console.log("WebSocket Message:", data); 
+   
         switch (data.action) {
             case 'start_game':
                 startNewGame(data);

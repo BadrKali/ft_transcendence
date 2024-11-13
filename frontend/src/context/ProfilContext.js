@@ -29,6 +29,7 @@ export const ProfileProvider = ({ children, userId }) => {
 
 
     const { nameOfUser } = useParams();
+
     const [isProfileDataReady, setIsProfileDataReady] = useState(false); 
 
 
@@ -156,7 +157,6 @@ export const ProfileProvider = ({ children, userId }) => {
     }, [profilData, auth.accessToken]);
   
     useEffect(() => {
-        console.log(profileDataLoading, profileBlockLoading,profileFriendLoading, HistoryLoading)
         if (!profileDataLoading && !profileBlockLoading && !profileFriendLoading && !HistoryLoading) {
             setIsProfileDataReady(true);
         }

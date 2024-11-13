@@ -64,7 +64,7 @@ function AddFriendUnfriendButton({ FriendId }) {
             setIsRequst(data.message);
 
         } catch (error) {
-            console.log(error.message);
+
             ErrorToast(t("An error occurred while sending the friend request."));
             // alert(error.message);
         }

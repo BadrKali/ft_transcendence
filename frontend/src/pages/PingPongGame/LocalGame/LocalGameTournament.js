@@ -52,7 +52,7 @@ const LocalGameTournament = () => {
               }
             }
           );
-          console.log('Match ended successfully:', response.data);
+      
         } catch (error) {
           console.error('Error ending match:', error);
         }
@@ -62,7 +62,7 @@ const LocalGameTournament = () => {
       }, [tournamentId, gameRoom, auth.accessToken]);
     
       useEffect(() => {
-        console.log(tournament?.tournament_map);
+      
       
         switch (tournament?.tournament_map) {
           case "hell":

@@ -78,7 +78,7 @@ function NoTournament({setJoinedTournament}) {
             tournament_map: selectedMap,
             invitedUsers: players.map(player => player.username),
         };
-        console.log(postData);
+
         if (!selectedMap){
             setMapError(true)
         }else{

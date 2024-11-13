@@ -9,8 +9,8 @@ const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 function DashProfil({profilData}) {
   const [progress, setProgress] = useState('0%');
   const { t, i18n } = useTranslation();
-  const winPer = 0;
-  const lossPer = 0;
+  let winPer = 0;
+  let lossPer = 0;
   const isArabic = i18n.language === 'ar';
 
   useEffect(() => {

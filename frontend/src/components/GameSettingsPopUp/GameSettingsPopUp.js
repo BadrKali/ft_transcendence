@@ -69,7 +69,7 @@ const GameSettingsPopUp = ({ onExit }) => {
                     'Authorization': `Bearer ${auth.accessToken}`,
                 }
             });
-            console.log("Game Settings saved", response.data);
+          
         } catch (error) {
             console.log("Failed to save game settings");
         }

@@ -68,7 +68,7 @@ function JoinedTournamentOnline({TournamentData}) {
         
             if (response.ok) {
               const data = await response.json();
-              console.log('Tournament started successfully:', data);
+             
            
             } else {
               const errorData = await response.json();
@@ -107,7 +107,7 @@ function JoinedTournamentOnline({TournamentData}) {
                 }
                 const updatedTournamentData = await TournamentResponse.json();
                 updatetounament(updatedTournamentData);
-            console.log('Tournament deleted successfully:', data);
+          
     
           } else {
             const errorData = await response.json();

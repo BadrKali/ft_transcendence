@@ -20,7 +20,6 @@ const WS_BACKEND_URL = process.env.REACT_APP_WS_BACKEND_URL;
 
         ws.onmessage = (event) => {
             const data = JSON.parse(event.data);
-            console.log("Received message:", data);
             setHasNotification(true);
             alert(data.message);
         };
@@ -38,7 +37,6 @@ const WS_BACKEND_URL = process.env.REACT_APP_WS_BACKEND_URL;
         return () => {
             if (ws) {
                 ws.close();
-                console.log("WebSocket closed.");
             }
         };
     }, [auth.accessToken]);

@@ -11,8 +11,8 @@ const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 function DashProfil({profil}) {
     const {isBlockedMe, isBlockingHim} = useContext(ProfileContext)
     const { t } = useTranslation();
-    const winPer = 0;
-    const lossPer = 0;
+    let winPer = 0;
+    let lossPer = 0;
 
     const [progress, setProgress] = useState('0%');
     useEffect(() => {

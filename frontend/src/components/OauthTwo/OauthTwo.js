@@ -13,10 +13,8 @@ const AuthTwo = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    console.log("Authentication process started");
     const searchParams = new URLSearchParams(location.search);
     const code = searchParams.get('code');
-    console.log("Received code:", code);
 
     if (code) {
       axios.post("/auth/callback/", { code }, {
@@ -29,13 +27,10 @@ const AuthTwo = () => {
 
 
         // setAuth({ accessToken });
-        console.log("Access token received:", accessToken);
 
         if (requires2FA) {
-            console.log("2FA required, redirecting to 2FA page");
             navigate('/auth', { state: { is2FA: true, accessToken, username } });
         } else {
-            console.log("Authentication successful, redirecting to home");
             setAuth({ accessToken });
             navigate('/');
         }

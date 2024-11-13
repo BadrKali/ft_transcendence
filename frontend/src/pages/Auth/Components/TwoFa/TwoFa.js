@@ -3,6 +3,8 @@ import './TwoFa.css'
 import MainButton from '../../../../components/MainButton/MainButton'
 import useAuth from '../../../../hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
+
 
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
@@ -13,10 +15,12 @@ const TwoFa = (props) => {
     const inputRefs = useRef([]);
     const {auth,setAuth} = useAuth();
     const [verificationStatus, setVerificationStatus] = useState('idle');
-    const navigate = useNavigate()
+    const navigate = useNavigate();
+    const { t } = useTranslation();
+
 
     const handleContinueClick = () => {
-      console.log('Continue clicked', verificationStatus);
+   
       if(verificationStatus === 'success') {
         setAuth({username:"belkala", accessToken: props.accessToken})
         navigate('/')
@@ -40,8 +44,7 @@ const TwoFa = (props) => {
                 
               });
               if (response.ok) {
-                  console.log('OTP verified successfully');
-                  console.log(response)
+           
                   // console.log(response.data.username, response.data.access)
                   // props.setAuth({username:response.data.username, accessToken: response.data.access})
                   setVerificationStatus('success');
@@ -69,7 +72,6 @@ const TwoFa = (props) => {
           if (newOtp.every(data => data !== '')) {
             const otpCode = newOtp.join('');
             const status = veryfyOtp(otpCode, props.accessToken);
-            console.log('status: ', status)
             if(status === true) {
                 // setVerificationStatus('success');
                 console.log('2FA successful, navigate to home page')
@@ -87,8 +89,8 @@ const TwoFa = (props) => {
   return (
     <div className='AuthTwoFaConatiner'>
         <div className='AuthTwoFaHeader'>
-            <h1>Welcome back ! {props.username} </h1>
-            <p>entre 6-digit code from your two factor authentication APP.</p>
+            <h1>{t("Welcome back !")} {props.username} </h1>
+            <p>{t("entre 6-digit code from your two factor authentication APP.")}</p>
         </div>
         <div className='AuthOtpCard'>
             {otp.map((data, index) => {
@@ -107,8 +109,8 @@ const TwoFa = (props) => {
             })}
         </div>
         <div className='AuthTwoFaAction'>
-            <button className='AuthTwoFaButton' onClick={handleContinueClick}>Continue</button>
-            <button className="AuthTwoFaBackButton" onClick={props.handleBackToLogin}>&larr; Back to login</button>
+            <button className='AuthTwoFaButton' onClick={handleContinueClick}>{t("Continue")}</button>
+            <button className="AuthTwoFaBackButton" onClick={props.handleBackToLogin}>&larr; {t("Back to login")}</button>
 
         </div>
     </div>
