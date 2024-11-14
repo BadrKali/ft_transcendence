@@ -124,7 +124,7 @@ const AchievementComponent = ({notif , t}) => (
       <p className='NotifMessageAchievment'>{notif.message}</p>
       <div className='AchivmentTitleDes'>
         <h3 className='NotifTitleAchievment'>{notif.title}</h3>
-        <h4 className='NotifDescriptionAchievment'>{notif.description} (+50xp)</h4>
+        <h4 className='NotifDescriptionAchievment'>{notif.description} </h4>
       </div>
     </>
 );

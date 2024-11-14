@@ -113,9 +113,9 @@ class FriendRequestResponse(APIView):
         sender_friend_count = Friendship.objects.filter(player=player_sender).count() + Friendship.objects.filter(friend=player_sender).count()
         receiver_friend_count = Friendship.objects.filter(player=player_receiver).count() + Friendship.objects.filter(friend=player_receiver).count()
         print(sender_friend_count)
-        if sender_friend_count >= 2:
+        if sender_friend_count >= 5:
             self.unlock_five_friends_achievement(player_sender)
-        if receiver_friend_count >= 2:
+        if receiver_friend_count >= 5:
             self.unlock_five_friends_achievement(player_receiver)
     
     def unlock_five_friends_achievement(self, user):

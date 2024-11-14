@@ -47,7 +47,7 @@ class AchievementService:
         from game.models import Achievement, UserAchievement 
         from user_management.models import Notification  
 
-        if player.games_won >= 10 :
+        if player.games_won >= 5 :
             AchievementService.unlock_ten_wins_achievement(player)
 
     @staticmethod
