@@ -13,7 +13,6 @@ class GameHistorySerializer(serializers.ModelSerializer):
 
     def get_is_winner(self, obj):
         player_id = self.context.get('player_id')
-        print(f"{obj.winner_user_id, player_id} +++++++++++++++++")
         return obj.winner_user_id == player_id
 
 class AchievementSerializer(serializers.ModelSerializer):

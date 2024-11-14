@@ -19,21 +19,6 @@ const PlayerSelection = ({ onPlayerSelect, onCancel }) => {
   const ws = useRef(null);
   const handleSendInvitation = createSendInvitationHandler(auth);
 
-  // useEffect(() => {
-  //   ws.current = new WebSocket(`${WS_BACKEND_URL}/ws/notifications/?token=${auth.accessToken}`);
-  //   ws.current.onopen = () => {
-  //     console.log('WebSocket connection established');
-  //   };
-  //   ws.current.onclose = () => {
-  //     console.log('WebSocket connection closed');
-  //   };
-
-  //   return () => {
-  //     if (ws.current) {
-  //       ws.current.close();
-  //     }
-  //   };
-  // }, []);
 
   const handleChallenge = async (player) => {
     try {
