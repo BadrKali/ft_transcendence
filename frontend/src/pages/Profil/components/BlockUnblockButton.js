@@ -21,7 +21,7 @@ const BlockUnblockButton = ({ blockedId }) => {
 
 
     const handleBlockUnblock = async () => {
-        const url = `${BACKEND_URL}/user/${blockedId}/block-unblock/`;
+        const url = `${BACKEND_URL}/api/user/${blockedId}/block-unblock/`;
         try {
             const response = await fetch(url, {
                 method: profilisBlocked ? 'DELETE' : 'POST',
@@ -35,7 +35,7 @@ const BlockUnblockButton = ({ blockedId }) => {
                 setIsBlocked(!profilisBlocked);
                 setIsBlocking(!isBlockingHim);
                 setIsRequst('Friend request does not exist.')
-                const BlockedResponse = await fetch(`${BACKEND_URL}/user/block-unblock/`, {
+                const BlockedResponse = await fetch(`${BACKEND_URL}/api/user/block-unblock/`, {
                     method: 'GET',
                         headers: {
                           'Content-Type': 'application/json',

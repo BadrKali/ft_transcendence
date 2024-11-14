@@ -11,7 +11,7 @@ export const CurrentUserContext = createContext()
 
 export const CurrentUserProvider = ({children}) =>{
 
-const {data:CurrentUser} = useFetch(`${BACKEND_URL}/user/stats/`)
+const {data:CurrentUser} = useFetch(`${BACKEND_URL}/api/user/stats/`)
 return (
     <CurrentUserContext.Provider value={CurrentUser}>
         {children}

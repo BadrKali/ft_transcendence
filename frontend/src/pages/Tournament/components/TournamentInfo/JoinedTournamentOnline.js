@@ -26,7 +26,7 @@ function JoinedTournamentOnline({TournamentData}) {
 
 
     const date = new Date(TournamentData.tournament_date);
-    const {data ,isLoading, error} = useFetch(`${BACKEND_URL}/user/stats/${TournamentData.tournament_creator}`)
+    const {data ,isLoading, error} = useFetch(`${BACKEND_URL}/api/user/stats/${TournamentData.tournament_creator}`)
 
     useEffect(() => {
         if (userData.user_id === TournamentData.tournament_creator)
@@ -58,7 +58,7 @@ function JoinedTournamentOnline({TournamentData}) {
   
       const handleStartTournament = async () => {
         try {
-            const response = await fetch(`${BACKEND_URL}/user/tournament/start/`, {
+            const response = await fetch(`${BACKEND_URL}/api/user/tournament/start/`, {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json',
@@ -83,7 +83,7 @@ function JoinedTournamentOnline({TournamentData}) {
 
       const handleDeleteTournament = async () => {
         try {
-          const response = await fetch(`${BACKEND_URL}/user/tournament/`, {
+          const response = await fetch(`${BACKEND_URL}/api/user/tournament/`, {
             method: 'DELETE',
             headers: {
               'Content-Type': 'application/json',
@@ -94,7 +94,7 @@ function JoinedTournamentOnline({TournamentData}) {
       
           if (response.ok) {
             const data = await response.json();
-            const TournamentResponse = await fetch(`${BACKEND_URL}/user/tournament/`, {
+            const TournamentResponse = await fetch(`${BACKEND_URL}/api/user/tournament/`, {
                 method: 'GET',
                     headers: {
                     'Content-Type': 'application/json',

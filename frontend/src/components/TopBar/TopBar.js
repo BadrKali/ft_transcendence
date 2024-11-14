@@ -53,7 +53,7 @@ const TopBar = () => {
     setTournamentMatchAccepted } = useContext(RealTimeContext);
   const { userData, userDataLoading, userDataError, updateUserFriends, notifications, setNotifications, updatetounament} = useContext(UserContext);
   const debouncedQuery = useDebounce(query, 300);
-  const [queryEndpoint, setQueryEndpoint] = useState(`${BACKEND_URL}/user/search/?q=${query}`)
+  const [queryEndpoint, setQueryEndpoint] = useState(`${BACKEND_URL}/api/user/search/?q=${query}`)
 
   const handleNotificationClick = (notif) => {
     setSelectedNotification(notif);
@@ -97,7 +97,7 @@ const TopBar = () => {
   const handleAccept = async (id, type) => {
     handleClose(); 
 
-    let url = `${BACKEND_URL}/user/friends-request/${id}/response/`;
+    let url = `${BACKEND_URL}/api/user/friends-request/${id}/response/`;
     let body = JSON.stringify({ 'status': 'accept' });
 
     try {
@@ -106,7 +106,7 @@ const TopBar = () => {
             body = JSON.stringify({ 'status': 'accepted' });
         } else if (type === 'Tournament') {
 
-            const response = await fetch(`${BACKEND_URL}/user/tournament/invitations/`, {
+            const response = await fetch(`${BACKEND_URL}/api/user/tournament/invitations/`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -121,7 +121,7 @@ const TopBar = () => {
             const data = await response.json();
             const tournamentId = data.tournament.id;
 
-            url = `${BACKEND_URL}/user/tournament/invitations/${tournamentId}`;
+            url = `${BACKEND_URL}/api/user/tournament/invitations/${tournamentId}`;
             body = JSON.stringify({ 'status': 'accept' });
         }
 
@@ -144,7 +144,7 @@ const TopBar = () => {
 
 
         if (type === 'FRIEND REQUEST') {
-          const friendsResponse = await fetch(`${BACKEND_URL}/user/friends/list/`, {
+          const friendsResponse = await fetch(`${BACKEND_URL}/api/user/friends/list/`, {
             method: 'GET',
                 headers: {
                   'Content-Type': 'application/json',
@@ -160,7 +160,7 @@ const TopBar = () => {
 
             updateUserFriends(updatedFriendsData);
         }else if (type === 'Tournament'){
-          const TournamentResponse = await fetch(`${BACKEND_URL}/user/tournament/`, {
+          const TournamentResponse = await fetch(`${BACKEND_URL}/api/user/tournament/`, {
             method: 'GET',
                 headers: {
                   'Content-Type': 'application/json',
@@ -186,7 +186,7 @@ const TopBar = () => {
 
 const handleReject = async (id, type) => {
     handleClose();
-    let url = `${BACKEND_URL}/user/friends-request/${id}/response/`;
+    let url = `${BACKEND_URL}/api/user/friends-request/${id}/response/`;
     let body = JSON.stringify({ 'status': 'reject' });
 
     if (type === 'Game Challenge') {
@@ -196,7 +196,7 @@ const handleReject = async (id, type) => {
     else if (type === 'Tournament') {
       try {
 
-          const response =  await fetch(`${BACKEND_URL}/user/tournament/invitations/`, {
+          const response =  await fetch(`${BACKEND_URL}/api/user/tournament/invitations/`, {
               method: 'GET',
               headers: {
                   'Content-Type': 'application/json',
@@ -211,7 +211,7 @@ const handleReject = async (id, type) => {
           const data = await response.json();
           const tournamentId = data.tournament;
      
-          url = `${BACKEND_URL}/user/tournament/invitations/${tournamentId}`;
+          url = `${BACKEND_URL}/api/user/tournament/invitations/${tournamentId}`;
           body = JSON.stringify({ 'status': 'reject' });
 
       } catch (error) {
@@ -260,7 +260,7 @@ const handleReject = async (id, type) => {
     else
       setNotif(!showNotif);
     clearNotification(); 
-    await fetch(`${BACKEND_URL}/user/notifications/`, {
+    await fetch(`${BACKEND_URL}/api/user/notifications/`, {
       method: 'POST',
       headers: {
           'Content-Type': 'application/json',
@@ -285,7 +285,7 @@ const handleReject = async (id, type) => {
  
 
   useEffect(() => {
-    setQueryEndpoint(`${BACKEND_URL}/user/search/?q=${query}`)
+    setQueryEndpoint(`${BACKEND_URL}/api/user/search/?q=${query}`)
   }, [query])
 
 

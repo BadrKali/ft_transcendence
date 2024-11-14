@@ -43,7 +43,7 @@ const UserParams = () => {
     }
 
     const  handleBlocking =  async() =>{
-      const url = `${BACKEND_URL}/user/${ChatPartner.id}/block-unblock/`; //Link to Get and Post
+      const url = `${BACKEND_URL}/api/user/${ChatPartner.id}/block-unblock/`; 
       try {
         const response = await fetch(url, {
           method : 'POST',

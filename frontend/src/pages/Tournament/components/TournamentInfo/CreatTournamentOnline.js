@@ -21,7 +21,7 @@ const CreatTournamentOnline = ({onClose}) => {
     const [selectedMap, setSelectedMap] = useState('');
     const [tournamentTitle, setTournamentTitle] = useState('');
     const [listFriend, setListFriend] = useState([]);
-    const {data ,isLoading, error} = useFetch(`${BACKEND_URL}/user/friends/list/`)
+    const {data ,isLoading, error} = useFetch(`${BACKEND_URL}/api/user/friends/list/`)
     const [MapError, setMapError] = useState(false);
     const [NameError, setNameError] = useState(false);
     const [PlayersError, setPlayersError] = useState(false);
@@ -79,7 +79,7 @@ const CreatTournamentOnline = ({onClose}) => {
         }
 
         try {
-            const response = await fetch(`${BACKEND_URL}/user/tournament/`, {
+            const response = await fetch(`${BACKEND_URL}/api/user/tournament/`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -90,7 +90,7 @@ const CreatTournamentOnline = ({onClose}) => {
             });
             if (response.ok) {
                 onClose(); 
-                const TournamentResponse = await fetch(`${BACKEND_URL}/user/tournament/`, {
+                const TournamentResponse = await fetch(`${BACKEND_URL}/api/user/tournament/`, {
                 method: 'GET',
                     headers: {
                     'Content-Type': 'application/json',

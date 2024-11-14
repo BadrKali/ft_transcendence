@@ -26,7 +26,7 @@ function TournamentBracketOffline() {
   const [semiFinalMatches, setSemiFinalMatches] = useState([]);
   const [finalMatches, setFinalMatches] = useState([]);
   const [winner, setWinner] = useState()
-  const {data: matches ,isLoading, error} = useFetch(`${BACKEND_URL}/user/local-tournament/${TounamentData.tournament_stage}`)
+  const {data: matches ,isLoading, error} = useFetch(`${BACKEND_URL}/api/user/local-tournament/${TounamentData.tournament_stage}`)
 
   const unknownAvatar = avatarsUnkown.img;
 

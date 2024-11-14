@@ -21,7 +21,7 @@ function TournamentBracketOnline() {
   const four_lines = new Array(4).fill(null);
   const two_lines = new Array(2).fill(null);
   const one_lines = new Array(1).fill(null);
-  const {data: matches ,isLoading, error} = useFetch(`${BACKEND_URL}/user/tournament/SEMI-FINALS`)
+  const {data: matches ,isLoading, error} = useFetch(`${BACKEND_URL}/api/user/tournament/SEMI-FINALS`)
   const [FourPlayer, setFourPlayer] = useState([]);
   const [TwoPlayer, setTwoPlayer] = useState([]);
   const { t } = useTranslation();
@@ -40,7 +40,7 @@ function TournamentBracketOnline() {
   useEffect(() => {
     if (matches) {
       const fetchPlayerDetails = async (playerId) => {
-        const response = await fetch(`${BACKEND_URL}/user/stats/${playerId}`, {
+        const response = await fetch(`${BACKEND_URL}/api/user/stats/${playerId}`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',

@@ -18,7 +18,7 @@ export const UserProvider = ({ children }) => {
     const [TounamenrLoading, setTournamentLoading] = useState(true);
     const [blockedUsers, setBlockedUsers] = useState([]);
 
-    const { data: globalStatsFetch, isLoading: globalStatsLoading, isError: globalStatsError } = useFetch(`${BACKEND_URL}/user/globalstats/`);
+    const { data: globalStatsFetch, isLoading: globalStatsLoading, isError: globalStatsError } = useFetch(`${BACKEND_URL}/api/user/globalstats/`);
 
     useEffect(() => {
         if (globalStatsFetch) {

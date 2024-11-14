@@ -15,7 +15,7 @@ const PlayerSelection = ({ onPlayerSelect, onCancel }) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { auth } = useAuth();
-  const { data, isLoading, error } = useFetch(`${BACKEND_URL}/user/friends/list/`);
+  const { data, isLoading, error } = useFetch(`${BACKEND_URL}/api/user/friends/list/`);
   const ws = useRef(null);
   const handleSendInvitation = createSendInvitationHandler(auth);
 

@@ -14,7 +14,7 @@ const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
 
 function ListBlockedItem({user}) {
-    const {data ,isLoading, error} = useFetch(`${BACKEND_URL}/user/stats/${user.id}`)
+    const {data ,isLoading, error} = useFetch(`${BACKEND_URL}/api/user/stats/${user.id}`)
     const [profilData, setProfilData] = useState([]);
     const { auth }  = useAuth()
     const { t } = useTranslation();
@@ -28,7 +28,7 @@ function ListBlockedItem({user}) {
     }, [data]);
  
     const handleUnblock = async () => {
-        const url = `${BACKEND_URL}/user/${user.id}/block-unblock/`;
+        const url = `${BACKEND_URL}/api/user/${user.id}/block-unblock/`;
         try {
             const response = await fetch(url, {
                 method:'DELETE' ,
@@ -42,7 +42,7 @@ function ListBlockedItem({user}) {
                 setIsBlocked(!profilisBlocked)
                 setIsBlocking(!isBlockingHim);
                 SuccessToast(t('User has been unblocked successfully.'));
-                const BlockedResponse = await fetch(`${BACKEND_URL}/user/block-unblock/`, {
+                const BlockedResponse = await fetch(`${BACKEND_URL}/api/user/block-unblock/`, {
                     method: 'GET',
                         headers: {
                           'Content-Type': 'application/json',

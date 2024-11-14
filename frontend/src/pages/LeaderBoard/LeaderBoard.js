@@ -32,7 +32,7 @@ const LeaderBoard = () => {
   useEffect(() => {
     const fetchLeaderboardData = async () => {
       try {
-        const response = await fetch(`${BACKEND_URL}/user/leaderboard?page=${page}&limit=20`, {
+        const response = await fetch(`${BACKEND_URL}/api/user/leaderboard?page=${page}&limit=20`, {
           method: 'GET',
           headers: {
             'Authorization': `Bearer ${auth.accessToken}`,
