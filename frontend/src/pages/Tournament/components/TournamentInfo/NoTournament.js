@@ -218,7 +218,7 @@ function NoTournament({setJoinedTournament}) {
             </div>
             <div className='tournamentButton-container'>
                     <div className='CreatTournamentButton'>
-                        <MainButton type="submit" functionHandler={handleCreateTournament} content="Creat" />
+                        <MainButton type="submit" functionHandler={handleCreateTournament} content={t('Creat')}  />
                     </div>
             </div>
             {PlayersError && <p className="error-message">{t('Player selected must be 4 in Total')}</p>}

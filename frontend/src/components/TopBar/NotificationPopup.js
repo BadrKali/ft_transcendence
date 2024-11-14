@@ -28,12 +28,11 @@ const GeneralNotificationComponent = ({ notif, typeNotif, profilData, onAccept, 
           </div>
       </div>
       <div className='buttunsAR'>
-        {/* <button className='buttonA Accept' onClick={() => onAccept(notif.sender, typeNotif)}>Accept</button> */}
-        <MainButton type="button" functionHandler={() => onAccept(notif.sender_id, typeNotif)} content="Accept"/>
 
-        {/* <button  className='buttonA Reject' onClick={() => onReject(notif.sender, typeNotif)}>Reject</button> */}
-        {/* <MainButton type="button" onClick={() => onReject(notif.sender, typeNotif)} content="Reject"/> */}
-        <SecondButton type="button" functionHandler={() => onReject(notif.sender_id, typeNotif)} content="Reject"/>
+        <MainButton type="button" functionHandler={() => onAccept(notif.sender_id, typeNotif)}  content={t('Accept')} />
+
+      
+        <SecondButton type="button" functionHandler={() => onReject(notif.sender_id, typeNotif)} content={t('Reject')}/>
       </div>
     </>
 );
@@ -105,8 +104,8 @@ const TournamentPopupComponent = ({ notif, typeNotif, profilData, onAccept, onRe
             </div>
       </div>
       <div className='buttunsAR'>
-        <MainButton type="button" functionHandler={() => onAccept(notif.sender_id, typeNotif)} content="Accept"/>
-        <SecondButton type="button" functionHandler={() => onReject(notif.sender_id, typeNotif)} content="Reject"/>
+        <MainButton type="button" functionHandler={() => onAccept(notif.sender_id, typeNotif)} content={t('Accept')} />
+        <SecondButton type="button" functionHandler={() => onReject(notif.sender_id, typeNotif)} content={t('Reject')} />
       </div>
     </>
   );

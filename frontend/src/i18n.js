@@ -237,6 +237,18 @@ const resources = {
       "Set up two factor authentication (2FA)" : "Set up two factor authentication (2FA)",
       "To authorize, scan the QR code with any authentication app" : "To authorize, scan the QR code with any authentication app",
       "Complete Setup" : "Complete Setup",
+
+
+      "Accept" : "Accept",
+      "Reject" : "Reject",
+      "Creat" : "Creat",
+      "Accept" : "Accept",
+      "Reject" : "Reject",
+      "Start" : "Start",
+      "Cancel" : "Cancel",
+      "Leave" : "Leave",
+
+
     }
   },
   fr: {
@@ -466,6 +478,13 @@ const resources = {
       "To authorize, scan the QR code with any authentication app": "Pour autoriser, scannez le code QR avec n'importe quelle application d'authentification",
       "Complete Setup": "Terminer la configuration",
 
+      "Accept": "Accepter",
+      "Reject": "Rejeter",
+      "Creat": "Créer",
+      "Start": "Démarrer",
+      "Cancel": "Annuler",
+      "Leave": "Quitter",
+
     
     }
   },
@@ -693,9 +712,14 @@ const resources = {
       "Dismiss": "Descartar",
       "Set up two factor authentication (2FA)": "Configurar autenticación de dos factores (2FA)",
       "To authorize, scan the QR code with any authentication app": "Para autorizar, escanea el código QR con cualquier aplicación de autenticación",
-      "Complete Setup": "Completar configuración"
+      "Complete Setup": "Completar configuración",
 
-
+      "Accept": "Aceptar",
+      "Reject": "Rechazar",
+      "Creat": "Crear",
+      "Start": "Iniciar",
+      "Cancel": "Cancelar",
+      "Leave": "Salir",
 
 
     }
