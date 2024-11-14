@@ -7,6 +7,7 @@ import useAuth from "../../../../hooks/useAuth";
 import useFetch from "../../../../hooks/useFetch";
 import axios from "axios";
 import CreatLocalPlayer from "./CreateLocalPlayer";
+// CHANGE
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
 const LaunchButtons = ({ selectedMode, selectedBackground, selectedKeys, selectedPaddle ,className, onLaunch }) => {
@@ -88,6 +89,7 @@ const LaunchButtons = ({ selectedMode, selectedBackground, selectedKeys, selecte
 
     const handleCreateLocalPlayer = async (username, avatar, paddle) => {
         try {
+            // CHANGE
             const opponentResponse = await axios.post(`${BACKEND_URL}/api/user/create-local-player/`, 
                 { 
                     username: username,
@@ -102,6 +104,7 @@ const LaunchButtons = ({ selectedMode, selectedBackground, selectedKeys, selecte
                 }
             );
             const opponentUserId = opponentResponse.data.id
+            // CHANGE
             const currentUserResponse = await axios.post(`${BACKEND_URL}/api/user/create-local-player/`, 
                 { 
                     username: currentUser.username,

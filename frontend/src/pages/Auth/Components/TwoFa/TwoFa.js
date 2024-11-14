@@ -33,7 +33,7 @@ const TwoFa = (props) => {
 
     const veryfyOtp = async (otpCode) => {
         try {
-            const response = await fetch(`${BACKEND_URL}/auth/enable2fa/`, {
+            const response = await fetch(`${BACKEND_URL}/api/auth/enable2fa/`, {
                 method: 'POST',
                 headers: {
                   'Content-Type': 'application/json',

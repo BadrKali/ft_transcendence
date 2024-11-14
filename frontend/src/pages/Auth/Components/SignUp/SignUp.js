@@ -8,7 +8,7 @@ import { ErrorToast } from '../../../../components/ReactToastify/ErrorToast';
 
 
 const SIGNUP_URL = '/auth/user/register/'
-
+// CHANGE
 const SignUp = (props) => {
     const [activeAvatar, setActiveAvatar] = useState(0);
     const [avatarFile, setAvatarFile] = useState(null);

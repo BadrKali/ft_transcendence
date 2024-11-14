@@ -16,10 +16,11 @@ import { useTranslation } from 'react-i18next'
 
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
-const SETTING_ENDPOINT = `${BACKEND_URL}/auth/user/me/`
+// CHANGE
+const SETTING_ENDPOINT = `${BACKEND_URL}/api/auth/user/me/`
 
 const fetchQrCodeUrl = async (token) => {
-  const response = await fetch(`${BACKEND_URL}/auth/enable2fa/`, {
+  const response = await fetch(`${BACKEND_URL}/api/auth/enable2fa/`, {
     method: 'GET',
     headers: {
       authorization: `Bearer ${token}`
@@ -50,7 +51,7 @@ const Setting = () => {
   }
   
   const disableTwoFa = async () => {
-    const response = await fetch(`${BACKEND_URL}/auth/disable2fa/`, {
+    const response = await fetch(`${BACKEND_URL}/api/auth/disable2fa/`, {
       method: 'DELETE',
       headers: {
         authorization: `Bearer ${auth.accessToken}`

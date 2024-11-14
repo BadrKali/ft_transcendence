@@ -45,7 +45,7 @@ const TwoFaModal = ({handleClose, qrUrl}) => {
     setVerificationStatus('loading');
     const fetchQrCode = async () => {
       try {
-        const response = await fetch(`${BACKEND_URL}/auth/${qrUrl}`, {
+        const response = await fetch(`${BACKEND_URL}/api/auth/${qrUrl}`, {
           method: 'GET',
           headers: {
             'Authorization': `Bearer ${auth.accessToken}`
@@ -69,7 +69,7 @@ const TwoFaModal = ({handleClose, qrUrl}) => {
     setVerificationStatus('loading');
     try {
      
-      const response = await fetch(`${BACKEND_URL}/auth/enable2fa/`, {
+      const response = await fetch(`${BACKEND_URL}/api/auth/enable2fa/`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
