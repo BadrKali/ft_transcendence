@@ -1,0 +1,182 @@
+version: '3.8'
+
+services:
+  setup:
+    image: setup
+    build: ./ELK-Stack/setup
+    container_name: setup
+    depends_on:
+      nginx:
+        condition: service_healthy
+    volumes:
+      - certs:/usr/share/elasticsearch/config/certs
+      - /var/run/docker.sock:/var/run/docker.sock
+    env_file:
+      - ../.env
+    networks:
+      - elk-stack
+    restart: always
+    healthcheck:
+      test: ['CMD-SHELL', '[ -f /usr/share/elasticsearch/config/certs/elasticsearch/elasticsearch.crt ]']
+      interval: 1s
+      timeout: 5s
+      retries: 120
+
+  elasticsearch:
+    image: elasticsearch
+    build: ./ELK-Stack/elasticsearch
+    container_name: elasticsearch
+    depends_on:
+      setup:
+        condition: service_healthy
+    volumes:
+      - certs:/usr/share/elasticsearch/config/certs
+      - elasticsearch:/usr/share/elasticsearch/data
+    ports:
+      - '9200:9200'
+    env_file:
+      - ../.env
+    networks:
+      - elk-stack
+    restart: always
+    mem_limit: ${MEM_LIMIT}
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+
+  kibana:
+    image: kibana
+    build: ./ELK-Stack/kibana
+    container_name: kibana
+    depends_on:
+      setup:
+        condition: service_healthy
+    volumes:
+      - certs:/usr/share/kibana/config/certs
+      - kibana:/usr/share/kibana/data
+    ports:
+      - '5601:5601'
+    env_file:
+      - ../.env
+    networks:
+      - elk-stack
+    restart: always
+    mem_limit: ${MEM_LIMIT}
+
+  logstash:
+    image: logstash
+    build: ./ELK-Stack/logstash
+    container_name: logstash
+    depends_on:
+      setup:
+        condition: service_healthy
+    volumes:
+      - certs:/usr/share/logstash/config/certs
+      - ../nginx/access.log:/usr/share/logstash/nginx/access.log
+    env_file:
+      - ../.env
+    networks:
+      - elk-stack
+    restart: always
+
+
+################################### Prom-Graf ###################################
+
+  prometheus:
+    image: prometheus
+    build: ./prom-grafana/prometheus
+    container_name: prometheus
+    depends_on:
+      nginx:
+        condition: service_healthy
+    ports:
+      - "9090:9090"
+      - "9093:9093"
+    env_file:
+      - ../.env
+    volumes:
+      - prometheus:/var/lib/prometheus
+      - alertmanager:/var/lib/alertmanager
+    networks:
+      - prom-graf
+      - ft_transcendence
+    restart: always
+
+  grafana:
+    image: grafana
+    build: ./prom-grafana/grafana
+    container_name: grafana
+    depends_on:
+      nginx:
+        condition: service_healthy
+    ports:
+      - "3000:3000"
+    env_file:
+      - ../.env
+    volumes:
+      - grafana:/var/lib/grafana
+    networks:
+      - prom-graf 
+      - ft_transcendence
+    restart: always
+
+  nginx_exporter:
+    image: nginx-exporter
+    build:
+      dockerfile: ./prom-grafana/exporters/Dockerfile.nginx
+    container_name: nginx-exporter
+    depends_on:
+      nginx:
+        condition: service_healthy
+    env_file:
+      - ../.env
+    command:
+      - -nginx.scrape-uri=${NGINX_SCRAPE_URI}
+    networks:
+      - prom-graf
+      - ft_transcendence
+    restart: always
+
+  redis-exporter:
+    image: redis-exporter
+    container_name: redis-exporter
+    depends_on:
+      nginx:
+        condition: service_healthy
+    build:
+      dockerfile: ./prom-grafana/exporters/Dockerfile.redis
+    env_file:
+      - ../.env
+    networks:
+      - prom-graf
+      - ft_transcendence
+    restart: always
+
+  postgres-exporter:
+    image: postgres-exporter
+    container_name: postgres-exporter
+    depends_on:
+      nginx:
+        condition: service_healthy
+    build:
+      dockerfile: ./prom-grafana/exporters/Dockerfile.postgresql
+    env_file:
+      - ../.env
+    networks:
+      - prom-graf
+      - ft_transcendence
+    restart: always
+
+  node-exporter:
+    image: node-exporter
+    container_name: node-exporter
+    depends_on:
+      nginx:
+        condition: service_healthy
+    build:
+      dockerfile: ./prom-grafana/exporters/Dockerfile.node
+    networks:
+      - prom-graf
+      - ft_transcendence
+    restart: always

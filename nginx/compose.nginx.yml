@@ -1,0 +1,27 @@
+version: '3.8'
+
+services:
+  nginx:
+    image: nginx
+    build: .
+    container_name: nginx
+    depends_on:
+      frontend:
+        condition: service_healthy
+    volumes:
+      - ./access.log:/var/log/nginx/access.log
+      - ./nginx.conf:/etc/nginx/nginx.conf
+    env_file:
+      - ../.env
+    ports:
+      - "80:80"
+      - "443:443"
+    networks:
+      - ft_transcendence
+    restart: always
+    healthcheck:
+      test: ["CMD", "service", "nginx", "status"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+      start_period: 5s

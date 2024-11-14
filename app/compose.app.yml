@@ -1,0 +1,46 @@
+version: '3.8'
+
+services:
+  frontend:
+    image: frontend
+    build: ./frontend
+    container_name: frontend
+    depends_on:
+      backend:
+        condition: service_healthy
+    volumes:
+      - frontend:/front
+      - frontend:/front/node_modules
+      - ./frontend:/front
+    env_file:
+      - ../.env
+    networks:
+      - ft_transcendence
+    restart: always
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+      start_period: 10s
+
+  backend:
+    image: backend
+    build: ./backend
+    container_name: backend
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - ./backend:/back
+    env_file:
+      - ../.env
+    networks:
+      - ft_transcendence
+    restart: always
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/admin"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+      start_period: 10s
