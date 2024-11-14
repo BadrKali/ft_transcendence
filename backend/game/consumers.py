@@ -91,10 +91,8 @@ class GameState:
             if not isinstance(player1.get('score'), (int, float)) or not isinstance(player2.get('score'), (int, float)):
                 return None, None
             if player1['score'] > player2['score']:
-                print(f"{player1['username']} won")
                 return player1.get('username'), player2.get('username')
             elif player2['score'] > player1['score']:
-                print(f"{player2['username']} won")
                 return player2.get('username'), player1.get('username')
             else:
                 return None, None
@@ -144,14 +142,9 @@ class GameState:
         self.state['players'][player1_username] = player1
         self.state['players'][player2_username] = player2
 
-        print(f"Player 1: {player1}")
-        print(f"Player 2: {player2}")
-        print(f"Current players: {list(self.state['players'].keys())}")
-
     async def reconnect_player(self, username, room):
         player = self.state['players'][username]
         player['status'] = True
-        print(f"Current players: {list(self.state['players'].keys())}")
     
     async def get_game_players_status(self):
         players = self.state['players']
@@ -161,7 +154,6 @@ class GameState:
         return player_statuses
 
     async def update_player_status(self, username, status):
-        print(f"{username} status is {status}")
         player = self.state['players'][username]
         player['status'] = status
 
@@ -176,10 +168,8 @@ class GameState:
         player2_status = player2['status']
         if player1_status and player2_status:
             await self.update_game_started(False)
-            print("BOTH PLAYERS ARE CONNECTED ++++++++++++++++++++")
             return True
         else:
-            print("SOMEONE HAS DISCONNECTED ++++++++++++++++++++")
             return False
     
     async def get_player_username(self, player):
@@ -196,8 +186,6 @@ class GameState:
                 self.player_movement_states.pop(user, None)
             else:
                 self.player_movement_states[user] = direction
-        else:
-            print(f"Error: User {user} not found in players.")
 
     def update_player_positions(self):
         current_time = time.time()
@@ -328,7 +316,7 @@ class GameConsumer(AsyncWebsocketConsumer):
             try:
                 await self.reconnection_task
             except asyncio.CancelledError:
-                print("Reconnection task was cancelled on disconnect.")
+                return
 
         if self.game_mode == "tournament":
             return
@@ -336,7 +324,6 @@ class GameConsumer(AsyncWebsocketConsumer):
             await self.leave_room("game_over")
             return
         if not is_game_started:
-            print("Game is already over or hasn't started, handling disconnect accordingly")
             await self.leave_room("game_canceled")
             return
         elif self.game_state.remove_player(player_str):
@@ -406,12 +393,10 @@ class GameConsumer(AsyncWebsocketConsumer):
                 try:
                     await self.reconnection_task
                 except asyncio.CancelledError:
-                    print("Reconnection task was cancelled on disconnect.")
+                    return
             match_status = await self.game_state.get_game_started()
-            print(f"Match status: {match_status}")
             if not match_status:
                 await self.game_state.update_game_started(True)
-                print("Match started")
                 asyncio.create_task(self.start_game_loop(self.room)) 
         elif action == "im_waiting":
             room = self.get_game_room()
@@ -419,20 +404,35 @@ class GameConsumer(AsyncWebsocketConsumer):
 
 
     async def waiting_for_reconnection(self, room):
-        timeout = 20
+        from .models import GameRoom
+
+        room = await sync_to_async(
+            lambda: GameRoom.objects.filter(
+                    Q(player1=self.player) | Q(player2=self.player)
+            ).first()
+        )()
+        timeout = 15
         interval = 1 
         total_time_waited = 0
         winner = await self.game_state.get_player_username(self.player)
+        current_player_username = await self.game_state.get_player_username(self.player)
+        opponent_username = next(
+            username for username in self.game_state.state['players'].keys() 
+            if username != winner
+        )
         while total_time_waited < timeout:
             if await self.game_state.get_players_status():
-                print("Player has reconnected.")
                 return
             await asyncio.sleep(interval)
             total_time_waited += interval
+
+        await self.update_xp_and_save_history(winner, opponent_username, room)
+
         await self.send(text_data=json.dumps({
             'action': 'you_won',
             'winner': winner
         }))
+
 
     async def handle_invite_reconnection(self):
         player_str = await self.get_player_str()
@@ -482,10 +482,8 @@ class GameConsumer(AsyncWebsocketConsumer):
                 if not invite_game_room.is_waiting:
                     await self.game_state.add_player("", invite_game_room)
                     await self.notify_players(invite_game_room)
-            else:
-                print("InviteGameRoom not found")
         except Exception as e:
-            print(f"{e}")
+            return
 
     async def handle_tournament_action(self):
         from .models import TournamentGameRoom
@@ -513,10 +511,8 @@ class GameConsumer(AsyncWebsocketConsumer):
                 if not tournament_game_room.is_waiting:
                     await self.game_state.add_player("", tournament_game_room)
                     await self.notify_players(tournament_game_room)            
-            else:
-                print("TournamentGameRoom not found")
         except Exception as e:
-            print(f"{e}")
+            return
 
     async def handle_random_action(self):
         from .models import GameRoom
@@ -626,7 +622,6 @@ class GameConsumer(AsyncWebsocketConsumer):
         }))
 
     async def start_game_loop(self, room):
-        print("HELLO FROM START")
         frame_duration = 1 / 120
         while self.game_state.get_running():
             start_time = time.time()
@@ -672,8 +667,6 @@ class GameConsumer(AsyncWebsocketConsumer):
         try:
             player1 = room.player1.user.username
             player2 = room.player2.user.username
-            print(f"{player1, player2}")
-            print(f"{winner, loser}")
             if player1 == winner:
                 winner_user = room.player1
                 loser_user = room.player2
@@ -690,11 +683,10 @@ class GameConsumer(AsyncWebsocketConsumer):
                 game_type='pingpong',
                 match_type='single'
             )
-            print(f"XP Updated and Game History Saved for winner: {winner}, loser: {loser}")
         except Player.DoesNotExist:
-            print("Error: One of the players does not exist.")
+            return
         except Exception as e:
-            print(f"Unexpected error updating XP and saving history: {str(e)}")
+            return
 
     @database_sync_to_async
     def get_player(self, user):
@@ -730,7 +722,6 @@ class GameConsumer(AsyncWebsocketConsumer):
             'room_id': room.id,
             'game_state': self.game_state.get_state()
         }
-        print(f"GROUP NAAME {self.channel_layer}")
         await self.channel_layer.group_send(
             self.room_group_name, {
                 'type': 'send_message',
@@ -757,7 +748,6 @@ class GameConsumer(AsyncWebsocketConsumer):
         if status in ["game_over", "game_canceled"]:
             game_room.delete()
             game_state_manager.remove_game_state(self.room_id)
-            print(f"ALL SHIT IS DELETD with status : {status}")
             return
         elif game_room.player1 == player:
             game_room.player1 = None
