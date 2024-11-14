@@ -18,7 +18,7 @@ const LaunchButtons = ({ selectedMode, selectedBackground, selectedKeys, selecte
     const [localPlayerUsername, setLocalPlayerUsername] = useState("");
     const [localPlayerAvatar, setLocalPlayerAvatar] = useState(null);
     const [showCreateLocalPlayer, setShowCreateLocalPlayer] = useState(false);
-    const { data: currentUser } = useFetch(`${BACKEND_URL}/user/stats`);
+    const { data: currentUser } = useFetch(`${BACKEND_URL}/api/user/stats`);
     const [opponentKeys, setOpponentKeys] = useState("");
 
     useEffect(() => {
@@ -88,7 +88,7 @@ const LaunchButtons = ({ selectedMode, selectedBackground, selectedKeys, selecte
 
     const handleCreateLocalPlayer = async (username, avatar, paddle) => {
         try {
-            const opponentResponse = await axios.post(`${BACKEND_URL}/user/create-local-player/`, 
+            const opponentResponse = await axios.post(`${BACKEND_URL}/api/user/create-local-player/`, 
                 { 
                     username: username,
                     paddle: paddle,
@@ -102,7 +102,7 @@ const LaunchButtons = ({ selectedMode, selectedBackground, selectedKeys, selecte
                 }
             );
             const opponentUserId = opponentResponse.data.id
-            const currentUserResponse = await axios.post(`${BACKEND_URL}/user/create-local-player/`, 
+            const currentUserResponse = await axios.post(`${BACKEND_URL}/api/user/create-local-player/`, 
                 { 
                     username: currentUser.username,
                     paddle: selectedPaddle,

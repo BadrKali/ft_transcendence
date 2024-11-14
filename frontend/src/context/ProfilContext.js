@@ -40,7 +40,7 @@ export const ProfileProvider = ({ children, userId }) => {
                 setIsProfileDataReady(true);
                 return;
             }
-            const url = `${BACKEND_URL}/user/stats/username/${nameOfUser}`;
+            const url = `${BACKEND_URL}/api/user/stats/username/${nameOfUser}`;
             try {
                 const response = await fetch(url, {
                     method: 'GET',
@@ -72,7 +72,7 @@ export const ProfileProvider = ({ children, userId }) => {
     useEffect(() => {
         const fetchRequestStatus = async () => {
             if (!profilData) return;
-            const url = `${BACKEND_URL}/user/friends-request/${profilData.user_id}/`;
+            const url = `${BACKEND_URL}/api/user/friends-request/${profilData.user_id}/`;
             try {
                 const response = await fetch(url, {
                     method: 'GET',
@@ -101,7 +101,7 @@ export const ProfileProvider = ({ children, userId }) => {
     useEffect(() => {
         const fetchBlockStatus = async () => {
             if (!profilData) return;
-            const url = `${BACKEND_URL}/user/${profilData.user_id}/block-unblock/`;
+            const url = `${BACKEND_URL}/api/user/${profilData.user_id}/block-unblock/`;
             try {
                 const response = await fetch(url, {
                     method: 'GET',

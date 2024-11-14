@@ -31,7 +31,7 @@ function MatchHistory({profilData}) {
     }
   
   
-      const url = `${BACKEND_URL}/user/stats/${playerId}`;
+      const url = `${BACKEND_URL}/api/user/stats/${playerId}`;
       try {
           const response = await fetch(url, {
               method: 'GET',

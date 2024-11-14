@@ -219,7 +219,7 @@ const updateLastMessage = (data, result) =>{
     const abortController = new AbortController();
     const FetchContactSection = async () => {
       try {
-        const url = `${BACKEND_URL}/chat/GetContactSection/`;
+        const url = `${BACKEND_URL}/api/chat/GetContactSection/`;
         const response = await fetch(url, {
           method: "GET",
           headers: {
@@ -251,7 +251,7 @@ const updateLastMessage = (data, result) =>{
     const abortController = new AbortController();
     const FetchMessagesSection = async () => {
       try {
-        const url = `${BACKEND_URL}/chat/GetMessageswith/${PickedUsername}/`;
+        const url = `${BACKEND_URL}/api/chat/GetMessageswith/${PickedUsername}/`;
         const response = await fetch(url, {
           method: "GET",
           headers: {

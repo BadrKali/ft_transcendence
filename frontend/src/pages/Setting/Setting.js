@@ -57,7 +57,7 @@ const Setting = () => {
       }
     });
     if (response.ok) {
-      const userData = await fetchData(`${BACKEND_URL}/user/stats/`, auth.accessToken);
+      const userData = await fetchData(`${BACKEND_URL}/api/user/stats/`, auth.accessToken);
       updateUserData(userData);
     }
     else {
@@ -99,7 +99,7 @@ const Setting = () => {
                 'Authorization': `Bearer ${auth.accessToken}`,
             }
         });
-        const response = await axios.get(`${BACKEND_URL}/user/stats/`, {
+        const response = await axios.get(`${BACKEND_URL}/api/user/stats/`, {
             headers: {
                 'Authorization': `Bearer ${auth.accessToken}`,
             }

@@ -11,7 +11,7 @@ const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
 const MatchResult = ({ winner, onBack }) => {
     const [profileData, setProfileData] = useState(null);
-    const { data, error, isLoading } = useFetch(`${BACKEND_URL}/user/stats`);
+    const { data, error, isLoading } = useFetch(`${BACKEND_URL}/api/user/stats`);
     const { t } = useTranslation();
 
     useEffect(() => {

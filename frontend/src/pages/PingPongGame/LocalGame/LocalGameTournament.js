@@ -30,7 +30,7 @@ const LocalGameTournament = () => {
     const [winner, setWinner] = useState("");
     const [loser, setLoser] = useState(""); 
     const { data: gameRoom, isLoading: isLoadingGameRoom, error: gameRoomError } = useFetch(`${BACKEND_URL}/api/game/local-game-room/${gameRoomId}`);
-    const { data: tournament, isLoading: isLoadingTournament, error: tournamentError } = useFetch(`${BACKEND_URL}/user/local-tournament`);
+    const { data: tournament, isLoading: isLoadingTournament, error: tournamentError } = useFetch(`${BACKEND_URL}/api/user/local-tournament`);
     // const { data: tournament, isLoading: isLoadingTournament, error: tournamentError } = useFetch(`${BACKEND_URL}/api/user/local-tournament`); //URL
     const [background, setBackground] = useState(null);
     
@@ -39,7 +39,7 @@ const LocalGameTournament = () => {
         if (!winner || !loser) return;
         try {
           const response = await axios.post(
-            `${process.env.REACT_APP_BACKEND_URL}/user/tournament-match-result`,
+            `${process.env.REACT_APP_BACKEND_URL}/api/user/tournament-match-result`,
             {
               tournamentId: tournamentId,
               winner: winner,

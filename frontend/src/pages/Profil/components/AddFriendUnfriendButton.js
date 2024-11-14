@@ -21,7 +21,7 @@ function AddFriendUnfriendButton({ FriendId }) {
    
     const handleAddFriend = async () => {
         try {
-            const response = await fetch(`${BACKEND_URL}/user/friends-request/${FriendId}/`, {
+            const response = await fetch(`${BACKEND_URL}/api/user/friends-request/${FriendId}/`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -46,7 +46,7 @@ function AddFriendUnfriendButton({ FriendId }) {
 
     const handleCancelRequest = async () => {
         try {
-            const response = await fetch(`${BACKEND_URL}/user/friends-request/${FriendId}/`, {
+            const response = await fetch(`${BACKEND_URL}/api/user/friends-request/${FriendId}/`, {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json',
@@ -72,7 +72,7 @@ function AddFriendUnfriendButton({ FriendId }) {
 
     const handleUnfriend = async () => {
         try {
-            const response = await fetch(`${BACKEND_URL}/user/friend/${FriendId}/`, {
+            const response = await fetch(`${BACKEND_URL}/api/user/friend/${FriendId}/`, {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',
@@ -87,7 +87,7 @@ function AddFriendUnfriendButton({ FriendId }) {
 
             const data = await response.json();
             setIsRequst(data.message);
-            const friendsResponse = await fetch(`${BACKEND_URL}/user/friends/list/`, {
+            const friendsResponse = await fetch(`${BACKEND_URL}/api/user/friends/list/`, {
                 method: 'GET',
                     headers: {
                       'Content-Type': 'application/json',
@@ -112,7 +112,7 @@ function AddFriendUnfriendButton({ FriendId }) {
 
     const handleRejectRequest = async () => {
         try {
-            const response = await fetch(`${BACKEND_URL}/user/friends-request/${FriendId}/response/`, {
+            const response = await fetch(`${BACKEND_URL}/api/user/friends-request/${FriendId}/response/`, {
                 method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json',

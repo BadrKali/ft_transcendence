@@ -28,7 +28,7 @@ function NoTournament({setJoinedTournament}) {
     const [selectedMap, setSelectedMap] = useState('');
     const [tournamentTitle, setTournamentTitle] = useState('');
     const [listFriend, setListFriend] = useState([]);
-    const {data ,isLoading, error} = useFetch(`${BACKEND_URL}/user/friends/list/`)
+    const {data ,isLoading, error} = useFetch(`${BACKEND_URL}/api/user/friends/list/`)
     const [MapError, setMapError] = useState(false);
     const [NameError, setNameError] = useState(false);
     const [PlayersError, setPlayersError] = useState(false);
@@ -97,7 +97,7 @@ function NoTournament({setJoinedTournament}) {
             setPlayersError(false)
         }
         try {
-            const response = await fetch(`${BACKEND_URL}/user/local-tournament/`, {
+            const response = await fetch(`${BACKEND_URL}/api/user/local-tournament/`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -108,7 +108,7 @@ function NoTournament({setJoinedTournament}) {
             });
             if (response.ok) {
 
-                const TournamentResponse = await fetch(`${BACKEND_URL}/user/local-tournament/`, {
+                const TournamentResponse = await fetch(`${BACKEND_URL}/api/user/local-tournament/`, {
                 method: 'GET',
                     headers: {
                     'Content-Type': 'application/json',

@@ -39,7 +39,7 @@ const GeneralNotificationComponent = ({ notif, typeNotif, profilData, onAccept, 
 );
 
 const TournamentPopupComponent = ({ notif, typeNotif, profilData, onAccept, onReject, t }) => {
-  const {data ,isLoading, error} = useFetch(`${BACKEND_URL}/user/tournament/invitations/`)
+  const {data ,isLoading, error} = useFetch(`${BACKEND_URL}/api/user/tournament/invitations/`)
 
   return (
     <>
@@ -131,7 +131,7 @@ const AchievementComponent = ({notif , t}) => (
 
 const NotificationPopup = ({ isOpen, onClose, notif, onAccept, onReject })=> {
   const [typeNotif, setTypeNotif] = useState('');
-  const {data ,isLoading, error} = useFetch(`${BACKEND_URL}/user/stats/${notif.sender_id}`)
+  const {data ,isLoading, error} = useFetch(`${BACKEND_URL}/api/user/stats/${notif.sender_id}`)
   const [profilData, setProfilData] = useState([]);
   const { t } = useTranslation();
 

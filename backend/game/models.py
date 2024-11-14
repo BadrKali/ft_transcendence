@@ -112,21 +112,16 @@ class InviteGameRoom(models.Model):
     player2_connected = models.BooleanField(default=False)
 
     def set_player_connected(self, player):
-        print(f"{self.player1_connected, self.player2_connected} ++++++++++++++++++++++++++++")
         if self.player1 == player:
             self.player1_connected = True
-            print("player1 connected")
         elif self.player2 == player:
             self.player2_connected = True
-            print("player2 connected")
         self.save()
-        print(f"{self.player1_connected, self.player2_connected} ++++++++++++++++++++++++++++")
 
 
     def check_and_update_status(self):
         if self.player1_connected and self.player2_connected:
             self.is_waiting = False
-            print("Both players are connected, game is ready to start.")
             self.save()
         
     def add_player(self, player):
@@ -184,10 +179,8 @@ class TournamentGameRoom(models.Model):
     def set_player_connected(self, player):
         if self.player1 == player:
             self.player1_connected = True
-            print("player1 connected")
         elif self.player2 == player:
             self.player2_connected = True
-            print("player2 connected")
         self.save()
     
     def check_and_update_status(self):

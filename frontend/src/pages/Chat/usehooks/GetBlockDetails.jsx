@@ -9,7 +9,7 @@ export  function useGetBlockDetails(ChatPartner, auth){
 
     useEffect(() => {
         const fetchBlockStatus = async () => {
-            const url = `${BACKEND_URL}/user/${ChatPartner.id}/block-unblock/`;
+            const url = `${BACKEND_URL}/api/user/${ChatPartner.id}/block-unblock/`;
             try {
                 const response = await fetch(url, {
                     method: 'GET',

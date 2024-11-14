@@ -69,13 +69,8 @@ class TriggerAchievementView(APIView):
 class GameSettingsView(APIView):
     def post(self, request):
         try:
-            print(f"{request.data}")
             player, createdPlayer = Player.objects.get_or_create(user_id=request.user.id)
             game_settings, created = GameSettings.objects.get_or_create(user=player)
-            if created:
-                print("A new GameSettings instance was created.")
-            else:
-                print("An existing GameSettings instance was retrieved.")
             serializer = GameSettingsSerializer(instance=game_settings, data=request.data)
             if serializer.is_valid():
                 serializer.save()
@@ -98,8 +93,6 @@ class GameRoomView(APIView):
     def get(self, request, room_id):
         try:
             room = get_object_or_404(GameRoom, id=room_id)
-            print(f"{room.player1}")
-            print(f"{room.player2}")
             serializer = GameRoomSerializer(room)
             return Response(serializer.data, status=status.HTTP_200_OK)
         except GameRoom.DoesNotExist:
@@ -122,7 +115,6 @@ class SendChallengeView(APIView):
             ).first()
 
             if existing_challenge:
-                print("there's already a game b this id")
                 return Response({'error': 'A challenge already exists between these players.'}, status=status.HTTP_400_BAD_REQUEST)
 
             player1, created = Player.objects.get_or_create(user_id=request.user.id)
@@ -136,7 +128,6 @@ class SendChallengeView(APIView):
                     invite_game_room=invite_game_room
                 )
             except Exception as e:
-                print(f"Error creating InviteGameRoom: {e}")
                 return Response({'error': 'Error creating game room.'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
             Notification.objects.create(
@@ -166,7 +157,6 @@ class SendChallengeView(APIView):
 
 class GameChallengeResponse(APIView):
     def patch(self, request, sender_id):
-        print("hello world")
         player_sender = get_object_or_404(User, id=sender_id)
         player_receiver = request.user
     
@@ -188,7 +178,6 @@ class GameChallengeResponse(APIView):
             invite_game_room = game_challenge.invite_game_room
             invite_game_room.player2 = Player.objects.get(user=player_receiver)
             invite_game_room.save()
-            print("InviteGameRoom is created")
             return Response({'message': 'Game challenge accepted.'}, status=status.HTTP_200_OK)
         
         elif action == 'rejected':
@@ -197,7 +186,6 @@ class GameChallengeResponse(APIView):
             invite_game_room = game_challenge.invite_game_room
             invite_game_room.delete()
             game_challenge.delete()
-            print(f"invite_game_room && game_challenge are deleted")
             return Response({'message': 'Game challenge rejected.'}, status=status.HTTP_200_OK)
 
 class GameInvitationResponse(APIView):
@@ -228,8 +216,6 @@ class InviteGameRoomView(APIView):
     def get(self, request, room_id):
         try:
             room = InviteGameRoom.objects.get(id=room_id)
-            print(f"{room.player1}")
-            print(f"{room.player2}")
             serializer = InviteGameRoomSerializer(room)
             return Response(serializer.data, status=status.HTTP_200_OK)
         except InviteGameRoom.DoesNotExist:
@@ -239,8 +225,6 @@ class TournamentGameRoomView(APIView):
     def get(self, request, room_id):
         try:
             room = TournamentGameRoom.objects.get(id=room_id)
-            print(f"{room.player1}")
-            print(f"{room.player2}")
             serializer = TournamentGameRoomSerializer(room)
             return Response(serializer.data, status=status.HTTP_200_OK)
         except TournamentGameRoom.DoesNotExist:

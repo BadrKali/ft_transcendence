@@ -8,8 +8,8 @@ const ScoreBoard = ({ user1Score, user2Score, user1Id, user2Id }) => {
     const [user1, setUser1] = useState(null);
     const [user2, setUser2] = useState(null);
 
-    const { data: player1, loading: loading1 } = useFetch(user1Id ? `${BACKEND_URL}/user/stats/${user1Id}` : null);
-    const { data: player2, loading: loading2 } = useFetch(user2Id ? `${BACKEND_URL}/user/stats/${user2Id}` : null);
+    const { data: player1, loading: loading1 } = useFetch(user1Id ? `${BACKEND_URL}/api/user/stats/${user1Id}` : null);
+    const { data: player2, loading: loading2 } = useFetch(user2Id ? `${BACKEND_URL}/api/user/stats/${user2Id}` : null);
 
     useEffect(() => {
         if (player1) setUser1(player1);

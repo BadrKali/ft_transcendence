@@ -22,12 +22,7 @@ function Friends() {
   const navigate = useNavigate();
   const {userFriends, userFriendsLoading} = useContext(UserContext)
   const { t } = useTranslation();
-  // const {data ,isLoading, error} = useFetch(`${BACKEND_URL}/user/friends/list/`)
-  // useEffect(() => {
-  //   if (data) {
-  //     setListFriend(data);
-  //   }
-  // }, [data]);
+
   
   function handleItemClick(list) {
     navigate(`/user/${list.username}`, {

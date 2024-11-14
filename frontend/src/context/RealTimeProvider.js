@@ -33,7 +33,7 @@ export const RealTimeProvider = ({ children }) => {
         if (shouldFetchNotifications) {
             const fetchNotifications = async () => {
                 try {
-                    const response = await fetch(`${BACKEND_URL}/user/notifications/`, {
+                    const response = await fetch(`${BACKEND_URL}/api/user/notifications/`, {
                         headers: {
                             'Content-Type': 'application/json',
                             'Authorization': `Bearer ${auth.accessToken}`,
@@ -70,7 +70,7 @@ export const RealTimeProvider = ({ children }) => {
            
         
             try {
-                const response = await fetch(`${BACKEND_URL}/user/missed-notifications/`, {
+                const response = await fetch(`${BACKEND_URL}/api/user/missed-notifications/`, {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',
@@ -136,7 +136,7 @@ export const RealTimeProvider = ({ children }) => {
     const handleAcceptGame = (id) => {
         setGameChallenge(null);
         let url = tournamentType 
-        ? `${BACKEND_URL}/user/tournament/invitation/${id}/responce` 
+        ? `${BACKEND_URL}/api/user/tournament/invitation/${id}/responce` 
         : `${BACKEND_URL}/api/game/game-challenges/${id}/response/`;
         let body = JSON.stringify({ 'status': 'accepted' });
         fetch(url, {
@@ -168,7 +168,7 @@ export const RealTimeProvider = ({ children }) => {
     const handleRejectGame = (id) => {
         setGameChallenge(null);
         let url = tournamentType 
-        ? `${BACKEND_URL}/user/tournament/invitation/${id}/response` 
+        ? `${BACKEND_URL}/api/user/tournament/invitation/${id}/response` 
         : `${BACKEND_URL}/api/game/game-challenges/${id}/response/`;
         let body = JSON.stringify({ 'status': 'rejected' });
         fetch(url, {

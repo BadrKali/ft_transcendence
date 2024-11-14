@@ -71,9 +71,9 @@ const RealTimeGame = ({ mode }) => {
 
     const { data: gameSettings, isLoading: gameSettingsLoading } = useFetch(`${BACKEND_URL}/api/game/game-settings/current-user/`);
     const { data: room } = useFetch(roomId ? `${BACKEND_URL}/api/game/${endPoint}/${roomId}` : null);
-    const { data: player1 } = useFetch(player1Id ? `${BACKEND_URL}/user/stats/${player1Id}` : null);
-    const { data: player2 } = useFetch(player2Id ? `${BACKEND_URL}/user/stats/${player2Id}` : null);
-    const { data: currentUser } = useFetch(`${BACKEND_URL}/user/stats`);
+    const { data: player1 } = useFetch(player1Id ? `${BACKEND_URL}/api/user/stats/${player1Id}` : null);
+    const { data: player2 } = useFetch(player2Id ? `${BACKEND_URL}/api/user/stats/${player2Id}` : null);
+    const { data: currentUser } = useFetch(`${BACKEND_URL}/api/user/stats`);
 
     useEffect(() => {
         if (currentUser === player1) {

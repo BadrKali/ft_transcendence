@@ -6,12 +6,11 @@ from django.conf.urls.static import static
 from rest_framework_simplejwt.views import TokenObtainPairView , TokenRefreshView
 
 
-
 admin.site.site_header = "ft_transcendence Admin"
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path("user/", include("user_management.urls")),
-    path("auth/", include("authentication.urls")),
+    path("api/user/", include("user_management.urls")),
+    path("api/auth/", include("authentication.urls")),
     path("chat/", include("chat.urls")),
     path('api/game/', include('game.urls')),
     

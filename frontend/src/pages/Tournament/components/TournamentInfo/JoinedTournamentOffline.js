@@ -30,7 +30,7 @@ function JoinedTournamentOffline({TournamentData}) {
     const unknownAvatar = avatarsUnkown.img;
     const navigate = useNavigate();
     const [matchToDisplay, setMatchToDisplay] = useState(null);
-    const {data: matches ,isLoading: matchesisLoading, error: matchesError} = useFetch(`${BACKEND_URL}/user/local-tournament/${TournamentData.tournament_stage}`)
+    const {data: matches ,isLoading: matchesisLoading, error: matchesError} = useFetch(`${BACKEND_URL}/api/user/local-tournament/${TournamentData.tournament_stage}`)
   
 
     useEffect(() => {
@@ -58,7 +58,7 @@ function JoinedTournamentOffline({TournamentData}) {
 
 
     const date = new Date(TournamentData.created_at);
-    const {data ,isLoading, error} = useFetch(`${BACKEND_URL}/user/stats/${TournamentData.tournament_creator}`)
+    const {data ,isLoading, error} = useFetch(`${BACKEND_URL}/api/user/stats/${TournamentData.tournament_creator}`)
 
     useEffect(() => {
         if (userData.user_id === TournamentData.tournament_creator)
@@ -110,7 +110,7 @@ function JoinedTournamentOffline({TournamentData}) {
 
       const handleDeleteTournament = async () => {
         try {
-          const response = await fetch(`${BACKEND_URL}/user/local-tournament/`, {
+          const response = await fetch(`${BACKEND_URL}/api/user/local-tournament/`, {
             method: 'DELETE',
             headers: {
               'Content-Type': 'application/json',
@@ -121,7 +121,7 @@ function JoinedTournamentOffline({TournamentData}) {
       
           if (response.ok) {
             const data = await response.json();
-            const TournamentResponse = await fetch(`${BACKEND_URL}/user/local-tournament/`, {
+            const TournamentResponse = await fetch(`${BACKEND_URL}/api/user/local-tournament/`, {
                 method: 'GET',
                     headers: {
                     'Content-Type': 'application/json',

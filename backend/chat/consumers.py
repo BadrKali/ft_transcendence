@@ -148,7 +148,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
     def retreive_contacted_users(self):
         factory = RequestFactory()
         user = User.objects.get(id=self.sender_id)
-        request = factory.get('/chat/GetContactSection/')
+        request = factory.get('/api/chat/GetContactSection/')
         request.user = user
         response = RetreiveContacts(request)
         response.render()

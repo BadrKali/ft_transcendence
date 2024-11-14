@@ -41,7 +41,7 @@ const LineChart = () => {
     });
 
     useEffect(() => {
-        fetch(`${BACKEND_URL}/user/xp-history/`, {
+        fetch(`${BACKEND_URL}/api/user/xp-history/`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',

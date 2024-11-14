@@ -80,7 +80,7 @@ const TwoFaModal = ({handleClose, qrUrl}) => {
       if(response.ok) {
         setVerificationStatus('success');
         try {
-          const userData = await fetchData(`${BACKEND_URL}/user/stats/`, auth.accessToken);
+          const userData = await fetchData(`${BACKEND_URL}/api/user/stats/`, auth.accessToken);
   
           updateUserData(userData);
         } catch (error) {

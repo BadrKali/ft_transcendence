@@ -10,8 +10,8 @@ import avatar2 from "../../../assets/avatar2.png"
 import LocalScoreBoard from '../components/LocalScoreBoard';
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const LocalGameLogic = ({ player1Id, player2Id, handleEndMatch }) => {
-    const { data: player1, isLoading: isLoadingPlayer1, error: player1Error } = useFetch(`${BACKEND_URL}/user/local-player/${player1Id}`);
-    const { data: player2, isLoading: isLoadingPlayer2, error: player2Error } = useFetch(`${BACKEND_URL}/user/local-player/${player2Id}`);
+    const { data: player1, isLoading: isLoadingPlayer1, error: player1Error } = useFetch(`${BACKEND_URL}/api/user/local-player/${player1Id}`);
+    const { data: player2, isLoading: isLoadingPlayer2, error: player2Error } = useFetch(`${BACKEND_URL}/api/user/local-player/${player2Id}`);
     const navigate = useNavigate();
     const canvasRef = useRef(null);
     const { t } = useTranslation();

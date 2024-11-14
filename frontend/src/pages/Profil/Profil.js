@@ -36,7 +36,7 @@ const Profil = () => {
   const {userData} =  useContext(UserContext)
   const [isBlockedMe, setIsBlocked] = useState(false);
   const [isBlockingHim, setIsBlocking] = useState(false); 
-  const {data ,isLoading, error} = useFetch(`${BACKEND_URL}/user/stats/username/${nameOfUser}`)
+  const {data ,isLoading, error} = useFetch(`${BACKEND_URL}/api/user/stats/username/${nameOfUser}`)
 
 
   useEffect(() => {
