@@ -5,10 +5,14 @@ const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
 function RestItem({players, index}) {
     const ifOdd = index % 2 ? true : false;
+    let winPer = 0;
+    let lossPer = 0;
 
-    let winPer = Math.floor((players.games_won / players.games_played) * 100);
-    if (players.games_played === 0)
-        winPer = 0
+
+    if (players.games_played){
+        winPer = Math.floor((players.games_won / players.games_played) * 100);
+        lossPer = 100 - winPer ;
+    }
 
     return (
         <div className={ifOdd ? 'listPlayerContainer' : 'listPlayerContainer Odd'}   style={{ animationDelay: `${index * 0.1}s` }} >
@@ -32,7 +36,7 @@ function RestItem({players, index}) {
                     <p>{players.games_won}%</p>
                 </div>
                 <div className='PlayerLoss'>
-                    <p>{winPer}%</p>
+                    <p>{100 - winPer}%</p>
                 </div>
                 <div className='PlayerRank'>
                     <p>{players.rank}</p>
