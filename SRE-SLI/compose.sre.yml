@@ -93,6 +93,7 @@ services:
     ports:
       - "9090:9090"
       - "9093:9093"
+    hostname: localhost
     env_file:
       - ../.env
     volumes:

@@ -3,7 +3,7 @@ groups:
     rules:
       - alert: Instance-Status-Change
         expr: up == 0
-        for: 10s
+        for: 20s
         annotations:
           summary: "Status Change Detected"
           description: "[{{ $labels.instance }}] Instance in [{{ $labels.job }}] Job is experiencing status changes."

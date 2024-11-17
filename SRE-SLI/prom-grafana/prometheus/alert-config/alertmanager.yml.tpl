@@ -4,8 +4,8 @@ global:
 route:
   receiver: 'email'
   group_by: ['alertsname']
-  group_wait: 10s
-  group_interval: 1m
+  group_wait: 20s
+  group_interval: 2m
   repeat_interval: 30m
 
 receivers:
