@@ -12,7 +12,9 @@ import PlayerSelectedItem from './PlayerSelectedItem';
 import MainButton from '../../../../components/MainButton/MainButton';
 import { UserContext } from '../../../../context/UserContext';
 import { useTranslation } from 'react-i18next'
-
+import Forest from '../../../Game/Game-assets/forest.png';
+import Hell from '../../../Game/Game-assets/hell.png';
+import Grave from '../../../Game/Game-assets/graveyard.png'
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
@@ -63,6 +65,9 @@ const CreatTournamentOffline= ({onClose}) => {
         setNameError(false)
     };
 
+    const handleRemovePlayer = (indexToRemove) => {
+        setPlayers(players.filter((_, index) => index !== indexToRemove));
+    };
 
     const handleCreateTournament = async () => {
 
@@ -139,19 +144,28 @@ const CreatTournamentOffline= ({onClose}) => {
                 <p>{t('Select default arena theme')}</p>
                 <div className='maps-tournomant'>
                     <div
-                        className={`undergroundHell mapBox ${selectedMap === 'undergroundHell' ? 'selected' : ''}`}
-                        onClick={() => handleMapSelection('undergroundHell')}
-                        ></div>
+                        className={`undergroundHell underground ${selectedMap === 'hell' ? 'selectedUnderground' : ''}`}
+                        onClick={() => handleMapSelection('hell')}
+                        >
+                            <img src={Hell} alt="Forest" />
+
+                        </div>
                     <div
-                        className={`undergroundForest mapBox ${selectedMap === 'undergroundForest' ? 'selected' : ''}`}
-                        onClick={() => handleMapSelection('undergroundForest')}
-                        ></div>
+                        className={`undergroundForest underground ${selectedMap === 'forest' ? 'selectedUnderground' : ''}`}
+                        onClick={() => handleMapSelection('forest')}
+                        >
+                            <img src={Forest} alt="Forest" />
+
+                        </div>
                     <div
-                        className={`undergroundGraveyard mapBox ${selectedMap === 'undergroundGraveyard' ? 'selected' : ''}`}
-                        onClick={() => handleMapSelection('undergroundGraveyard')}
-                        ></div>
+                        className={`undergroundGraveyard underground ${selectedMap === 'graveyard' ? 'selectedUnderground' : ''}`}
+                        onClick={() => handleMapSelection('graveyard')}
+                        >
+                            <img src={Grave} alt="Forest" />
+
+                        </div>
                 </div>
-                {MapError && <p className="error-message">No map selected{t('FRIENDS')}</p>}
+                {MapError && <p className="error-message">{t('No map selected')}</p>}
             </div>
             <div className='selectTitle-container'>
                 <h4>{t('Tournament Title')}</h4>
@@ -182,7 +196,7 @@ const CreatTournamentOffline= ({onClose}) => {
                     </div>
                     <div className='playerselected'>
                         {players.map((player, index) => (
-                            <PlayerSelectedItem key={index} player={player}/>
+                            <PlayerSelectedItem key={index} player={player} onRemove={() => handleRemovePlayer(index)} />
                         ))
                     }
                     </div>
@@ -200,7 +214,7 @@ const CreatTournamentOffline= ({onClose}) => {
             </div>
             <div className='tournamentButton-container'>
                     <div className='CreatTournamentButton'>
-                        <MainButton type="submit" functionHandler={handleCreateTournament} content="Creat" />
+                        <MainButton type="submit" functionHandler={handleCreateTournament} content={t('Creat')}  />
                     </div>
             </div>
             {PlayersError && <p className="error-message">{t('Player selected must be 4 in Total')}</p>}

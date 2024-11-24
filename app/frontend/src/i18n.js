@@ -249,6 +249,10 @@ const resources = {
       "Leave" : "Leave",
 
 
+
+      "No map selected" : "No map selected",
+
+
     }
   },
   fr: {

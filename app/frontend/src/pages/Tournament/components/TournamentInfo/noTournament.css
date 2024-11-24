@@ -69,3 +69,42 @@
     margin-top: 200px;
     height: 200px;
   }
+
+  .tabsContainer-tornament{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    
+  }
+  .Online-OfflineTabs{
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 15px;
+    width: 100%;
+    gap: 10px;
+    background-color: #1C1E27;
+    width: 40%;
+    
+
+  }
+
+  .Online-OfflineTabs button {
+    flex: 1;
+    padding: 10px 0;
+    text-align: center; 
+    border: 1px solid #1C1E27; 
+    background-color: #1C1E27; 
+    cursor: pointer; 
+    transition: background-color 0.3s ease; 
+    border-radius: 15px ;
+    color: white;
+  }
+  
+  .Online-OfflineTabs button.active {
+    background-color: #F62943; 
+    color: white; 
+    border-color: #F62943; 
+  }
+

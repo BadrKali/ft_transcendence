@@ -18,6 +18,8 @@ import { UserContext } from '../../../../context/UserContext';
 import Forest from '../../../Game/Game-assets/forest.png';
 import Hell from '../../../Game/Game-assets/hell.png';
 import Grave from '../../../Game/Game-assets/graveyard.png'
+import CreatTournamentOnline from './CreatTournamentOnline';
+import CreatTournamentOffline from './CreatTournamentOffline';
 
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
@@ -35,6 +37,7 @@ function NoTournament({setJoinedTournament}) {
     const {updatetounament, userData} = useContext(UserContext)
     const [username, setUsername] = useState('');
     const [players, setPlayers] = useState([]);
+    const [isOnline, setIsOnline] = useState(true);
     const { t } = useTranslation();
 
 
@@ -143,85 +146,29 @@ function NoTournament({setJoinedTournament}) {
 
     return (
         <div className='sections-container'>
-            <div className='Arena-container'>
-                <h4>{t('Arena')}</h4>
-                <p>{t('Select default arena theme')}</p>
-                <div className='maps-tournomant'>
-                    <div
-                        className={`undergroundHell underground ${selectedMap === 'hell' ? 'selectedUnderground' : ''}`}
-                        onClick={() => handleMapSelection('hell')}
-                        >
-                            <img src={Hell} alt="Forest" />
+                 
+        <div className='tabsContainer-tornament'>
 
-                        </div>
-                    <div
-                        className={`undergroundForest underground ${selectedMap === 'forest' ? 'selectedUnderground' : ''}`}
-                        onClick={() => handleMapSelection('forest')}
-                        >
-                            <img src={Forest} alt="Forest" />
-
-                        </div>
-                    <div
-                        className={`undergroundGraveyard underground ${selectedMap === 'graveyard' ? 'selectedUnderground' : ''}`}
-                        onClick={() => handleMapSelection('graveyard')}
-                        >
-                            <img src={Grave} alt="Forest" />
-
-                        </div>
+        <div className="Online-OfflineTabs">
+            <button 
+            className={isOnline ? 'active' : ''} 
+            onClick={() => setIsOnline(true)}
+            >
+            Online
+            </button>
+            <button 
+            className={!isOnline ? 'active' : ''} 
+            onClick={() => setIsOnline(false)}
+            >
+            Offline
+            </button>
+        </div>
                 </div>
-                {MapError && <p className="error-message">No map selected{t('FRIENDS')}</p>}
-            </div>
-            <div className='selectTitle-container'>
-                <h4>{t('Tournament Title')}</h4>
-                <p>{t('Type your tournament title')}</p>
-                <div className='selectNameInput'>
-                            <input
-                                placeholder={t('tournament title')} 
-                                type='text'
-                                value={tournamentTitle}
-                                onChange={handleTitleChange}
-                            />
-                            <Icon name='inputTournamant' className='inputTournamant-icon' />
-                </div>
-                {NameError && <p className="error-message"> {t('You need to choice a Title')}</p>}
-
-            </div>
-            <div className='selectPlayer-container '>
-                <h4>{t('Select Players')}</h4>
-                <p>{t('Select Players for your tournament')}</p>
-                <div className='displayPlayers'>
-                    <div className='playerselectedOwner'>
-                        <div className='slectedPlayerItemOwner'>
-                            <div className='imagePlayerSelectedOwner'>
-                                <img src={`${BACKEND_URL}${userData.avatar}`}/>
-                            </div>
-                            <p>{userData.username}</p>
-                        </div>
-                    </div>
-                    <div className='playerselected'>
-                        {players.map((player, index) => (
-                            <PlayerSelectedItem key={index} player={player} onRemove={() => handleRemovePlayer(index)} />
-                        ))
-                    }
-                    </div>
-                </div>
-                <div className='selectNameInput'>
-                            <input
-                                placeholder={t('username')}
-                                type='text'
-                                value={username}
-                                onChange={(e) => setUsername(e.target.value)}
-                                disabled={players.length >= 3}
-                            />
-                            <p className="AddClick"onClick={handleAddPlayer}>ADD{t('FRIENDS')}</p>
-                </div>
-            </div>
-            <div className='tournamentButton-container'>
-                    <div className='CreatTournamentButton'>
-                        <MainButton type="submit" functionHandler={handleCreateTournament} content={t('Creat')}  />
-                    </div>
-            </div>
-            {PlayersError && <p className="error-message">{t('Player selected must be 4 in Total')}</p>}
+                {isOnline ? 
+                <CreatTournamentOnline />
+                :
+                <CreatTournamentOffline />    
+            }
 
         </div>
     )

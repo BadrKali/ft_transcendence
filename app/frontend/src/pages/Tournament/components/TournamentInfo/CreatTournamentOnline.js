@@ -10,6 +10,9 @@ import PlayerSelectedItem from './PlayerSelectedItem';
 import MainButton from '../../../../components/MainButton/MainButton';
 import { UserContext } from '../../../../context/UserContext';
 import { useTranslation } from 'react-i18next'
+import Forest from '../../../Game/Game-assets/forest.png';
+import Hell from '../../../Game/Game-assets/hell.png';
+import Grave from '../../../Game/Game-assets/graveyard.png'
 
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
@@ -177,17 +180,26 @@ const CreatTournamentOnline = ({onClose}) => {
                 <p>{t('Select default arena theme')}</p>
                 <div className='maps-tournomant'>
                     <div
-                        className={`undergroundHell mapBox ${selectedMap === 'undergroundHell' ? 'selected' : ''}`}
-                        onClick={() => handleMapSelection('undergroundHell')}
-                        ></div>
+                        className={`undergroundHell underground ${selectedMap === 'hell' ? 'selectedUnderground' : ''}`}
+                        onClick={() => handleMapSelection('hell')}
+                        >
+                            <img src={Hell} alt="Forest" />
+
+                        </div>
                     <div
-                        className={`undergroundForest mapBox ${selectedMap === 'undergroundForest' ? 'selected' : ''}`}
-                        onClick={() => handleMapSelection('undergroundForest')}
-                        ></div>
+                        className={`undergroundForest underground ${selectedMap === 'forest' ? 'selectedUnderground' : ''}`}
+                        onClick={() => handleMapSelection('forest')}
+                        >
+                            <img src={Forest} alt="Forest" />
+
+                        </div>
                     <div
-                        className={`undergroundGraveyard mapBox ${selectedMap === 'undergroundGraveyard' ? 'selected' : ''}`}
-                        onClick={() => handleMapSelection('undergroundGraveyard')}
-                        ></div>
+                        className={`undergroundGraveyard underground ${selectedMap === 'graveyard' ? 'selectedUnderground' : ''}`}
+                        onClick={() => handleMapSelection('graveyard')}
+                        >
+                            <img src={Grave} alt="Forest" />
+
+                        </div>
                 </div>
                 {MapError && <p className="error-message">{t('No map selected')}</p>}
             </div>
