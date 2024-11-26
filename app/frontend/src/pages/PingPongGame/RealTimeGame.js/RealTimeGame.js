@@ -453,7 +453,25 @@ const RealTimeGame = ({ mode }) => {
             }
         };
     }, [socket]);
+    useEffect(() => {
+        const isRefreshing = sessionStorage.getItem("refreshing");
+    
+        if (isRefreshing) {
+          sessionStorage.removeItem("refreshing");
+          navigate("/game", { replace: true });
+        }
 
+        const handleBeforeUnload = () => {
+          sessionStorage.setItem("refreshing", "true");
+        };
+    
+        window.addEventListener("beforeunload", handleBeforeUnload);
+    
+        return () => {
+          window.removeEventListener("beforeunload", handleBeforeUnload);
+        };
+    }, [navigate]);
+    
     const handleInvitationRejected = () => {
         navigate('/game', { replace:true});
     }
