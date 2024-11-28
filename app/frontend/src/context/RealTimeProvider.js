@@ -97,8 +97,10 @@ export const RealTimeProvider = ({ children }) => {
             setData(dataFromServer);
           
             if (dataFromServer.type === 'match_notification') {
+                console.log("Match Notification");
                 setGameChallenge(dataFromServer);
             } else if (dataFromServer.type === 'tournament_notification') {
+                console.log("Tournament Notification");
                 setTournamentType(true);
                 setGameChallenge(dataFromServer);
             } else if (dataFromServer.type === "invite_reconnection") {
@@ -135,7 +137,7 @@ export const RealTimeProvider = ({ children }) => {
 
     const handleAcceptGame = (id) => {
         setGameChallenge(null);
-        let url = tournamentType 
+        let url = tournamentType
         ? `${BACKEND_URL}/api/user/tournament/invitation/${id}/responce` 
         : `${BACKEND_URL}/api/game/game-challenges/${id}/response/`;
         let body = JSON.stringify({ 'status': 'accepted' });
@@ -216,7 +218,8 @@ return (
             showGameSettings, 
             setShowGameSettings, 
             tournamentMatchAccepted, 
-            setTournamentMatchAccepted
+            setTournamentMatchAccepted,
+            tournamentType,
             }}>
             {children}
             <ToastContainer />

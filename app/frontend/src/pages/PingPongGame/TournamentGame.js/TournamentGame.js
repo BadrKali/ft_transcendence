@@ -1,7 +1,6 @@
 import RealTimeGame from "../RealTimeGame.js/RealTimeGame";
-const TournamentGame = () => {
-    alert("HELLO FROM TOURNAMENT COMPONENT");
 
+const TournamentGame = () => {
     return (
         <div>
             <RealTimeGame mode={"tournament"}/>

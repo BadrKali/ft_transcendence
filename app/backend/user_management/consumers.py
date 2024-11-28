@@ -99,7 +99,6 @@ class NotificationConsumer(AsyncWebsocketConsumer):
         }))
 
     async def invite_reconnection(self, event):
-        print("HELLO BABY FROM NOTIFICATION INVITE RECONNECTION")
         message = event['message']
         sender = event['sender']
         receiver = event['receiver']

@@ -50,6 +50,7 @@ const TopBar = () => {
     setGameAccepted, 
     setShowGameSettings, 
     tournamentMatchAccepted, 
+    tournamentType,
     setTournamentMatchAccepted } = useContext(RealTimeContext);
   const { userData, userDataLoading, userDataError, updateUserFriends, notifications, setNotifications, updatetounament} = useContext(UserContext);
   const debouncedQuery = useDebounce(query, 300);
@@ -74,6 +75,7 @@ const TopBar = () => {
 
   useEffect(() => {
     if (tournamentMatchAccepted) {
+      console.log('tournamentMatchAccepted', tournamentMatchAccepted);
       setTournamentMatchAccepted(false);
       navigate('/tournament-game', { replace:true });
     }
@@ -82,7 +84,11 @@ const TopBar = () => {
   useEffect(() => {
     if (gameAccepted) {
       setGameAccepted(false);
-      navigate('/invite-game', { replace:true });
+      if (tournamentType){
+        navigate('/tournament-game', { replace:true });
+      } else {
+        navigate('/invite-game', { replace:true });
+      }
     }
   }, [gameAccepted, navigate]);
 

@@ -539,7 +539,7 @@ class GameConsumer(AsyncWebsocketConsumer):
                 if not tournament_game_room.is_waiting:
                     self.game_state.update_player_connects(True)
                     await self.game_state.add_player("", tournament_game_room)
-                    await self.notify_players(tournament_game_room)            
+                    await self.notify_players(tournament_game_room)
         except Exception as e:
             return
 
