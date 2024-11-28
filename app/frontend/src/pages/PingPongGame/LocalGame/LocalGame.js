@@ -29,6 +29,25 @@ const LocalGame = () => {
     const [background, setBackground] = useState(null);
 
     useEffect(() => {
+        const isRefreshing = sessionStorage.getItem("refreshing");
+    
+        if (isRefreshing) {
+          sessionStorage.removeItem("refreshing");
+          navigate("/game", { replace: true });
+        }
+
+        const handleBeforeUnload = () => {
+          sessionStorage.setItem("refreshing", "true");
+        };
+    
+        window.addEventListener("beforeunload", handleBeforeUnload);
+
+        return () => {
+          window.removeEventListener("beforeunload", handleBeforeUnload);
+        };
+    }, [navigate]);
+
+    useEffect(() => {
         if (gameSettings) {
             setBackground(backgroundImages[gameSettings.background] || null);
         }
@@ -54,6 +73,7 @@ const LocalGame = () => {
         setShowWinner(false);
         navigate('/game', { replace:true })
     }
+
     return (
         <div className="pingponggame-container" style={{ backgroundImage: `url(${background})` }}>
             <LocalGameLogic 

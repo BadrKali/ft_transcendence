@@ -35,6 +35,26 @@ const LocalGameTournament = () => {
     const [background, setBackground] = useState(null);
     
     const [map, setMap] = useState("");
+
+    useEffect(() => {
+        const isRefreshing = sessionStorage.getItem("refreshing");
+    
+        if (isRefreshing) {
+          sessionStorage.removeItem("refreshing");
+          navigate("/game", { replace: true });
+        }
+
+        const handleBeforeUnload = () => {
+          sessionStorage.setItem("refreshing", "true");
+        };
+    
+        window.addEventListener("beforeunload", handleBeforeUnload);
+
+        return () => {
+          window.removeEventListener("beforeunload", handleBeforeUnload);
+        };
+    }, [navigate]);
+  
     const handleEndMatch = useCallback(async (winner, loser) => {
         if (!winner || !loser) return;
         try {

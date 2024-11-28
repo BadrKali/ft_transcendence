@@ -14,12 +14,10 @@ const LocalGameLogic = ({ player1Id, player2Id, handleEndMatch }) => {
     const { data: player2, isLoading: isLoadingPlayer2, error: player2Error } = useFetch(`${BACKEND_URL}/api/user/local-player/${player2Id}`);
     const navigate = useNavigate();
     const canvasRef = useRef(null);
-    const { t } = useTranslation();
 
     const [showAboutGame, setShowAboutGame] = useState(true);
     const [user1Score, setUser1Score] = useState(0);
     const [user2Score, setUser2Score] = useState(0);
-    const [gameRunning, setGameRunning] = useState(false);
     const [matchRunning, setMatchRunning] = useState(false);
     const [gameOver, setGameOver] = useState(false);
     const [canvasSize, setCanvasSize] = useState({ width: 1384, height: 696 });
@@ -268,6 +266,7 @@ const LocalGameLogic = ({ player1Id, player2Id, handleEndMatch }) => {
             setGameOver(true);
         }
     }, [user1Score, user2Score]);
+
 
     if (gameOver) {
         return null;

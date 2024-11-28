@@ -19,7 +19,7 @@ export const createSendInvitationHandler = (auth) => {
           }
         }
       );
-   
+      
       return response.data;
     } catch (error) {
       console.error("Failed to send invitation", error);
