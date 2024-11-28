@@ -9,9 +9,10 @@ services:
       backend:
         condition: service_healthy
     volumes:
-      - frontend:/front
-      - frontend:/front/node_modules
-      - ./frontend:/front
+      - frontend:/frontend
+      - frontend:/frontend/node_modules
+      - ./frontend/build:/frontend/build
+      - ./frontend:/frontend
     env_file:
       - ../.env
     networks:
@@ -21,8 +22,8 @@ services:
       test: ["CMD", "curl", "-f", "http://localhost:3000"]
       interval: 5s
       timeout: 5s
-      retries: 30
-      start_period: 10s
+      retries: 120
+      start_period: 30s
 
   backend:
     image: backend
@@ -32,7 +33,7 @@ services:
       postgres:
         condition: service_healthy
     volumes:
-      - ./backend:/back
+      - ./backend:/backend
     env_file:
       - ../.env
     networks:

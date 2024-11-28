@@ -21,9 +21,10 @@ services:
       backend:
         condition: service_healthy
     volumes:
-      - frontend:/front
-      - frontend:/front/node_modules
-      - ./app/frontend:/front
+      - frontend:/frontend
+      - frontend:/frontend/node_modules
+      - ./app/frontend/build:/frontend/build
+      - ./app/frontend:/frontend
     env_file:
       - .env
     networks:
@@ -33,8 +34,8 @@ services:
       test: ["CMD", "curl", "-f", "http://localhost:3000"]
       interval: 5s
       timeout: 5s
-      retries: 30
-      start_period: 10s
+      retries: 120
+      start_period: 30s
 
   backend:
     image: backend
@@ -44,7 +45,7 @@ services:
       postgres:
         condition: service_healthy
     volumes:
-      - ./app/backend:/back
+      - ./app/backend:/backend
     env_file:
       - .env
     networks:
@@ -117,3 +118,76 @@ services:
       timeout: 5s
       retries: 30
       start_period: 5s
+
+######################################################################
+######################################################################
+
+# services:
+
+#   # Web App
+#   frontend:
+#     extends:
+#       file: ./app/compose.app.yml
+#       service: frontend
+#   backend:
+#     extends:
+#       file: ./app/compose.app.yml
+#       service: backend
+#   postgres:
+#     extends:
+#       file: ./database/compose.database.yml
+#       service: postgres
+#   redis:
+#     extends:
+#       file: ./database/compose.database.yml
+#       service: redis
+#   nginx:
+#     extends:
+#       file: ./nginx/compose.nginx.yml
+#       service: nginx
+  
+#   # ELK-Stack
+#   setup:
+#     extends:
+#       file: ./SRE-SLI/compose.sre.yml
+#       service: setup
+#   elasticsearch:
+#     extends:
+#       file: ./SRE-SLI/compose.sre.yml
+#       service: elasticsearch
+#   kibana:
+#     extends:
+#       file: ./SRE-SLI/compose.sre.yml
+#       service: kibana
+#   logstash:
+#     extends:
+#       file: ./SRE-SLI/compose.sre.yml
+#       service: logstash
+  
+#   # Prometheus & Grafana
+#   prometheus:
+#     extends:
+#       file: ./SRE-SLI/compose.sre.yml
+#       service: prometheus
+#   grafana:
+#     extends:
+#       file: ./SRE-SLI/compose.sre.yml
+#       service: grafana
+  
+#   # Exporters
+#   nginx_exporter:
+#     extends:
+#       file: ./SRE-SLI/compose.sre.yml
+#       service: nginx_exporter
+#   redis-exporter:
+#     extends:
+#       file: ./SRE-SLI/compose.sre.yml
+#       service: redis-exporter
+#   postgres-exporter:
+#     extends:
+#       file: ./SRE-SLI/compose.sre.yml
+#       service: postgres-exporter
+#   node-exporter:
+#     extends:
+#       file: ./SRE-SLI/compose.sre.yml
+#       service: node-exporter

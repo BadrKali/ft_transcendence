@@ -1,9 +1,12 @@
 FROM python:3.9
 
-WORKDIR /back
+WORKDIR /backend
+
 COPY requirements.txt .
 RUN pip install -r requirements.txt
+
 COPY . .
+
 USER root
 RUN chmod +x MAKE_MIGRATIONS.sh
 
