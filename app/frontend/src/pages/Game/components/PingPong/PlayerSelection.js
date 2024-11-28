@@ -22,8 +22,12 @@ const PlayerSelection = ({ onPlayerSelect, onCancel }) => {
 
   const handleChallenge = async (player) => {
     try {
-      await handleSendInvitation(player.id);
-      navigate('/invite-game', { replace:true })
+      const response = await handleSendInvitation(player.id);
+      if (response.exist) {
+        return;
+      } else {
+        navigate('/invite-game', { replace:true });
+      }
     } catch (error) {
       console.log(error);
     }

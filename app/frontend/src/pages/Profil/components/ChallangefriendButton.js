@@ -14,13 +14,17 @@ const ChallangefriendButton = () => {
   const navigate = useNavigate()
   const {isBlockedMe, isBlockingHim, profilData} = useContext(ProfileContext);
   const { t } = useTranslation();
-  const handleSendInvitation = createSendInvitationHandler(auth);
   const isDisabled = isBlockingHim || isBlockedMe;
+  const handleSendInvitation = createSendInvitationHandler(auth);
 
     const handleChallenge = async () => {
       try {
-        await handleSendInvitation(profilData.user_id);
-        navigate('/invite-game', { replace:true })
+        const response = await handleSendInvitation(profilData.user_id);
+        if (response.exist) {
+          return;
+        } else {
+          navigate('/invite-game', { replace:true });
+        }
       } catch (error) {
         console.log(error);
       }

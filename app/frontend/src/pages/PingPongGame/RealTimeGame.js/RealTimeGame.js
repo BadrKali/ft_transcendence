@@ -149,6 +149,9 @@ const RealTimeGame = ({ mode }) => {
                 showOpponentDisconnected(false);
                 endGame(data);
                 break;
+            case "game_canceled_befor_launch":
+                return navigate('/game', { replace:true});
+                break;
             default:
                 if (data.message) {
                     alert(data.message);
@@ -190,6 +193,14 @@ const RealTimeGame = ({ mode }) => {
             }
         }
     }, [room]);
+
+    // useEffect(() => {
+    //     return () => {
+    //         if (socket) {
+    //             socket.send(JSON.stringify({ action: "left_before_launch" }));
+    //         }
+    //     };
+    // }, [socket]);
 
     const startNewGame = (data) => {
         setShowWaiting(false);
@@ -453,6 +464,7 @@ const RealTimeGame = ({ mode }) => {
             }
         };
     }, [socket]);
+
     useEffect(() => {
         const isRefreshing = sessionStorage.getItem("refreshing");
     

@@ -6,11 +6,10 @@ import { useTranslation } from 'react-i18next'
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
-const PlayerInfo = ({ player1, player2, onStartGame}) => {
+const PlayerInfo = ({ player1, player2, onStartGame, socket}) => {
     const [timer, setTimer] = useState(7);
     const [isGameStarting, setIsGameStarting] = useState(false);
     const { t } = useTranslation();
-
 
     useEffect(() => {
         if (timer === 0) {
@@ -25,9 +24,11 @@ const PlayerInfo = ({ player1, player2, onStartGame}) => {
 
         return () => clearInterval(interval);
     }, [timer]);
+
     if (!player1 || !player2) {
         return <div><h1>{t('Loading...')}</h1></div>;
     }
+
     return (
         <div className="player-info-container">
             {!isGameStarting && (

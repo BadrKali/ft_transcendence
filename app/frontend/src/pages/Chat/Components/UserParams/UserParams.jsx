@@ -35,8 +35,12 @@ const UserParams = () => {
     const handleInviteToGame = async () => {
       if (blockRelation) return;
       try {
-        await handleSendInvitation(ChatPartner.id);
-        navigate('/invite-game', { replace:true })
+        const response = await handleSendInvitation(ChatPartner.id);
+        if (response.exist) {
+          return;
+        } else {
+          navigate('/invite-game', { replace:true });
+        }
       } catch (error) {
         console.log(error);
       }
