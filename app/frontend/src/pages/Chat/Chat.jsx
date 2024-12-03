@@ -43,7 +43,7 @@ const Chat = () => {
   const  updateUnreadMsgs = (message) =>{
     if (message.receiver_id === CurrentUser?.user_id && message.receiver_id !== message.sender_id){
       setChatList(prevChatList => {
-        return prevChatList.map((contact) => {
+        return prevChatList?.map((contact) => {
           if (contact.id === message.sender_id) {
             return {        
                 ...contact,
@@ -64,7 +64,7 @@ const alreadyHaveConversation = (id) =>{
 }
 
 const sortConversations = () =>{
-  if (ChatList.length > 1){
+  if (ChatList?.length > 1){
     setChatList(prevChatList => {
       const sortedChatList = [...prevChatList].sort((a, b) => {
         return b.created_at.localeCompare(a.created_at);
@@ -106,6 +106,7 @@ const updateLastMessage = (data, result) =>{
     });
   });
 }
+
   if (clientSocket) {
     clientSocket.onmessage = (event) => {
     const data = JSON.parse(event.data);
@@ -167,10 +168,10 @@ const updateLastMessage = (data, result) =>{
     }
       
     if (data.type === "last.message"){
-      let result = ChatList.filter((contact) =>{
+      let result = ChatList?.filter((contact) =>{
         return (contact.id === data.message.sender_id) || (contact.id === data.message.receiver_id)
       })
-    if (result.length > 1){
+    if (result?.length > 1){
         result= result.filter((Conversation) => Conversation.id !== CurrentUser.user_id)
     }
     updateLastMessage(data, result)
@@ -273,10 +274,12 @@ const updateLastMessage = (data, result) =>{
       FetchMessagesSection();
       const PickedConversation = ChatList?.filter(contact => contact.username === PickedUsername)
       // if I protect for PickedConversation this will make error's msgs will not mark_as_Read !
-      if (PickedConversation[0]?.unreadMessages){
+      if (PickedConversation){
+        if (PickedConversation[0]?.unreadMessages){
           clientSocket.send(JSON.stringify({ type: "_mark_msgs_asRead_",
                                                messageData: {With: PickedUsername }}));
-        } 
+        }
+      }
     }
     
     return () => {

@@ -159,6 +159,8 @@ class ChatConsumer(AsyncWebsocketConsumer):
     async def receive(self, text_data=None):
         self.extracted_msg = json.loads(text_data)
 
+        if (self.extracted_msg.get('type') == '_warn_tournament_users_'):
+            await self.war_users()
         # 2 cases already Existing ChatList - Create new Conversation !
         if (self.extracted_msg.get('type') == '_start_chat_'):
             await self.start_chat()
@@ -183,7 +185,55 @@ class ChatConsumer(AsyncWebsocketConsumer):
                     'message': self.extracted_msg.get('messageData')
                 }
                 )
+    
+    async def war_users(self):
+        self.warning_message = 'You have a Tournament ! Check /tournament'
+        participants_ids = self.extracted_msg.get('messageData')
+        for user_id in participants_ids:
+            already_have_conv = await self.already_have_record(self.sender_id, user_id)
+            saved_msg = await self.save_warn_to_db(self.sender_id, user_id)
+            receiver_status = await self.get_user_status(user_id);
+            if already_have_conv :
+                if receiver_status :
+                    await (self.channel_layer.group_send)(
+                        f'room_{user_id}',{
+                            'type': 'newchat.message',
+                            'message' : saved_msg
+                        }
+                        )
+                    await (self.channel_layer.group_send)(
+                        f'room_{user_id}',{
+                            'type': 'last.message',
+                            'message' : saved_msg
+                        }
+                        )
+            else:
+                if receiver_status:
+                    print('We never Talked : First Time', flush=True)
+                    await (self.channel_layer.group_send)(
+                        f'room_{user_id}',{
+                            'type': 'newchat.message',
+                            'message' : saved_msg
+                        }
+                        )
+
             
+    @database_sync_to_async
+    def save_warn_to_db(self,sender, receiver):
+        receiver_record = User.objects.get(id=receiver)
+        sender_record = User.objects.get(id=sender)
+        
+        saved_message = message.objects.create(
+            
+            sender_id=sender_record,
+            receiver_id = receiver_record,
+            content= self.warning_message,
+            ImgPath = None,
+            seen = False,
+        )
+        serializer = __messageSerializer__(saved_message)
+        return serializer.data
+
     async def deactivate_typing_event(self, event):
         await (self.send( text_data=json.dumps(event) ))
         

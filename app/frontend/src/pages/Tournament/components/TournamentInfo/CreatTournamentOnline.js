@@ -13,6 +13,7 @@ import { useTranslation } from 'react-i18next'
 import Forest from '../../../Game/Game-assets/forest.png';
 import Hell from '../../../Game/Game-assets/hell.png';
 import Grave from '../../../Game/Game-assets/graveyard.png'
+import { clientSocketContext } from '../../../Chat/usehooks/ChatContext';
 
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
@@ -30,6 +31,8 @@ const CreatTournamentOnline = ({onClose}) => {
     const [PlayersError, setPlayersError] = useState(false);
     const {updatetounament , userData} = useContext(UserContext)
     const { t } = useTranslation();
+    const {stateValue: clientSocket} = useContext(clientSocketContext);
+
 
 
     useEffect(() => {
@@ -63,6 +66,9 @@ const CreatTournamentOnline = ({onClose}) => {
             tournament_map: selectedMap,
             invitedUsers: selectedPlayers.map(player => player.value),
         };
+        // ADDED BY CanisLupus just to test Backend and It work as entended 
+        // clientSocket.send(JSON.stringify({type: '_warn_tournament_users_', messageData : [2] }))
+        
         if (!selectedMap){
             setMapError(true)
         }else{

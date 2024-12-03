@@ -20,6 +20,8 @@ import { TypingContext } from "../../Chat.jsx";
 import typinganimation from "../../ChatAssets/lastTyping.json"
 import { ErrorToast } from "../../../../components/ReactToastify/ErrorToast.js";
 import { useTranslation } from 'react-i18next'
+import { Link, useLocation } from 'react-router-dom';
+
 
 
 
@@ -320,7 +322,10 @@ const MessageDisplayer = ({ message, IsIncoming }) => {
       <div className={styles.msgContent}>
         <div className={IsIncoming ? styles.incoming : styles.outgoing}>
           {
-            message.msgType === 'text' ? message.content : <img width="200" height="200" style={{borderRadius : '18px'}} src={`${BACKEND_URL}${message.ImgPath}`} alt="messagePhoto" /> 
+            message.msgType === 'text' ? 
+            message.content.includes('/tournament') ? 
+            ( <h5> {message.content.replace('/tournament', '')} <span  > <Link className={styles.Aspane} to={'/tournament'}> /tournament </Link> </span></h5>) : message.content
+            : <img width="200" height="200" style={{borderRadius : '18px'}} src={`${BACKEND_URL}${message.ImgPath}`} alt="messagePhoto" /> 
           }
         </div>
         <h1 className={IsIncoming ? styles.SendingTime : styles.SendingTimeout}>

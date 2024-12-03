@@ -26,7 +26,7 @@ const ChatFriendButton = ({profilData: ChatPartnerData}) => {
             clientSocket?.send(JSON.stringify({type: '_start_chat_', 
                 messageData : ChatPartnerData
             }))
-        }, 5555)
+        }, 3333)
 
     };
 
