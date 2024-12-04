@@ -187,7 +187,31 @@ class TournamentGameRoom(models.Model):
         if self.player1_connected and self.player2_connected:
             self.is_waiting = False
             self.save()
+            
+    def add_player(self, player):
+        if not self.player1:
+            self.player1 = player
+        elif not self.player2:
+            self.player2 = player
+        else:
+            raise ValueError("Room is already full")
+        if self.player1 and self.player2:
+            self.is_waiting = False
+        self.save()
 
+    def get_players(self):
+        return self.player1, self.player2
+
+    def leave_room(self, player):
+        if self.player1 == player:
+            self.player1 = None
+        elif self.player2 == player:
+            self.player2 = None
+        
+        if not self.player1 and not self.player2:
+            self.delete()
+        else:
+            self.save()
 
 
 

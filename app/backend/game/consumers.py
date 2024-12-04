@@ -121,6 +121,7 @@ class GameState:
 
         player1_username = await self.get_player_username(room.player1)
         player2_username = await self.get_player_username(room.player2)
+
         player1 = {
             'username': player1_username,
             'id': 1,
@@ -324,7 +325,6 @@ class GameConsumer(AsyncWebsocketConsumer):
                 await self.reconnection_task
             except asyncio.CancelledError:
                 return
-
         if self.game_mode == "tournament":
             return
         if is_game_over:
@@ -376,6 +376,23 @@ class GameConsumer(AsyncWebsocketConsumer):
         player = Player.objects.get(user__username=player_str)
         return player.user.id
 
+    async def assign_tournament_match(self):
+        from .models import TournamentGameRoom
+        from user_management.models import TournamentParticipants
+        game_over = await self.game_state.get_game_over()
+        if game_over:
+            tournament_obj = await sync_to_async(
+                lambda: TournamentParticipants.objects.filter(
+                    Q(player1=self.player) | Q(player2=self.player)
+                ).first()
+            )()
+            if tournament_obj:
+                tournament_obj.assign_winner()
+            else:
+                print("tournament_obj not found") 
+                return
+            await self.leave_room("game_over")
+            
     async def receive(self, text_data):
         data = json.loads(text_data)
         action = data.get('action')
@@ -516,32 +533,27 @@ class GameConsumer(AsyncWebsocketConsumer):
     async def handle_tournament_action(self):
         from .models import TournamentGameRoom
         try:
-            player_str = await self.get_player_str()
-            tournament_game_room = await self.check_for_tournament_reconnection(player_str)
-            if tournament_game_room:
-                self.room = tournament_game_room
-                await self.handle_reconnection(player_str, tournament_game_room)
-                return
-            tournament_game_room = await sync_to_async(
+            room = await sync_to_async(
                 lambda: TournamentGameRoom.objects.filter(
                     Q(player1=self.player) | Q(player2=self.player)
                 ).first()
             )()
-            if tournament_game_room:
-                self.room = tournament_game_room
-                self.room_name = f"game_room_{tournament_game_room.id}"
-                self.room_id = tournament_game_room.id
+
+            if room:
+                self.room = room
+                self.room_name = f"game_room_{room.id}"
+                self.room_id = room.id
                 self.room_group_name = self.room_name
                 await self.channel_layer.group_add(self.room_group_name, self.channel_name)
-                await sync_to_async(tournament_game_room.set_player_connected)(self.player)
-                await sync_to_async(tournament_game_room.check_and_update_status)()
+                await sync_to_async(room.set_player_connected)(self.player)
+                await sync_to_async(room.check_and_update_status)()
                 self.game_state = game_state_manager.get_or_create_game_state(self.room_id)
-                if not tournament_game_room.is_waiting:
+                if not room.is_waiting:
                     self.game_state.update_player_connects(True)
-                    await self.game_state.add_player("", tournament_game_room)
-                    await self.notify_players(tournament_game_room)
+                    await self.game_state.add_player("", room)
+                    await self.notify_players(room)
         except Exception as e:
-            return
+            print(f"Error in handle_tournament_action: {e}") 
 
     async def handle_random_action(self):
         from .models import GameRoom
@@ -664,6 +676,9 @@ class GameConsumer(AsyncWebsocketConsumer):
                 if not match_data:
                     await self.update_xp_and_save_history(winner, loser, self.room)
                     await self.game_state.update_match_data(True)
+                if self.game_mode == "tournament":
+                    print("tournament from start_game_loop")
+                    self.assign_tournament_match()
                 await self.channel_layer.group_send(
                     self.room_group_name,
                     {
@@ -691,11 +706,14 @@ class GameConsumer(AsyncWebsocketConsumer):
             sleep_duration = max(0, frame_duration - elapsed_time)
             await asyncio.sleep(sleep_duration)
 
+
     @sync_to_async
     def update_xp_and_save_history(self, winner, loser, room):
         from user_management.models import Player
         from .models import GameHistory
+        from user_management.models import TournamentParticipants  
         try:
+
             player1 = room.player1.user.username
             player2 = room.player2.user.username
             if player1 == winner:
@@ -706,13 +724,27 @@ class GameConsumer(AsyncWebsocketConsumer):
                 loser_user = room.player1
             winner_user.update_xp(True)
             loser_user.update_xp(False)
+    
+            if self.game_mode == "tournament":
+                print("tournament from update_xp_and_save_history")
+                tournament_obj = TournamentParticipants.objects.filter(
+                        Q(player1=self.player.user) | Q(player2=self.player.user)
+                    ).first()
+                if tournament_obj:
+                    tournament_obj.assign_winner(winner_user.user, loser_user.user)
+                else:
+                    print("tournament_obj not found") 
+                match_type = "tournament"
+            else: 
+                match_type = "single"
+
             GameHistory.objects.create(
                 winner_user=winner_user,
                 loser_user=loser_user,
                 winner_score=self.game_state.winner_score(str(winner)),
                 loser_score=self.game_state.loser_score(str(loser)),
                 game_type='pingpong',
-                match_type='single'
+                match_type=match_type
             )
         except Player.DoesNotExist:
             return

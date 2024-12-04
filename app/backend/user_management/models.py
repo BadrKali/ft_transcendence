@@ -180,6 +180,7 @@ class TournamentParticipants(models.Model):
     loosers = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='loosers', null=True, blank=True)
 
     def assign_winner(self, winner, looser):
+        print("HELLO FROM ASSIGN WINNER")
         self.loosers = looser
         self.winner = winner
         self.matchPlayed = True
@@ -269,6 +270,7 @@ class Tournament(models.Model):
         tournamentParticipants = TournamentParticipants.objects.filter(tournament=self)
         for participant in tournamentParticipants:
             participant.notify_players(self.tournament_creator)
+            break
 
 
     def save(self, *args, **kwargs):
