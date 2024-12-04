@@ -185,16 +185,16 @@ class TournamentParticipants(models.Model):
         self.winner = winner
         self.matchPlayed = True
         #remove tghe looser player from the tournament
-        if self.player1 == winner:
-            self.player2.tournament_participants.remove(self.tournament)
-        else:
-            self.player1.tournament_participants.remove(self.tournament)
+        # if self.player1 == winner:
+        #     self.player2.tournament_participants.remove(self.tournament)
+        # else:
+        #     self.player1.tournament_participants.remove(self.tournament)
         self.save()
 
     def notify_players(self, tournament_creator):
         Notification.objects.create (
             recipient=self.player1,
-            sender=tournament_creator,
+            sender=tournament_creator, 
             message='has challenged you to a game!'
         )
         channel_layer = get_channel_layer()
@@ -267,10 +267,48 @@ class Tournament(models.Model):
             self.tournament_stage = 'GROUP-STAGE'
     
     def start_tournament(self):
-        tournamentParticipants = TournamentParticipants.objects.filter(tournament=self)
-        for participant in tournamentParticipants:
-            participant.notify_players(self.tournament_creator)
-            break
+        tournament_participants = TournamentParticipants.objects.filter(tournament=self)
+        match_played = False  # Track if any match is yet to be played
+
+        # Notify players for the first unmatched participant
+        for participant in tournament_participants:
+            if not participant.matchPlayed:
+                participant.notify_players(self.tournament_creator)
+                match_played = True
+                break
+        print("hello 1")
+        if not match_played:
+            print("hello2")
+            self.tournament_stage = 'FINALS'  
+            print("hello3")
+            winners = [
+                participant.winner
+                for participant in tournament_participants
+                if participant.winner
+            ]
+            print("those are the winners", winners)
+            finalParticipants = TournamentParticipants.objects.create(
+                        tournament=self,
+                        player1=winners[i],
+                        player2=winners[i + 1],
+                        matchStage='FINALS'
+                    )
+            print("this is the final participa", finalParticipants)
+            finalGameRoom = TournamentGameRoom.objects.create(player1=winners[i].player, player2=winners[i].player)
+            print("this is final match ", finalGameRoom)
+            finalParticipants.notify_players(self.tournament_creator)
+            self.save()
+            # Handle case where winners are less than 2 (e.g., declare overall winner)
+            # elif len(winners) == 1:
+            #     self.overall_winner = winners[0]
+            #     self.save()
+
+                    
+
+
+
+
+            
 
 
     def save(self, *args, **kwargs):
@@ -288,7 +326,7 @@ class TournamentInvitation(models.Model):
 
     def __str__(self):
         return f"{self.player} invited to {self.tournament}"
-
+ 
 
     
 # class LocalTournamentUser(models.Model):
