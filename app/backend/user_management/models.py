@@ -255,7 +255,7 @@ class Tournament(models.Model):
         random.shuffle(participants)
         for i in range(0, len(participants), 2):
             TournamentParticipants.objects.create(tournament=self, player1=participants[i], player2=participants[i+1])
-            TournamentGameRoom.objects.create(player1=participants[i].player, player2=participants[i+1].player)
+            # TournamentGameRoom.objects.create(player1=participants[i].player, player2=participants[i+1].player)
 
 
     def assign_tournament_stage(self):
@@ -267,34 +267,41 @@ class Tournament(models.Model):
             self.tournament_stage = 'GROUP-STAGE'
     
     def start_tournament(self):
+        from game.models import TournamentGameRoom
         tournament_participants = TournamentParticipants.objects.filter(tournament=self)
         match_played = False  # Track if any match is yet to be played
 
         # Notify players for the first unmatched participant
         for participant in tournament_participants:
             if not participant.matchPlayed:
+                print("jhshshshshshshshshshsh")
+                TournamentGameRoom.objects.create(player1=participant.player1.player, player2=participant.player2.player)
                 participant.notify_players(self.tournament_creator)
                 match_played = True
                 break
+
+        # If no matches are pending, proceed to finals
         print("hello 1")
         if not match_played:
             print("hello2")
-            self.tournament_stage = 'FINALS'  
+            self.tournament_stage = 'FINALS'  # Update tournament stage
             print("hello3")
+            # Get winners from the participants
             winners = [
                 participant.winner
                 for participant in tournament_participants
-                if participant.winner
+                if participant.winner  # Ensure the participant has a decl
             ]
             print("those are the winners", winners)
+            # If we have enough winners, create semifinal matches
             finalParticipants = TournamentParticipants.objects.create(
                         tournament=self,
-                        player1=winners[i],
-                        player2=winners[i + 1],
+                        player1=winners[0],
+                        player2=winners[1],
                         matchStage='FINALS'
                     )
             print("this is the final participa", finalParticipants)
-            finalGameRoom = TournamentGameRoom.objects.create(player1=winners[i].player, player2=winners[i].player)
+            finalGameRoom = TournamentGameRoom.objects.create(player1=winners[0].player, player2=winners[1].player)
             print("this is final match ", finalGameRoom)
             finalParticipants.notify_players(self.tournament_creator)
             self.save()
