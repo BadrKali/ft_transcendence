@@ -12,6 +12,8 @@ import { CircularProgressbar, buildStyles } from 'react-circular-progressbar';
 import 'react-circular-progressbar/dist/styles.css';
 import { avatarsUnkown } from '../../../../assets/assets'
 import { useTranslation } from 'react-i18next'
+import { useContext } from 'react'
+import { UserContext } from '../../../../context/UserContext'
 
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
@@ -21,6 +23,7 @@ function TournamentBracketOnline() {
   const four_lines = new Array(4).fill(null);
   const two_lines = new Array(2).fill(null);
   const one_lines = new Array(1).fill(null);
+  const {TounamentData, TounamenrLoading} = useContext(UserContext)
   const {data: matches ,isLoading, error} = useFetch(`${BACKEND_URL}/api/user/tournament/SEMI-FINALS`)
   const [FourPlayer, setFourPlayer] = useState([]);
   const [TwoPlayer, setTwoPlayer] = useState([]);
@@ -36,6 +39,22 @@ function TournamentBracketOnline() {
     { id: 1, player1: {}, player2: {} },
   ];
 
+  useEffect(() => {
+    const fetchbracket  =  async () => {
+      const TournamentResponse = await fetch(`${BACKEND_URL}/api/user/tournament/${TounamentData.tournament_stage}`, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${auth.accessToken}`
+        }
+    });
+    console.log("bracket :", TournamentResponse);
+    if (!TournamentResponse.ok) {
+        throw new Error('Failed to fetch the tournament data');
+    }
+    }
+    fetchbracket();
+  },[TounamentData])
 
   useEffect(() => {
     if (matches) {

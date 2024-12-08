@@ -97,8 +97,10 @@ const CreatTournamentOnline = ({onClose}) => {
                 },
                 body: JSON.stringify(postData)
             });
+            console.log(response);
             if (response.ok) {
-                onClose(); 
+           
+                console.log("aaaaa");
                 const TournamentResponse = await fetch(`${BACKEND_URL}/api/user/tournament/`, {
                 method: 'GET',
                     headers: {

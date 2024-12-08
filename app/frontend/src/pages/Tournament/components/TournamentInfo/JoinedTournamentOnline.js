@@ -47,8 +47,26 @@ function JoinedTournamentOnline({TournamentData}) {
         if (data) {
           setProfilData(data);
         }
+
       }, [data]);
       
+    useEffect(() => {
+        const fetchData = async () => {
+            const TournamentResponse = await fetch(`${BACKEND_URL}/api/user/tournament/`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${auth.accessToken}`
+                }
+            });
+            if (!TournamentResponse.ok) {
+                throw new Error('Failed to fetch the tournament data');
+            }
+            const updatedTournamentData = await TournamentResponse.json();
+            updatetounament(updatedTournamentData);
+        }
+        fetchData();
+    },[])
 
       useEffect(() => {
         setTimeout(() => {

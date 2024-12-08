@@ -106,7 +106,7 @@ const CreatTournamentOffline= ({onClose}) => {
                 body: JSON.stringify(postData)
             });
             if (response.ok) {
-                onClose(); 
+        
                 const TournamentResponse = await fetch(`${BACKEND_URL}/api/user/local-tournament/`, {
                 method: 'GET',
                     headers: {
