@@ -28,7 +28,7 @@ const GameSettingsPopUp = ({ onExit }) => {
     const [currentAreaIndex, setCurrentAreaIndex] = useState(0);
     const [currentColorIndex, setCurrentColorIndex] = useState(0);
     const [selectedOption, setSelectedOption] = useState(null);
-    const {setGameAccepted} = useContext(RealTimeContext);
+    const {setGameAccepted, tournamentType} = useContext(RealTimeContext);
     const { t } = useTranslation();
 
 
@@ -55,12 +55,14 @@ const GameSettingsPopUp = ({ onExit }) => {
     const handleSelectOption = (option) => {
         setSelectedOption(option);
     };
+    const mode = tournamentType ? "tournament" : "invite";
+
     const handleSubmit = async () => {
         const gameSettings = {
             background: areasNames[currentAreaIndex],
             paddle: paddleColors[currentColorIndex],
             keys: selectedOption,
-            gameMode: "invite",
+            gameMode: mode, 
         }
         try  {
             const response = await axios.post(`${BACKEND_URL}/api/game/game-settings/current-user/`, gameSettings, {
@@ -69,10 +71,14 @@ const GameSettingsPopUp = ({ onExit }) => {
                     'Authorization': `Bearer ${auth.accessToken}`,
                 }
             });
-          
+            if (response.status === 200) {
+                console.log("Game settings saved");
+            } else {
+                alert("Failed to save game settings");
+            }
         } catch (error) {
             console.log("Failed to save game settings");
-        }
+        } 
         setGameAccepted(true);
         onExit();
     }

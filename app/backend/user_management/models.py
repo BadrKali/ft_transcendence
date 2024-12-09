@@ -225,7 +225,6 @@ class TournamentParticipants(models.Model):
     def __str__(self):  
         return f"{self.player1} vs {self.player2} in {self.tournament}"
 
-
 class Tournament(models.Model):
     tournament_creator = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     tournament_name = models.CharField(max_length=100)
@@ -328,9 +327,7 @@ class TournamentInvitation(models.Model):
 
     def __str__(self):
         return f"{self.player} invited to {self.tournament}"
- 
 
-    
 # class LocalTournamentUser(models.Model):
 #     tournament = models.ForeignKey('LocalTournament', related_name='participants', on_delete=models.CASCADE)
 #     username = models.CharField(max_length=100)
@@ -338,7 +335,6 @@ class TournamentInvitation(models.Model):
 
 #     def __str__(self):
 #         return self.username
-
 
 class LocalPlayer(models.Model):
 

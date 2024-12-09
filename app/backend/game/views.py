@@ -65,7 +65,7 @@ class TriggerAchievementView(APIView):
             }
         )
         return Response({"status": "Achievement sent"}, status=status.HTTP_200_OK)
-    
+
 class GameSettingsView(APIView):
     def post(self, request):
         try:
@@ -88,7 +88,7 @@ class GameSettingsView(APIView):
             return Response({"error": "Player not found"}, status=status.HTTP_404_NOT_FOUND)
         except GameSettings.DoesNotExist:
             return Response({"error": "GameSettings not found"}, status=status.HTTP_404_NOT_FOUND)
-        
+
 class GameRoomView(APIView):
     def get(self, request, room_id):
         try:
@@ -113,14 +113,13 @@ class SendChallengeView(APIView):
                 Q(player_sender=player_sender, player_receiver=player_receiver) |
                 Q(player_sender=player_receiver, player_receiver=player_sender)
             ).first()
-
+ 
             if existing_challenge:
                 return Response({'error': 'A challenge already exists between these players.'}, status=status.HTTP_400_BAD_REQUEST)
 
             player1, created = Player.objects.get_or_create(user_id=request.user.id)
             player2, created = Player.objects.get_or_create(user_id=player_receiver_id)
 
-                
             exist = InviteGameRoom.objects.filter(
                 Q(player1=player2) | Q(player2=player2)
             ).exists()

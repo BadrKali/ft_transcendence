@@ -49,13 +49,14 @@ class GameState:
         return self.state['player_connects']
 
     async def update_player_connects(self, status):
+        print("update_player_connects")
         self.state['player_connects'] = status
     
     async def get_match_data(self):
         return self.state['match_data']
 
     async def update_match_data(self, status):
-        self.state['match_data'] = status
+        self.state['match_data'] = status 
 
     async def get_game_started(self):
         return self.state['game_started']
@@ -116,41 +117,47 @@ class GameState:
         return self.state['players'][loser]['score']
 
     async def add_player(self, username, room):
-        player1_settings = await self.get_player_settings(room.player1)
-        player2_settings = await self.get_player_settings(room.player2)
+        try :
+            # print("add_player")
+            # player1_settings = await sync_to_async(self.get_player_settings)(room.player1)
+            # print("player1_settings")
+            # player2_settings = await sync_to_async(self.get_player_settings)(room.player2)
+            # print("player2_settings")
 
-        player1_username = await self.get_player_username(room.player1)
-        player2_username = await self.get_player_username(room.player2)
+            # player1_username = await self.get_player_username(room.player1)
+            # player2_username = await self.get_player_username(room.player2)
 
-        player1 = {
-            'username': player1_username,
-            'id': 1,
-            'score': 0,
-            'x': 20,
-            'y': (self.state['canvas']['height'] - 140) / 2,
-            'width': 10,
-            'height': 140,
-            'color': player1_settings.paddle if player1_settings else 'WHITE',
-            'disconnect' : 0,
-            'status': True,
-        }
-        player2 = {
-            'username': player2_username,
-            'id': 2,
-            'score': 0,
-            'x': self.state['canvas']['width'] - 30,
-            'y': (self.state['canvas']['height'] - 140) / 2,
-            'width': 10,
-            'height': 140,
-            'color': player2_settings.paddle if player2_settings else 'WHITE',
-            'disconnect' : 0,
-            'status': True,
-        }
+            player1 = {
+                'username': "hahaha",
+                'id': 1,
+                'score': 0,
+                'x': 20,
+                'y': (self.state['canvas']['height'] - 140) / 2,
+                'width': 10,
+                'height': 140,
+                'color': 'WHITE',
+                'disconnect': 0,
+                'status': True,
+            }
+            player2 = { 
+                'username': "hohoho",
+                'id': 2,
+                'score': 0,
+                'x': self.state['canvas']['width'] - 30,
+                'y': (self.state['canvas']['height'] - 140) / 2,
+                'width': 10,
+                'height': 140,
+                'color': 'WHITE', 
+                'disconnect': 0,
+                'status': True,
+            } 
+            self.state['players']["hahaha"] = player1
+            self.state['players']["hohoho"] = player2
+        except Exception as e:
+            print(e)
+            return
 
-        self.state['players'][player1_username] = player1
-        self.state['players'][player2_username] = player2
-
-    async def reconnect_player(self, username, room):
+    async def reconnect_player(self, username, room): 
         player = self.state['players'][username]
         player['status'] = True
     
@@ -185,8 +192,11 @@ class GameState:
 
     async def get_player_settings(self, player):
         from .models import GameSettings
-        return await sync_to_async(lambda: GameSettings.objects.filter(user=player).first())()
-
+        try:
+            return await sync_to_async(lambda: GameSettings.objects.filter(user=player).first())()
+        except Exception as e:
+            print(e)
+ 
     def player_mouvement(self, user, direction, canvas_size):
         if user in self.state['players']:
             self.player_canvas_sizes[user] = canvas_size
@@ -194,8 +204,8 @@ class GameState:
                 self.player_movement_states.pop(user, None)
             else:
                 self.player_movement_states[user] = direction
-
-    def update_player_positions(self):
+ 
+    def update_player_positions(self):  
         current_time = time.time()
         delta_time = current_time - self.last_update_time
         self.last_update_time = current_time
@@ -544,20 +554,24 @@ class GameConsumer(AsyncWebsocketConsumer):
                 self.room_name = f"game_room_{room.id}"
                 self.room_id = room.id
                 self.room_group_name = self.room_name
+
                 await self.channel_layer.group_add(self.room_group_name, self.channel_name)
                 await sync_to_async(room.set_player_connected)(self.player)
                 await sync_to_async(room.check_and_update_status)()
                 self.game_state = game_state_manager.get_or_create_game_state(self.room_id)
-                if not room.is_waiting:
-                    self.game_state.update_player_connects(True)
+                if not room.is_waiting: 
+                    await self.game_state.update_player_connects(True)
                     await self.game_state.add_player("", room)
                     await self.notify_players(room)
+            else:
+                print(f"No tournament game room found for player {self.player}")
         except Exception as e:
-            print(f"Error in handle_tournament_action: {e}") 
+            print(f"Error in handle_tournament_action: {e}")
 
-    async def handle_random_action(self):
+
+    async def handle_random_action(self): 
         from .models import GameRoom
-        player_str = await self.get_player_str()
+        player_str = await self.get_player_str() 
         room = await self.check_for_random_reconnection(player_str)
         if room:
             self.room = room

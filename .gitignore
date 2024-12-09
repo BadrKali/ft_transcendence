@@ -44,3 +44,4 @@ node_modules/
 
 # Media files
 
+nginx/access.log
