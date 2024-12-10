@@ -116,43 +116,73 @@ class GameState:
     def loser_score(self, loser):
         return self.state['players'][loser]['score']
 
-    async def add_player(self, username, room):
+    async def add_player_for_tournament(self, username1, username2, game_setting1, game_setting2):
         try :
-            # print("add_player")
-            # player1_settings = await sync_to_async(self.get_player_settings)(room.player1)
-            # print("player1_settings")
-            # player2_settings = await sync_to_async(self.get_player_settings)(room.player2)
-            # print("player2_settings")
-
-            # player1_username = await self.get_player_username(room.player1)
-            # player2_username = await self.get_player_username(room.player2)
-
             player1 = {
-                'username': "hahaha",
+                'username': username1,
                 'id': 1,
                 'score': 0,
                 'x': 20,
                 'y': (self.state['canvas']['height'] - 140) / 2,
                 'width': 10,
                 'height': 140,
-                'color': 'WHITE',
+                'color': game_setting1.paddle if game_setting1 else 'WHITE',
                 'disconnect': 0,
                 'status': True,
             }
             player2 = { 
-                'username': "hohoho",
+                'username': username2,
                 'id': 2,
                 'score': 0,
                 'x': self.state['canvas']['width'] - 30,
                 'y': (self.state['canvas']['height'] - 140) / 2,
                 'width': 10,
                 'height': 140,
-                'color': 'WHITE', 
+                'color': game_setting2.paddle if game_setting2 else 'WHITE', 
                 'disconnect': 0,
                 'status': True,
             } 
-            self.state['players']["hahaha"] = player1
-            self.state['players']["hohoho"] = player2
+            self.state['players'][username1] = player1
+            self.state['players'][username2] = player2
+        except Exception as e:
+            print(e)
+            return
+ 
+    async def add_player(self, username, room):
+        try :
+            player1_settings = await self.get_player_settings(room.player1)
+            player2_settings = await self.get_player_settings(room.player2)
+
+            player1_username = await self.get_player_username(room.player1)
+            player2_username = await self.get_player_username(room.player2)
+
+            player1 = {
+                'username': player1_username,
+                'id': 1,
+                'score': 0,
+                'x': 20,
+                'y': (self.state['canvas']['height'] - 140) / 2,
+                'width': 10,
+                'height': 140,
+                'color': player1_settings.paddle if player1_settings else 'WHITE',
+                'disconnect': 0,
+                'status': True,
+            }
+
+            player2 = { 
+                'username': player2_username,
+                'id': 2,
+                'score': 0,
+                'x': self.state['canvas']['width'] - 30,
+                'y': (self.state['canvas']['height'] - 140) / 2,
+                'width': 10,
+                'height': 140,
+                'color': player2_settings.paddle if player2_settings else 'WHITE', 
+                'disconnect': 0,
+                'status': True,
+            } 
+            self.state['players'][player1_username] = player1
+            self.state['players'][player2_username] = player2
         except Exception as e:
             print(e)
             return
@@ -302,7 +332,6 @@ class GameStateManager:
 game_state_manager = GameStateManager()
 
 class GameConsumer(AsyncWebsocketConsumer):
-    print("GameConsumer")
     async def connect(self):
         if self.scope['user'].is_anonymous:
             await self.close()
@@ -335,8 +364,8 @@ class GameConsumer(AsyncWebsocketConsumer):
                 await self.reconnection_task
             except asyncio.CancelledError:
                 return
-        if self.game_mode == "tournament":
-            return
+        # if self.game_mode == "tournament":
+        #     return
         if is_game_over:
             await self.leave_room("game_over")
             return
@@ -441,7 +470,6 @@ class GameConsumer(AsyncWebsocketConsumer):
             self.reconnection_task = create_task(self.waiting_for_reconnection(room))
 
     async def left_before_launch(self):
-        print("left_before_launch")
         current_player_username = await self.game_state.get_player_username(self.player)
         opponent_username = next(
             username for username in self.game_state.state['players'].keys() 
@@ -541,7 +569,7 @@ class GameConsumer(AsyncWebsocketConsumer):
             return
 
     async def handle_tournament_action(self):
-        from .models import TournamentGameRoom
+        from .models import TournamentGameRoom, GameSettings
         try:
             room = await sync_to_async(
                 lambda: TournamentGameRoom.objects.filter(
@@ -559,9 +587,15 @@ class GameConsumer(AsyncWebsocketConsumer):
                 await sync_to_async(room.set_player_connected)(self.player)
                 await sync_to_async(room.check_and_update_status)()
                 self.game_state = game_state_manager.get_or_create_game_state(self.room_id)
-                if not room.is_waiting: 
+                if not room.is_waiting:
+                    game_setting1 = await sync_to_async(lambda: GameSettings.objects.filter(user=room.player1).first())()
+                    game_setting2 = await sync_to_async(lambda: GameSettings.objects.filter(user=room.player2).first())()
+                    player1_username = await self.game_state.get_player_username(room.player1)
+                    player2_username = await self.game_state.get_player_username(room.player2)
+                    print(f"player1_username: {player1_username}")
+                    print(f"player2_username: {player2_username}")
                     await self.game_state.update_player_connects(True)
-                    await self.game_state.add_player("", room)
+                    await self.game_state.add_player_for_tournament(player1_username, player2_username, game_setting1, game_setting2)
                     await self.notify_players(room)
             else:
                 print(f"No tournament game room found for player {self.player}")
@@ -570,7 +604,7 @@ class GameConsumer(AsyncWebsocketConsumer):
 
 
     async def handle_random_action(self): 
-        from .models import GameRoom
+        from .models import GameRoom 
         player_str = await self.get_player_str() 
         room = await self.check_for_random_reconnection(player_str)
         if room:
