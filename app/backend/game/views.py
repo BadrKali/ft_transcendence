@@ -125,6 +125,19 @@ class SendChallengeView(APIView):
             ).exists()
             if exist:
                 return Response({'exists': True, 'error': 'Player is already in a game room.'}, status=status.HTTP_400_BAD_REQUEST)
+            
+            exist = GameRoom.objects.filter(
+                Q(player1=player2) | Q(player2=player2)
+            ).exists()
+            if exist:
+                return Response({'exists': True, 'error': 'Player is already in a game room.'}, status=status.HTTP_400_BAD_REQUEST)
+            
+            exist = TournamentGameRoom.objects.filter(
+                Q(player1=player2) | Q(player2=player2)
+            ).exists()
+            if exist:
+                return Response({'exists': True, 'error': 'Player is already in a game room.'}, status=status.HTTP_400_BAD_REQUEST)
+            
             try:
                 invite_game_room, created = InviteGameRoom.objects.get_or_create(player1=player1, player2=player2)
                 game_challenge = GameChallenge.objects.create(
