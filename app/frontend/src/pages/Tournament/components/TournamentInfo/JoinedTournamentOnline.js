@@ -21,8 +21,8 @@ function JoinedTournamentOnline({TournamentData}) {
     const [profilData, setProfilData] = useState([]);
     const {userData, updatetounament} = useContext(UserContext)
     const [progress, setProgress] = useState(0);
+    const [tournamentFinished, setTournamentFinished] = useState(false);
     const { t } = useTranslation();
-
 
 
     const date = new Date(TournamentData.tournament_date);
@@ -59,10 +59,15 @@ function JoinedTournamentOnline({TournamentData}) {
                     'Authorization': `Bearer ${auth.accessToken}`
                 }
             });
+
             if (!TournamentResponse.ok) {
                 throw new Error('Failed to fetch the tournament data');
             }
             const updatedTournamentData = await TournamentResponse.json();
+            if(updatedTournamentData.tournament_stage === 'FINALS'){
+                console.log('Tournament finished');
+                setTournamentFinished(true);
+            }
             updatetounament(updatedTournamentData);
         }
         fetchData();
@@ -83,10 +88,14 @@ function JoinedTournamentOnline({TournamentData}) {
                 'Authorization': `Bearer ${auth.accessToken}`
               },
             });
-        
+            
             if (response.ok) {
               const data = await response.json();
-             
+              console.log('Tournament started:', data);
+              if (data.status === 'FINALS') {
+                setTournamentFinished(true);
+              }
+
            
             } else {
               const errorData = await response.json();
@@ -265,7 +274,7 @@ function JoinedTournamentOnline({TournamentData}) {
                             opacity: TournamentData.tournament_participants && TournamentData.tournament_participants.length < 4 ? 0.5 : 1
                         }}
                     >
-                        <MainButton type="submit" functionHandler={handleStartTournament} content={t('Start')} />
+                        {!tournamentFinished ? (<MainButton type="submit" functionHandler={handleStartTournament} content={t('Start')} />) : ""}
                     </div>
                     <MainButton type="submit"  functionHandler={handleDeleteTournament} content={t('Cancel')} />
                 </div>

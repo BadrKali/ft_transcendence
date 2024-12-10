@@ -385,6 +385,8 @@ class StartTournamentView(APIView):
     def post(self, request):
         current_user = request.user
         tournament = Tournament.objects.filter(tournament_creator=request.user).first()
+        if(tournament.tournament_stage == 'FINALS'):
+            return(Response({'status': 'FINALS'}, status=status.HTTP_200_OK))
         tournament.start_tournament()
         return(Response({'message': 'Tournament started successfully'}, status=status.HTTP_200_OK))
 
