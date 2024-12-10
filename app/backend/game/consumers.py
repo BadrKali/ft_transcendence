@@ -353,6 +353,7 @@ class GameConsumer(AsyncWebsocketConsumer):
             }))
 
     async def disconnect(self, close_code):
+        from user_management.models import TournamentParticipants
         player_str = await self.get_player_str()
         self.game_state.update_game_running(False)
         is_game_over = await self.game_state.get_game_over()
@@ -364,8 +365,6 @@ class GameConsumer(AsyncWebsocketConsumer):
                 await self.reconnection_task
             except asyncio.CancelledError:
                 return
-        # if self.game_mode == "tournament":
-        #     return
         if is_game_over:
             await self.leave_room("game_over")
             return
@@ -500,13 +499,14 @@ class GameConsumer(AsyncWebsocketConsumer):
         current_player_username = await self.game_state.get_player_username(self.player)
         opponent_username = next(
             username for username in self.game_state.state['players'].keys() 
-            if username != winner
+            if username != winner 
         )
-        while total_time_waited < timeout:
-            if await self.game_state.get_players_status():
-                return
-            await asyncio.sleep(interval)
-            total_time_waited += interval
+        if self.game_mode != "tournament":
+            while total_time_waited < timeout:
+                if await self.game_state.get_players_status():
+                    return
+                await asyncio.sleep(interval)
+                total_time_waited += interval
 
         await self.update_xp_and_save_history(winner, opponent_username, room)
 
