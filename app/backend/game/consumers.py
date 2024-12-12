@@ -594,7 +594,7 @@ class GameConsumer(AsyncWebsocketConsumer):
                     player2_username = await self.game_state.get_player_username(room.player2)
                     print(f"player1_username: {player1_username}")
                     print(f"player2_username: {player2_username}")
-                    await self.game_state.update_player_connects(True)
+                    self.game_state.update_player_connects(True)
                     await self.game_state.add_player_for_tournament(player1_username, player2_username, game_setting1, game_setting2)
                     await self.notify_players(room)
             else:
@@ -759,7 +759,7 @@ class GameConsumer(AsyncWebsocketConsumer):
     def update_xp_and_save_history(self, winner, loser, room):
         from user_management.models import Player
         from .models import GameHistory
-        from user_management.models import TournamentParticipants  
+        from user_management.models import TournamentParticipants, Tournament
         try:
 
             player1 = room.player1.user.username
@@ -778,8 +778,9 @@ class GameConsumer(AsyncWebsocketConsumer):
                 tournament_obj = TournamentParticipants.objects.filter(
                         Q(player1=self.player.user) | Q(player2=self.player.user)
                     ).first()
-                if tournament_obj:
+                if tournament_obj:  
                     tournament_obj.assign_winner(winner_user.user, loser_user.user)
+                    # IMPLEMENT TOURNAMENT STAGE HERE YAAAAAAA BADR
                 else:
                     print("tournament_obj not found") 
                 match_type = "tournament"
