@@ -781,6 +781,9 @@ class GameConsumer(AsyncWebsocketConsumer):
                 if tournament_obj:  
                     tournament_obj.assign_winner(winner_user.user, loser_user.user)
                     # IMPLEMENT TOURNAMENT STAGE HERE YAAAAAAA BADR
+                    print("asjkdhakjdhkajdhkjahsd NYAHAHAHAHAHA")
+                    tournament = Tournament.objects.get(id=tournament_obj.tournament.id)
+                    tournament.level_tournament_to_finals()
                 else:
                     print("tournament_obj not found") 
                 match_type = "tournament"

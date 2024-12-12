@@ -274,7 +274,8 @@ function JoinedTournamentOnline({TournamentData}) {
                             opacity: TournamentData.tournament_participants && TournamentData.tournament_participants.length < 4 ? 0.5 : 1
                         }}
                     >
-                        {!tournamentFinished ? (<MainButton type="submit" functionHandler={handleStartTournament} content={t('Start')} />) : ""}
+                        {/* {!tournamentFinished ? (<MainButton type="submit" functionHandler={handleStartTournament} content={t('Start')} />) : ""} */}
+                        <MainButton type="submit" functionHandler={handleStartTournament} content={t('Start')} />
                     </div>
                     <MainButton type="submit"  functionHandler={handleDeleteTournament} content={t('Cancel')} />
                 </div>

@@ -256,6 +256,26 @@ class Tournament(models.Model):
             TournamentParticipants.objects.create(tournament=self, player1=participants[i], player2=participants[i+1])
             # TournamentGameRoom.objects.create(player1=participants[i].player, player2=participants[i+1].player)
 
+    def level_tournament_to_finals(self):
+        match_played = False
+        tournament_participants = TournamentParticipants.objects.filter(tournament=self)
+        if self.tournament_stage == 'SEMI-FINALS' and all(participant.matchPlayed for participant in tournament_participants):
+            winners = [participant.winner for participant in tournament_participants if participant.winner]
+            if len(winners) >= 2:
+                print("ha7na kancreyiw l part dyal l final")
+                self.tournament_stage = 'FINALS'
+                self.save()
+                final_participants = TournamentParticipants.objects.create(
+                    tournament=self,
+                    player1=winners[0],
+                    player2=winners[1],
+                    matchStage='FINALS'
+                )
+                # final_game_room = TournamentGameRoom.objects.create(
+                #     player1=winners[0].player,
+                #     player2=winners[1].player
+                # )
+            self.save()
 
     def assign_tournament_stage(self):
         if self.tournament_participants.count() == 4:
@@ -266,9 +286,9 @@ class Tournament(models.Model):
             self.tournament_stage = 'GROUP-STAGE'
     
     def start_tournament(self):
-        print("HELLO FROM START TOURNAMENT hjgjhgjgjhgjghjgjgjgjjhgjgjgjghjgjhghj")
+        # print("HELLO FROM START TOURNAMENT hjgjhgjgjhgjghjgjgjgjjhgjgjgjghjgjhghj")
         from game.models import TournamentGameRoom
-        tournament_participants = TournamentParticipants.objects.filter(tournament=self)
+        tournament_participants = TournamentParticipants.objects.filter(tournament=self, matchStage='SEMI-FINALS')
         match_played = False
 
         # Create game room and notify players for the first unmatched participant
@@ -285,22 +305,30 @@ class Tournament(models.Model):
 
         # Proceed to finals if no matches are pending
         if not match_played:
-            self.tournament_stage = 'FINALS'
-            winners = [participant.winner for participant in tournament_participants if participant.winner]
-
-            if len(winners) >= 2:
-                final_participants = TournamentParticipants.objects.create(
-                    tournament=self,
-                    player1=winners[0],
-                    player2=winners[1],
-                    matchStage='FINALS'
-                )
-                final_game_room = TournamentGameRoom.objects.create(
-                    player1=winners[0].player,
-                    player2=winners[1].player
-                )
-                if final_game_room:
-                    final_participants.notify_players(self.tournament_creator)
+            final_participants = TournamentParticipants.objects.filter(tournament=self, matchStage='FINALS')
+            print("wak wak", final_participants)
+            final_game_room = TournamentGameRoom.objects.create(
+                player1=final_participants[0].player1.player,
+                player2=final_participants[0].player2.player
+            )
+            #notify player
+            final_participants[0].notify_players(self.tournament_creator)
+            # self.tournament_stage = 'FINALS'
+            # winners = [participant.winner for participant in tournament_participants if participant.winner]
+            #just get the game room for the final match with the winners its already created 
+            # if len(winners) >= 2:
+            #     final_participants = TournamentParticipants.objects.create(
+            #         tournament=self,
+            #         player1=winners[0],
+            #         player2=winners[1],
+            #         matchStage='FINALS'
+            #     )
+            #     final_game_room = TournamentGameRoom.objects.create(
+            #         player1=winners[0].player,
+            #         player2=winners[1].player
+            #     )
+            #     if final_game_room:
+            #         final_participants.notify_players(self.tournament_creator)
             self.save()
 
 
