@@ -10,18 +10,17 @@ function TournamentsItem({players}) {
   const [ifPlayer2Win, setIfPlayer2Win] = useState(false)
 
 
-
-useEffect(() => {
-  if (players?.player1?.username && players?.winner?.username && players.player1.username === players.winner.username) {
-    setIfPlayer1Win(true);
-  }
-}, [players]);
-
-useEffect(() => {
-  if (players?.player2?.username && players?.winner?.username && players.player2.username === players.winner.username) {
-    setIfPlayer2Win(true);
-  }
-}, [players]);
+  useEffect(() => {
+    if (players?.winner && players?.player1?.user_id) {
+      setIfPlayer1Win(players.winner === players.player1.user_id);
+    }
+  }, [players]);
+  
+  useEffect(() => {
+    if (players?.winner && players?.player2?.user_id) {
+      setIfPlayer2Win(players.winner === players.player2.user_id);
+    }
+  }, [players]);
 
   return (
     <div className="tournamentsItem-match-container">

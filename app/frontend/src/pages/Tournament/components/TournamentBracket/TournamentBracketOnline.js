@@ -24,10 +24,16 @@ function TournamentBracketOnline() {
   const two_lines = new Array(2).fill(null);
   const one_lines = new Array(1).fill(null);
   const {TounamentData, TounamenrLoading} = useContext(UserContext)
-  const {data: matches ,isLoading, error} = useFetch(`${BACKEND_URL}/api/user/tournament/SEMI-FINALS`)
+  const [matches, setMatches] = useState([]);
+  // const {data: matches ,isLoading, error} = useFetch(`${BACKEND_URL}/api/user/tournament/SEMI-FINALS`)
   const [FourPlayer, setFourPlayer] = useState([]);
   const [TwoPlayer, setTwoPlayer] = useState([]);
   const { t } = useTranslation();
+  const [playersByStage, setPlayersByStage] = useState({});
+  const [loading, setLoading] = useState(true);
+  const [semiFinalMatches, setSemiFinalMatches] = useState([]);
+  const [finalMatches, setFinalMatches] = useState([]);
+
   const unknownAvatar = avatarsUnkown.img;
 
   const defaultTwoMatches = [
@@ -35,74 +41,189 @@ function TournamentBracketOnline() {
     { id: 2, player1: {}, player2: {} },
   ];
 
-  const defaultOneMatches = [
-    { id: 1, player1: {}, player2: {} },
-  ];
+  const defaultOneMatch = [{ id: 1, player1: {}, player2: {} }];
 
-  useEffect(() => {
-    const fetchbracket  =  async () => {
-      const TournamentResponse = await fetch(`${BACKEND_URL}/api/user/tournament/${TounamentData.tournament_stage}`, {
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${auth.accessToken}`
-        }
-    });
-    console.log("bracket :", TournamentResponse);
-    if (!TournamentResponse.ok) {
-        throw new Error('Failed to fetch the tournament data');
-    }
-    }
-    fetchbracket();
-  },[TounamentData])
+  // useEffect(() => {
+  //   const fetchBracket = async () => {
+  //     try {
 
+  //       const response = await fetch(`${BACKEND_URL}/api/user/tournament/${TounamentData.tournament_stage}`, {
+  //         method: 'GET',
+  //         headers: {
+  //           'Content-Type': 'application/json',
+  //           'Authorization': `Bearer ${auth.accessToken}`
+  //         }
+  //       });
+  
+  //       if (!response.ok) {
+  //         throw new Error('Failed to fetch the tournament data');
+  //       }
+  
+  //       const data = await response.json();
+  //       setMatches(data);
+  //       console.log("Bracket Data:", data);
+  //     } catch (error) {
+  //       console.error("Error fetching tournament data:", error.message);
+  //     }
+  //   };
+  
+  //   fetchBracket();
+  // }, [TounamentData.tournament_stage, auth.accessToken]);
+
+
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     try {
+  //       const semiFinalResponse = await fetch(`${BACKEND_URL}/api/user/tournament/SEMI-FINALS`, {
+  //         method: 'GET',
+  //         headers: {
+  //           'Content-Type': 'application/json',
+  //           'Authorization': `Bearer ${auth.accessToken}`
+  //         }
+  //       });
+  
+  //       const finalResponse = await fetch(`${BACKEND_URL}/api/user/tournament/FINALS`, {
+  //         method: 'GET',
+  //         headers: {
+  //           'Content-Type': 'application/json',
+  //           'Authorization': `Bearer ${auth.accessToken}`
+  //         }
+  //       });
+  
+  //       if (semiFinalResponse.ok) {
+  //         const semiFinalData = await semiFinalResponse.json();
+  //         console.log("Semi-Finals Data:", semiFinalData);
+  //         setSemiFinalMatches(semiFinalData); 
+  //       }
+  
+  //       if (finalResponse.ok) {
+  //         const finalData = await finalResponse.json();
+  //         console.log("Finals Data:", finalData);
+  //         setFinalMatches(finalData); 
+  //       }
+  //     } catch (error) {
+  //       console.error('Error fetching data:', error);
+  //     }
+  //   };
+  
+  //   fetchData();
+  // }, []); 
+  
   useEffect(() => {
-    if (matches) {
-      const fetchPlayerDetails = async (playerId) => {
+    const fetchPlayerDetails = async (playerId) => {
+      try {
         const response = await fetch(`${BACKEND_URL}/api/user/stats/${playerId}`, {
-          method: 'GET',
+          method: "GET",
           headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${auth.accessToken}`
-          }
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${auth.accessToken}`,
+          },
         });
+  
         if (!response.ok) {
-          throw new Error('Failed to fetch player data');
+          throw new Error("Failed to fetch player data");
         }
-        return response.json();
-      };
-      
-      const fetchAllPlayers = async () => {
-        const playerData = [];
-        
-        for (const match of matches) {
+  
+        return await response.json();
+      } catch (error) {
+        console.error(`Error fetching player data for ID ${playerId}:`, error);
+        return null; 
+      }
+    };
+  
+    const fetchPlayersByStage = async (matches) => {
+      console.log("dddd ", matches)
+      return await Promise.all(
+        matches.map(async (match) => {
           const [player1Data, player2Data] = await Promise.all([
             fetchPlayerDetails(match.player1),
-            fetchPlayerDetails(match.player2)
+            fetchPlayerDetails(match.player2),
           ]);
-          
-          playerData.push({
+  
+          return {
             matchId: match.id,
+            matchStage: match.matchStage, 
+            tournament: match.tournament, 
+            matchPlayed: match.matchPlayed, 
             player1: player1Data,
             player2: player2Data,
-          });
-        }
-        
-        setFourPlayer(playerData);
-      };
-      
-      fetchAllPlayers().catch(error => console.error(error));
-    }
-  }, [matches]);
+            winner: match.winner, 
+            looser: match.loosers, 
+          };
+        })
+      );
+    };
   
-  const matchesToDisplayTwo = FourPlayer.length > 0 ? FourPlayer : defaultTwoMatches;
-  const matchesToDisplayOne = TwoPlayer.length > 0 ? FourPlayer : defaultOneMatches;
- 
+    const fetchAllPlayers = async () => {
+      try {
+        setLoading(true);
+  
+      
+        const [semiFinalResponse, finalResponse] = await Promise.all([
+          fetch(`${BACKEND_URL}/api/user/tournament/SEMI-FINALS`, {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${auth.accessToken}`,
+            },
+          }),
+          fetch(`${BACKEND_URL}/api/user/tournament/FINALS`, {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${auth.accessToken}`,
+            },
+          }),
+        ]);
+  
+        const [semiFinalMatches, finalMatches] = await Promise.all([
+          semiFinalResponse.ok ? semiFinalResponse.json() : [],
+          finalResponse.ok ? finalResponse.json() : [],
+        ]);
+  
+       
+        const [semiFinalPlayers, finalPlayers] = await Promise.all([
+          fetchPlayersByStage(semiFinalMatches),
+          fetchPlayersByStage(finalMatches),
+        ]);
+  
+    
+        setSemiFinalMatches(semiFinalPlayers);
+        setFinalMatches(finalPlayers);
+  
+        setPlayersByStage((prev) => ({
+          ...prev,
+          "SEMI-FINALS": semiFinalPlayers,
+          "FINALS": finalPlayers,
+        }));
+      } catch (error) {
+        console.error("Error fetching tournament data:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+  
+    fetchAllPlayers();
+  }, [auth.accessToken]);
+  
+  const semiFinalMatche = semiFinalMatches.length > 0 ? semiFinalMatches : defaultTwoMatches;
+  const finalPlayers = finalMatches.length > 0 ? finalMatches : defaultOneMatch;
+  
+  
+
+
+  if (loading)
+    {
+      return(
+        <div>loading....</div>
+      )
+    }
+
   return (
     <div className='bracket-container'>
         <div className="second-four-player">
             <div className="player-items">
-                  {matchesToDisplayTwo.map((players) => (
+                  {semiFinalMatche.map((players) => (
                     <TournamentsItem key={players.id} players={players}/>
                   ))}
               </div>
@@ -122,7 +243,7 @@ function TournamentBracketOnline() {
         </div>
         <div className="final-game-players">
               <div className="player-items">
-                  {matchesToDisplayOne.map((players) => (
+                  {finalPlayers.map((players) => (
                     <TournamentsItem key={players.id} players={players}/>
                   ))}
               </div>
@@ -145,11 +266,11 @@ function TournamentBracketOnline() {
         </div>
         <div className='TournamentPlayers'>
                 <h2>{t('SEMI FINAL')}</h2>
-            {matchesToDisplayTwo.map((players) => (
+            {semiFinalMatche.map((players) => (
                     <TournamentPlayersItem key={players.id} players={players}/>
                   ))}
                <h2>{t('FINAL')}</h2>
-            {matchesToDisplayOne.map((players) => (
+            {finalPlayers.map((players) => (
                     <TournamentPlayersItem key={players.id} players={players}/>
                   ))}
               <div className='TournamentWinner'>
