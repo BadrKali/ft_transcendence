@@ -286,7 +286,7 @@ class Tournament(models.Model):
             self.tournament_stage = 'GROUP-STAGE'
     
     def start_tournament(self):
-        # print("HELLO FROM START TOURNAMENT hjgjhgjgjhgjghjgjgjgjjhgjgjgjghjgjhghj")
+        print("HELLO FROM START TOURNAMENT hjgjhgjgjhgjghjgjgjgjjhgjgjgjghjgjhghj")
         from game.models import TournamentGameRoom
         tournament_participants = TournamentParticipants.objects.filter(tournament=self, matchStage='SEMI-FINALS')
         match_played = False
@@ -307,12 +307,19 @@ class Tournament(models.Model):
         if not match_played:
             final_participants = TournamentParticipants.objects.filter(tournament=self, matchStage='FINALS')
             print("wak wak", final_participants)
-            final_game_room = TournamentGameRoom.objects.create(
-                player1=final_participants[0].player1.player,
-                player2=final_participants[0].player2.player
-            )
+            # final_game_room = TournamentGameRoom.objects.create(
+            #     player1=final_participants[0].player1.player,
+            #     player2=final_participants[0].player2.player
+            # )
             #notify player
-            final_participants[0].notify_players(self.tournament_creator)
+            for participant in final_participants:
+                print("ya zatla ya kho")
+                final_game_room = TournamentGameRoom.objects.create(
+                    player1=participant.player1.player,
+                    player2=participant.player2.player
+                )
+                participant.notify_players(self.tournament_creator)
+            
             # self.tournament_stage = 'FINALS'
             # winners = [participant.winner for participant in tournament_participants if participant.winner]
             #just get the game room for the final match with the winners its already created 
