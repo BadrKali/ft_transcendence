@@ -390,7 +390,15 @@ class StartTournamentView(APIView):
         tournament.start_tournament()
         return(Response({'message': 'Tournament started successfully'}, status=status.HTTP_200_OK))
 
-
+class TournamentNotify(APIView):
+    def patch(self, request, tournament_id):
+        try:
+            tournament = Tournament.objects.get(id=tournament_id)
+            tournament.all_notified = True
+            tournament.save()
+            return Response({"message": "Tournament notification status updated successfully."}, status=status.HTTP_200_OK)
+        except Tournament.DoesNotExist:
+            return Response({"error": "Tournament not found."}, status=status.HTTP_404_NOT_FOUND)
 
 class TournamentByStageView(APIView):
     def get(self, request, stage):

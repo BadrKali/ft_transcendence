@@ -24,7 +24,7 @@ urlpatterns = [
     path('tournament/invitations/', TournamentInvitationView.as_view(), name='tournament_management'),
     path('tournament/invitation/<int:tournament_id>/responce', TournamentInvitationResponse.as_view(), name="tournament_invitation_response"),
     path('tournament/invitations/<int:tournament_id>', TournamentInvitationView.as_view(), name='tournament_invitation_handler'),
-
+    path('tournament/set_notified/<int:tournament_id>', TournamentNotify.as_view(), name="tournament_notify"),
     path('tournament/start/', StartTournamentView.as_view(), name='tournament_start'),
 
     path('tournament/', TournamentsManagementView.as_view(), name='tournament_management'),

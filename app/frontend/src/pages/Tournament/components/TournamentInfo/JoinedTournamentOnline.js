@@ -10,6 +10,9 @@ import 'react-circular-progressbar/dist/styles.css';
 import MainButton from '../../../../components/MainButton/MainButton'
 import { UserContext } from '../../../../context/UserContext'
 import { useTranslation } from 'react-i18next'
+import { clientSocketContext } from '../../../Chat/usehooks/ChatContext';
+// import { clientSocketContext } from '../../pages/Chat/usehooks/ChatContext';
+
 
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
@@ -23,8 +26,12 @@ function JoinedTournamentOnline({TournamentData}) {
     const [progress, setProgress] = useState(0);
     const [tournamentFinished, setTournamentFinished] = useState(false);
     const { t } = useTranslation();
-
-
+    const [player1, setPlayer1] = useState();
+    const [player2, setPlayer2] = useState();
+    const [player3, setPlayer3] = useState();
+    const [player4, setPlayer4] = useState();
+    const { stateValue: clientSocket } = useContext(clientSocketContext);
+    const [ifPlayed, setIfPlayed] = useState(false);
     const date = new Date(TournamentData.tournament_date);
     const {data ,isLoading, error} = useFetch(`${BACKEND_URL}/api/user/stats/${TournamentData.tournament_creator}`)
 
@@ -33,6 +40,9 @@ function JoinedTournamentOnline({TournamentData}) {
             setjoinedOwner(true)
     },[userData]);
 
+    useEffect(() => {
+        console.log("aaa :",ifPlayed)
+    },[ifPlayed])
     const formattedDate = date.toLocaleDateString('en-GB', {
         day: '2-digit',
         month: 'short',
@@ -78,8 +88,90 @@ function JoinedTournamentOnline({TournamentData}) {
           setProgress(profilData.rank_progress);
         }, 500); 
       }, []);
-  
+      
+      useEffect(() => {
+        console.log("aaaa",TournamentData)
+      },[TournamentData])
+    useEffect(() => {
+        const fetchBracket = async () => {
+        try {
+
+            const response = await fetch(`${BACKEND_URL}/api/user/tournament/${TournamentData.tournament_stage}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${auth.accessToken}`
+            }
+            });
+    
+            if (!response.ok) {
+            throw new Error('Failed to fetch the tournament data');
+            }
+    
+            const data = await response.json();
+            setIfPlayed(TournamentData.all_notified)
+            if (data[0].matchStage === "SEMI-FINALS"){
+               
+                    setPlayer1(data[0].player1)
+                    setPlayer2(data[0].player2)
+                
+                    setPlayer3(data[1].player1)
+                    setPlayer4(data[1].player2)
+               
+            }else if(data[0].matchStage === "FINALS"){
+                    setPlayer1(data[0].player1)
+                    setPlayer2(data[0].player2)
+            }
+            console.log("Bracket Data:", data);
+        } catch (error) {
+            console.error("Error fetching tournament data:", error.message);
+        }
+        };
+    
+        fetchBracket();
+    }, [TournamentData.tournament_stage, auth.accessToken]);
+
+    const handleNotify = async () => {
+        let playersToNotify = [];
+        setIfPlayed(true);
+    
+        if (TournamentData.tournament_stage === "SEMI-FINALS") {
+            playersToNotify = [
+                [player1, player2], 
+                [player3, player4], 
+            ];
+        } else if (TournamentData.tournament_stage === "FINALS") {
+            playersToNotify = [
+                [player1, player2], 
+            ];
+        }
+    
+        
+        playersToNotify.forEach(pair => {
+            clientSocket.send(JSON.stringify({ type: '_warn_tournament_users_', messageData: pair }));
+        });
+
+        const response = await fetch(`${BACKEND_URL}/api/user/tournament/set_notified/${TournamentData.id}`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${auth.accessToken}`
+            }
+        });
+        
+        if (response.ok) {
+            const data = await response.json();
+            console.log('Success:', data);
+        } else {
+            const errorData = await response.json();
+            console.error('Error:', errorData);
+        }
+        console.log("Notifications sent for player pairs:", playersToNotify);
+    };
+    
       const handleStartTournament = async () => {
+          
+
         try {
             const response = await fetch(`${BACKEND_URL}/api/user/tournament/start/`, {
               method: 'POST',
@@ -108,6 +200,10 @@ function JoinedTournamentOnline({TournamentData}) {
           }
       }
 
+      useEffect(() => {
+        console.log("1 ", player1)
+        console.log("2 ", player2)
+      },[player1])
       const handleDeleteTournament = async () => {
         try {
           const response = await fetch(`${BACKEND_URL}/api/user/tournament/`, {
@@ -274,8 +370,11 @@ function JoinedTournamentOnline({TournamentData}) {
                             opacity: TournamentData.tournament_participants && TournamentData.tournament_participants.length < 4 ? 0.5 : 1
                         }}
                     >
-                        {/* {!tournamentFinished ? (<MainButton type="submit" functionHandler={handleStartTournament} content={t('Start')} />) : ""} */}
-                        <MainButton type="submit" functionHandler={handleStartTournament} content={t('Start')} />
+                         {ifPlayed ? (
+                                <MainButton type="submit" functionHandler={handleStartTournament} content={t('Start')} />
+                            ) : (
+                                <MainButton type="button" functionHandler={handleNotify} content={t('Notify')} />
+                            )}
                     </div>
                     <MainButton type="submit"  functionHandler={handleDeleteTournament} content={t('Cancel')} />
                 </div>

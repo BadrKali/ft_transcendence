@@ -235,7 +235,7 @@ class Tournament(models.Model):
     tournament_status = models.BooleanField(default=False) # hadi ghadi tbadelha b True lma ykono les places kamline
     tournament_stage = models.CharField(max_length=100, default="semi-finals") # hadi f ina stage wasla tournament
     is_online = models.BooleanField(default=True)
-
+    all_notified = models.BooleanField(default=False)
     tournament_participants = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='tournament_participants')
    
     def assign_tournament_prize(self):

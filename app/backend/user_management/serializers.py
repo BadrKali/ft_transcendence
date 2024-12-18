@@ -93,6 +93,7 @@ class TournamentSerializer(serializers.ModelSerializer):
             'tournament_status',
             'tournament_stage',
             'tournament_participants',
+            'all_notified',
         ]
 
 #check if the user is not present with the invited users
