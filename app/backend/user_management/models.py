@@ -179,7 +179,7 @@ class TournamentParticipants(models.Model):
     winner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='winner', null=True, blank=True)
     loosers = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='loosers', null=True, blank=True)
 
-    def assign_winner(self, winner, looser):
+    def assign_winner(self, winner, looser): 
         print("HELLO FROM ASSIGN WINNER")
         self.loosers = looser
         self.winner = winner
@@ -264,6 +264,7 @@ class Tournament(models.Model):
             if len(winners) >= 2:
                 print("ha7na kancreyiw l part dyal l final")
                 self.tournament_stage = 'FINALS'
+                self.all_notified = False
                 self.save()
                 final_participants = TournamentParticipants.objects.create(
                     tournament=self,

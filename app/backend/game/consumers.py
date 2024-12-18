@@ -485,13 +485,25 @@ class GameConsumer(AsyncWebsocketConsumer):
         )
     
     async def waiting_for_reconnection(self, room):
-        from .models import GameRoom
-
-        room = await sync_to_async(
-            lambda: GameRoom.objects.filter(
-                    Q(player1=self.player) | Q(player2=self.player)
-            ).first()
-        )()
+        from .models import GameRoom, InviteGameRoom, TournamentGameRoom
+        if self.game_mode == "random":
+            room = await sync_to_async(
+                lambda: GameRoom.objects.filter(
+                        Q(player1=self.player) | Q(player2=self.player)
+                ).first()
+            )()
+        elif self.game_mode == "invite":
+            room = await sync_to_async(
+                lambda: InviteGameRoom.objects.filter(
+                        Q(player1=self.player) | Q(player2=self.player)
+                ).first()
+            )() 
+        elif self.game_mode == "tournament":
+            room = await sync_to_async(
+                lambda: TournamentGameRoom.objects.filter(
+                        Q(player1=self.player) | Q(player2=self.player)
+                ).first()
+            )()
         timeout = 15
         interval = 1 
         total_time_waited = 0
@@ -507,14 +519,12 @@ class GameConsumer(AsyncWebsocketConsumer):
                     return
                 await asyncio.sleep(interval)
                 total_time_waited += interval
-
+        print("hello, im the winner of the game")
         await self.update_xp_and_save_history(winner, opponent_username, room)
-
         await self.send(text_data=json.dumps({
             'action': 'you_won',
             'winner': winner
         }))
-
 
     async def handle_invite_reconnection(self):
         player_str = await self.get_player_str()
@@ -757,35 +767,47 @@ class GameConsumer(AsyncWebsocketConsumer):
 
     @sync_to_async
     def update_xp_and_save_history(self, winner, loser, room):
+        print("hello from update_xp") 
         from user_management.models import Player
         from .models import GameHistory
         from user_management.models import TournamentParticipants, Tournament
         try:
-
+            print("1")
             player1 = room.player1.user.username
+            print("2")
             player2 = room.player2.user.username
+            print("3")
             if player1 == winner:
+                print("4")
                 winner_user = room.player1
+                print("5")
                 loser_user = room.player2
             else:
+                print("6")
                 winner_user = room.player2
+                print("7")
                 loser_user = room.player1
+            print("8")
             winner_user.update_xp(True)
+            print("9")
             loser_user.update_xp(False)
-    
-            if self.game_mode == "tournament":
+            print("10")
+        
+            if self.game_mode == "tournament": 
+                print("11") 
                 print("tournament from update_xp_and_save_history")
                 tournament_obj = TournamentParticipants.objects.filter(
-                        Q(player1=self.player.user) | Q(player2=self.player.user)
-                    ).first()
-                if tournament_obj:  
+                    (Q(player1=self.player.user) & Q(player2=room.player2.user)) |
+                    (Q(player2=self.player.user) & Q(player1=room.player1.user))
+                ).first()
+                if tournament_obj:
+                    print(tournament_obj)
                     tournament_obj.assign_winner(winner_user.user, loser_user.user)
-                    # IMPLEMENT TOURNAMENT STAGE HERE YAAAAAAA BADR
-                    print("asjkdhakjdhkajdhkjahsd NYAHAHAHAHAHA")
                     tournament = Tournament.objects.get(id=tournament_obj.tournament.id)
-                    tournament.level_tournament_to_finals()
+                    if tournament.tournament_stage != 'FINALS':
+                        tournament.level_tournament_to_finals()
                 else:
-                    print("tournament_obj not found") 
+                    print("tournament_obj not found")
                 match_type = "tournament"
             else: 
                 match_type = "single"
