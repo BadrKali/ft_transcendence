@@ -7,10 +7,26 @@ volumes:
     name: frontend
   redis:
     name: redis
+  certs:
+    name: certs
+  elasticsearch:
+    name: elasticsearch
+  kibana:
+    name: kibana
+  prometheus:
+    name: prometheus
+  alertmanager:
+    name: alertmanager
+  grafana:
+    name: grafana
 
 networks:
   ft_transcendence:
     name: ft_transcendence
+  elk-stack:
+    name: elk-stack
+  prom-graf:
+    name: prom-graf
 
 services:
   frontend:
