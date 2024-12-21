@@ -54,9 +54,10 @@ clean:
 	@docker volume rm -f $$(docker volume ls -q) || true
 	@docker network rm $$(docker network ls -q) || true
 
-re: clean all
-
 prune: clean
 	@docker system prune -a --volumes -f
+
+re: clean all
+
 
 .PHONY: all up down stop start clean re prune

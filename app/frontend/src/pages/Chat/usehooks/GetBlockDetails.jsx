@@ -36,5 +36,6 @@ export  function useGetBlockDetails(ChatPartner, auth){
 
       return {
         blockRelation,
+        setblockRelation
       }
 }

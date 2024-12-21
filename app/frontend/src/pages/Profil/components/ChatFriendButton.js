@@ -17,17 +17,9 @@ const ChatFriendButton = ({profilData: ChatPartnerData}) => {
 
     const handleItemClick = () => {
         navigate(`/chat`, {state :{
-            navigatedBy: 'click_on_ChatFriend_button' 
+            navigatedBy: 'click_on_ChatFriend_button',
+            Targetuser : ChatPartnerData
         } });
-        // The Pickedusername is setted befor the Contact Section component mount so that Make a
-        // problem ! because ChatList will be null .
-        // here is why I maked a small Delay !
-        setTimeout(()=>{
-            clientSocket?.send(JSON.stringify({type: '_start_chat_', 
-                messageData : ChatPartnerData
-            }))
-        }, 3333)
-
     };
 
     return (

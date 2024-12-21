@@ -9,7 +9,9 @@ import { clientSocketContext } from "./usehooks/ChatContext.js";
 import { blockPopUpContext } from "./usehooks/ChatContext.js";
 import receivedmsgsound from "./ChatAssets/receivemsgnotif.mp3"
 import { ErrorToast } from "../../components/ReactToastify/ErrorToast.js";
-
+import Lottie from 'lottie-react';
+import LoadingAnimation from '../../components/OauthTwo/loading-animation.json'
+import { useLocation } from 'react-router-dom';
 
 export const conversationMsgContext = createContext();
 export const ChatListContext = createContext();
@@ -39,6 +41,9 @@ const Chat = () => {
   const [requestRefetch, setrequestRefetch] = useState(false);
   const{blockpopUp, setblockpopUp} = useContext(blockPopUpContext)
   const [typingData, setTypingData] = useState({status: false, sender_id: null})
+  const [IsLoading, setIsLoading] = useState(true)
+  const location = useLocation();
+  const data = location.state || null;
 
   const  updateUnreadMsgs = (message) =>{
     if (message.receiver_id === CurrentUser?.user_id && message.receiver_id !== message.sender_id){
@@ -112,6 +117,7 @@ const updateLastMessage = (data, result) =>{
     const data = JSON.parse(event.data);
     const notif = new Audio(receivedmsgsound);
     
+    console.log(data.type)
     if (data.type === 'receive_typing'){
       if (ChatPartner && ChatPartner.id === data.message.sender_id){
       setTypingData({status: true,
@@ -191,10 +197,6 @@ const updateLastMessage = (data, result) =>{
           });
         });
     }
-
-    if (data.type === "Pick_existed_conv"){
-          setPickerUsername(data.message.username)
-    }
     
     if (data.type === 'Blocke_Warning'){
       setblockpopUp(true)
@@ -202,19 +204,36 @@ const updateLastMessage = (data, result) =>{
         setblockpopUp(false)
       }, 2000)
     }
-
-    if (data.type === 'start_Firstconv'){
-      setChatList(prevChatList => {
-        if (prevChatList === null) {
-          return [data.message];
-        } else {
-          return [data.message, ...prevChatList];
-        }
-      });
-      setPickerUsername(data.message.username)
-    }
   };
 }
+
+
+useEffect(()=>{
+  if (ChatList){
+    if (data?.navigatedBy === 'click_on_ChatFriend_button'){
+      const TargetUser = data.Targetuser
+      const existence = ChatList.some((user) => user.username === TargetUser.username)
+      if (existence){
+        setPickerUsername(TargetUser.username)
+      }else{
+        const targetConv = {
+          "avatar" : TargetUser.avatar,
+          "username" :  TargetUser.username,
+          "unreadMessages" : 0,
+          "status" : true,
+          "lastMessage" : 'Hi ! 👋',
+          "id" :  TargetUser.user_id,
+          "lastTime" : `${new Date(Date.now()).getHours()} : ${new Date(Date.now()).getMinutes()}`,
+          "created_at" : String(new Date(Date.now()))
+        }
+        setChatList (prev => [targetConv, ...prev])
+        setPickerUsername(TargetUser.username)
+        console.log(targetConv)
+      }
+    }
+    setIsLoading(false)
+  }
+}, [ChatList])
 
   useEffect(() => {
     const abortController = new AbortController();
@@ -288,6 +307,11 @@ const updateLastMessage = (data, result) =>{
   }, [PickedUsername, auth.accessToken]);
 
   return (
+    IsLoading ?
+    <div className={style.cercleAnimation} >
+        <Lottie  animationData={LoadingAnimation} style={{ width: 400, height: 400 }} />
+    </div>
+    :
     <>
       <h1>Clunca</h1>
       <div className={style.ChatView}>

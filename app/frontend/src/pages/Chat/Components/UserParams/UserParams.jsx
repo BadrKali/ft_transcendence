@@ -23,7 +23,7 @@ const UserParams = () => {
 
 
 
-  const { blockRelation } = useGetBlockDetails(ChatPartner, auth);
+  const { blockRelation, setblockRelation } = useGetBlockDetails(ChatPartner, auth);
     
     function handleVisiteProfil(){
       if (ChatPartner)
@@ -58,6 +58,8 @@ const UserParams = () => {
         })
         if (response.ok){
           SuccessToast(t(`User has been blocked successfully.`));
+          // setblockRelation(true)
+          
         }else {
           const data = await response.json();
           ErrorToast(`Error : ${data.error}`)

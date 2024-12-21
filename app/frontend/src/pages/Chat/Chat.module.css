@@ -18,3 +18,12 @@
         grid-template-rows: 5rem 1fr;
     }
 }
+
+.cercleAnimation{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 90%;
+
+}
