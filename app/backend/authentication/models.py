@@ -20,7 +20,7 @@ class User(AbstractUser):
         super().save(*args, **kwargs)
         if created:
             Player.objects.create(user=self)
-    
+
     def set_avatar_from_url(self, image_url):
         from urllib import request
         from django.core.files import File
@@ -30,7 +30,7 @@ class User(AbstractUser):
             os.path.basename(image_url),
             File(open(result[0], 'rb'))
         )
-
+    
     def generate_otp_secret(self):
         if not self.otp_secret:
             self.otp_secret = pyotp.random_base32()

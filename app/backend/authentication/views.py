@@ -61,19 +61,11 @@ class UserRegistration(APIView):
                 return Response({"message": "No avatar provided"}, status=status.HTTP_400_BAD_REQUEST)
             user = serializer.save()
             player = Player.objects.get(user=user)
-            self.create_default_game_settings(player)
+            player.create_default_game_settings()
             self.unlock_first_register_achievement(user)
             return Response({"message": "User registered successfully"}, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    def create_default_game_settings(self, player):
-        GameSettings.objects.create(
-            user=player,
-            background='hell',
-            paddle='#036145',
-            keys='up-down',
-            gameMode=''
-        )
 
     def unlock_first_register_achievement(self, user):
         achievement, _ = Achievement.objects.get_or_create(
