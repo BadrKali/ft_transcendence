@@ -242,7 +242,7 @@ const resources = {
       "Accept" : "Accept",
       "Reject" : "Reject",
       "Creat" : "Creat",
-      "Accept" : "Accept",
+
       "Reject" : "Reject",
       "Start" : "Start",
       "Cancel" : "Cancel",
@@ -251,6 +251,10 @@ const resources = {
 
 
       "No map selected" : "No map selected",
+      "Players not notified yet" : "Players not notified yet",
+      "Notify" : "Notify",
+      "Finish" : "Finish",
+       "Unknown Player" : "Unknown Player",
 
 
     }
@@ -327,7 +331,7 @@ const resources = {
       "Matchs Played": "Matchs Joués", 
       "FRIENDS": "AMIS", 
       "Loss": "Défaite", 
-      "uknown player": "joueur inconnu", // "unknown" is misspelled as "uknown" in English
+      "uknown player": "joueur inconnu", 
       "BACK TO LOBBY ?": "RETOUR AU LOBBY ?", 
       "Yes": "Oui", 
       "Cancel": "Annuler", 
@@ -488,6 +492,20 @@ const resources = {
       "Start": "Démarrer",
       "Cancel": "Annuler",
       "Leave": "Quitter",
+
+      "Accept": "Accepter",
+      "Reject": "Rejeter",
+      "Create": "Créer",
+      "Start": "Démarrer",
+      "Cancel": "Annuler",
+      "Leave": "Quitter",
+
+
+      "No map selected": "Aucune carte sélectionnée",
+      "Players not notified yet": "Joueurs non encore notifiés",
+      "Notify": "Notifier",
+      "Finish": "Terminer",
+      "Unknown Player": "Joueur inconnu"
 
     
     }
@@ -724,6 +742,12 @@ const resources = {
       "Start": "Iniciar",
       "Cancel": "Cancelar",
       "Leave": "Salir",
+
+      "No map selected": "No se ha seleccionado un mapa",
+      "Players not notified yet": "Jugadores aún no notificados",
+      "Notify": "Notificar",
+      "Finish": "Finalizar",
+      "Unknown Player": "Jugador desconocido"
 
 
     }

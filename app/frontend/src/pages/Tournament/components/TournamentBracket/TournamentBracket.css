@@ -244,40 +244,60 @@
 
 }
 
-.TheWinnerCard{
+.TheWinnerCard {
     box-sizing: border-box;
-    background-color: #1A1B22; 
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); 
-    border-radius: 8px;
-    padding: 10px;
+    background-color: #2A2B36; 
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+    border-radius: 12px; 
+    padding: 20px; 
+    max-width: 300px; 
+    margin: 0 auto; 
+    text-align: center; 
+    border: 2px solid transparent; 
+    transition: transform 0.2s, border-color 0.2s;
     width: 100%;
-    flex: 1;
-}
-
-.WinnerImage{
+  }
+  
+  .TheWinnerCard:hover {
+    transform: scale(1.05); 
+    border-color: #32CD32; 
+  }
+  
+  .WinnerImage {
     display: flex;
     justify-content: center;
-    /* align-items: center; */
-}
-
-.WinnerImage img{
-    height: 100px;
-    width: 100px;
+    margin-bottom: 15px;
+  }
+  
+  .WinnerImage img {
+    height: 120px;
+    width: 120px;
     object-fit: cover;
     border-radius: 50%; 
-    border: 2px solid #fff; 
-}
-
-.WinerNameRank{
+    border: 3px solid #32CD32;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); 
+  }
+  
+  .WinnerNameRank {
     display: flex;
     flex-direction: column;
-    justify-content: center;
     align-items: center;
-    padding: 20px;
-    font-size: 16px;
+    gap: 8px;
+  }
+  
+  .WinnerNameRank h2 {
+    font-size: 20px;
     font-weight: bold;
-}
-
+    color: #32CD32;
+    margin: 0;
+  }
+  
+  .WinnerNameRank p {
+    font-size: 16px;
+    color: #B0B0B0; 
+    margin: 0;
+  }
+  
 .winerProgress{
     display: flex;
     height: 100px;

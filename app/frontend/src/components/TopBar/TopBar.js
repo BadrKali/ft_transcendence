@@ -75,7 +75,7 @@ const TopBar = () => {
 
   useEffect(() => {
     if (tournamentMatchAccepted) {
-      console.log('tournamentMatchAccepted', tournamentMatchAccepted);
+    
       setTournamentMatchAccepted(false);
       navigate('/tournament-game', { replace:true });
     }

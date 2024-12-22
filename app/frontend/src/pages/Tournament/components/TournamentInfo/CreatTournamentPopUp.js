@@ -110,7 +110,6 @@ const CreatTournamentPopUp = ({ isOpen, onClose})=> {
                 updatetounament(updatedTournamentData);
             } else {
                 const errorData = await response.json();
-                console.log('Error creating tournament: ' );
             }
         } catch (error) {
 

@@ -97,10 +97,8 @@ export const RealTimeProvider = ({ children }) => {
             setData(dataFromServer);
           
             if (dataFromServer.type === 'match_notification') {
-                console.log("Match Notification");
                 setGameChallenge(dataFromServer);
             } else if (dataFromServer.type === 'tournament_notification') {
-                console.log("Tournament Notification");
                 setTournamentType(true);
                 setGameChallenge(dataFromServer);
             } else if (dataFromServer.type === "invite_reconnection") {

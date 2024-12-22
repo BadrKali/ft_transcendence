@@ -40,7 +40,7 @@ function HistoryItem( {history} ) {
 
 if (player.games_played){
 
-    winPer = Math.floor((30 / 100) * 100);
+    winPer = Math.floor((player.games_won / player.games_played) * 100);
 }
   return (
     <div className={isWineer ? "card won" : "card loss"}>
@@ -66,7 +66,6 @@ if (player.games_played){
                     <p className='parg clr'>{history.winner_score}:{history.loser_score}</p>
                 </div>
                 <div className="Loss box">
-                    {/* <p>{t('Played')}</p> */}
                     <p className='parg' style={{color: '#8D93AC'}}>{formatTimeAgo(history.played_at)}</p>
                 </div>
             </div>

@@ -138,7 +138,6 @@ function JoinedTournamentOffline({TournamentData}) {
                 } else {
                     throw new Error('Network response was not ok');
                 }
-            console.log('Tournament deleted successfully:', data);
     
           } else {
             const errorData = await response.json();
@@ -153,7 +152,7 @@ function JoinedTournamentOffline({TournamentData}) {
       
   return (
     <div className="joined-tournament">
-       <h1 className='tournament-title'>{TournamentData.tournament_name} OFFLINE</h1>
+       <h1 className='tournament-title'>{TournamentData.tournament_name} </h1>
        
        <div className={`tournament-info-container ${TournamentData.tournament_map}`}>
             <div className='tournament-info-item'>

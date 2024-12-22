@@ -25,7 +25,7 @@ function HistoryItem( {history} ) {
         player = history.loser_user
 
   if (player.games_played){
-      winPer = Math.floor((30 / 100) * 100);
+    winPer = Math.floor((player.games_won / player.games_played) * 100);
   }
   return (
     <div className={history.is_winner ? "card won" : "card loss"}>

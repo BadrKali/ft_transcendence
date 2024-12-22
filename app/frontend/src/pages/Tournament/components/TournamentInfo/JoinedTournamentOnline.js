@@ -11,6 +11,7 @@ import MainButton from '../../../../components/MainButton/MainButton'
 import { UserContext } from '../../../../context/UserContext'
 import { useTranslation } from 'react-i18next'
 import { clientSocketContext } from '../../../Chat/usehooks/ChatContext';
+import { ErrorToast } from '../../../../components/ReactToastify/ErrorToast'
 // import { clientSocketContext } from '../../pages/Chat/usehooks/ChatContext';
 
 
@@ -40,9 +41,7 @@ function JoinedTournamentOnline({TournamentData}) {
             setjoinedOwner(true)
     },[userData]);
 
-    useEffect(() => {
-        console.log("aaa :",ifPlayed)
-    },[ifPlayed])
+ 
     const formattedDate = date.toLocaleDateString('en-GB', {
         day: '2-digit',
         month: 'short',
@@ -74,10 +73,7 @@ function JoinedTournamentOnline({TournamentData}) {
                 throw new Error('Failed to fetch the tournament data');
             }
             const updatedTournamentData = await TournamentResponse.json();
-            if(updatedTournamentData.tournament_stage === 'FINALS'){
-                console.log('Tournament finished');
-                setTournamentFinished(true);
-            }
+    
             updatetounament(updatedTournamentData);
         }
         fetchData();
@@ -89,9 +85,7 @@ function JoinedTournamentOnline({TournamentData}) {
         }, 500); 
       }, []);
       
-      useEffect(() => {
-        console.log("aaaa",TournamentData)
-      },[TournamentData])
+   
     useEffect(() => {
         const fetchBracket = async () => {
         try {
@@ -103,11 +97,10 @@ function JoinedTournamentOnline({TournamentData}) {
                 'Authorization': `Bearer ${auth.accessToken}`
             }
             });
-    
             if (!response.ok) {
-            throw new Error('Failed to fetch the tournament data');
+                throw new Error('Failed to fetch the tournament data');
             }
-    
+            
             const data = await response.json();
             setIfPlayed(TournamentData.all_notified)
             if (data[0].matchStage === "SEMI-FINALS"){
@@ -121,8 +114,10 @@ function JoinedTournamentOnline({TournamentData}) {
             }else if(data[0].matchStage === "FINALS"){
                     setPlayer1(data[0].player1)
                     setPlayer2(data[0].player2)
+                if (data[0].winner){
+                    setTournamentFinished(true);
+                }
             }
-            console.log("Bracket Data:", data);
         } catch (error) {
             console.error("Error fetching tournament data:", error.message);
         }
@@ -161,16 +156,31 @@ function JoinedTournamentOnline({TournamentData}) {
         
         if (response.ok) {
             const data = await response.json();
-            console.log('Success:', data);
         } else {
             const errorData = await response.json();
-            console.error('Error:', errorData);
         }
-        console.log("Notifications sent for player pairs:", playersToNotify);
     };
     
       const handleStartTournament = async () => {
-          
+        const TournamentResponse = await fetch(`${BACKEND_URL}/api/user/tournament/`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${auth.accessToken}`
+            }
+        });
+
+        if (!TournamentResponse.ok) {
+            throw new Error('Failed to fetch the tournament data');
+        }
+        const updatedTournamentData = await TournamentResponse.json();
+
+        if (!updatedTournamentData.all_notified){
+            ErrorToast(t("Players not notified yet"));
+            setIfPlayed(false);
+            return;
+        }
+
 
         try {
             const response = await fetch(`${BACKEND_URL}/api/user/tournament/start/`, {
@@ -183,10 +193,6 @@ function JoinedTournamentOnline({TournamentData}) {
             
             if (response.ok) {
               const data = await response.json();
-              console.log('Tournament started:', data);
-              if (data.status === 'FINALS') {
-                setTournamentFinished(true);
-              }
 
            
             } else {
@@ -200,10 +206,9 @@ function JoinedTournamentOnline({TournamentData}) {
           }
       }
 
-      useEffect(() => {
-        console.log("1 ", player1)
-        console.log("2 ", player2)
-      },[player1])
+    
+
+    
       const handleDeleteTournament = async () => {
         try {
           const response = await fetch(`${BACKEND_URL}/api/user/tournament/`, {
@@ -242,10 +247,39 @@ function JoinedTournamentOnline({TournamentData}) {
    
         }
       };
+
+      const renderMainActionButton = () => {
+        if (!ifPlayed) {
+            return (
+                <MainButton
+                    type="button"
+                    functionHandler={handleNotify}
+                    content={t('Notify')}
+                />
+            );
+            
+        }
+        if (tournamentFinished) {
+            return (
+                <MainButton
+                    type="submit"
+                    functionHandler={handleDeleteTournament}
+                    content={t('Finish')}
+                />
+            );
+        }
+        return (
+            <MainButton
+                type="submit"
+                functionHandler={handleStartTournament}
+                content={t('Start')}
+            />
+        );
+    };
       
   return (
     <div className="joined-tournament">
-       <h1 className='tournament-title'>{TournamentData.tournament_name}ONLINE</h1>
+       <h1 className='tournament-title'>{TournamentData.tournament_name} </h1>
        
        <div className={`tournament-info-container ${TournamentData.tournament_map}`}>
             <div className='tournament-info-item'>
@@ -266,7 +300,7 @@ function JoinedTournamentOnline({TournamentData}) {
                 <Icon name='game_mode' className="tournament-info-icon"/>
                 <div className='tournament-info-item-txt'>
                     <p>{t('Game Mode')}</p>
-                    <span>1 v 1 li mat khser</span>
+                    <span>{t('Online')}</span>
                 </div>
             </div>
             <div className='tournament-info-item'>
@@ -292,75 +326,20 @@ function JoinedTournamentOnline({TournamentData}) {
             <div className='tournament-desc-rules'>
                 <div className='tournament-desc-rules-top'>
                     <h1>{t('Attention Pongers')}</h1>
-                    <p>simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled</p>
+                    <p>{t('Get ready to showcase your skills! Make sure you are available for all your matches, as missing a game might lead to disqualification. Ensure you read all rules carefully before participating.')}</p>
                 </div>
                 <div className='tournament-desc-rules-top'>
                     <h1>{t('How Does It work ?')}</h1>
-                    <p>simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled</p>
+                    <p>{t('Players will compete in a series of matches. Winners will advance to the next round, and the tournament will continue until a champion is crowned. Stay tuned for match updates and ensure you are prepared for each round!')}</p>
                 </div>
             </div>
-            <div className='tournament-top-player-container'>
-                <div className='tournament-top-player'>
-                    <div className='tournament-top-player-avatar'>
-                        <img src={avatars[0].img}/>
-                        <div className='nameRank'>
-                            <span>{profilData.username}</span>
-                            <span>Rank{t('FRIENDS')} : {profilData.rank}</span>
-                        </div>
-                    </div>
-                    <div className='tournament-top-player-stats'>
-                        <div className='ownerWinRate'>
-                            <CircularProgressbar
-                                value={75}
-                                text={`${75}%`}
-                                styles={buildStyles({
-                                    pathColor: '#F62943',
-                                    textColor: '#F62943',
-                                    trailColor: '#A9A6A6',
-                                    backgroundColor: '#11141B',
-                                })}
-                            />
-                            <p>WinRate</p>
-                        </div>
-                        <div className='ownerWinRate'>
-
-                            <CircularProgressbar
-                                value={30}
-                                text={`${30}%`}
-                                styles={buildStyles({
-                                    pathColor: '#F62943',
-                                    textColor: '#F62943',
-                                    trailColor: '#A9A6A6',
-                                    backgroundColor: '#11141B',
-                                })}
-                            />
-                            <p>WinRate</p>
-
-                            </div>
-                            <div className='ownerWinRate'>
-
-                            <CircularProgressbar
-                                value={92}
-                                text={`${92}%`}
-                                styles={buildStyles({
-                                    pathColor: '#F62943',
-                                    textColor: '#F62943',
-                                    trailColor: '#A9A6A6',
-                                    backgroundColor: '#11141B',
-                                })}
-                            />
-                            <p>WinRate</p>
-
-                            </div>
-                    </div>
-                    
-                </div>
-                
-            </div>
+        
+                   
+             
             
         </div>
         <div className='JoinedTournomanentButoon'>
-            {joinedOwner ? (
+            {joinedOwner && (
                 <div className='TournamentTwoButton'> 
 
                     <div className='disapledButton'
@@ -370,17 +349,9 @@ function JoinedTournamentOnline({TournamentData}) {
                             opacity: TournamentData.tournament_participants && TournamentData.tournament_participants.length < 4 ? 0.5 : 1
                         }}
                     >
-                         {ifPlayed ? (
-                                <MainButton type="submit" functionHandler={handleStartTournament} content={t('Start')} />
-                            ) : (
-                                <MainButton type="button" functionHandler={handleNotify} content={t('Notify')} />
-                            )}
+                         {renderMainActionButton()}                 
                     </div>
                     <MainButton type="submit"  functionHandler={handleDeleteTournament} content={t('Cancel')} />
-                </div>
-            ) : (
-                <div className='leaveTournomantButton'>
-                    <MainButton type="submit"  content={t('Leave')} />
                 </div>
             )}
         </div>

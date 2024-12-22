@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import './TournamentsItem.css'
 import { avatarsUnkown } from '../../../../assets/assets';
+import { useTranslation } from 'react-i18next'
+
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
@@ -8,6 +10,8 @@ function TournamentsItem({players}) {
   const unknownAvatar = avatarsUnkown.img;
   const [ifPlayer1Win, setIfPlayer1Win] = useState(false)
   const [ifPlayer2Win, setIfPlayer2Win] = useState(false)
+  const { t } = useTranslation();
+
 
 
   useEffect(() => {
@@ -29,7 +33,7 @@ function TournamentsItem({players}) {
             <img src={players.player1?.avatar ? `${BACKEND_URL}${players.player1.avatar}` : unknownAvatar} alt={players.player1?.username || 'Unknown Player'} />
           </div>
           <div className="player-name">
-            <p>{players.player1?.username || 'Unknown Player'}</p>
+            <p>{players.player1?.username || t("Unknown Player")}</p>
           </div>
       </div>
       <div className={ifPlayer2Win ? 'tournamentsItem-container wone' : 'tournamentsItem-container losse'}>
@@ -38,7 +42,7 @@ function TournamentsItem({players}) {
 
         </div>
         <div className="player-name">
-          <p>{players.player2?.username || 'Unknown Player'}</p>
+          <p>{players.player2?.username || t("Unknown Player")}</p>
         </div>
         </div>
     </div>

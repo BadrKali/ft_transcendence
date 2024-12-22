@@ -1,10 +1,13 @@
 import React from 'react'
 import './tournamentPlayersItem.css'
+import { useTranslation } from 'react-i18next'
 import { avatarsUnkown } from '../../../../assets/assets';
+
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
 function TournamentPlayersItem({players}) {
   const unknownAvatar = avatarsUnkown.img;
+  const { t } = useTranslation();
 
   return (
     <div className='TournamentPlayersItem'>
@@ -13,7 +16,7 @@ function TournamentPlayersItem({players}) {
             <img src={players.player1?.avatar ? `${BACKEND_URL}${players.player1.avatar}` : unknownAvatar} alt={players.player1?.username || 'Unknown Player'} />
             </div>
             <div className='TournamentPlayers-firstPlayerName'>
-                <p>{players.player1?.username || 'Unknown Player'}</p>
+                <p>{players.player1?.username || t("Unknown Player")}</p>
 
             </div>
         </div>
@@ -22,7 +25,7 @@ function TournamentPlayersItem({players}) {
         </div>
         <div className='secondPlayer'>
             <div className='TournamentPlayers-secondPlayerName'>
-                <p>{players.player2?.username || 'Unknown Player'}</p>
+                <p>{players.player2?.username ||  t("Unknown Player")}</p>
 
             </div>
             <div className='TournamentPlayers-secondPlayerImage'>

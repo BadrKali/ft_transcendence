@@ -33,6 +33,7 @@ function TournamentBracketOnline() {
   const [loading, setLoading] = useState(true);
   const [semiFinalMatches, setSemiFinalMatches] = useState([]);
   const [finalMatches, setFinalMatches] = useState([]);
+  const [winnerPlayer, setWinnerPlayer] = useState(null)
 
   const unknownAvatar = avatarsUnkown.img;
 
@@ -43,72 +44,53 @@ function TournamentBracketOnline() {
 
   const defaultOneMatch = [{ id: 1, player1: {}, player2: {} }];
 
-  // useEffect(() => {
-  //   const fetchBracket = async () => {
-  //     try {
+  useEffect(() => {
+    const fetchTournamentData = async () => {
+  
+      if (TounamentData.tournament_stage === "FINALS") {
+        try {
+          const response = await fetch(`${BACKEND_URL}/api/user/tournament/FINALS`, {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${auth.accessToken}`,
+            },
+          });
+  
+          if (response.ok) {
+            const data = await response.json();
+            if (data[0].winner) {
+              try {
+                const playerResponse = await fetch(
+                  `${BACKEND_URL}/api/user/stats/${data[0].winner}`,
+                  {
+                    method: "GET",
+                    headers: {
+                      "Content-Type": "application/json",
+                      Authorization: `Bearer ${auth.accessToken}`,
+                    },
+                  }
+                );
+  
+                if (playerResponse.ok) {
+                  const playerData = await playerResponse.json();
+                  setWinnerPlayer(playerData)
+                } 
+              } catch (playerError) {
+                console.error("Error fetching player data:", playerError);
+              }
+            } 
+          } 
+        } catch (error) {
+          console.error("Error fetching tournament data:", error);
+        }
+      } 
+    };
+  
+    fetchTournamentData();
+  }, [TounamentData]);
+  
 
-  //       const response = await fetch(`${BACKEND_URL}/api/user/tournament/${TounamentData.tournament_stage}`, {
-  //         method: 'GET',
-  //         headers: {
-  //           'Content-Type': 'application/json',
-  //           'Authorization': `Bearer ${auth.accessToken}`
-  //         }
-  //       });
-  
-  //       if (!response.ok) {
-  //         throw new Error('Failed to fetch the tournament data');
-  //       }
-  
-  //       const data = await response.json();
-  //       setMatches(data);
-  //       console.log("Bracket Data:", data);
-  //     } catch (error) {
-  //       console.error("Error fetching tournament data:", error.message);
-  //     }
-  //   };
-  
-  //   fetchBracket();
-  // }, [TounamentData.tournament_stage, auth.accessToken]);
-
-
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     try {
-  //       const semiFinalResponse = await fetch(`${BACKEND_URL}/api/user/tournament/SEMI-FINALS`, {
-  //         method: 'GET',
-  //         headers: {
-  //           'Content-Type': 'application/json',
-  //           'Authorization': `Bearer ${auth.accessToken}`
-  //         }
-  //       });
-  
-  //       const finalResponse = await fetch(`${BACKEND_URL}/api/user/tournament/FINALS`, {
-  //         method: 'GET',
-  //         headers: {
-  //           'Content-Type': 'application/json',
-  //           'Authorization': `Bearer ${auth.accessToken}`
-  //         }
-  //       });
-  
-  //       if (semiFinalResponse.ok) {
-  //         const semiFinalData = await semiFinalResponse.json();
-  //         console.log("Semi-Finals Data:", semiFinalData);
-  //         setSemiFinalMatches(semiFinalData); 
-  //       }
-  
-  //       if (finalResponse.ok) {
-  //         const finalData = await finalResponse.json();
-  //         console.log("Finals Data:", finalData);
-  //         setFinalMatches(finalData); 
-  //       }
-  //     } catch (error) {
-  //       console.error('Error fetching data:', error);
-  //     }
-  //   };
-  
-  //   fetchData();
-  // }, []); 
-  
   useEffect(() => {
     const fetchPlayerDetails = async (playerId) => {
       try {
@@ -132,7 +114,6 @@ function TournamentBracketOnline() {
     };
   
     const fetchPlayersByStage = async (matches) => {
-      console.log("dddd ", matches)
       return await Promise.all(
         matches.map(async (match) => {
           const [player1Data, player2Data] = await Promise.all([
@@ -275,47 +256,19 @@ function TournamentBracketOnline() {
                   ))}
               <div className='TournamentWinner'>
                 <h2>{t('WINNER')}</h2>
-                <div className='TheWinnerCard'>
-                  <div className='WinnerImage'>
-                    <img src={unknownAvatar}/>
+                <div className="TheWinnerCard">
+                  <div className="WinnerImage">
+                    <img 
+                      src={winnerPlayer?.avatar ? `${BACKEND_URL}${winnerPlayer.avatar}` : unknownAvatar} 
+                      alt={winnerPlayer?.username || t("Unknown Player")} 
+                    />
                   </div>
-                  <div className='WinerNameRank'>
-                    <p>{t('Name of User')}</p>
-                    <p>{t('Rank')} : GOLD</p>
-                  </div>
-                  <div className='winerProgress'>
-                          <CircularProgressbar
-                                value={75}
-                                text={`${75}%`}
-                                styles={buildStyles({
-                                    pathColor: '#F62943',
-                                    textColor: '#F62943',
-                                    trailColor: '#A9A6A6',
-                                    backgroundColor: '#11141B',
-                                })}
-                            />
-                            <CircularProgressbar
-                                value={75}
-                                text={`${75}%`}
-                                styles={buildStyles({
-                                    pathColor: '#F62943',
-                                    textColor: '#F62943',
-                                    trailColor: '#A9A6A6',
-                                    backgroundColor: '#11141B',
-                                })}
-                            />
-                            <CircularProgressbar
-                                value={75}
-                                text={`${75}%`}
-                                styles={buildStyles({
-                                    pathColor: '#F62943',
-                                    textColor: '#F62943',
-                                    trailColor: '#A9A6A6',
-                                    backgroundColor: '#11141B',
-                                })}
-                            />
+                  <div className="WinnerNameRank">
+                    <h2>{winnerPlayer?.username || t("Unknown Player")}</h2>
+                    <p>{t('Rank')} : {winnerPlayer?.rank || "N/A"}</p>
                   </div>
                 </div>
+
               </div>
         </div>
         

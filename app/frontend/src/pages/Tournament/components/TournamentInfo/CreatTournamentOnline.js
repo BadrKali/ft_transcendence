@@ -14,7 +14,7 @@ import Forest from '../../../Game/Game-assets/forest.png';
 import Hell from '../../../Game/Game-assets/hell.png';
 import Grave from '../../../Game/Game-assets/graveyard.png'
 import { clientSocketContext } from '../../../Chat/usehooks/ChatContext';
-
+import PlayerSelectedItemOnline from './PlayerSelectedItemOnline';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
@@ -97,10 +97,8 @@ const CreatTournamentOnline = ({onClose}) => {
                 },
                 body: JSON.stringify(postData)
             });
-            console.log(response);
             if (response.ok) {
            
-                console.log("aaaaa");
                 const TournamentResponse = await fetch(`${BACKEND_URL}/api/user/tournament/`, {
                 method: 'GET',
                     headers: {
@@ -116,7 +114,6 @@ const CreatTournamentOnline = ({onClose}) => {
                 updatetounament(updatedTournamentData);
             } else {
                 const errorData = await response.json();
-                console.log('Error creating tournament: ' );
             }
         } catch (error) {
 
@@ -240,7 +237,7 @@ const CreatTournamentOnline = ({onClose}) => {
                     </div>
                     <div className='playerselected'>
                         {selectedPlayers.map((player) => (
-                            <PlayerSelectedItem key={player.value} player={player}/>
+                            <PlayerSelectedItemOnline key={player.value} player={player}/>
                         ))
                     }
                     </div>
