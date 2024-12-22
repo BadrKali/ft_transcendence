@@ -36,7 +36,7 @@ const Auth = (props) => {
         setTwoFaUser(state.username) // Adjust this based on your userInfo structure
       }
       if (state.error) {
-        console.log('Error:', state.error)
+        // console.log('Error:', state.error)
         setError(state.error)
 
       }
@@ -61,7 +61,7 @@ const Auth = (props) => {
           withCredentials: true,
         });
         if (response.status === 205) {
-          console.log('Logged out successfully');
+          // console.log('Logged out successfully');
         }
       }
       catch (error) {

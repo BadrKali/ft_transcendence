@@ -13,7 +13,7 @@ const GameMode = ({ className, setSelectedMode }) => {
     const modes = [
         { name: t("Invite"), img: invite },
         { name: t("Local"), img: local },
-        { name: t("Random"), img: random },
+        // { name: t("Random"), img: random },
     ];
 
     const [selectedModeIndex, setSelectedModeIndex] = useState(0);

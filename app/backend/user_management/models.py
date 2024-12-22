@@ -243,7 +243,7 @@ class Tournament(models.Model):
     created_at = models.DateTimeField(auto_now_add=True) 
     tournament_date = models.DateTimeField(auto_now_add=True) # hadi f ina date tournament hadi khasha t3awerd
     tournament_status = models.BooleanField(default=False) # hadi ghadi tbadelha b True lma ykono les places kamline
-    tournament_stage = models.CharField(max_length=100, default="semi-finals") # hadi f ina stage wasla tournament
+    tournament_stage = models.CharField(max_length=100, default="SEMI-FINALS") # hadi f ina stage wasla tournament
     is_online = models.BooleanField(default=True)
     all_notified = models.BooleanField(default=False)
     tournament_participants = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='tournament_participants')
@@ -297,12 +297,12 @@ class Tournament(models.Model):
             self.tournament_stage = 'GROUP-STAGE'
     
     def start_tournament(self):
-        print("HELLO FROM START TOURNAMENT hjgjhgjgjhgjghjgjgjgjjhgjgjgjghjgjhghj")
+
         from game.models import TournamentGameRoom
         tournament_participants = TournamentParticipants.objects.filter(tournament=self, matchStage='SEMI-FINALS')
         match_played = False
 
-        # Create game room and notify players for the first unmatched participant
+
         for participant in tournament_participants:
             if not participant.matchPlayed:
                 game_room = TournamentGameRoom.objects.create(
@@ -314,15 +314,11 @@ class Tournament(models.Model):
                     match_played = True
                 break
 
-        # Proceed to finals if no matches are pending
+
         if not match_played:
             final_participants = TournamentParticipants.objects.filter(tournament=self, matchStage='FINALS')
             print("wak wak", final_participants)
-            # final_game_room = TournamentGameRoom.objects.create(
-            #     player1=final_participants[0].player1.player,
-            #     player2=final_participants[0].player2.player
-            # )
-            #notify player
+
             for participant in final_participants:
                 print("ya zatla ya kho")
                 final_game_room = TournamentGameRoom.objects.create(
@@ -331,22 +327,6 @@ class Tournament(models.Model):
                 )
                 participant.notify_players(self.tournament_creator)
             
-            # self.tournament_stage = 'FINALS'
-            # winners = [participant.winner for participant in tournament_participants if participant.winner]
-            #just get the game room for the final match with the winners its already created 
-            # if len(winners) >= 2:
-            #     final_participants = TournamentParticipants.objects.create(
-            #         tournament=self,
-            #         player1=winners[0],
-            #         player2=winners[1],
-            #         matchStage='FINALS'
-            #     )
-            #     final_game_room = TournamentGameRoom.objects.create(
-            #         player1=winners[0].player,
-            #         player2=winners[1].player
-            #     )
-            #     if final_game_room:
-            #         final_participants.notify_players(self.tournament_creator)
             self.save()
 
 
@@ -415,9 +395,7 @@ class LocalTournament(models.Model):
             # TournamentGameRoom.objects.create(ç=participants[i], player2=participants[i+1])
     def assign_tournament_stage(self):
         print("HELLO FROM TOURNAMENT STAGE")
-        # participants = LocalTournamanetParticipants.objects.filter(tournament=self)
-        #the tournament created by default on semi-finals with 2 object of participant 2 players each so we have to check if the tournament is a Semi final after that we check the match played if both maches are played we change the stage to finals
-        # we creat the final match participants the both matches are played 
+
         if self.tournament_stage == 'SEMI-FINALS':
             participants = LocalTournamanetParticipants.objects.filter(tournament=self, matchStage='SEMI-FINALS')
             if participants[0].matchPlayed and participants[1].matchPlayed:

@@ -72,12 +72,12 @@ const GameSettingsPopUp = ({ onExit }) => {
                 }
             });
             if (response.status === 200) {
-                console.log("Game settings saved");
+                // console.log("Game settings saved");
             } else {
                 alert("Failed to save game settings");
             }
         } catch (error) {
-            console.log("Failed to save game settings");
+            // console.log("Failed to save game settings");
         } 
         setGameAccepted(true);
         onExit();

@@ -26,7 +26,7 @@ const TwoFa = (props) => {
         navigate('/')
       }
       else {
-        console.log('OTP verification failed');
+        // console.log('OTP verification failed');
         //here i have to implement a toad notifiction to show the user that the otp verification failed
       }
     }
@@ -53,7 +53,7 @@ const TwoFa = (props) => {
                 }
                 return false;
         } catch(error) {
-            console.log('Error verifying OTP: ', error);
+            // console.log('Error verifying OTP: ', error);
             return false;
         }
     }
@@ -74,7 +74,7 @@ const TwoFa = (props) => {
             const status = veryfyOtp(otpCode, props.accessToken);
             if(status === true) {
                 // setVerificationStatus('success');
-                console.log('2FA successful, navigate to home page')
+                // console.log('2FA successful, navigate to home page')
                 // navigate('/')
             }
           }

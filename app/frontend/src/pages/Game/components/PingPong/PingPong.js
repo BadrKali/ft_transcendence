@@ -54,7 +54,7 @@ const PingPong = () => {
             });
            
         } catch (error) {
-            console.log("Failed to save game settings");
+            // console.log("Failed to save game settings");
         }
     }
     return (

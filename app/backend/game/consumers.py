@@ -538,6 +538,8 @@ class GameConsumer(AsyncWebsocketConsumer):
                     return
                 await asyncio.sleep(interval)
                 total_time_waited += interval
+        else:
+            await self.game_state.update_game_over(True)
         await self.update_xp_and_save_history(winner, opponent_username, room)
         await self.send(text_data=json.dumps({
             'action': 'you_won',

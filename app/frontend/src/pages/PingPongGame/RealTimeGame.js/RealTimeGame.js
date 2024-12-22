@@ -93,7 +93,8 @@ const RealTimeGame = ({ mode }) => {
             }
         };
         ws.onmessage = handleWebSocketMessage;
-        ws.onclose = () => console.log("WebSocket connection closed");
+        ws.onclose = () => {}
+        // console.log("WebSocket connection closed");
         ws.onerror = (error) => console.error("WebSocket connection error:", error);
         setSocket(ws);
         return () => ws.close();

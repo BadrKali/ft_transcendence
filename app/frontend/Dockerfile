@@ -8,7 +8,7 @@ RUN npm ci
 
 COPY . .
 
-ENTRYPOINT ["npm", "start"]
+# ENTRYPOINT ["npm", "start"]
 
 # the start.sh entrypoint runs the app in production mode
-# ENTRYPOINT ["sh", "start.sh"]
+ENTRYPOINT ["sh", "start.sh"]

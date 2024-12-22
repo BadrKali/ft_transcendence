@@ -90,7 +90,7 @@ const TwoFaModal = ({handleClose, qrUrl}) => {
         setVerificationStatus('failed');
       }
     } catch (error) {
-      console.log('Error verifying OTP: ', error);
+      // console.log('Error verifying OTP: ', error);
       setVerificationStatus('failed');
     }
   }

@@ -53,7 +53,7 @@ class ChatBotConsumer(AsyncWebsocketConsumer):
                 self.room_group_name,
                 self.channel_name
         )
-        )
+        ) 
             
     async def receive(self, text_data=None):
         self.msgData = json.loads(text_data)
@@ -86,7 +86,7 @@ class ChatBotConsumer(AsyncWebsocketConsumer):
                 })
                 self.messages.append({"role" : "assistant", "content" : response})
             except Exception as e:
-                print(e)
+                # print(e)
                 await (self.channel_layer.group_send)(
                   f'{self.sender_id}_withBot',{
                         'type': 'bot_msg',
@@ -209,7 +209,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
                         )
             else:
                 if receiver_status:
-                    print('We never Talked : First Time', flush=True)
+                    # print('We never Talked : First Time', flush=True)
                     await (self.channel_layer.group_send)(
                         f'room_{user_id}',{
                             'type': 'newchat.message',

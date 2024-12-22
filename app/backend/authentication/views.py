@@ -297,7 +297,7 @@ class ProtectedQRCodeView(APIView):
         user = request.user
         expected_file_name = f'{user.username}_2fa.png'
         file_path = f'private_media/2fa/{expected_file_name}'
-        print(f"file path: {file_path}")
+        # print(f"file path: {file_path}")
         # Ensure the file exists and the file name matches the expected file name
         if not os.path.exists(file_path) or expected_file_name != file_name:
             raise Http404("File not found or you don't have permission to access this file.")

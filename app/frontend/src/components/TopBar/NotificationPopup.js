@@ -9,19 +9,21 @@ import Icon from '../../assets/Icon/icons';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
-const GeneralNotificationComponent = ({ notif, typeNotif, profilData, onAccept, onReject, t }) => (
+const GeneralNotificationComponent = ({ notif, typeNotif, profilData, onAccept, onReject, t , loading}) => (
     <>
       <h2>{typeNotif}</h2>
+
       <div className='NotifUserImageName-container' style={{
-            backgroundImage: `url(${backGround})`,
-          }}>
+        backgroundImage: `url(${backGround})`,
+      }}>
+        { loading &&
           <div className='NotifUserImageName'>
-            <img src={`${BACKEND_URL}${profilData.avatar}`} alt="profile_pic" />
             <div className='NotiddName'>
               <p>{profilData.username}</p>
               <p>{t('Rank')} : Gold</p>
             </div>
           </div>
+          }
           <div className='WinRate'>
             <p>{t('Win Rate')}</p>
             <p>50%</p>
@@ -39,7 +41,7 @@ const GeneralNotificationComponent = ({ notif, typeNotif, profilData, onAccept, 
 
 const TournamentPopupComponent = ({ notif, typeNotif, profilData, onAccept, onReject, t }) => {
   const {data ,isLoading, error} = useFetch(`${BACKEND_URL}/api/user/tournament/invitations/`)
-
+  
   return (
     <>
       <h2 className='typeNotif'>{typeNotif}</h2>
@@ -48,7 +50,6 @@ const TournamentPopupComponent = ({ notif, typeNotif, profilData, onAccept, onRe
             backgroundImage: `url(${backGround})`,
           }}>
           <div className='NotifUserImageName'>
-            <img src={`${BACKEND_URL}${profilData.avatar}`} alt="profile_pic" />
             <div className='NotiddName'>
               <p>{profilData.username}</p>
               <p>{t('Rank')} : Gold</p>
@@ -133,11 +134,12 @@ const NotificationPopup = ({ isOpen, onClose, notif, onAccept, onReject })=> {
   const {data ,isLoading, error} = useFetch(`${BACKEND_URL}/api/user/stats/${notif.sender_id}`)
   const [profilData, setProfilData] = useState([]);
   const { t } = useTranslation();
+  const [Loading, setLoading] = useState(true)
 
-
+  
   useEffect(() => {
     if (data) {
-    setProfilData(data);
+      setProfilData(data);
     }
   }, [data]);
 
@@ -160,13 +162,20 @@ const NotificationPopup = ({ isOpen, onClose, notif, onAccept, onReject })=> {
   }, [notif]);
 
 
+  
+  useEffect(()=>{
+    if (profilData.length){
+      setLoading(false)
+    }
+  }, [profilData])
+  
+  
   if (!isOpen) {
     return null;
   }
-
-
   return (
     <div className="modal-overlay">
+      {Loading &&
       <div className="modal">
         <button className="modalCloseButton" onClick={onClose}>&times;</button>
         {typeNotif === 'Achievement' && (
@@ -190,9 +199,11 @@ const NotificationPopup = ({ isOpen, onClose, notif, onAccept, onReject })=> {
             onAccept={onAccept}
             onReject={onReject}
             t={t}
+            loading={Loading}
           />
         )}
       </div>
+  }
     </div>
   );
 };

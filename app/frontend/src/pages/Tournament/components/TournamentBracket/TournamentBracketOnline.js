@@ -59,7 +59,7 @@ function TournamentBracketOnline() {
   
           if (response.ok) {
             const data = await response.json();
-            if (data[0].winner) {
+            if (data && data[0].winner) {
               try {
                 const playerResponse = await fetch(
                   `${BACKEND_URL}/api/user/stats/${data[0].winner}`,
@@ -204,8 +204,8 @@ function TournamentBracketOnline() {
     <div className='bracket-container'>
         <div className="second-four-player">
             <div className="player-items">
-                  {semiFinalMatche.map((players) => (
-                    <TournamentsItem key={players.id} players={players}/>
+                  {semiFinalMatche.map((players, index) => (
+                    <TournamentsItem key={`${players.id}-${index}`} players={players}/>
                   ))}
               </div>
               <div className="four-lines">
@@ -224,8 +224,8 @@ function TournamentBracketOnline() {
         </div>
         <div className="final-game-players">
               <div className="player-items">
-                  {finalPlayers.map((players) => (
-                    <TournamentsItem key={players.id} players={players}/>
+                  {finalPlayers.map((players, index) => (
+                    <TournamentsItem key={`${players.id}-${index}`} players={players}/>
                   ))}
               </div>
               <div className="final-lines">
@@ -247,12 +247,12 @@ function TournamentBracketOnline() {
         </div>
         <div className='TournamentPlayers'>
                 <h2>{t('SEMI FINAL')}</h2>
-            {semiFinalMatche.map((players) => (
-                    <TournamentPlayersItem key={players.id} players={players}/>
+            {semiFinalMatche.map((players, index ) => (
+                    <TournamentPlayersItem key={`${players.id}-${index}`} players={players}/>
                   ))}
                <h2>{t('FINAL')}</h2>
-            {finalPlayers.map((players) => (
-                    <TournamentPlayersItem key={players.id} players={players}/>
+            {finalPlayers.map((players, index ) => (
+                    <TournamentPlayersItem key={`${players.id}-${index}`} players={players}/>
                   ))}
               <div className='TournamentWinner'>
                 <h2>{t('WINNER')}</h2>

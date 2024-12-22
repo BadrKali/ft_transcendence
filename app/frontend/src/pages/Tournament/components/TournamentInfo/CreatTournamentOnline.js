@@ -71,18 +71,21 @@ const CreatTournamentOnline = ({onClose}) => {
         
         if (!selectedMap){
             setMapError(true)
+            return;
         }else{
             setMapError(false)
         }
 
         if (!tournamentTitle){
             setNameError(true)
+            return;
         }else{
             setNameError(false)
         }
 
-        if (selectedPlayers.length === 0 || selectedPlayers.length > 3){
+        if (selectedPlayers.length !== 3){
             setPlayersError(true)
+            return;
         }else{
             setPlayersError(false)
         }

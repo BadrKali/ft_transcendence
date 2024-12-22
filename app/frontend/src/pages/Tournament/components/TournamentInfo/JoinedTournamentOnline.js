@@ -89,7 +89,6 @@ function JoinedTournamentOnline({TournamentData}) {
     useEffect(() => {
         const fetchBracket = async () => {
         try {
-
             const response = await fetch(`${BACKEND_URL}/api/user/tournament/${TournamentData.tournament_stage}`, {
             method: 'GET',
             headers: {
@@ -102,28 +101,31 @@ function JoinedTournamentOnline({TournamentData}) {
             }
             
             const data = await response.json();
-            setIfPlayed(TournamentData.all_notified)
-            if (data[0].matchStage === "SEMI-FINALS"){
-               
+            if (Array.isArray(data) && data.length > 0) {
+                
+                setIfPlayed(TournamentData.all_notified)
+                if (data[0].matchStage === "SEMI-FINALS"){
+                    
                     setPlayer1(data[0].player1)
                     setPlayer2(data[0].player2)
-                
+                    
                     setPlayer3(data[1].player1)
                     setPlayer4(data[1].player2)
-               
-            }else if(data[0].matchStage === "FINALS"){
+                    
+                }else if(data[0].matchStage === "FINALS"){
                     setPlayer1(data[0].player1)
                     setPlayer2(data[0].player2)
-                if (data[0].winner){
-                    setTournamentFinished(true);
+                    if (data[0].winner){
+                        setTournamentFinished(true);
+                    }
                 }
             }
         } catch (error) {
             console.error("Error fetching tournament data:", error.message);
         }
         };
-    
-        fetchBracket();
+        if (TournamentData.tournament_stage)
+            fetchBracket();
     }, [TournamentData.tournament_stage, auth.accessToken]);
 
     const handleNotify = async () => {
@@ -132,8 +134,8 @@ function JoinedTournamentOnline({TournamentData}) {
     
         if (TournamentData.tournament_stage === "SEMI-FINALS") {
             playersToNotify = [
-                [player1, player2], 
-                [player3, player4], 
+                [player1, player2],
+                [player3, player4],
             ];
         } else if (TournamentData.tournament_stage === "FINALS") {
             playersToNotify = [

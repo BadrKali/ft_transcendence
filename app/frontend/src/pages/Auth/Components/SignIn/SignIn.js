@@ -131,7 +131,7 @@ const SignIn = (props) => {
             <div className='signin-input-section'>
                 <div className='signin-input'>
                     <Icon name='at' className='signin-icon'/>
-                    <input name='username' placeholder={t('Email')}  type='text' onChange={handleInputChange}/>
+                    <input name='username' placeholder={t('Username')}  type='text' onChange={handleInputChange}/>
                 </div>
                 <div className='signin-password'>
                     <div className='signin-input'>
