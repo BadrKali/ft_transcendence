@@ -116,8 +116,7 @@ const updateLastMessage = (data, result) =>{
     clientSocket.onmessage = (event) => {
     const data = JSON.parse(event.data);
     const notif = new Audio(receivedmsgsound);
-    
-    console.log(data.type)
+
     if (data.type === 'receive_typing'){
       if (ChatPartner && ChatPartner.id === data.message.sender_id){
       setTypingData({status: true,
@@ -228,7 +227,7 @@ useEffect(()=>{
         }
         setChatList (prev => [targetConv, ...prev])
         setPickerUsername(TargetUser.username)
-        console.log(targetConv)
+        // console.log(targetConv)
       }
     }
     setIsLoading(false)
