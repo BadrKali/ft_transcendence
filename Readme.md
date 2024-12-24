@@ -8,29 +8,18 @@
 
 
 ## Features
-**Signup and Login**: Users can create an account and log in to the application or use third-party authentication with 42 OAuth2.
-
-**Profile Management**: Users can view and edit their profile information.
-
-**Friend Management**: Users can send, accept, and reject friend requests.
-
-**Real-time Chat**: Users can chat with their friends in real-time.
-
-**Game Rooms**: Users can create and join game rooms to play games with their friends.
-
-**Gameplay**: Users can play games against each other in real-time.
-
-**Leaderboard**: Users can view the leaderboard to see the top players.
-
-**Tournaments**: Users can participate in tournaments and compete against each other.
-
-**Notifications**: Users receive notifications for friend requests, chat messages, game invites, and tournament games.
-
-**Security**: The application is secured using authentication, authorization, and encryption: (JWT tokens, OAuth2, 2FA, SSL/TLS).
-
-**Monitoring**: The application is monitored using Prometheus and Grafana for metrics and alerting.
-
-**Logging**: The application logs are collected and processed using the ELK stack (Elasticsearch, Logstash, Kibana).
+- **[Signup and Login]()**: Users can create an account and log in to the application or use third-party authentication with 42 OAuth2.
+- **[Profile Management]()**: Users can view and edit their profile information.
+- **[Friend Management]()**: Users can send, accept, and reject friend requests.
+- **[Real-time Chat]()**: Users can chat with their friends in real-time.
+- **[Game Rooms]()**: Users can create and join game rooms to play games with their friends.
+- **[Gameplay]()**: Users can play games against each other in real-time.
+- **[Leaderboard]()**: Users can view the leaderboard to see the top players.
+- **[Tournaments]()**: Users can participate in tournaments and compete against each other.
+- **[Notifications]()**: Users receive notifications for friend requests, chat messages, game invites, and tournament games.
+- **[Security]()**: The application is secured using authentication, authorization, and encryption: (JWT tokens, OAuth2, 2FA, SSL/TLS).
+- **[Monitoring]()**: The application is monitored using Prometheus and Grafana for metrics and alerting.
+- **[Logging]()**: The application logs are collected and processed using the ELK stack (Elasticsearch, Logstash, Kibana).
 
 ---
 ## Project Structure
