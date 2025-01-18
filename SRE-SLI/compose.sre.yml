@@ -3,7 +3,9 @@ version: '3.8'
 services:
   setup:
     image: setup
-    build: ./ELK-Stack/setup
+    build:
+      context: ./ELK-Stack/setup
+      dockerfile: Dockerfile
     container_name: setup
     depends_on:
       nginx:
@@ -24,7 +26,9 @@ services:
 
   elasticsearch:
     image: elasticsearch
-    build: ./ELK-Stack/elasticsearch
+    build:
+      context: ./ELK-Stack/elasticsearch
+      dockerfile: Dockerfile
     container_name: elasticsearch
     depends_on:
       setup:
@@ -39,7 +43,7 @@ services:
     networks:
       - elk-stack
     restart: always
-    mem_limit: ${MEM_LIMIT}
+    mem_limit: ${ES_MEM_LIMIT}
     ulimits:
       memlock:
         soft: -1
@@ -52,7 +56,9 @@ services:
 
   kibana:
     image: kibana
-    build: ./ELK-Stack/kibana
+    build:
+      context: ./ELK-Stack/kibana
+      dockerfile: Dockerfile
     container_name: kibana
     depends_on:
       setup:
@@ -67,11 +73,13 @@ services:
     networks:
       - elk-stack
     restart: always
-    mem_limit: ${MEM_LIMIT}
+    mem_limit: ${KB_MEM_LIMIT}
 
   logstash:
     image: logstash
-    build: ./ELK-Stack/logstash
+    build:
+      context: ./ELK-Stack/logstash
+      dockerfile: Dockerfile
     container_name: logstash
     depends_on:
       elasticsearch:
@@ -90,7 +98,9 @@ services:
 
   prometheus:
     image: prometheus
-    build: ./prom-grafana/prometheus
+    build:
+      context: ./prom-grafana/prometheus
+      dockerfile: Dockerfile
     container_name: prometheus
     depends_on:
       nginx:
@@ -111,7 +121,9 @@ services:
 
   grafana:
     image: grafana
-    build: ./prom-grafana/grafana
+    build:
+      context: ./prom-grafana/grafana
+      dockerfile: Dockerfile
     container_name: grafana
     depends_on:
       nginx:
@@ -130,7 +142,8 @@ services:
   nginx_exporter:
     image: nginx-exporter
     build:
-      dockerfile: ./prom-grafana/exporters/Dockerfile.nginx
+      context: ./prom-grafana/exporters
+      dockerfile: Dockerfile.nginx
     container_name: nginx-exporter
     depends_on:
       nginx:
@@ -151,7 +164,8 @@ services:
       nginx:
         condition: service_healthy
     build:
-      dockerfile: ./prom-grafana/exporters/Dockerfile.redis
+      context: ./prom-grafana/exporters
+      dockerfile: Dockerfile.redis
     env_file:
       - ../.env
     networks:
@@ -166,7 +180,8 @@ services:
       nginx:
         condition: service_healthy
     build:
-      dockerfile: ./prom-grafana/exporters/Dockerfile.postgresql
+      context: ./prom-grafana/exporters
+      dockerfile: Dockerfile.postgresql
     env_file:
       - ../.env
     networks:
@@ -181,7 +196,8 @@ services:
       nginx:
         condition: service_healthy
     build:
-      dockerfile: ./prom-grafana/exporters/Dockerfile.node
+      context: ./prom-grafana/exporters
+      dockerfile: Dockerfile.node
     networks:
       - prom-graf
       - ft_transcendence

@@ -1,5 +1,6 @@
 all:
 	clear
+	./generate
 	docker-compose up --build -d
 
 down:
