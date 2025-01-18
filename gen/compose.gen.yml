@@ -1,0 +1,9 @@
+version: '3.8'
+
+services:
+  gen:
+    image: alpine:latest
+    container_name: gen
+    volumes:
+      - ./gen:/gen
+    command: sh -c "cd /gen && chmod +x /gen/generate && /gen/generate"

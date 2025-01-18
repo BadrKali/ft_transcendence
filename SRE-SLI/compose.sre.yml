@@ -43,7 +43,7 @@ services:
     networks:
       - elk-stack
     restart: always
-    mem_limit: ${ES_MEM_LIMIT}
+    mem_limit: ${MEM_LIMIT}
     ulimits:
       memlock:
         soft: -1
@@ -73,7 +73,7 @@ services:
     networks:
       - elk-stack
     restart: always
-    mem_limit: ${KB_MEM_LIMIT}
+    mem_limit: ${MEM_LIMIT}
 
   logstash:
     image: logstash

@@ -2,8 +2,7 @@ cluster.name: docker-cluster
 node.name: elasticsearch
 network.host: 0.0.0.0
 bootstrap.memory_lock: true
-# cluster.initial_master_nodes: elasticsearch
-discovery.type: single-node
+cluster.initial_master_nodes: elasticsearch
 xpack.security.enabled: true
 xpack.security.http.ssl.enabled: true
 xpack.security.http.ssl.key: certs/elasticsearch/elasticsearch.key
@@ -15,4 +14,3 @@ xpack.security.transport.ssl.certificate: certs/elasticsearch/elasticsearch.crt
 xpack.security.transport.ssl.certificate_authorities: certs/ca/ca.crt
 xpack.security.transport.ssl.verification_mode: certificate
 xpack.license.self_generated.type: basic
-logger.org.elasticsearch: DEBUG
