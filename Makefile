@@ -1,6 +1,13 @@
 all:
 	clear
+	@echo "\n\033[1;33mMake sure you have the .env file in the root directory, if not run 'make env'\033[0m\n"
 	docker-compose up --build -d
+
+env:
+	@docker-compose -f ./gen/compose.gen.yml up --build -d
+	@docker rm -f gen || true
+	@mv ./gen/gen/env ./.env
+	@echo "\n\033[1;32m.env file created successfully\033[0m\n"
 
 down:
 	docker-compose down

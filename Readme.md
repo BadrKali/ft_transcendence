@@ -125,26 +125,51 @@
 
 
 ## System Specification
-- This project is run using **Docker Desktop** on a **macOS** machine.
+- This Project is developed and tested on **macOS** using **Docker Desktop**
 - If you are running this project on a different architecture, you may need to adjust the configurations accordingly.
-
+- **Development Environment:**
+  - **Docker Desktop**: Version 20.10.21
+  - **Docker Compose**: Version 2.13.0
 
 ## Setup
 ### if you already have docker and docker-compose installed on your machine
 ```bash
-git clone https://github.com/BadrKali/ft_transcendence.git
+git clone https://github.com/AhmedFatir/ft_transcendence.git && cd ./ft_transcendence
+```
 
-cd ./ft_transcendence && make
+```bash
+# Before running the project, you need to create a .env file in the root directory using the following command:
 
-# Befor running the project, you need to create a .env file in the root directory the .env.example file is provided as a template.
+make env && make
 
+# The .env.example file is provided as a template.
 
-# And then you can access:
-# Web Application: https://localhost
-# Grafana: https://localhost:3000
-# Prometheus: https://localhost:9090
-# Alertmanager: https://localhost:9093
-# Kibana: https://localhost:5601
+# After the build is complete, On localhost, you can access the services using the following URLs:
+Web Application: https://localhost
+Grafana:         https://localhost:3000
+Prometheus:      https://localhost:9090
+Alertmanager:    https://localhost:9093
+Kibana:          https://localhost:5601
+```
+### If you are runing this porject on GitHub Codespaces, you need to make the following changes
+
+```bash
+# - Change the value of "localhost" in the .env file to the output of the following command:
+  echo ${CODESPACE_NAME}-443.app.github.dev
+
+# - Change the vm.max_map_count value from 65530 to 262144 for the Elaticsearch container by using the following command:
+  sudo sysctl -w vm.max_map_count=262144
+
+# After the build is complete, On GitHub Codespaces, you can access the services using the following URLs:
+Web Application: https://${CODESPACE_NAME}-443.app.github.dev
+Grafana:         https://${CODESPACE_NAME}-3000.app.github.dev
+Prometheus:      https://${CODESPACE_NAME}-9090.app.github.dev
+Alertmanager:    https://${CODESPACE_NAME}-9093.app.github.dev
+Kibana:          https://${CODESPACE_NAME}-5601.app.github.dev
+
+# Note:
+  Make sure that all the ports are forwarded using HTTPS NOT HTTP.
+    "Ports Tab > right-click on the port > Change Port protocol > HTTPS"
 ```
 ---
 
