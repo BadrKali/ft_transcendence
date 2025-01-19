@@ -30,6 +30,70 @@ function reformeDate(datestr) {
   return `${hours}:${minutes}`;
 }
 
+
+function audioHandler() {
+  const [recording, setRecording] = useState(false);
+  const [mediaRecorder, setMediaRecorder] = useState(null);
+  const [AudioUrl, setAudioUrl] = useState(null);
+  const [error , seterror] = useState("");
+
+  const startRecording = async () => {
+    try {
+      setRecording(true);
+      setMediaRecorder(null);
+      setAudioUrl(null);
+      seterror("")
+  
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const options = { mimeType: 'audio/ogg;codecs=opus' };
+      const newMediaRecorder = new MediaRecorder(stream, options);
+      setMediaRecorder(newMediaRecorder);
+  
+      newMediaRecorder.start();
+  
+      const audioChunks = [];
+      newMediaRecorder.ondataavailable = event => {
+        audioChunks.push(event.data);
+      };
+  
+      newMediaRecorder.onstop = () => {
+        const audioBlob = new Blob(audioChunks);
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          if (reader.result) 
+            setAudioUrl(reader.result);
+    };
+        reader.readAsDataURL(audioBlob);
+    };
+    
+    } catch (catchederror) {
+      ErrorToast(catchederror.message);
+      setRecording(false);
+    }
+  };
+
+  const stopRecording = () => {
+    if (mediaRecorder) {
+      mediaRecorder.stop();
+      setRecording(false);
+    }
+  };
+
+  return (
+    <div style={{display : 'grid', gridTemplateColumns: '1fr', gridTemplateRows : '1fr 1fr 1fr 1fr'}}>
+      <button onClick={startRecording} disabled={recording}>
+        Start Recording
+      </button>
+      <button onClick={stopRecording} disabled={!recording}>
+        Stop Recording
+      </button>
+      {AudioUrl && <audio controls src={AudioUrl}>Your browser does not support the audio element.</audio>}
+    </div>
+  );
+}
+
+
+
 const Chat = () => {
   const [ChatList, setChatList] = useState(null);
   const [conversationMsgs, setconversationMsgs] = useState(null);
@@ -334,66 +398,5 @@ useEffect(()=>{
   );
 };
 
-
-// function Chat() {
-//   const [recording, setRecording] = useState(false);
-//   const [mediaRecorder, setMediaRecorder] = useState(null);
-//   const [AudioUrl, setAudioUrl] = useState(null);
-//   const [error , seterror] = useState("");
-
-//   const startRecording = async () => {
-//     try {
-//       setRecording(true);
-//       setMediaRecorder(null);
-//       setAudioUrl(null);
-//       seterror("")
-  
-//       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-//       const options = { mimeType: 'audio/ogg;codecs=opus' };
-//       const newMediaRecorder = new MediaRecorder(stream, options);
-//       setMediaRecorder(newMediaRecorder);
-  
-//       newMediaRecorder.start();
-  
-//       const audioChunks = [];
-//       newMediaRecorder.ondataavailable = event => {
-//         audioChunks.push(event.data);
-//       };
-  
-//       newMediaRecorder.onstop = () => {
-//         const audioBlob = new Blob(audioChunks);
-//         const reader = new FileReader();
-//         reader.onloadend = () => {
-//           if (reader.result) 
-//             setAudioUrl(reader.result);
-//     };
-//         reader.readAsDataURL(audioBlob);
-//     };
-    
-//     } catch (catchederror) {
-//       ErrorToast(catchederror.message);
-//       setRecording(false);
-//     }
-//   };
-
-//   const stopRecording = () => {
-//     if (mediaRecorder) {
-//       mediaRecorder.stop();
-//       setRecording(false);
-//     }
-//   };
-
-//   return (
-//     <div style={{display : 'grid', gridTemplateColumns: '1fr', gridTemplateRows : '1fr 1fr 1fr 1fr'}}>
-//       <button onClick={startRecording} disabled={recording}>
-//         Start Recording
-//       </button>
-//       <button onClick={stopRecording} disabled={!recording}>
-//         Stop Recording
-//       </button>
-//       {AudioUrl && <audio controls src={AudioUrl}>Your browser does not support the audio element.</audio>}
-//     </div>
-//   );
-// }
 
 export default Chat;
