@@ -31,7 +31,7 @@ function reformeDate(datestr) {
 }
 
 
-function audioHandler() {
+function AudioHandler() {
   const [recording, setRecording] = useState(false);
   const [mediaRecorder, setMediaRecorder] = useState(null);
   const [AudioUrl, setAudioUrl] = useState(null);

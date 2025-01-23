@@ -24,7 +24,7 @@ import GameChallengeNotification from '../Notification/GameChallengeNotification
 import GameSettingsPopUp from '../GameSettingsPopUp/GameSettingsPopUp'
 import { UserContext } from '../../context/UserContext'
 import { useTranslation } from 'react-i18next'
-
+import { clientSocketContext } from '../../pages/Chat/usehooks/ChatContext'
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
 const TopBar = () => {
@@ -39,7 +39,7 @@ const TopBar = () => {
   const [results, setResults] = useState([]);
   const navigate = useNavigate();
   const { hasNotification, clearNotification} = useContext(RealTimeContext);
-  const { auth }  = useAuth()
+  const { auth, setAuth }  = useAuth()
   const [modalOpen, setModalOpen] = useState(false);
   const [modalOpenBlocked, setModalOpenBlocked] = useState(false);
   const [selectedNotification, setSelectedNotification] = useState(null);
@@ -55,6 +55,7 @@ const TopBar = () => {
   const { userData, userDataLoading, userDataError, updateUserFriends, notifications, setNotifications, updatetounament} = useContext(UserContext);
   const debouncedQuery = useDebounce(query, 300);
   const [queryEndpoint, setQueryEndpoint] = useState(`${BACKEND_URL}/api/user/search/?q=${query}`)
+  const { stateValue: clientSocket, botSocket } = useContext(clientSocketContext);
 
   const handleNotificationClick = (notif) => {
     setSelectedNotification(notif);
@@ -72,6 +73,26 @@ const TopBar = () => {
   const handleSettingClick = () => {
       navigate(`/setting`)
   }
+  const handleLogout = async () => {
+      try {
+        // CHANGE
+        const response = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/auth/logout/`, {}, {
+          headers: {
+            'Authorization': `Bearer ${auth.accessToken}`,
+          },
+          withCredentials: true,
+        });
+      } catch (error) {
+        console.error('Error logging out:', error.response ? error.response.data : error.message);
+      }
+      
+      if (clientSocket)
+        clientSocket.close();
+      if (botSocket)
+        botSocket.close();
+      setAuth(null);
+      navigate('/auth');
+  };
 
   useEffect(() => {
     if (tournamentMatchAccepted) {
@@ -433,7 +454,7 @@ const handleReject = async (id, type) => {
               <p className='list' onClick={handleMyProfilClick}>{t('View My Profil')}</p>
               <p className='list' onClick={handleListBlockedClick}>{t('List Blocked')}</p>
               <p className='list' onClick={handleSettingClick}>{t('Setting')}</p>
-              <p className='list'>{t('Log Out')}</p>
+              <p className='list' onClick={handleLogout}>{t('Logout')}</p>
             </div>
           </div>
             <ListBlockedPopup isOpen={modalOpenBlocked} onClose={handleCloseBlocked} />

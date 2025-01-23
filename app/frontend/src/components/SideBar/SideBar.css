@@ -129,6 +129,14 @@
     padding: 20px 0;
     text-decoration: none;
     color: #8D93AC;
+    border-radius: 7px;
+    transition: all 0.3s ease-out;
+    cursor: pointer;
+}
+
+.logout-link:hover {
+    background: #F62943;
+    color: #fff;
 }
 
 @media screen and (max-width: 1300px) {
@@ -151,4 +159,3 @@
         display: none;
     }
 }
-  

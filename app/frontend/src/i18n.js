@@ -165,6 +165,7 @@ const resources = {
       "Sign In": "Sign In",
       "Or": "Or",
       "Sign In With 42": "Sign In With 42",
+      "Sign In as a Guest": "Sign In as a Guest",
       "Sign In With Google": "Sign In With Google",
 
       "Don’t have an account ?": "Don’t have an account ?",
@@ -418,7 +419,8 @@ const resources = {
       "Current Password": "Mot de passe actuel",
       "Sign In": "Se connecter",
       "Or": "Ou",
-      "Sign In With 42": "Se connecter avec 42",
+      "Sign In With 42": "Se Connecter Avec 42",
+      "Sign In as a Guest": "Se Connecter En Tant Qu'Invité",
       "Sign In With Google": "Se connecter avec Google",
       "Don’t have an account ?": "Vous n'avez pas de compte ?",
       "Username cannot contain special characters or spaces.": "Le nom d'utilisateur ne peut pas contenir de caractères spéciaux ou d'espaces.",
@@ -667,6 +669,7 @@ const resources = {
       "Select players...": "Selecciona jugadores...",
       "Or": "O",
       "Sign In With 42": "Iniciar sesión con 42",
+      "Sign In as a Guest": "Iniciar Sesión Como Invitado",
       "Sign In With Google": "Iniciar sesión con Google",
 
       "Don’t have an account ?": "¿No tienes una cuenta?",
