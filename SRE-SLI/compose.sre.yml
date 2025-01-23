@@ -139,7 +139,7 @@ services:
       - ft_transcendence
     restart: always
 
-  nginx_exporter:
+  nginx-exporter:
     image: nginx-exporter
     build:
       context: ./prom-grafana/exporters

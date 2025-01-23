@@ -1,5 +1,3 @@
-version: '3.8'
-
 volumes:
   postgres_data:
     name: postgres_data
@@ -81,10 +79,10 @@ services:
       service: grafana
   
   # Exporters
-  nginx_exporter:
+  nginx-exporter:
     extends:
       file: ./SRE-SLI/compose.sre.yml
-      service: nginx_exporter
+      service: nginx-exporter
   redis-exporter:
     extends:
       file: ./SRE-SLI/compose.sre.yml
