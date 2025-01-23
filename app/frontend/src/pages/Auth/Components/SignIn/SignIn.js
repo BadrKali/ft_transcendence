@@ -10,10 +10,12 @@ import { fetchData } from '../../../Setting/components/TwoFaModal/TwoFaModal'
 import useRefresh from '../../../../hooks/useRefresh'
 import { useTranslation } from 'react-i18next';
 import { ErrorToast } from '../../../../components/ReactToastify/ErrorToast'
+import Guest from '../../../../assets/unknown.png'
 
 
 
 const SIGNIN_URL = "/auth/token/"
+const GUEST_URL = "/auth/user/guest/"
 const CALLBACK_URL = process.env.REACT_APP_CALLBACK_URL;
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
@@ -59,6 +61,24 @@ const SignIn = (props) => {
         // navigate('/api_42')
         window.location.href = CALLBACK_URL;
     }
+
+    const handleGuestSignIn = async () => {
+        try {
+            const formData = new FormData();
+            formData.append('is_guest', 'true');
+            const response = await axios.post(GUEST_URL, formData, {
+                headers: { 'Content-Type': 'multipart/form-data' },
+                withCredentials: true
+            });
+            const accessToken = response.data?.access;
+            const username = response.data?.username;
+            props.setAuth({username: username, accessToken: accessToken});
+            navigate('/');
+        } catch (err) {
+            ErrorToast(t("An error occurred. Please try again later."));
+            console.error(err);
+        }
+    };
 
     const handleSignInSubmit = async (e) => {
         e.preventDefault();
@@ -161,6 +181,10 @@ const SignIn = (props) => {
         <div className='school_auth' onClick={handle42Click}>
             <img src={assets.SchoolIcon}/>
             <p>{t('Sign In With 42')}</p>
+        </div>
+        <div className='school_auth' onClick={handleGuestSignIn}>
+            <img src={Guest} alt="Guest"/>
+            <p>{t('Sign In as a Guest')}</p>
         </div>
         
         <div className='signin-text-bottom'>

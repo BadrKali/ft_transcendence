@@ -8,6 +8,7 @@ urlpatterns = [
     path("logout/", LogoutView.as_view(), name="logout"),
     path("user-auth/", include("rest_framework.urls")),
     path("user/register/", UserRegistration.as_view(), name="register"),
+    path("user/guest/", GuestRegistration.as_view(), name="guest_register"),
     path("user/me/", CurrentUserView.as_view(), name="get_user_info"),
     path("user/me/<int:user_id>", UserView.as_view(), name="get_user_info"),
     path("callback/", CallbackView.as_view(), name="auth_callback"),

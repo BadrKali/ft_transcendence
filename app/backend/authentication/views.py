@@ -95,6 +95,49 @@ class UserRegistration(APIView):
             }
         )
 
+class GuestRegistration(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        is_guest = request.data.get('is_guest', 'false')
+        if is_guest != 'true':
+            return Response({"error": "Bad request"}, status=status.HTTP_400_BAD_REQUEST)
+
+        base_username = "GuestUser"
+        unique_username = base_username
+        counter = 1
+        while User.objects.filter(username=unique_username).exists():
+            unique_username = f"{base_username}{counter}"
+            counter += 1
+
+        user = User.objects.create_user(
+            username=unique_username,
+            password=None,
+            email=unique_username + '@email.com'
+        )
+        user.avatar = "avatars/0.png"
+        user.is_guest = True
+        user.save()
+
+        player = Player.objects.get(user=user)
+        player.create_default_game_settings()
+
+        refresh = RefreshToken.for_user(user)
+        access_token = str(refresh.access_token)
+        refresh_token = str(refresh)
+
+        response_data = {
+            'access': access_token,
+            'username': unique_username
+        }
+        response = Response(response_data, status=status.HTTP_201_CREATED)
+        response.set_cookie(
+            key='refresh',
+            value=refresh_token,
+            httponly=True,
+        )
+        return response
+
 class CustomTokenObtainPairView(TokenObtainPairView):
     def post(self, request, *args, **kwargs):
         response = super().post(request, *args, **kwargs)
@@ -284,7 +327,12 @@ class LogoutView(APIView):
             if not refresh_token:
                 return Response({"error": "Refresh token not found in cookies"}, status=status.HTTP_400_BAD_REQUEST)
             token = RefreshToken(refresh_token)
+            user_id = token['user_id']
+            user = get_object_or_404(User, pk=user_id)
             token.blacklist()
+            if user.is_guest:
+                user.delete()
+                return Response({"message": "Guest user logged out and deleted."}, status=status.HTTP_205_RESET_CONTENT)
             return Response({"message": "Successfully logged out"}, status=status.HTTP_205_RESET_CONTENT)
         except Exception as e:
             return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

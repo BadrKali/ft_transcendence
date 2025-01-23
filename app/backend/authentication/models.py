@@ -14,6 +14,7 @@ class User(AbstractUser):
     is_2fa_enabled = models.BooleanField(default=False)
     is_2fa_verified = models.BooleanField(default=False)
     otp_secret = models.CharField(max_length=255, null=True, blank=True)
+    is_guest = models.BooleanField(default=False)
     
     def save(self, *args, **kwargs):
         created = self.pk is None

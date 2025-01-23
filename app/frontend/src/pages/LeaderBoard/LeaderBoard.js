@@ -25,9 +25,8 @@ const LeaderBoard = () => {
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true); 
 
-  const defaultsecond = {user_id: 2, username: 'Uknown Player', rank: 'None'};
-  const defaultthird = {user_id: 3, username: 'Uknown Player', rank: 'None'};
-
+  const defaultsecond = {user_id: -2, username: 'Uknown Player', rank: 'None'};
+  const defaultthird = {user_id: -3, username: 'Uknown Player', rank: 'None'};
 
   useEffect(() => {
     const fetchLeaderboardData = async () => {
