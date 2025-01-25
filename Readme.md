@@ -252,19 +252,21 @@ ln -s ~/goinfre/DockerData/com.docker.docker ~/Library/Containers/com.docker.doc
   ![Monitoring Targets](https://github.com/AhmedFatir/AhmedFatir/blob/master/images/Targets.png)
 ---
 - **Grafana Dashboards**
+  - **Node Exporter**
+  ![Node Dashboard](https://github.com/AhmedFatir/AhmedFatir/blob/master/images/Node.png)
   - **Prometheus**
   ![Prometheus Dashboard](https://github.com/AhmedFatir/AhmedFatir/blob/master/images/Prometheus.png)
-  - **Node Exporter**
+  - **NGINX**
   ![Ngix Dashboard](https://github.com/AhmedFatir/AhmedFatir/blob/master/images/Nginx.png)
-  - **PostgreSQL**
-  ![PostgreSQL Dashboard](https://github.com/AhmedFatir/AhmedFatir/blob/master/images/Postgresql.png)
   - **Redis**
   ![Redis Dashboard](https://github.com/AhmedFatir/AhmedFatir/blob/master/images/Redis.png)
   - **PostgreSQL**
-  ![Node Dashboard](https://github.com/AhmedFatir/AhmedFatir/blob/master/images/Node.png)
+  ![PostgreSQL Dashboard](https://github.com/AhmedFatir/AhmedFatir/blob/master/images/Postgresql.png)
 ---
-- **Elasicsearch indices**
+- **ELK Stack**
+  - **Elaticsearch Indices**
   ![Elasticsearch Indices](https://github.com/AhmedFatir/AhmedFatir/blob/master/images/ElasticSearch.png)
----
-- **Kibana Dashboard**
+  - **ILM Policy**
+  ![ILM Policy](https://github.com/AhmedFatir/AhmedFatir/blob/master/images/LM-Policy.png)
+  - **Nginx Logs Dashboard**
   ![Nginx Dashboard](https://github.com/AhmedFatir/AhmedFatir/blob/master/images/Kibana.png)
