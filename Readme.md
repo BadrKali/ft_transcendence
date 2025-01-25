@@ -6,21 +6,25 @@
 
 ![](https://github.com/AhmedFatir/AhmedFatir/blob/master/images/%20Transcendence.png)
 
-## Description
-- ### [**Features**](#Features)
-- ### [**Project Structure**](#Project-Structure)
-  - **[Management](#Management)**
+---
+
+## [Description](#Description)
+- ### **[Project Features](#Features)**
+
+- ### **[Project Structure](#Structure)**
+  - **[Project Management](#Management)**
   - **[Web Application Architecture](#Web-Application-Architecture)**
   - **[DevOps Infrastructure](#DevOps-Infrastructure)**
-- ### [**System Specification**](#System-Specification)
-- ### [**Setup**](#Setup)
+
+- ### **[System Specification](#Specification)**
+
+- ### **[Project Setup](#Setup)**
   - **[Local Machine](#On-local-machine)**
   - **[GitHub Codespaces](#On-GitHub-Codespaces)**
-- ### [**Project Screenshots**](#Screenshots)
 
-
-
-## Features
+- ### [Project Screenshots](#Screenshots)
+---
+## [Features](#Features)
 - **[Signup and Login]()**: Users can create an account and log in to the application or use third-party authentication with 42 OAuth2.
 - **[Profile Management]()**: Users can view and edit their profile information.
 - **[Friend Management]()**: Users can send, accept, and reject friend requests.
@@ -35,8 +39,8 @@
 - **[Logging]()**: The application logs are collected and processed using the ELK stack (Elasticsearch, Logstash, Kibana).
 
 ---
-## Project Structure
-### Management
+## [Structure](#Structure)
+### [Management](#Management)
  <a href="https://www.docker.com/" target="_blank" rel="noreferrer"> <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/docker/docker-original-wordmark.svg" alt="docker" width="40" height="40"/> </a>
  <a href="https://yaml.org/" target="_blank" rel="noreferrer"> <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/yaml/yaml-original.svg" alt="yaml" width="40" height="40"/> </a>
  <a href="https://makefiletutorial.com/" target="_blank" rel="noreferrer"> <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/cmake/cmake-original.svg" alt="yaml" width="40" height="40"/> </a>
@@ -44,7 +48,8 @@
 - **Docker**: Manages application containers for each service.
 - **Docker Compose**: Manages the application infrastructure using Docker containers.
 - **Makefile**: Provides shortcuts for common tasks.
-### Web Application Architecture
+---
+### [Web Application Architecture](#Web-Application-Architecture)
 #### 1. **Frontend**
 <a href="https://www.javascript.com/" target="_blank" rel="noreferrer"> <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/javascript/javascript-original.svg" alt="bash" width="40" height="40"/> </a>
 <a href="https://nodejs.org/en" target="_blank" rel="noreferrer"> <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/nodejs/nodejs-original-wordmark.svg" alt="bash" width="40" height="40"/> </a>
@@ -92,7 +97,7 @@
 
 ---
 
-### DevOps Infrastructure
+### [DevOps Infrastructure](#DevOps-Infrastructure)
 #### 1. **[Log Management System](https://github.com/AhmedFatir/ELK-Stack)**
 <a href="https://www.elastic.co/elasticsearch" target="_blank" rel="noreferrer"> <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/elasticsearch/elasticsearch-original.svg" alt="bash" width="40" height="40"/> </a>
 <a href="https://www.elastic.co/logstash" target="_blank" rel="noreferrer"> <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/logstash/logstash-original.svg" alt="bash" width="40" height="40"/> </a>
@@ -137,15 +142,15 @@
   - **Purpose**: Exposes metrics about the host machine.
 
 
-## System Specification
+## [Specification](#Specification)
 - This Project is developed and tested on **macOS** using **Docker Desktop**
 - If you are running this project on a different architecture, you may need to adjust the configurations accordingly.
 - **Development Environment:**
   - **Docker Desktop**: Version 20.10.21
   - **Docker Compose**: Version 2.13.0
 
-# Setup
-## On local machine
+# [Setup](#Setup)
+## [On local machine](#On-local-machine)
 ### if you already have docker and docker-compose installed on your machine
 ```bash
 git clone https://github.com/AhmedFatir/ft_transcendence.git && cd ./ft_transcendence
@@ -166,7 +171,7 @@ Alertmanager:    https://localhost:9093
 Kibana:          https://localhost:5601
 ```
 ---
-## On GitHub Codespaces
+## [On GitHub Codespaces](#On-GitHub-Codespaces)
 ### If you are runing this porject on GitHub Codespaces, you need to make the following changes
 
 ```bash
@@ -219,7 +224,7 @@ ln -s ~/goinfre/DockerData/com.docker.docker ~/Library/Containers/com.docker.doc
 # Open Docker > Preferences > Resources > File Sharing > Add ~/goinfre to Shared Paths.
 ```
 <!-- adding some project pictures here -->
-## Screenshots
+## [Screenshots](#Screenshots)
 
 - **Login Page**
   - **Sign In**
