@@ -3,6 +3,19 @@ ELK_SERVICES = setup elasticsearch kibana logstash
 PROM_SERVICES = prometheus grafana nginx-exporter redis-exporter postgres-exporter node-exporter
 
 all:
+	@echo "\n\033[1;32mmake up:    \033[0mrun all services"
+	@echo "\033[1;32mmake env:   \033[0mgenerate the .env file"
+	@echo "\033[1;32mmake web:   \033[0mrun (postgres, redis, backend, frontend, nginx)"
+	@echo "\033[1;32mmake elk:   \033[0mrun (postgres, redis, backend, frontend, nginx, setup, elasticsearch, kibana, logstash)"
+	@echo "\033[1;32mmake prom:  \033[0mrun (postgres, redis, backend, frontend, nginx, prometheus, grafana, and the exporters)"
+	@echo "\033[1;32mmake down:  \033[0mstop and remove all the running containers, and networks"
+	@echo "\033[1;32mmake stop:  \033[0mstop all the running containers"
+	@echo "\033[1;32mmake start: \033[0mstart all the stopped containers"
+	@echo "\033[1;32mmake clean: \033[0mstop and remove all the running containers, images, volumes, and networks"
+	@echo "\033[1;32mmake re:    \033[0mclean and run all services"
+	@echo "\033[1;32mmake prune: \033[0mclean and remove all cached data\n"
+
+up:
 	@test -f .env || ( echo "\n\033[1;33mError: .env not found, run 'make env'\033[0m\n"; exit 1 )
 	clear
 	docker-compose up --build -d
@@ -48,18 +61,5 @@ re: clean all
 
 prune: clean
 	@docker system prune -a --volumes -f
-
-info:
-	@echo "\n\033[1;32mmake:       \033[0mrun all services"
-	@echo "\033[1;32mmake env:   \033[0mgenerate the .env file"
-	@echo "\033[1;32mmake web:   \033[0mrun (postgres, redis, backend, frontend, nginx)"
-	@echo "\033[1;32mmake elk:   \033[0mrun (postgres, redis, backend, frontend, nginx, setup, elasticsearch, kibana, logstash)"
-	@echo "\033[1;32mmake prom:  \033[0mrun (postgres, redis, backend, frontend, nginx, prometheus, grafana, and the exporters)"
-	@echo "\033[1;32mmake down:  \033[0mstop and remove all the running containers, and networks"
-	@echo "\033[1;32mmake stop:  \033[0mstop all the running containers"
-	@echo "\033[1;32mmake start: \033[0mstart all the stopped containers"
-	@echo "\033[1;32mmake clean: \033[0mstop and remove all the running containers, images, volumes, and networks"
-	@echo "\033[1;32mmake re:    \033[0mclean and run all services"
-	@echo "\033[1;32mmake prune: \033[0mclean and remove all cached data\n"
 
 .PHONY: all env web elk prom down stop start clean re prune info
