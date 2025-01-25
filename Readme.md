@@ -6,6 +6,19 @@
 
 ![](https://github.com/AhmedFatir/AhmedFatir/blob/master/images/%20Transcendence.png)
 
+## Description
+- ### [**Features**](#Features)
+- ### [**Project Structure**](#Project-Structure)
+  - **[Management](#Management)**
+  - **[Web Application Architecture](#Web-Application-Architecture)**
+  - **[DevOps Infrastructure](#DevOps-Infrastructure)**
+- ### [**System Specification**](#System-Specification)
+- ### [**Setup**](#Setup)
+  - **[Local Machine](#On-local-machine)**
+  - **[GitHub Codespaces](#On-GitHub-Codespaces)**
+- ### [**Project Screenshots**](#Screenshots)
+
+
 
 ## Features
 - **[Signup and Login]()**: Users can create an account and log in to the application or use third-party authentication with 42 OAuth2.
@@ -131,7 +144,8 @@
   - **Docker Desktop**: Version 20.10.21
   - **Docker Compose**: Version 2.13.0
 
-## Setup
+# Setup
+## On local machine
 ### if you already have docker and docker-compose installed on your machine
 ```bash
 git clone https://github.com/AhmedFatir/ft_transcendence.git && cd ./ft_transcendence
@@ -151,6 +165,8 @@ Prometheus:      https://localhost:9090
 Alertmanager:    https://localhost:9093
 Kibana:          https://localhost:5601
 ```
+---
+## On GitHub Codespaces
 ### If you are runing this porject on GitHub Codespaces, you need to make the following changes
 
 ```bash
@@ -202,3 +218,53 @@ ln -s ~/goinfre/DockerData/com.docker.docker ~/Library/Containers/com.docker.doc
 
 # Open Docker > Preferences > Resources > File Sharing > Add ~/goinfre to Shared Paths.
 ```
+<!-- adding some project pictures here -->
+## Screenshots
+
+- **Login Page**
+  - **Sign In**
+  ![Login Page](https://github.com/AhmedFatir/AhmedFatir/blob/master/images/Login.png)
+  - **Sign Up**
+  ![Sign Up](https://github.com/AhmedFatir/AhmedFatir/blob/master/images/Signup.png)
+---
+- **Home Page**
+  ![Home Page](https://github.com/AhmedFatir/AhmedFatir/blob/master/images/Home.png)
+---
+- **Game Page**
+  - **Game Settings**
+  ![Game Settings](https://github.com/AhmedFatir/AhmedFatir/blob/master/images/GameSettings.png)
+  - **Game Room**
+  ![Game Room](https://github.com/AhmedFatir/AhmedFatir/blob/master/images/GameRoom.png)
+---
+- **Chat Page**
+  ![Chat Page](https://github.com/AhmedFatir/AhmedFatir/blob/master/images/Chat.png)
+---
+- **Tournament Page**
+  ![Tournament Page](https://github.com/AhmedFatir/AhmedFatir/blob/master/images/Tournament.png)
+---
+- **Leaderboard Page**
+  ![Leaderboard Page](https://github.com/AhmedFatir/AhmedFatir/blob/master/images/Leaderboard.png)
+---
+- **Settings Page**
+  ![Settings Page](https://github.com/AhmedFatir/AhmedFatir/blob/master/images/Settings.png)
+---
+- **Prometheus Monitoring Targets**
+  ![Monitoring Targets](https://github.com/AhmedFatir/AhmedFatir/blob/master/images/Targets.png)
+---
+- **Grafana Dashboards**
+  - **Prometheus**
+  ![Prometheus Dashboard](https://github.com/AhmedFatir/AhmedFatir/blob/master/images/Prometheus.png)
+  - **Node Exporter**
+  ![Ngix Dashboard](https://github.com/AhmedFatir/AhmedFatir/blob/master/images/Nginx.png)
+  - **PostgreSQL**
+  ![PostgreSQL Dashboard](https://github.com/AhmedFatir/AhmedFatir/blob/master/images/Postgresql.png)
+  - **Redis**
+  ![Redis Dashboard](https://github.com/AhmedFatir/AhmedFatir/blob/master/images/Redis.png)
+  - **PostgreSQL**
+  ![Node Dashboard](https://github.com/AhmedFatir/AhmedFatir/blob/master/images/Node.png)
+---
+- **Elasicsearch indices**
+  ![Elasticsearch Indices](https://github.com/AhmedFatir/AhmedFatir/blob/master/images/ElasticSearch.png)
+---
+- **Kibana Dashboard**
+  ![Nginx Dashboard](https://github.com/AhmedFatir/AhmedFatir/blob/master/images/Kibana.png)
